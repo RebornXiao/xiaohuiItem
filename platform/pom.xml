@@ -17,6 +17,7 @@
         <module>payment</module>
         <module>order</module>
         <module>item</module>
+        <module>io</module>
     </modules>
 
     <dependencies>

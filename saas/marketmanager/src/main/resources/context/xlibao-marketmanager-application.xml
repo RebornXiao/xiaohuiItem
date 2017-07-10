@@ -23,7 +23,7 @@
     <context:property-placeholder location="classpath:properties/*/${profiles.active}*.properties"/>
 
     <!-- 自动扫描(自动注入) -->
-    <context:component-scan base-package="com.xlibao.order">
+    <context:component-scan base-package="com.xlibao.saas.market.manager">
         <!-- 排除Controller -->
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
@@ -62,21 +62,15 @@
         <property name="dataSource" ref="dataSource"/>
         <property name="mapperLocations">
             <array>
-                <value>classpath:/com/xlibao/order/data/mapper/*/*Mapper.xml</value>
+                <value>classpath:/com/xlibao/saas/market/manager/data/mapper/*Mapper.xml</value>
             </array>
         </property>
 
-        <property name="typeAliasesPackage" value="com.xlibao.metadata.order.*"/>
-
-        <property name="plugins">
-            <array>
-                <bean class="com.github.pagehelper.PageHelper"/>
-            </array>
-        </property>
+        <property name="typeAliasesPackage" value="com.xlibao.saas.market.manager.data.model.*"/>
     </bean>
 
     <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.xlibao.order.data.mapper.*"/>
+        <property name="basePackage" value="com.xlibao.saas.market.manager.data.mapper"/>
     </bean>
 
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
@@ -98,7 +92,7 @@
     </tx:advice>
 
     <aop:config>
-        <aop:pointcut id="services" expression="execution(* com.xlibao.order.service.*..*Service*.*(..))"/>
-        <aop:advisor advice-ref="transaction" pointcut-ref="services"/>
+        <aop:pointcut id="transactionService" expression="execution(* com.xlibao.saas.market.manager.service.*..*Service*.*(..))"/>
+        <aop:advisor advice-ref="transaction" pointcut-ref="transactionService"/>
     </aop:config>
 </beans>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xlibao.item.data.mapper.MarketItemStockLockLoggerMapper">
+    <resultMap id="BaseResultMap" type="com.xlibao.metadata.data.MarketItemStockLockLogger">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="item_id" property="itemId" jdbcType="BIGINT"/>
+        <result column="lock_quantity" property="lockQuantity" jdbcType="INTEGER"/>
+        <result column="lock_type" property="lockType" jdbcType="INTEGER"/>
+        <result column="lock_time" property="lockTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+</mapper>
