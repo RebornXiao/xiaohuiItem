@@ -1,0 +1,27 @@
+package com.xlibao.item.data.mapper;
+
+import com.xlibao.metadata.item.ItemTemplate;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
+
+public interface ItemTemplateMapper {
+
+    List<ItemTemplate> loaderItemTemplates(@Param("status") int status);
+
+    List<ItemTemplate> getItemTemplates(@Param("itemTypeId") long itemTypeId, @Param("status") int status);
+
+    ItemTemplate getItemTemplate(@Param("itemTemplateId") long itemTemplateId, @Param("status") int status);
+
+    ItemTemplate getItemTemplateByName(@Param("itemName") String itemName, @Param("status") int status);
+
+    ItemTemplate getItemTemplateByBarcode(@Param("barcode") String barcode);
+    
+    int add(@Param("template") ItemTemplate template);
+    
+    void updateItemTemplate(@Param("template") ItemTemplate template);
+
+    List<ItemTemplate> getItemTemplateList(@Param("template") ItemTemplate template, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
+
+    int getItemTemplateListCount(@Param("template") ItemTemplate template);
+}

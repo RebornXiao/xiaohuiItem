@@ -1,0 +1,325 @@
+package com.xlibao.payment.service.channel.tencent;
+
+import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.BasicWebService;
+import com.xlibao.common.CommonUtils;
+import com.xlibao.common.DefineRandom;
+import com.xlibao.common.constant.payment.CurrencyTypeEnum;
+import com.xlibao.common.constant.payment.PaymentTypeEnum;
+import com.xlibao.common.constant.payment.TransStatusEnum;
+import com.xlibao.common.constant.payment.TransTypeEnum;
+import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.file.XMLSupport;
+import com.xlibao.common.http.HttpRequest;
+import com.xlibao.payment.config.ConfigFactory;
+import com.xlibao.payment.data.mapper.PaymentDataAccessManager;
+import com.xlibao.payment.data.model.PaymentTransactionLogger;
+import com.xlibao.payment.service.currency.CurrencyEventListenerManager;
+import com.xlibao.payment.service.trans.TransactionEventListenerManager;
+import org.apache.log4j.Logger;
+import org.dom4j.Document;
+import org.dom4j.Element;
+import org.dom4j.io.SAXReader;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * @author chinahuangxc on 2017/2/2.
+ */
+@Component
+public class TencentPayment extends BasicWebService {
+
+    private static final Logger logger = Logger.getLogger(TencentPayment.class);
+
+    // 微信统一下单接口
+    private static final String TENCENT_ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";
+
+    @Autowired
+    private PaymentDataAccessManager paymentDataAccessManager;
+    @Autowired
+    private TransactionEventListenerManager transactionEventListenerManager;
+    @Autowired
+    private CurrencyEventListenerManager currencyEventListenerManager;
+
+    public JSONObject weixinNativePaymentParameters(String tradeNumber, long totalAmount, String function, String desc, String attach, String remoteIP) {
+        return weixinPaymentParameters(PaymentTypeEnum.WEIXIN_NATIVE, "", tradeNumber, totalAmount, function, desc, attach, remoteIP);
+    }
+
+    public JSONObject weixinJSPaymentParameters(String openId, String tradeNumber, long totalAmount, String function, String desc, String attach, String remoteIP) {
+        return weixinPaymentParameters(PaymentTypeEnum.WEIXIN_JS, openId, tradeNumber, totalAmount, function, desc, attach, remoteIP);
+    }
+
+    private JSONObject weixinPaymentParameters(PaymentTypeEnum paymentType, String openId, String tradeNumber, long totalAmount, String function, String desc, String attach, String remoteIP) {
+        String[] payParameter = generationPrePaymentId(paymentType, openId, tradeNumber, totalAmount, function, desc, attach, remoteIP);
+        if (payParameter == null) {
+            throw new XlibaoRuntimeException("无法生成微信预支付ID");
+        }
+        JSONObject parameters = new JSONObject();
+        Map<String, String> signParameters = new HashMap<>();
+        // 公众账号ID appid 微信分配的公众账号ID
+        parameters.put("appid", ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_ID);
+        signParameters.put("appid", ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_ID);
+        // 商户号 partnerid 微信支付分配的商户号
+        parameters.put("partnerid", ConfigFactory.getTencentWeixinPaymentConfig().WX_PARTNER_ID);
+        signParameters.put("partnerid", ConfigFactory.getTencentWeixinPaymentConfig().WX_PARTNER_ID);
+        // 预支付交易会话ID prepayid 微信返回的支付交易会话ID
+        parameters.put("prepayid", payParameter[0]);
+        signParameters.put("prepayid", payParameter[0]);
+        // 扩展字段 package 暂填写固定值Sign=WXPay
+        parameters.put("package", "Sign=WXPay");
+        signParameters.put("package", "Sign=WXPay");
+        // 随机字符串 noncestr 不长于32位
+        parameters.put("noncestr", payParameter[1]);
+        signParameters.put("noncestr", payParameter[1]);
+        // 时间戳 timestamp 时间戳
+        parameters.put("timestamp", System.currentTimeMillis() / 1000);
+        signParameters.put("timestamp", String.valueOf(System.currentTimeMillis() / 1000));
+
+        String parameterSort = CommonUtils.parameterSort(signParameters, new ArrayList<>());
+        String sign = parameterSort + "key=" + ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_KEY;
+        logger.info("before sign " + sign);
+        sign = CommonUtils.md5(sign).toUpperCase();
+        logger.info("after sign " + sign);
+
+        // 签名 sign
+        parameters.put("sign", sign);
+        return parameters;
+    }
+
+    private String[] generationPrePaymentId(PaymentTypeEnum paymentType, String openId, String tradeNumber, long totalAmount, String body, String detail, String attach, String remoteIp) {
+        String nonceValue = DefineRandom.randomChar(32).toUpperCase();
+        Map<String, String> parameters = new HashMap<>();
+        logger.info("App id is " + ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_ID);
+        // 公众账号ID appid 微信分配的公众账号ID（企业号corpid即为此appId）
+        parameters.put("appid", ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_ID);
+        // 商户号 mch_id 微信支付分配的商户号
+        parameters.put("mch_id", ConfigFactory.getTencentWeixinPaymentConfig().WX_PARTNER_ID);
+        // 随机字符串 nonce_str 不长于32位。推荐随机数生成算法
+        parameters.put("nonce_str", nonceValue);
+        // 商品描述 body 商品或支付单简要描述
+        parameters.put("body", body);
+        // 商品详情 detail 商品名称明细列表
+        parameters.put("detail", detail);
+        // 附加数据 attach 在查询API和支付通知中原样返回，该字段主要用于商户携带订单的自定义数据
+        parameters.put("attach", attach);
+        // 商户订单号 out_trade_no 32个字符内、可包含字母, 其他说明见商户订单号
+        parameters.put("out_trade_no", tradeNumber + "");
+        // 总金额 total_fee 单位为分，详见支付金额
+        parameters.put("total_fee", totalAmount + "");
+        // 终端IP spbill_create_ip APP和网页支付提交用户端ip，Native支付填调用微信支付API的机器IP。
+        parameters.put("spbill_create_ip", remoteIp);
+        // 交易起始时间 time_start 格式为yyyyMMddHHmmss，如2009年12月25日9点10分10秒表示为20091225091010。其他详见时间规则
+        parameters.put("time_start", CommonUtils.defineDateFormat(System.currentTimeMillis(), "yyyyMMddHHmmss"));
+        // 交易结束时间 time_expire 订单失效时间，格式为yyyyMMddHHmmss，如2009年12月27日9点10分10秒表示为20091227091010。其他详见时间规则
+        parameters.put("time_expire", CommonUtils.defineDateFormat(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(30), "yyyyMMddHHmmss"));
+        // 通知地址 notify_url 接收微信支付异步通知回调地址
+        parameters.put("notify_url", ConfigFactory.getDomainNameConfig().paymentRemoteURL + "/channelCallbackController/notifyWeixinNativePaymented");
+        // 交易类型 trade_type 取值如下：JSAPI，NATIVE，APP，详细说明见参数规定
+        parameters.put("trade_type", "APP");
+        // JSAPI时需要传openId
+        if (paymentType == PaymentTypeEnum.WEIXIN_JS) {
+            parameters.put("trade_type", "JSAPI");
+            parameters.put("openid", openId);
+        }
+        String parameterSort = CommonUtils.parameterSort(parameters, new ArrayList<>());
+        String sign = parameterSort + "key=" + ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_KEY;
+        logger.info("pre before sign " + sign);
+        sign = CommonUtils.md5(sign).toUpperCase();
+        logger.info("pre after sign " + sign);
+        // 签名 sign 签名，详见签名生成算法
+        parameters.put("sign", sign);
+        // 设备号 device_info 终端设备号(门店号或收银设备ID)，注意：PC网页或公众号内支付请传"WEB"
+        try {
+            String result = HttpRequest.sendPost(TENCENT_ORDER_URL, XMLSupport.mapToXML("xml", parameters));
+            Map<String, String> responseResult = XMLSupport.xmlToMap(result);
+            String returnCode = responseResult.get("return_code");
+            logger.info("return " + responseResult);
+            if (!"SUCCESS".equals(returnCode)) {
+                logger.info(result);
+                return null;
+            }
+            return new String[]{responseResult.get("prepay_id"), nonceValue};
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public void notifyWeixinNativePaymented() {
+        try {
+            SAXReader reader = new SAXReader();
+
+            Document document = reader.read(getHttpServletRequest().getInputStream());
+            logger.info("↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 微信支付回调参数 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓" +
+                    "\r\n" + document.asXML() + "\r\n" +
+                    "↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 微信支付回调参数 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑");
+
+            List<Element> elements = document.getRootElement().elements();
+            Map<String, String> parameters = new HashMap<>();
+            for (Element element : elements) {
+                parameters.put(element.getName(), element.getTextTrim());
+            }
+            // 返回状态码 return_code String(16) 包含：SUCCESS SUCCESS/FAIL
+            // 此字段是通信标识，非交易标识，交易是否成功需要查看result_code来判断
+            String returnCode = parameters.get("return_code");
+            // 返回信息 return_msg 非必填字段 String(128)
+            // 如非空，为错误原因 如：签名失败、参数格式校验错误等
+            String returnMsg = parameters.get("return_msg");
+
+            if (returnMsg != null && returnMsg.length() > 0) {
+                // 错误描述 这里后期要做记录 但由于无法获取到我方的订单号 无法记录到对应的交易记录上
+                logger.info("充值失败：" + returnMsg);
+            }
+            if (!"SUCCESS".equals(returnCode)) {
+                return;
+            }
+            // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 执行签名验证的流程 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+            // 签名 sign
+            String sign = parameters.get("sign");
+            // 验证签名
+            if (!verifyWeixinSign(parameters, sign)) {
+                responseWeixinResult("FAIL", "签名失败");
+                return;
+            }
+            // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 完成签名验证的流程 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+            // 总金额 total_fee 订单总金额，单位为分
+            int totalFee = Integer.parseInt(parameters.get("total_fee"));
+            // 商户订单号 out_trade_no 商户系统的订单号，与请求一致。
+            String outTradeNo = parameters.get("out_trade_no");
+
+            // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 以下为业务逻辑程序代码 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+            // 通过我方的参数内容获取交易记录
+            PaymentTransactionLogger transactionLogger = paymentDataAccessManager.getTransactionLogger(outTradeNo);
+            if (transactionLogger == null) {
+                responseWeixinResult("FAIL", "非法请求，订单号不存在");
+                return;
+            }
+            // 判断该笔订单是否已经做过处理
+            if ((transactionLogger.getTransStatus() & TransStatusEnum.TRADE_FINISHED.getKey()) == TransStatusEnum.TRADE_FINISHED.getKey()) { // 已处于交易完成状态
+                responseWeixinResult("SUCCESS", "FINISHED");
+                return;
+            }
+            // 如果有做过处理，不执行业务程序
+            if ((transactionLogger.getTransStatus() & TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey()) == TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey()) { // 已处于支付成功状态(仅针对服务器状态)
+                responseWeixinResult("SUCCESS", "S_FINISHED");
+                return;
+            }
+            /**
+             * <pre>
+             * 如果没有做过处理，根据订单号（out_trade_no）在订单系统中查到该笔订单的详细，并执行业务程序
+             *
+             * <b>注意：</b>
+             * 付款完成后，该交易状态通知相关的系统
+             * 最终支付金额不能小于发起时的额度(不包括充值)
+             * </pre>
+             */
+            if (transactionLogger.getTransType() != TransTypeEnum.RECHARGE.getKey() && transactionLogger.getTransTotalAmount() > totalFee) {
+                responseWeixinResult("FAIL", "支付金额不符合要求");
+                return;
+            }
+            // 填充微信回调的数据
+            fillWeixinNotifyTransData(parameters, transactionLogger);
+            // 通知监听系统
+            transactionEventListenerManager.notifyFinishPaymented(transactionLogger, TransStatusEnum.TRADE_SUCCESSED_SERVER, transactionLogger.getTransType() != TransTypeEnum.RECHARGE.getKey());
+
+            // 通知额度偏移，这里主要是做一个流水记录
+            currencyEventListenerManager.notifyOffsetCurrencyAmount(transactionLogger.getPassportId(), transactionLogger.getChannelId(), CurrencyTypeEnum.BALANCE.getKey(), 0, -Math.abs(transactionLogger.getTransTotalAmount()),
+                    0, transactionLogger.getPaymentType(), transactionLogger.getTransTitle(), transactionLogger.getTransType(), transactionLogger.getTransSequenceNumber());
+            responseWeixinResult("SUCCESS", "OK");
+            return;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        responseWeixinResult("FAIL", "ERROR");
+        // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 以上为业务逻辑程序代码 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+    }
+
+    private boolean verifyWeixinSign(Map<String, String> params, String sign) {
+        params.remove("sign");
+        String parameterSort = CommonUtils.parameterSort(params, new ArrayList<>()) + "key=" + ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_KEY;
+
+        String preSignValue = CommonUtils.md5(parameterSort).toUpperCase();
+
+        return sign.equals(preSignValue);
+    }
+
+    private void fillWeixinNotifyTransData(Map<String, String> parameters, PaymentTransactionLogger transactionLogger) {
+        // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 以下字段在return_code为SUCCESS的时候有返回 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+        // 公众账号ID appid 微信分配的公众账号ID（企业号corpid即为此appId）
+        // String appId = parameters.get("appid");
+        // 商户号 mch_id 微信支付分配的商户号
+        // String mchId = parameters.get("mch_id");
+        // 设备号 device_info 微信支付分配的终端设备号
+        String deviceInfo = parameters.get("device_info");
+        // 随机字符串 nonce_str 随机字符串，不长于32位
+        String nonceStr = parameters.get("nonce_str");
+        // 错误代码 err_code 否 String(32) SYSTEMERROR 错误返回的信息描述
+        // String errCode = parameters.get("err_code");
+        // 错误代码描述 err_code_des 错误返回的信息描述
+        // String errCodeDes = parameters.get("err_code_des");
+        // 用户标识 openid 用户在商户appid下的唯一标识
+        String openId = parameters.get("openid");
+        // 是否关注公众账号 is_subscribe 用户是否关注公众账号，Y-关注，N-未关注，仅在公众账号类型支付有效
+        String isSubscribe = parameters.get("is_subscribe");
+        // 交易类型 trade_type JSAPI JSAPI、NATIVE、APP
+        String tradeType = parameters.get("trade_type");
+        // 付款银行 bank_type 银行类型，采用字符串类型的银行标识，银行类型见银行列表
+        String bankType = parameters.get("bank_type");
+        // 货币种类 fee_type 货币类型，符合ISO4217标准的三位字母代码，默认人民币：CNY，其他值列表详见货币类型
+        String feeType = parameters.get("fee_type");
+        // 现金支付金额 cash_fee 现金支付金额订单现金支付金额，详见支付金额
+        // String cashFee = parameters.get("cash_fee");
+        // 现金支付货币类型 cash_fee_type 货币类型，符合ISO4217标准的三位字母代码，默认人民币：CNY，其他值列表详见货币类型
+        // String cashFeeType = parameters.get("cash_fee_type");
+        // 代金券或立减优惠金额 coupon_fee 代金券或立减优惠金额<=订单总金额，订单总金额-代金券或立减优惠金额=现金支付金额，详见支付金额
+        // int couponFee = Integer.parseInt(parameters.get("coupon_fee")) / 100;
+        // 代金券或立减优惠使用数量 coupon_count 代金券或立减优惠使用数量
+        // int couponCount = Integer.parseInt(parameters.get("coupon_count"));
+        // 代金券或立减优惠ID coupon_id_$n 代金券或立减优惠ID,$n为下标，从0开始编号
+        // String couponIdNum = parameters.get("coupon_id_$n");
+        // 单个代金券或立减优惠支付金额 coupon_fee_$n 单个代金券或立减优惠支付金额,$n为下标，从0开始编号
+        // int couponFeeSingle = Integer.parseInt(parameters.get("coupon_fee_$n"));
+        // 微信支付订单号 transaction_id
+        String transactionId = parameters.get("transaction_id");
+        // 商家数据包 attach 商家数据包，原样返回
+        // String attach = parameters.get("attach");
+        // 支付完成时间 time_end 格式为yyyyMMddHHmmss，如2009年12月25日9点10分10秒表示为20091225091010。其他详见时间规则
+        String timeEnd = parameters.get("time_end");
+        // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 业务数据 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+        String body = "deviceInfo:" + deviceInfo +
+                CommonUtils.SPACE +
+                "nonceValue:" + nonceStr +
+                CommonUtils.SPACE +
+                "tradeType:" + tradeType +
+                CommonUtils.SPACE +
+                "bankType:" + bankType +
+                CommonUtils.SPACE +
+                "feeType:" + feeType +
+                CommonUtils.SPACE +
+                "subscribe:" + isSubscribe;
+
+        // 修改对象的状态
+        transactionLogger.setTransStatus(transactionLogger.getTransStatus() | TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey());
+        transactionLogger.setPaymentType(PaymentTypeEnum.WEIXIN_NATIVE.getKey());
+        transactionLogger.setChannelUserId(openId);
+        transactionLogger.setChannelUserName(openId);
+        transactionLogger.setChannelTradeNumber(transactionId);
+        transactionLogger.setTransCreateTime(transactionLogger.getCreateTime());
+        transactionLogger.setPaymentTime(new Date(CommonUtils.dateFormatToLong(timeEnd)));
+        transactionLogger.setChannelRemark(body);
+    }
+
+    public static void main(String[] args) {
+        String value = "<xml><appid>wxf3c01ed21e6e9c6f</appid><body><![CDATA[密码]]></body><mch_id>1230969802</mch_id><nonce_str>teHNxDNASW6Q6VAf</nonce_str><notify_url>http://apptest.0085.com/pay/pay/wechat/payCallBack.action</notify_url><openid>ow1CduOTc0yLr40kdMSxgWSgNe0c</openid><out_trade_no>20161201022504810540</out_trade_no><sign><![CDATA[6910EDC3E7828D77310E92E2CE3E7EC0]]></sign><spbill_create_ip>14.150.64.118</spbill_create_ip><total_fee>3</total_fee><trade_type>JSAPI</trade_type></xml>";
+        Map<String, String> parameters = XMLSupport.xmlToMap(value);
+
+        TencentPayment tencentPayment = new TencentPayment();
+
+        JSONObject response = tencentPayment.weixinNativePaymentParameters(parameters.get("out_trade_no"), 241, "password", parameters.get("mch_id"), parameters.get("spbill_create_ip"), "");
+        System.out.println(response);
+    }
+}

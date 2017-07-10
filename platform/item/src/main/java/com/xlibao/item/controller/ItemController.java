@@ -1,0 +1,142 @@
+package com.xlibao.item.controller;
+
+import com.alibaba.fastjson.JSONObject;
+import com.xlibao.item.service.item.ItemService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+/**
+ * @author chinahuangxc on 2017/2/26.
+ */
+@Controller
+@RequestMapping(value = "/item")
+public class ItemController {
+
+    @Autowired
+    private ItemService itemService;
+
+    @ResponseBody
+    @RequestMapping(value = "loaderItemTemplates")
+    public JSONObject loaderItemTemplates() {
+        return itemService.loaderItemTemplates();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getItemTemplate")
+    public JSONObject getItemTemplate() {
+        return itemService.getItemTemplate();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getItemTemplateByName")
+    public JSONObject getItemTemplateByName() {
+        return itemService.getItemTemplateByName();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getItemTemplateByBarcode")
+    public JSONObject getItemTemplateByBarcode() {
+        return itemService.getItemTemplateByBarcode();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "relationItemTemplates")
+    public JSONObject relationItemTemplates() {
+        return itemService.relationItemTemplates();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "loaderItemBrands")
+    public JSONObject loaderItemBrands() {
+        return itemService.loaderItemBrands();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getItemBrand")
+    public JSONObject getItemBrand() {
+        return itemService.getItemBrand();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "loaderItemTypes")
+    public JSONObject loaderItemTypes() {
+        return itemService.loaderItemTypes();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getItemType")
+    public JSONObject getItemType() {
+        return itemService.getItemType();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "relationItemTypes")
+    public JSONObject relationItemTypes() {
+        return itemService.relationItemTypes();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "loaderItemUnits")
+    public JSONObject loaderItemUnits() {
+        return itemService.loaderItemUnits();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getItemUnit")
+    public JSONObject getItemUnit() {
+        return itemService.getItemUnit();
+    }
+
+    /**
+     * list
+     **/
+    @ResponseBody
+    @RequestMapping(value = "getItemUnitList")
+    public JSONObject getItemUnitList() {
+        return itemService.getItemUnitList();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getItemTemplateList")
+    public JSONObject getItemTemplateList() {
+        return itemService.getItemTemplateList();
+    }
+
+
+    /**
+     * update data
+     **/
+
+    @ResponseBody
+    @RequestMapping(value = "saveItemTemplate", method = RequestMethod.POST)
+    public JSONObject saveItemTemplate() {
+        return itemService.saveItemTemplate();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "saveItemUnit", method = RequestMethod.POST)
+    public JSONObject saveItemUnit() {
+        return itemService.saveItemUnit();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "saveItemType", method = RequestMethod.POST)
+    public JSONObject saveItemType() {
+        return itemService.saveItemType();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "saveItemBrand", method = RequestMethod.POST)
+    public JSONObject saveItemBrand() {
+        return itemService.saveItemBrand();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "saveItemRelationship", method = RequestMethod.POST)
+    public JSONObject saveItemRelationship() {
+        return itemService.saveItemRelationship();
+    }
+}

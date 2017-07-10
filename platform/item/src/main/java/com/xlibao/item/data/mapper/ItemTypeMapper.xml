@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xlibao.item.data.mapper.ItemTypeMapper">
+    <resultMap id="BaseResultMap" type="com.xlibao.metadata.item.ItemType">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="sort" property="sort" jdbcType="INTEGER"/>
+        <result column="top" property="top" jdbcType="TINYINT"/>
+        <result column="icon" property="icon" jdbcType="VARCHAR"/>
+        <result column="image" property="image" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="loaderItemTypes" resultMap="BaseResultMap">
+        select * from item_type where status = #{status}
+    </select>
+
+    <select id="relationItemTypes" resultMap="BaseResultMap">
+        select * from item_type where parent_id = #{parentItemTypeId} and status = #{status}
+    </select>
+
+    <select id="getItemType" resultMap="BaseResultMap">
+        select * from item_type where id = #{itemTypeId}
+        <if test="status != -1" > and status = #{status} </if>
+    </select>
+</mapper>
