@@ -15,11 +15,8 @@ public class XlibaoFilterChain implements Filter {
 
     private static final Logger logger = LoggerFactory.getLogger(XlibaoFilterChain.class);
 
-    private String encoding = null;
-
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        encoding = filterConfig.getInitParameter("encoding");
     }
 
     @Override
@@ -82,9 +79,5 @@ public class XlibaoFilterChain implements Filter {
         logger.info("↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 执行完成所有等待中的任务 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑");
 
         System.exit(0);
-    }
-
-    private String getEncoding() {
-        return this.encoding;
     }
 }

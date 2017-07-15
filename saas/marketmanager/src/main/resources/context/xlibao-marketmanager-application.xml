@@ -81,18 +81,5 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <tx:advice id="transaction" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="select*" read-only="true"/>
-            <tx:method name="find*" read-only="true"/>
-            <tx:method name="get*" read-only="true"/>
-            <tx:method name="query*" read-only="true"/>
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>
-
-    <aop:config>
-        <aop:pointcut id="transactionService" expression="execution(* com.xlibao.saas.market.manager.service.*..*Service*.*(..))"/>
-        <aop:advisor advice-ref="transaction" pointcut-ref="transactionService"/>
-    </aop:config>
+    <tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager"/>
 </beans>

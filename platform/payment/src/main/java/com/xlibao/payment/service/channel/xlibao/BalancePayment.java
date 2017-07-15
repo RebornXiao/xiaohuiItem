@@ -75,7 +75,7 @@ public class BalancePayment {
         transactionLogger.setTransCreateTime(transactionLogger.getCreateTime());
         transactionLogger.setPaymentTime(new Date());
         transactionLogger.setChannelRemark("");
-        transactionEventListenerManager.notifyFinishPaymented(transactionLogger, TransStatusEnum.TRADE_SUCCESSED_SERVER, true);
+        transactionEventListenerManager.notifyFinishPayment(transactionLogger, TransStatusEnum.TRADE_SUCCESSED_SERVER, true);
 
         currencyEventManager.notifyOffsetCurrencyAmount(transactionLogger.getPassportId(), transactionLogger.getChannelId(), currencyTypeEnum.getKey(), currencyAccount.getCurrentAmount(), offsetAmount,
                 (currencyAccount.getCurrentAmount() + offsetAmount), transactionLogger.getPaymentType(), transactionLogger.getTransTitle(), transactionLogger.getTransType(), transactionLogger.getTransSequenceNumber());

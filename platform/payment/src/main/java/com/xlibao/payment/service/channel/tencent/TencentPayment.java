@@ -224,7 +224,7 @@ public class TencentPayment extends BasicWebService {
             // 填充微信回调的数据
             fillWeixinNotifyTransData(parameters, transactionLogger);
             // 通知监听系统
-            transactionEventListenerManager.notifyFinishPaymented(transactionLogger, TransStatusEnum.TRADE_SUCCESSED_SERVER, transactionLogger.getTransType() != TransTypeEnum.RECHARGE.getKey());
+            transactionEventListenerManager.notifyFinishPayment(transactionLogger, TransStatusEnum.TRADE_SUCCESSED_SERVER, transactionLogger.getTransType() != TransTypeEnum.RECHARGE.getKey());
 
             // 通知额度偏移，这里主要是做一个流水记录
             currencyEventListenerManager.notifyOffsetCurrencyAmount(transactionLogger.getPassportId(), transactionLogger.getChannelId(), CurrencyTypeEnum.BALANCE.getKey(), 0, -Math.abs(transactionLogger.getTransTotalAmount()),

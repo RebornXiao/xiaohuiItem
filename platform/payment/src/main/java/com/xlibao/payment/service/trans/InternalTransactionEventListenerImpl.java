@@ -9,7 +9,6 @@ import com.xlibao.common.constant.payment.TransTypeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.http.HttpRequest;
 import com.xlibao.common.support.PassportRemoteService;
-import com.xlibao.common.thread.AsyncScheduledService;
 import com.xlibao.metadata.passport.Passport;
 import com.xlibao.payment.data.mapper.PaymentDataAccessManager;
 import com.xlibao.payment.data.model.PaymentCurrencyAccount;
@@ -17,13 +16,13 @@ import com.xlibao.payment.data.model.PaymentRechargePresent;
 import com.xlibao.payment.data.model.PaymentTransactionLogger;
 import com.xlibao.payment.listener.TransactionEventListener;
 import com.xlibao.payment.service.currency.CurrencyEventListenerManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author chinahuangxc on 2017/2/3.
@@ -31,7 +30,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class InternalTransactionEventListenerImpl implements TransactionEventListener {
 
-    private static final Logger logger = Logger.getLogger(InternalTransactionEventListenerImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(InternalTransactionEventListenerImpl.class);
 
     @Autowired
     private PaymentDataAccessManager paymentDataAccessManager;
@@ -39,7 +38,7 @@ public class InternalTransactionEventListenerImpl implements TransactionEventLis
     private CurrencyEventListenerManager currencyEventListenerManager;
 
     @Override
-    public void notifyFinishPaymented(PaymentTransactionLogger transactionLogger, TransStatusEnum transStatusEnum, boolean callback) {
+    public void notifyFinishPayment(PaymentTransactionLogger transactionLogger, TransStatusEnum transStatusEnum, boolean callback) {
         if (transactionLogger.getTransType() == TransTypeEnum.RECHARGE.getKey()) {
             Passport passport = PassportRemoteService.getPassport(transactionLogger.getPassportId());
             // 执行充值流程
@@ -80,50 +79,52 @@ public class InternalTransactionEventListenerImpl implements TransactionEventLis
     }
 
     private void callback(PaymentTransactionLogger transactionLogger, TransStatusEnum transStatusEnum) {
-        Runnable runnable = new Runnable() {
+        if (CommonUtils.isNullString(transactionLogger.getNotifyUrl())) {
+            return;
+        }
+        JSONObject data = new JSONObject();
 
-            @Override
-            public void run() {
-                JSONObject data = new JSONObject();
+        data.put("partnerId", transactionLogger.getPartnerId());
+        data.put("appId", transactionLogger.getAppId());
+        data.put("transSequenceNumber", transactionLogger.getTransSequenceNumber());
+        data.put("transStatus", transStatusEnum.getKey());
+        data.put("paymentType", transactionLogger.getPaymentType());
+        data.put("transType", transactionLogger.getTransStatus());
+        data.put("partnerUserId", transactionLogger.getPartnerUserId());
+        data.put("partnerTradeNumber", transactionLogger.getPartnerTradeNumber());
+        data.put("channelTradeNumber", transactionLogger.getChannelTradeNumber());
+        data.put("channelUserId", transactionLogger.getChannelUserId());
+        data.put("channelUserName", CommonUtils.nullToEmpty(transactionLogger.getChannelUserName()));
+        data.put("channelRemark", CommonUtils.nullToEmpty(transactionLogger.getChannelRemark()));
+        data.put("transUnitAmount", transactionLogger.getTransUnitAmount());
+        data.put("transNumber", transactionLogger.getTransNumber());
+        data.put("transTotalAmount", transactionLogger.getTransTotalAmount());
+        data.put("transCreateTime", transactionLogger.getTransCreateTime().getTime());
+        data.put("paymentTime", transactionLogger.getPaymentTime().getTime());
+        data.put("useConpon", transactionLogger.getUseCoupon());
+        data.put("discountAmount", transactionLogger.getDiscountAmount());
+        data.put("extendParameter", CommonUtils.nullToEmpty(transactionLogger.getExtendParameter()));
 
-                data.put("partnerId", transactionLogger.getPartnerId());
-                data.put("appId", transactionLogger.getAppId());
-                data.put("transSequenceNumber", transactionLogger.getTransSequenceNumber());
-                data.put("transStatus", transStatusEnum.getKey());
-                data.put("paymentType", transactionLogger.getPaymentType());
-                data.put("transType", transactionLogger.getTransStatus());
-                data.put("partnerUserId", transactionLogger.getPartnerUserId());
-                data.put("partnerTradeNumber", transactionLogger.getPartnerTradeNumber());
-                data.put("channelTradeNumber", transactionLogger.getChannelTradeNumber());
-                data.put("channelUserId", transactionLogger.getChannelUserId());
-                data.put("channelUserName", CommonUtils.nullToEmpty(transactionLogger.getChannelUserName()));
-                data.put("channelRemark", CommonUtils.nullToEmpty(transactionLogger.getChannelRemark()));
-                data.put("transUnitAmount", transactionLogger.getTransUnitAmount());
-                data.put("transNumber", transactionLogger.getTransNumber());
-                data.put("transTotalAmount", transactionLogger.getTransTotalAmount());
-                data.put("transCreateTime", transactionLogger.getTransCreateTime().getTime());
-                data.put("paymentTime", transactionLogger.getPaymentTime().getTime());
-                data.put("useConpon", transactionLogger.getUseConpon());
-                data.put("discountAmount", transactionLogger.getDiscountAmount());
-                data.put("extendParameter", CommonUtils.nullToEmpty(transactionLogger.getExtendParameter()));
+        String signatureParameters = PassportRemoteService.signatureParameters(data);
+        data.put("sign", signatureParameters);
 
-                String signatureParameters = PassportRemoteService.signatureParameters(data);
-                data.put("sign", signatureParameters);
+        logger.info("支付回调地址：" + transactionLogger.getNotifyUrl() + "\r\n回调内容：" + data.toJSONString());
 
-                logger.info("支付回调地址：" + transactionLogger.getNotifyUrl() + "\r\n回调内容：" + data.toJSONString());
+        Map<String, String> parameters = new HashMap<>();
 
-                Map<String, String> parameters = new HashMap<>();
+        parameters.put("data", data.toJSONString());
 
-                parameters.put("data", data.toJSONString());
+        try {
+            String result = HttpRequest.post(transactionLogger.getNotifyUrl(), parameters);
 
-                String result = HttpRequest.post(transactionLogger.getNotifyUrl(), parameters);
-
-                JSONObject response = JSONObject.parseObject(result);
-                if (response.getIntValue("code") != BasicWebService.SUCCESS_CODE) {
-                    AsyncScheduledService.submitRemoteNotifyTask(this, 5, TimeUnit.MINUTES);
-                }
+            JSONObject response = JSONObject.parseObject(result);
+            logger.info(transactionLogger.getTransSequenceNumber() + " 通知支付结果：" + response);
+            if (response.getIntValue("code") != BasicWebService.SUCCESS_CODE) {
+                throw new XlibaoRuntimeException(response.getIntValue("code"), response.getString("msg"));
             }
-        };
-        AsyncScheduledService.submitRemoteNotifyTask(runnable, 0, TimeUnit.SECONDS);
+        } catch (Exception ex) {
+            logger.error(transactionLogger.getTransSequenceNumber() + "支付通知发生异常，通知内容：" + data.toJSONString());
+            throw new XlibaoRuntimeException("支付失败，请稍后重试！", ex);
+        }
     }
 }

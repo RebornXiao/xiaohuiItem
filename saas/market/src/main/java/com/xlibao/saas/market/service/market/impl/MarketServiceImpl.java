@@ -1,7 +1,12 @@
 package com.xlibao.saas.market.service.market.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
+import com.xlibao.saas.market.data.mapper.market.MarketDataAccessManager;
 import com.xlibao.saas.market.service.market.MarketService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,4 +16,20 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service("marketService")
 public class MarketServiceImpl extends BasicWebService implements MarketService {
+
+    private static final Logger logger = LoggerFactory.getLogger(MarketServiceImpl.class);
+
+    @Autowired
+    private MarketDataAccessManager marketDataAccessManager;
+
+    @Override
+    public JSONObject lastMarket() {
+        long passportId = getLongParameter("passportId");
+        return null;
+    }
+
+    @Override
+    public JSONObject choiceMarket() {
+        return null;
+    }
 }

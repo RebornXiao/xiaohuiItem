@@ -8,5 +8,5 @@ import com.xlibao.payment.data.model.PaymentTransactionLogger;
  */
 public interface TransactionEventListener {
 
-    void notifyFinishPaymented(PaymentTransactionLogger transactionLogger, TransStatusEnum transStatusEnum, boolean callback);
+    void notifyFinishPayment(PaymentTransactionLogger transactionLogger, TransStatusEnum transStatusEnum, boolean callback);
 }
