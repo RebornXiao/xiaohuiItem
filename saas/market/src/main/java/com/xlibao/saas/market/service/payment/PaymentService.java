@@ -9,9 +9,9 @@ public interface PaymentService {
 
     JSONObject notifyOrderBalancePayment();
 
-    JSONObject callbackNativeAlipayPayment();
+    JSONObject notifyNativeAlipayPayment();
 
-    JSONObject callbackNativeWeixinAppPayment();
+    JSONObject notifyNativeWeixinAppPayment();
 
-    JSONObject callbackNativeWeixinJSPayment();
+    JSONObject notifyNativeWeixinJSPayment();
 }

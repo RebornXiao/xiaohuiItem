@@ -110,6 +110,21 @@ public class PassportRemoteService {
         return JSONObject.parseObject(response.getString("response"), Passport.class);
     }
 
+    public static String changeAccessToken(long passportId, String accessToken) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("passportId", String.valueOf(passportId));
+        parameters.put("accessToken", accessToken);
+
+        String data = HttpRequest.post(passportRemoteServiceURL + "passport/changeAccessToken", parameters);
+
+        JSONObject response = JSONObject.parseObject(data);
+        int code = response.getIntValue("code");
+        if (code != 0) {
+            throw new XlibaoRuntimeException(code, response.getString("msg"));
+        }
+        return response.getString("accessToken");
+    }
+
     public static JSONObject verifySmsCode(String phone, String smsCode, int smsType) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("phone", phone);

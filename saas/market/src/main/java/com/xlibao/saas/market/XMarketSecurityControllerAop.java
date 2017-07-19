@@ -3,6 +3,7 @@ package com.xlibao.saas.market;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.support.PassportRemoteService;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -23,6 +24,12 @@ public class XMarketSecurityControllerAop extends BasicWebService {
     public Object around(ProceedingJoinPoint point) throws Throwable {
         Object[] args = point.getArgs();
         try {
+            long passportId = getLongParameter("passportId");
+            String accessToken = getUTF("accessToken");
+
+            accessToken = PassportRemoteService.changeAccessToken(passportId, accessToken);
+            setAccessToken(accessToken);
+
             return point.proceed(args);
         } catch (XlibaoIllegalArgumentException ex) {
             logger.error("(安全)无人超市拦截异常(非法参数)，错误信息：" + ex.getMessage());

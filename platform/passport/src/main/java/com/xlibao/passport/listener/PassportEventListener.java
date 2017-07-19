@@ -10,5 +10,5 @@ public interface PassportEventListener {
 
     void notifyCreatedPassport(Passport passport, PassportRoleTypeEnum passportRoleTypeEnum);
 
-    void notifyLoginedPassport(Passport passport);
+    void notifyLoginPassport(Passport passport);
 }

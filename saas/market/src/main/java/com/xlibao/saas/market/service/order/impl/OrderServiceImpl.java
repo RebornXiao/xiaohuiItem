@@ -1,7 +1,9 @@
 package com.xlibao.saas.market.service.order.impl;
 
 import com.xlibao.common.BasicWebService;
+import com.xlibao.saas.market.data.mapper.DataAccessFactory;
 import com.xlibao.saas.market.service.order.OrderService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,4 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 @Service("orderService")
 public class OrderServiceImpl extends BasicWebService implements OrderService {
+
+    @Autowired
+    private DataAccessFactory dataAccessFactory;
 }

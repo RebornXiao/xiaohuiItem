@@ -22,5 +22,7 @@ public interface PassportService {
 
     JSONObject versionUpgrade();
 
+    JSONObject changeAccessToken();
+
     Passport getPassport(long passportId);
 }

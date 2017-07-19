@@ -31,9 +31,9 @@ public class PassportEventListenerManager {
         }
     }
 
-    public void notifyLoginedPassport(Passport passport) {
+    public void notifyLoginPassport(Passport passport) {
         for (PassportEventListener passportEventListener : passportEventListenerMap.values()) {
-            passportEventListener.notifyLoginedPassport(passport);
+            passportEventListener.notifyLoginPassport(passport);
         }
     }
 }

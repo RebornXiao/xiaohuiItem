@@ -2,7 +2,7 @@ package com.xlibao.saas.market.service.market.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
-import com.xlibao.saas.market.data.mapper.market.MarketDataAccessManager;
+import com.xlibao.saas.market.data.mapper.DataAccessFactory;
 import com.xlibao.saas.market.service.market.MarketService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +20,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
     private static final Logger logger = LoggerFactory.getLogger(MarketServiceImpl.class);
 
     @Autowired
-    private MarketDataAccessManager marketDataAccessManager;
+    private DataAccessFactory dataAccessFactory;
 
     @Override
     public JSONObject lastMarket() {

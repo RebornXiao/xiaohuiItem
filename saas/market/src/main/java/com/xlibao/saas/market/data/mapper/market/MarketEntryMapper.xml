@@ -21,4 +21,16 @@
         <result column="delivery_cost" property="deliveryCost" jdbcType="BIGINT"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
+
+    <select id="loaderMarkets" resultMap="BaseResultMap">
+        select * from market_entry where status = 1
+    </select>
+
+    <select id="getMarket" resultMap="BaseResultMap">
+        select * from market_entry where id = #{marketId}
+    </select>
+
+    <select id="getMarketForPassport" resultMap="BaseResultMap">
+        select * from market_entry where passport_id = #{passportId}
+    </select>
 </mapper>

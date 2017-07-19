@@ -26,18 +26,18 @@ public class PaymentListenerController {
     @ResponseBody
     @RequestMapping(value = "callbackNativeAlipayPayment")
     public JSONObject callbackNativeAlipayPayment() {
-        return paymentService.callbackNativeAlipayPayment();
+        return paymentService.notifyNativeAlipayPayment();
     }
 
     @ResponseBody
     @RequestMapping(value = "callbackNativeWeixinAppPayment")
     public JSONObject callbackNativeWeixinAppPayment() {
-        return paymentService.callbackNativeWeixinAppPayment();
+        return paymentService.notifyNativeWeixinAppPayment();
     }
 
     @ResponseBody
     @RequestMapping(value = "callbackNativeWeixinJSPayment")
     public JSONObject callbackNativeWeixinJSPayment() {
-        return paymentService.callbackNativeWeixinJSPayment();
+        return paymentService.notifyNativeWeixinJSPayment();
     }
 }
