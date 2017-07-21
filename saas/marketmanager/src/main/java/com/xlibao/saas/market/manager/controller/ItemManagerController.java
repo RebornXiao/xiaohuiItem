@@ -2,6 +2,7 @@ package com.xlibao.saas.market.manager.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author chinahuangxc on 2017/7/10.
@@ -9,4 +10,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping(value = "/market/manager/item")
 public class ItemManagerController {
+
+    @ResponseBody
+    @RequestMapping("login")
+    public String login() {
+        return "item/itemmain.html";
+    }
+
 }
