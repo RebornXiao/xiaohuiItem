@@ -1,5 +1,8 @@
 package com.xlibao.saas.market.data.model;
 
+import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.CommonUtils;
+
 import java.util.Date;
 
 public class MarketEntry {
@@ -152,7 +155,7 @@ public class MarketEntry {
     }
 
     public Long getDeliveryCost() {
-        return deliveryCost;
+        return deliveryCost == null ? 0 : deliveryCost;
     }
 
     public void setDeliveryCost(Long deliveryCost) {
@@ -165,5 +168,24 @@ public class MarketEntry {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    public JSONObject message() {
+        JSONObject response = new JSONObject();
+
+        response.put("id", getId());
+        response.put("name", getName());
+        response.put("type", getType());
+        response.put("adminName", CommonUtils.nullToEmpty(getAdminName()));
+        response.put("showPhoneNumber", CommonUtils.hideChar(getPhoneNumber(), 4, 7));
+        response.put("hidePhoneNumber", getPhoneNumber());
+        response.put("formatAddress", CommonUtils.nullToEmpty(getProvince()) + CommonUtils.nullToEmpty(getCity()) + CommonUtils.nullToEmpty(getDistrict()) +
+                CommonUtils.nullToEmpty(getStreet()) + CommonUtils.nullToEmpty(getStreetNumber()));
+        response.put("address", CommonUtils.nullToEmpty(getAddress()));
+        response.put("coveringDistance", CommonUtils.formatDistance(getCoveringDistance()));
+        response.put("deliveryMode", getDeliveryMode());
+        response.put("deliveryCost", getDeliveryCost());
+
+        return response;
     }
 }

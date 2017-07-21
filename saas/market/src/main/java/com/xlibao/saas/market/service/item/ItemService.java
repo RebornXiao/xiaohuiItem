@@ -11,5 +11,9 @@ public interface ItemService {
 
     JSONObject itemTypes();
 
+    JSONObject findSubItemTypes();
+
+    JSONObject findRecommendItems();
+
     JSONObject pageItems();
 }

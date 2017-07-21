@@ -17,11 +17,6 @@ public class ItemOpenApiController {
     @Autowired
     private ItemService itemService;
 
-    /**
-     * <pre>
-     *
-     * </pre>
-     */
     @ResponseBody
     @RequestMapping(value = "homepage")
     public JSONObject homepage() {
@@ -32,6 +27,18 @@ public class ItemOpenApiController {
     @RequestMapping(value = "itemTypes")
     public JSONObject itemTypes() {
         return itemService.itemTypes();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "findSubItemTypes")
+    public JSONObject findSubItemTypes() {
+        return itemService.findSubItemTypes();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "findRecommendItems")
+    public JSONObject findRecommendItems() {
+        return itemService.findRecommendItems();
     }
 
     @ResponseBody

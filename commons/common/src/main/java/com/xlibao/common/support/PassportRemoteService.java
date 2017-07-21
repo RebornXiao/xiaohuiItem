@@ -5,7 +5,8 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.http.HttpRequest;
 import com.xlibao.metadata.passport.Passport;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -19,7 +20,7 @@ import java.util.Map;
  */
 public class PassportRemoteService {
 
-    private static final Logger logger = Logger.getLogger(PassportRemoteService.class);
+    private static final Logger logger = LoggerFactory.getLogger(PassportRemoteService.class);
 
     private static String passportRemoteServiceURL = "";
 

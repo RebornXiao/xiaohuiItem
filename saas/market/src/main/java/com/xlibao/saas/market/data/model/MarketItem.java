@@ -1,5 +1,9 @@
 package com.xlibao.saas.market.data.model;
 
+import com.xlibao.common.CommonUtils;
+import com.xlibao.metadata.item.ItemUnit;
+import com.xlibao.saas.market.service.item.DiscountTypeEnum;
+
 import java.util.Date;
 
 public class MarketItem {
@@ -11,7 +15,6 @@ public class MarketItem {
     private Integer defaultSort;
     private Long ownerId;
     private Integer productBatches;
-    private String locationCode;
     private String batchesCode;
     private Integer stock;
     private Integer lockStock;
@@ -19,6 +22,7 @@ public class MarketItem {
     private Integer warningQuantity;
     private Integer keepQuantity;
     private Integer oversoldQuantity;
+    private Integer maximumSellCount;
     private Integer minimumSellCount;
     private Integer allocationQuantity;
     private Integer purchaseQuantity;
@@ -97,14 +101,6 @@ public class MarketItem {
         this.productBatches = productBatches;
     }
 
-    public String getLocationCode() {
-        return locationCode;
-    }
-
-    public void setLocationCode(String locationCode) {
-        this.locationCode = locationCode == null ? null : locationCode.trim();
-    }
-
     public String getBatchesCode() {
         return batchesCode;
     }
@@ -159,6 +155,14 @@ public class MarketItem {
 
     public void setOversoldQuantity(Integer oversoldQuantity) {
         this.oversoldQuantity = oversoldQuantity;
+    }
+
+    public Integer getMaximumSellCount() {
+        return maximumSellCount;
+    }
+
+    public void setMaximumSellCount(Integer maximumSellCount) {
+        this.maximumSellCount = maximumSellCount;
     }
 
     public Integer getMinimumSellCount() {
@@ -303,5 +307,30 @@ public class MarketItem {
 
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
+    }
+
+    /**
+     * 当前显示可购买的库存数量 = 真实库存 - 已挂起数量 - 锁定库存 + 超卖库存
+     */
+    public int getShowStock() {
+        return getStock() - getPendingQuantity() - getLockStock() + getOversoldQuantity();
+    }
+
+    public long maxPrice() {
+        return getMarketPrice() < getSellPrice() ? getSellPrice() : getMarketPrice();
+    }
+
+    public String showDiscount(ItemUnit itemUnit) {
+        if (discountType == 0 || discountPrice >= sellPrice) {
+            return "暂无优惠";
+        }
+        long maxPrice = sellPrice;
+        if (marketPrice > maxPrice) {
+            maxPrice = marketPrice;
+        }
+        float discount = (discountPrice) / (maxPrice * 1.0f);
+        DiscountTypeEnum discountTypeEnum = DiscountTypeEnum.getDiscountTypeEnum(discountType);
+        String limit = (restrictionQuantity == -1 ? "无限购" : "每天限购" + restrictionQuantity + itemUnit.getTitle());
+        return (discountTypeEnum == null ? "" : discountTypeEnum.getValue()) + CommonUtils.formatNumber(discount * 10, "0.00") + "折" + "(" + limit + ")";
     }
 }

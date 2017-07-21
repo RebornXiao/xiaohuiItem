@@ -9,14 +9,15 @@ import com.aliyun.mns.model.MessageAttributes;
 import com.aliyun.mns.model.RawTopicMessage;
 import com.aliyun.mns.model.TopicMessage;
 import com.xlibao.common.DefineRandom;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author chinahuangxc on 2017/5/18.
  */
 public class AliyunMessageService {
 
-    private static final Logger logger = Logger.getLogger(AliyunMessageService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AliyunMessageService.class);
 
     private static String aliyunAccessKeyId = "LTAID6hYVA5uzY4c";
     private static String aliyunAccessKeySecret = "xmxtP7WAvEkkEh0QPeP221tpj0zuYg";

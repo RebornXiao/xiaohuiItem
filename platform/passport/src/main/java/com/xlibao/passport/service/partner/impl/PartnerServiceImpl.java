@@ -9,7 +9,8 @@ import com.xlibao.metadata.passport.PassportPartner;
 import com.xlibao.metadata.passport.PassportPartnerApplication;
 import com.xlibao.passport.data.mapper.partner.PartnerDataManager;
 import com.xlibao.passport.service.partner.PartnerService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +25,7 @@ import java.util.Map;
 @Service("partnerService")
 public class PartnerServiceImpl extends BasicWebService implements PartnerService {
 
-    private static final Logger logger = Logger.getLogger(PartnerServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PartnerServiceImpl.class);
 
     @Autowired
     private PartnerDataManager partnerDataManager;

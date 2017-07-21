@@ -2,10 +2,11 @@ package com.xlibao.common;
 
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
-import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -19,7 +20,7 @@ import org.springframework.stereotype.Service;
 @Aspect
 public class ApplicationControllerAop extends BasicWebService {
 
-    private static final Logger logger = Logger.getLogger(ApplicationControllerAop.class);
+    private static final Logger logger = LoggerFactory.getLogger(ApplicationControllerAop.class);
 
     @Around(value = "execution(* com.xlibao.*.controller.*.*(..))")
     public Object around(ProceedingJoinPoint point) throws Throwable {

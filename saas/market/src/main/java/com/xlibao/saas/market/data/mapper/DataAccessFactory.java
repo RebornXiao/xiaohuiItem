@@ -4,6 +4,7 @@ import com.xlibao.saas.market.data.mapper.activity.ActivityDataAccessManager;
 import com.xlibao.saas.market.data.mapper.item.ItemDataAccessManager;
 import com.xlibao.saas.market.data.mapper.market.MarketDataAccessManager;
 import com.xlibao.saas.market.data.mapper.order.OrderDataAccessManager;
+import com.xlibao.saas.market.service.item.MarketItemDataCacheService;
 import com.xlibao.saas.market.service.market.MarketDataCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -27,6 +28,8 @@ public class DataAccessFactory {
 
     @Autowired
     private MarketDataCacheService marketDataCacheService;
+    @Autowired
+    private MarketItemDataCacheService marketItemDataCacheService;
 
     public ActivityDataAccessManager getActivityDataAccessManager() {
         return activityDataAccessManager;
@@ -46,5 +49,9 @@ public class DataAccessFactory {
 
     public MarketDataCacheService getMarketDataCacheService() {
         return marketDataCacheService;
+    }
+
+    public MarketItemDataCacheService getMarketItemDataCacheService() {
+        return marketItemDataCacheService;
     }
 }

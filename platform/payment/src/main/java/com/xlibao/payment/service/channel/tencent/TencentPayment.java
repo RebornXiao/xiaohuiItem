@@ -16,10 +16,11 @@ import com.xlibao.payment.data.mapper.PaymentDataAccessManager;
 import com.xlibao.payment.data.model.PaymentTransactionLogger;
 import com.xlibao.payment.service.currency.CurrencyEventListenerManager;
 import com.xlibao.payment.service.trans.TransactionEventListenerManager;
-import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 public class TencentPayment extends BasicWebService {
 
-    private static final Logger logger = Logger.getLogger(TencentPayment.class);
+    private static final Logger logger = LoggerFactory.getLogger(TencentPayment.class);
 
     // 微信统一下单接口
     private static final String TENCENT_ORDER_URL = "https://api.mch.weixin.qq.com/pay/unifiedorder";

@@ -6,7 +6,8 @@ import com.xlibao.datacache.DataCacheApplicationContextLoaderNotify;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.concurrent.Callable;
@@ -19,7 +20,7 @@ import java.util.stream.Collectors;
  */
 public class ItemDataCacheService {
 
-    private static final Logger logger = Logger.getLogger(ItemDataCacheService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ItemDataCacheService.class);
 
     // 商品模版专用读写锁
     private static final ReentrantReadWriteLock ITEM_TEMPLATE_READ_WRITE_LOCK = new ReentrantReadWriteLock();
@@ -475,7 +476,7 @@ public class ItemDataCacheService {
         return itemTypes;
     }
 
-    private static List<ItemType> relationItemTypes(long parentItemTypeId) {
+    public static List<ItemType> relationItemTypes(long parentItemTypeId) {
         try {
             if (!ITEM_TYPE_READ_LOCK.tryLock(DataCacheApplicationContextLoaderNotify.WAIT_LOCK_TIME_OUT, DataCacheApplicationContextLoaderNotify.WAIT_LOCK_TIME_UNIT)) {
                 return ItemRemoteService.relationItemTypes(parentItemTypeId);
@@ -516,26 +517,26 @@ public class ItemDataCacheService {
     }
 
     public static List<ItemTemplate> appointItemType(long itemTypeId) {
-        List<ItemTemplate> itemTemplates = relationItemTemplate(itemTypeId);
-        if (itemTemplates == null) {
+        ItemType itemType = getItemType(itemTypeId);
+        if (itemType.getParentId() == 0) {
             List<ItemType> itemTypes = relationItemTypes(itemTypeId);
             if (itemTypes == null || itemTypes.isEmpty()) {
                 return null;
             }
-            for (ItemType itemType : itemTypes) {
-                List<ItemTemplate> tmpItemTemplates = appointItemType(itemType.getId());
-                if (tmpItemTemplates != null) {
-                    if (itemTemplates == null) {
-                        itemTemplates = new ArrayList<>();
-                    }
-                    itemTemplates.addAll(tmpItemTemplates);
+            List<ItemTemplate> itemTemplates = new ArrayList<>();
+            for (ItemType it : itemTypes) {
+                List<ItemTemplate> tmpItemTemplates = appointItemType(it.getId());
+                if (CommonUtils.isEmpty(tmpItemTemplates)) {
+                    continue;
                 }
+                itemTemplates.addAll(tmpItemTemplates);
             }
+            return itemTemplates;
         }
-        return itemTemplates;
+        return relationItemTemplate(itemTypeId);
     }
 
-    public static String assemItemTemplateSet(List<ItemTemplate> supplychainItemTemplates) {
+    public static String assemblyItemTemplateSet(List<ItemTemplate> supplychainItemTemplates) {
         if (CommonUtils.isEmpty(supplychainItemTemplates)) {
             return "";
         }

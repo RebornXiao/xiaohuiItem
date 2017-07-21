@@ -1,7 +1,8 @@
 package com.xlibao.common.printer;
 
 import com.xlibao.common.CommonUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
  */
 public class PrinterFormat {
 
-    private final static Logger logger = Logger.getLogger(PrinterFormat.class);
+    private static final Logger logger = LoggerFactory.getLogger(PrinterFormat.class);
 
     private List<String> lines = new LinkedList<>();
 

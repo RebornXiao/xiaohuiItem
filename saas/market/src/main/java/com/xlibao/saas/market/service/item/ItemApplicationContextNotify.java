@@ -13,11 +13,16 @@ public class ItemApplicationContextNotify {
     private static final String MODULE_NAME = "item";
 
     @Autowired
+    private MarketItemDataCacheService marketItemDataCacheService;
+
+    @Autowired
     private OrderEventListenerManager orderEventListenerManager;
     @Autowired
     private ItemOrderEventListenerImpl itemOrderEventListener;
 
     public void loaderNotify() {
+        marketItemDataCacheService.initMarketItemCache();
+
         orderEventListenerManager.registerOrderEventListener(MODULE_NAME, itemOrderEventListener);
     }
 }

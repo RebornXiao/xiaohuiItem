@@ -35,6 +35,18 @@ public class ItemController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "findSubItemTypes")
+    public JSONObject findSubItemTypes() {
+        return itemService.findSubItemTypes();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "findRecommendItems")
+    public JSONObject findRecommendItems() {
+        return itemService.findRecommendItems();
+    }
+
+    @ResponseBody
     @RequestMapping(value = "pageItems")
     public JSONObject pageItems() {
         return itemService.pageItems();

@@ -11,7 +11,8 @@ import com.xlibao.passport.config.ConfigFactory;
 import com.xlibao.passport.data.mapper.sms.SmsDataManager;
 import com.xlibao.passport.data.model.PassportSmsLogger;
 import com.xlibao.passport.service.sms.SmsService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,7 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("smsService")
 public class SmsServiceImpl extends BasicWebService implements SmsService {
 
-    private static final Logger logger = Logger.getLogger(SmsServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(SmsServiceImpl.class);
 
     @Autowired
     private SmsDataManager smsDataManager;

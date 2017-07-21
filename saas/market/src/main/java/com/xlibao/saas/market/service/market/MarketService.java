@@ -7,7 +7,7 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface MarketService {
 
-    JSONObject lastMarket();
+    JSONObject findMarket();
 
-    JSONObject choiceMarket();
+    JSONObject filterMarket();
 }

@@ -20,7 +20,8 @@ import com.xlibao.order.data.mapper.order.OrderDataAccessManager;
 import com.xlibao.order.service.order.OrderEventListenerManager;
 import com.xlibao.order.service.order.OrderService;
 import com.xlibao.order.service.support.LogisticsRemoteService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +36,7 @@ import java.util.stream.Collectors;
 @Service("orderService")
 public class OrderServiceImpl extends BasicWebService implements OrderService {
 
-    private static final Logger logger = Logger.getLogger(OrderServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(OrderServiceImpl.class);
 
     @Autowired
     private OrderDataAccessManager orderDataAccessManager;

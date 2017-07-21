@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xlibao.item.data.mapper.MarketItemMapper">
-    <resultMap id="BaseResultMap" type="com.xlibao.metadata.data.MarketItem">
+<mapper namespace="com.xlibao.saas.market.data.mapper.item.MarketItemMapper">
+    <resultMap id="BaseResultMap" type="com.xlibao.saas.market.data.model.MarketItem">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="item_template_id" property="itemTemplateId" jdbcType="BIGINT"/>
         <result column="define_name" property="defineName" jdbcType="VARCHAR"/>
@@ -9,7 +9,6 @@
         <result column="default_sort" property="defaultSort" jdbcType="INTEGER"/>
         <result column="owner_id" property="ownerId" jdbcType="BIGINT"/>
         <result column="product_batches" property="productBatches" jdbcType="INTEGER"/>
-        <result column="location_code" property="locationCode" jdbcType="VARCHAR"/>
         <result column="batches_code" property="batchesCode" jdbcType="VARCHAR"/>
         <result column="stock" property="stock" jdbcType="INTEGER"/>
         <result column="lock_stock" property="lockStock" jdbcType="INTEGER"/>
@@ -17,6 +16,7 @@
         <result column="warning_quantity" property="warningQuantity" jdbcType="INTEGER"/>
         <result column="keep_quantity" property="keepQuantity" jdbcType="INTEGER"/>
         <result column="oversold_quantity" property="oversoldQuantity" jdbcType="INTEGER"/>
+        <result column="maximum_sell_count" property="maximumSellCount" jdbcType="INTEGER"/>
         <result column="minimum_sell_count" property="minimumSellCount" jdbcType="INTEGER"/>
         <result column="allocation_quantity" property="allocationQuantity" jdbcType="INTEGER"/>
         <result column="purchase_quantity" property="purchaseQuantity" jdbcType="INTEGER"/>
@@ -36,4 +36,29 @@
         <result column="description" property="description" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
+
+    <select id="specialProducts" resultMap="BaseResultMap">
+        select * from market_item where market_id = #{marketId} and status = 1 and restriction_quantity != 0
+            <if test="appointType == -100">and #{timeout} > timestampdiff(second, create_time, now())</if>
+            <if test="appointType == -99">and discount_type = 1</if>
+            <if test="appointType == -98">and discount_type = 2</if>
+
+            order by
+            <if test="sortType == 0">default_sort</if>
+            <if test="sortType == 1">sell_price</if>
+            <if test="sortType == 2">actual_sales</if>
+
+            <if test="sortValue == 1">desc</if>, id
+        limit #{pageStartIndex}, #{pageSize}
+    </select>
+
+    <select id="conditionOrdering" resultMap="BaseResultMap">
+        select * from market_item where market_id = #{marketId} and status = 1 and item_template_id in(${itemTemplateSet}) and restriction_quantity != 0 order by
+        <if test="sortType == 0">default_sort</if>
+        <if test="sortType == 1">sell_price</if>
+        <if test="sortType == 2">actual_sales</if>
+
+        <if test="sortValue == 1">desc</if>, id
+        limit #{pageStartIndex}, #{pageSize}
+    </select>
 </mapper>

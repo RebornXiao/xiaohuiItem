@@ -9,7 +9,8 @@ import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.metadata.passport.PassportAddress;
 import com.xlibao.passport.data.mapper.passport.PassportDataManager;
 import com.xlibao.passport.service.address.AddressService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,7 @@ import java.util.List;
 @Service("addressService")
 public class AddressServiceImpl extends BasicWebService implements AddressService {
 
-    private static final Logger logger = Logger.getLogger(AddressServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(AddressServiceImpl.class);
 
     @Autowired
     private PassportDataManager passportDataManager;

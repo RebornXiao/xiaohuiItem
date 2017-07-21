@@ -18,14 +18,14 @@ public class MarketController {
     private MarketService marketService;
 
     @ResponseBody
-    @RequestMapping(value = "lastMarket")
-    public JSONObject lastMarket() {
-        return marketService.lastMarket();
+    @RequestMapping(value = "findMarket")
+    public JSONObject findMarket() {
+        return marketService.findMarket();
     }
 
     @ResponseBody
-    @RequestMapping(value = "choiceMarket")
-    public JSONObject choiceMarket() {
-        return marketService.choiceMarket();
+    @RequestMapping(value = "filterMarket")
+    public JSONObject filterMarket() {
+        return marketService.filterMarket();
     }
 }

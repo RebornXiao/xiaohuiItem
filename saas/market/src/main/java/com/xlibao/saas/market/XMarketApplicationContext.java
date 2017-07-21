@@ -16,7 +16,7 @@ import javax.annotation.PostConstruct;
 @Lazy(false)
 public class XMarketApplicationContext {
 
-    private Logger logger = LoggerFactory.getLogger(XMarketApplicationContext.class);
+    private static final Logger logger = LoggerFactory.getLogger(XMarketApplicationContext.class);
 
     @Autowired
     private ApplicationContextLoaderNotify applicationContextLoaderNotify;

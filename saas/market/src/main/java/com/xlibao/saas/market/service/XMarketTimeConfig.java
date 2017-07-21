@@ -16,6 +16,9 @@ public class XMarketTimeConfig {
     /** 订单失效时间 -- 1天 */
     public static final long ORDER_INVALID_TIME = TimeUnit.DAYS.toMillis(1);
 
+    /** 新品有效时间 -- 7天 */
+    public static final long ITEM_NEW_TIME = TimeUnit.DAYS.toMillis(7);
+
     public static final long DELAY = 5;
     public static final TimeUnit TIME_UNIT = TimeUnit.MINUTES;
 

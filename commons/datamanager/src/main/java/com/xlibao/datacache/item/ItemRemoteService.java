@@ -9,7 +9,8 @@ import com.xlibao.datacache.DataCacheApplicationContextLoaderNotify;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import java.util.List;
  */
 public class ItemRemoteService {
 
-    private static final Logger logger = Logger.getLogger(ItemRemoteService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ItemRemoteService.class);
 
     public static List<ItemTemplate> loaderItemTemplates() {
         String url = DataCacheApplicationContextLoaderNotify.getItemRemoteServiceURL() + "item/loaderItemTemplates";

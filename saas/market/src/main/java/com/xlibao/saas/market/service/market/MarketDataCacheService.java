@@ -46,7 +46,7 @@ public class MarketDataCacheService {
             public Boolean call() throws Exception {
                 try {
                     logger.info("系统正在加载所有商店数据到缓存中......");
-                    loaderWarehouses();
+                    loaderMarket();
                 } catch (Throwable cause) {
                     cause.printStackTrace();
                     return false;
@@ -62,17 +62,17 @@ public class MarketDataCacheService {
         }
     }
 
-    private void loaderWarehouses() {
+    private void loaderMarket() {
         List<MarketEntry> marketEntries = dataAccessFactory.getMarketDataAccessManager().loaderMarkets();
         logger.info("当前系统商店数量：" + (marketEntries == null ? 0 : marketEntries.size()));
-        if (CommonUtils.isEmpty(marketEntries)) {
-            return;
-        }
+
         Map<Long, MarketEntry> marketEntryMap = new ConcurrentHashMap<>();
         Map<Long, Long> passportCacheMap = new ConcurrentHashMap<>();
-        for (MarketEntry marketEntry : marketEntries) {
-            marketEntryMap.put(marketEntry.getId(), marketEntry);
-            passportCacheMap.put(marketEntry.getPassportId(), marketEntry.getId());
+        if (!CommonUtils.isEmpty(marketEntries)) {
+            for (MarketEntry marketEntry : marketEntries) {
+                marketEntryMap.put(marketEntry.getId(), marketEntry);
+                passportCacheMap.put(marketEntry.getPassportId(), marketEntry.getId());
+            }
         }
         try {
             if (MARKET_WRITE_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
