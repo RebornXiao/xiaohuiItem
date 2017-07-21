@@ -9,7 +9,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.CoreConnectionPNames;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -21,8 +22,8 @@ import java.util.List;
  * @author Simon
  */
 public class PrintFEUtils {
-	
-	private static final Logger logger = Logger.getLogger(PrintFEUtils.class);
+
+	private static final Logger logger = LoggerFactory.getLogger(PrintFEUtils.class);
 	
 	// PRINTER_SN：打印机编号9位,查看飞鹅打印机底部贴纸上面的打印机编号
 	public static final String PRINTER_SN = "915800477";

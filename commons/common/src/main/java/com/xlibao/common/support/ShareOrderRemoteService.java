@@ -2,7 +2,8 @@ package com.xlibao.common.support;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.metadata.order.OrderEntry;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -11,7 +12,7 @@ import java.util.Map;
  */
 public class ShareOrderRemoteService extends BasicRemoteService {
 
-    private static final Logger logger = Logger.getLogger(ShareOrderRemoteService.class);
+    private static final Logger logger = LoggerFactory.getLogger(ShareOrderRemoteService.class);
 
     public static OrderEntry getOrder(String partnerId, String appId, String appkey, String urlPrefix, long orderId) {
         Map<String, String> parameters = initialParameter(partnerId, appId);

@@ -20,7 +20,8 @@ import com.xlibao.payment.service.channel.xlibao.BalancePayment;
 import com.xlibao.payment.service.currency.CurrencyEventListenerManager;
 import com.xlibao.payment.service.currency.CurrencyPropertiesTypeKeyEnum;
 import com.xlibao.payment.service.payment.PaymentService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,7 +38,7 @@ import java.util.Map;
 @Service("paymentService")
 public class PaymentServiceImpl extends BasicWebService implements PaymentService {
 
-    private static final Logger logger = Logger.getLogger(PaymentServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PaymentServiceImpl.class);
 
     @Autowired
     private PaymentDataAccessManager paymentDataAccessManager;

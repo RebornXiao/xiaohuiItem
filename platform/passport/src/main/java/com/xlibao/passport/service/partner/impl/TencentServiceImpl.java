@@ -6,7 +6,8 @@ import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.http.HttpUtils;
 import com.xlibao.passport.config.ConfigFactory;
 import com.xlibao.passport.service.partner.TencentService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("tencentServiceImpl")
 public class TencentServiceImpl extends BasicWebService implements TencentService {
 
-    private final static Logger logger = Logger.getLogger(TencentServiceImpl.class);
+    private final static Logger logger = LoggerFactory.getLogger(TencentServiceImpl.class);
 
     @Override
     public JSONObject weixinAuthorization() {

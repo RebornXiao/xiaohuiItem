@@ -3,10 +3,11 @@ package com.xlibao.passport;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
-import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -20,7 +21,7 @@ import org.springframework.stereotype.Service;
 @Aspect
 public class PassportControllerAop extends BasicWebService {
 
-    private static final Logger logger = Logger.getLogger(PassportControllerAop.class);
+    private static final Logger logger = LoggerFactory.getLogger(PassportControllerAop.class);
 
     @Around(value = "execution(* com.xlibao.passport.controller.*.*(..))")
     public Object around(ProceedingJoinPoint point) throws Throwable {

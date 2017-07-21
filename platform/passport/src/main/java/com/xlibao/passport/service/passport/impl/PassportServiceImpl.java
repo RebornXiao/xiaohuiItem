@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
+import com.xlibao.common.GlobalConstantConfig;
 import com.xlibao.common.constant.device.DeviceTypeEnum;
 import com.xlibao.common.constant.passport.*;
 import com.xlibao.common.constant.sms.SmsCodeTypeEnum;
@@ -20,7 +21,8 @@ import com.xlibao.passport.data.model.PassportVersion;
 import com.xlibao.passport.service.passport.PassportEventListenerManager;
 import com.xlibao.passport.service.passport.PassportService;
 import com.xlibao.passport.service.sms.SmsService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,7 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service("passportService")
 public class PassportServiceImpl extends BasicWebService implements PassportService {
 
-    private static final Logger logger = Logger.getLogger(PassportServiceImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(PassportServiceImpl.class);
 
     @Autowired
     private PassportDataManager passportDataManager;
@@ -109,6 +111,8 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         if (result <= 0) {
             throw new XlibaoRuntimeException("注册通行证失败，请稍后再试！");
         }
+        changeAccessToken(passport);
+
         // 通知所有监听者 建立通行证成功
         passportEventListenerManager.notifyCreatedPassport(passport, PassportRoleTypeEnum.DEFAULT);
         // 到这步可理解为用户已正常登录系统
@@ -145,6 +149,9 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         }
         // 客户端的权限控制
         String roleValue = clientPowerControl(passport, clientType);
+        // 设置新的访问密令
+        changeAccessToken(passport);
+
         passport.setVersionIndex(versionIndex);
         // 版本检测
         JSONObject versionMessage = versionControl(deviceType, clientType, versionIndex);
@@ -152,7 +159,7 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         response.put("versionMessage", versionMessage);
 
         // 通知监听系统登录成功
-        passportEventListenerManager.notifyLoginedPassport(passport);
+        passportEventListenerManager.notifyLoginPassport(passport);
         return success(response);
     }
 
@@ -263,6 +270,15 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
     }
 
     @Override
+    public JSONObject changeAccessToken() {
+        long passportId = getLongParameter("passportId");
+        String accessToken = getUTF("accessToken");
+
+        changeAccessToken(passportId, accessToken);
+        return success();
+    }
+
+    @Override
     public Passport getPassport(long passportId) {
         Passport passport = passportDataManager.getPassport(passportId);
         if (passport == null) {
@@ -339,5 +355,23 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         response.put("showVersion", version.getShowVersion());
 
         return response;
+    }
+
+    private Passport changeAccessToken(long passportId, String accessToken) {
+        Passport passport = getPassport(passportId);
+        if (!accessToken.equals(passport.getAccessToken())) {
+            throw new XlibaoRuntimeException(999, "您的登录已过期或帐号存在泄漏风险，请重新登录");
+        }
+        changeAccessToken(passport);
+        return passport;
+    }
+
+    private void changeAccessToken(Passport passport) {
+        String accessToken = CommonUtils.generateAccessToken(GlobalConstantConfig.PARTNER_ID_PREFIX + String.valueOf(passport.getId()));
+        int result = passportDataManager.modifyAccessToken(passport.getId(), accessToken);
+        if (result >= 1) {
+            passport.setAccessToken(accessToken);
+        }
+        setAccessToken(passport.getAccessToken());
     }
 }

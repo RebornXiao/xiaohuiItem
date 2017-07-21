@@ -3,10 +3,11 @@ package com.xlibao.payment;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
-import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 @Aspect
 public class PaymentControllerAop extends BasicWebService {
 
-    private static final Logger logger = Logger.getLogger(PaymentControllerAop.class);
+    private static final Logger logger = LoggerFactory.getLogger(PaymentControllerAop.class);
 
     @Around(value = "execution(* com.xlibao.payment.controller.PaymentController.*(..))")
     public Object doAround(ProceedingJoinPoint pjp) throws Throwable {

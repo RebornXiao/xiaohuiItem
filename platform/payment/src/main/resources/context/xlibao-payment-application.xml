@@ -67,23 +67,6 @@
         </property>
 
         <property name="typeAliasesPackage" value="com.xlibao.payment.data.model.*"/>
-
-        <property name="plugins">
-            <array>
-                <bean class="com.github.pagehelper.PageHelper">
-                    <!-- 这里的几个配置主要演示如何使用，如果不理解，一定要去掉下面的配置 -->
-                    <!--<property name="properties">-->
-                    <!--<value>-->
-                    <!--dialect=mysql-->
-                    <!--reasonable=true-->
-                    <!--supportMethodsArguments=true-->
-                    <!--params=count=countSql-->
-                    <!--autoRuntimeDialect=true-->
-                    <!--</value>-->
-                    <!--</property>-->
-                </bean>
-            </array>
-        </property>
     </bean>
 
     <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
@@ -98,18 +81,5 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
-    <tx:advice id="transaction" transaction-manager="transactionManager">
-        <tx:attributes>
-            <tx:method name="select*" read-only="true"/>
-            <tx:method name="find*" read-only="true"/>
-            <tx:method name="get*" read-only="true"/>
-            <tx:method name="query*" read-only="true"/>
-            <tx:method name="*"/>
-        </tx:attributes>
-    </tx:advice>
-
-    <aop:config>
-        <aop:pointcut id="xlibaoPaymentService" expression="execution(* com.xlibao.passport.service.*..*Service*.*(..))"/>
-        <aop:advisor advice-ref="transaction" pointcut-ref="xlibaoPaymentService"/>
-    </aop:config>
+    <tx:annotation-driven proxy-target-class="true" transaction-manager="transactionManager"/>
 </beans>

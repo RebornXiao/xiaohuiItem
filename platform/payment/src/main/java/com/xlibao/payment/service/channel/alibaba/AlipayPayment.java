@@ -13,7 +13,8 @@ import com.xlibao.payment.service.channel.alibaba.rsa.SignUtils;
 import com.xlibao.payment.service.channel.alibaba.util.AlipayNotify;
 import com.xlibao.payment.service.currency.CurrencyEventListenerManager;
 import com.xlibao.payment.service.trans.TransactionEventListenerManager;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -30,7 +31,7 @@ import java.util.Map;
 @Component
 public class AlipayPayment extends BasicWebService {
 
-    private static final Logger logger = Logger.getLogger(AlipayPayment.class);
+    private static final Logger logger = LoggerFactory.getLogger(AlipayPayment.class);
 
     @Autowired
     private PaymentDataAccessManager paymentDataAccessManager;
@@ -150,7 +151,7 @@ public class AlipayPayment extends BasicWebService {
                         transactionLogger.setTransCreateTime(new Date(CommonUtils.dateFormatToLong(gmtCreate)));
                         transactionLogger.setPaymentTime(new Date(CommonUtils.dateFormatToLong(gmtPayment)));
 
-                        transactionEventListenerManager.notifyFinishPaymented(transactionLogger, TransStatusEnum.TRADE_SUCCESSED_SERVER, true);
+                        transactionEventListenerManager.notifyFinishPayment(transactionLogger, TransStatusEnum.TRADE_SUCCESSED_SERVER, true);
                         // 通知额度偏移，这里主要是做一个流水记录
                         currencyEventListenerManager.notifyOffsetCurrencyAmount(transactionLogger.getPassportId(), transactionLogger.getChannelId(), CurrencyTypeEnum.BALANCE.getKey(), 0,
                                 -Math.abs(transactionLogger.getTransTotalAmount()), 0, transactionLogger.getPaymentType(), transactionLogger.getTransTitle(), transactionLogger.getTransType(), transactionLogger.getTransSequenceNumber());
@@ -173,7 +174,7 @@ public class AlipayPayment extends BasicWebService {
                         transactionLogger.setTransCreateTime(new Date(CommonUtils.dateFormatToLong(gmtCreate)));
                         transactionLogger.setPaymentTime(new Date(CommonUtils.dateFormatToLong(gmtPayment)));
 
-                        transactionEventListenerManager.notifyFinishPaymented(transactionLogger, TransStatusEnum.TRADE_FINISHED, false);
+                        transactionEventListenerManager.notifyFinishPayment(transactionLogger, TransStatusEnum.TRADE_FINISHED, false);
                     }
                     break;
                     case "TRADE_CLOSED": {
@@ -181,7 +182,7 @@ public class AlipayPayment extends BasicWebService {
                         transactionLogger.setTransCreateTime(new Date(CommonUtils.dateFormatToLong(gmtCreate)));
                         transactionLogger.setPaymentTime(new Date(CommonUtils.dateFormatToLong(gmtPayment)));
 
-                        transactionEventListenerManager.notifyFinishPaymented(transactionLogger,  TransStatusEnum.TRADE_CLOSED, true);
+                        transactionEventListenerManager.notifyFinishPayment(transactionLogger,  TransStatusEnum.TRADE_CLOSED, true);
                     }
                     break;
                 }

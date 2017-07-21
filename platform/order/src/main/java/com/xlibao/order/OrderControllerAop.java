@@ -4,13 +4,13 @@ import com.xlibao.common.BasicWebService;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.support.PassportRemoteService;
-import org.apache.log4j.Logger;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author chinahuangxc on 2017/2/8.
@@ -19,7 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 @Aspect
 public class OrderControllerAop extends BasicWebService {
 
-    private static final Logger logger = Logger.getLogger(OrderControllerAop.class);
+    private static final Logger logger = LoggerFactory.getLogger(OrderControllerAop.class);
 
     @Around(value = "execution(* com.xlibao.order.controller.OrderController.*(..))")
     public Object doAround(ProceedingJoinPoint pjp) throws Throwable {

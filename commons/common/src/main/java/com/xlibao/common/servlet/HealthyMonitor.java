@@ -3,14 +3,15 @@ package com.xlibao.common.servlet;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalConstantConfig;
 import com.xlibao.common.thread.AsyncScheduledService;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author chinahuangxc on 2017/2/4.
  */
 public class HealthyMonitor {
-    
-    private static final Logger logger = Logger.getLogger(HealthyMonitor.class);
+
+    private static final Logger logger = LoggerFactory.getLogger(HealthyMonitor.class);
     
     public static void healthyInformation() {
 

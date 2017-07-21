@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xlibao.saas.market.data.mapper.item.MarketItemLocationMapper">
+    <resultMap id="BaseResultMap" type="com.xlibao.saas.market.data.model.MarketItemLocation">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="item_id" property="itemId" jdbcType="BIGINT"/>
+        <result column="location_code" property="locationCode" jdbcType="VARCHAR"/>
+        <result column="stock" property="stock" jdbcType="INTEGER"/>
+        <result column="last_modify_time" property="lastModifyTime" jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+</mapper>

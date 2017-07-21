@@ -1,6 +1,7 @@
 package com.xlibao.common;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
@@ -69,7 +70,7 @@ public class CommonUtils {
 
     private static final Map<Integer, String> WEEK_FOR_CH = new HashMap<>();
 
-    private static final Logger logger = Logger.getLogger(CommonUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(CommonUtils.class);
 
     static {
         WEEK_FOR_CH.put(1, "周一");

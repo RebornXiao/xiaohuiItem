@@ -2,7 +2,6 @@ package com.xlibao.passport.service.passport;
 
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
-import com.xlibao.common.GlobalConstantConfig;
 import com.xlibao.common.constant.passport.*;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.metadata.passport.Passport;
@@ -29,10 +28,6 @@ public class InternalPassportEventListenerImpl extends BasicWebService implement
         if (result <= 0) {
             throw new XlibaoRuntimeException("建立角色失败");
         }
-        setAccessToken(passport);
-
-        passportDataManager.modifyAccessToken(passport.getId(), passport.getAccessToken());
-
         if (!CommonUtils.nullToEmpty(passport.getDefaultName()).equals(CommonUtils.nullToEmpty(passport.getPhoneNumber()))) {
             createPassportAlias(passport.getId(), passport.getDefaultName(), PassportAliasTypeEnum.DEFAULT.getKey());
         }
@@ -42,17 +37,9 @@ public class InternalPassportEventListenerImpl extends BasicWebService implement
     }
 
     @Override
-    public void notifyLoginedPassport(Passport passport) {
-        String accessToken = setAccessToken(passport);
+    public void notifyLoginPassport(Passport passport) {
         // 新增帐号操作日志
-        createPassportLogger(passport.getId(), PassportLoggerTypeEnum.LOGIIN, String.valueOf(passport.getVersionIndex()), accessToken, passport.getId());
-    }
-
-    private String setAccessToken(Passport passport) {
-        String accessToken = CommonUtils.generateAccessToken(GlobalConstantConfig.PARTNER_ID_PREFIX + String.valueOf(passport.getId()));
-        passport.setAccessToken(accessToken);
-
-        return accessToken;
+        createPassportLogger(passport.getId(), PassportLoggerTypeEnum.LOGIIN, String.valueOf(passport.getVersionIndex()), passport.getAccessToken(), passport.getId());
     }
 
     private int createPassportAlias(long passportId, String aliasName, int type) {

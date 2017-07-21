@@ -20,9 +20,9 @@ public class TransactionEventListenerManager {
         transactionEventListenerMap.put(moduleName, transactionEventListener);
     }
 
-    public void notifyFinishPaymented(PaymentTransactionLogger transactionLogger, TransStatusEnum transStatusEnum, boolean callback) {
+    public void notifyFinishPayment(PaymentTransactionLogger transactionLogger, TransStatusEnum transStatusEnum, boolean callback) {
         for (TransactionEventListener transactionEventListener : transactionEventListenerMap.values()) {
-            transactionEventListener.notifyFinishPaymented(transactionLogger, transStatusEnum, callback);
+            transactionEventListener.notifyFinishPayment(transactionLogger, transStatusEnum, callback);
         }
     }
 }

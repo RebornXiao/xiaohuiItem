@@ -6,7 +6,8 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.http.HttpRequest;
 import com.xlibao.order.config.ConfigFactory;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +17,7 @@ import java.util.Map;
  */
 public class LogisticsRemoteService extends BasicWebService {
 
-    private static final Logger logger = Logger.getLogger(LogisticsRemoteService.class);
+    private static final Logger logger = LoggerFactory.getLogger(LogisticsRemoteService.class);
 
     public static JSONObject pushOrderMsg(String orderParameters, int pushType, byte target, String receiptId, String title, String content, String voice, String message) {
         Map<String, String> parameters = new HashMap<>();

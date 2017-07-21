@@ -5,7 +5,8 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.http.HttpRequest;
 import com.xlibao.metadata.passport.Passport;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
@@ -19,7 +20,7 @@ import java.util.Map;
  */
 public class PassportRemoteService {
 
-    private static final Logger logger = Logger.getLogger(PassportRemoteService.class);
+    private static final Logger logger = LoggerFactory.getLogger(PassportRemoteService.class);
 
     private static String passportRemoteServiceURL = "";
 
@@ -108,6 +109,21 @@ public class PassportRemoteService {
             throw new XlibaoRuntimeException(code, response.getString("msg"));
         }
         return JSONObject.parseObject(response.getString("response"), Passport.class);
+    }
+
+    public static String changeAccessToken(long passportId, String accessToken) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("passportId", String.valueOf(passportId));
+        parameters.put("accessToken", accessToken);
+
+        String data = HttpRequest.post(passportRemoteServiceURL + "passport/changeAccessToken", parameters);
+
+        JSONObject response = JSONObject.parseObject(data);
+        int code = response.getIntValue("code");
+        if (code != 0) {
+            throw new XlibaoRuntimeException(code, response.getString("msg"));
+        }
+        return response.getString("accessToken");
     }
 
     public static JSONObject verifySmsCode(String phone, String smsCode, int smsType) {

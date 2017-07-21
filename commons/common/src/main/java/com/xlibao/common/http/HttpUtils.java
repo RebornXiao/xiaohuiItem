@@ -5,7 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import okhttp3.*;
 import okhttp3.FormBody.Builder;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.Map;
@@ -18,7 +19,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class HttpUtils {
 
-    private static Logger logger = Logger.getLogger(HttpUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 
     private static final MediaType mediaType = MediaType.parse("application/json; charset=utf-8");
     private static OkHttpClient client;

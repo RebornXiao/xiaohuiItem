@@ -1,13 +1,14 @@
 package com.xlibao.common.thread;
 
 import com.xlibao.common.DefineThreadFactory;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.*;
 
 public class AsyncScheduledService {
 
-    private static final Logger logger = Logger.getLogger(AsyncScheduledService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AsyncScheduledService.class);
 
     // 数据库写操作专用调度任务 -- 线程池
     private static final ScheduledThreadPoolExecutor databaseThreadPoolExecutor = new ScheduledThreadPoolExecutor(16, new DefineThreadFactory("DatabasePool"), new ThreadPoolExecutor.CallerRunsPolicy());
