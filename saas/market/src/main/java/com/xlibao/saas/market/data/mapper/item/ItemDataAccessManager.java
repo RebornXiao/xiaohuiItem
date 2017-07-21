@@ -38,6 +38,10 @@ public class ItemDataAccessManager {
         return itemMapper.conditionOrdering(marketId, itemTemplateSet, sortType, sortValue, pageStartIndex, pageSize);
     }
 
+    public List<MarketItem> getItems(long marketId, String itemTemplateSet, int pageStartIndex, int pageSize) {
+        return itemMapper.getItems(marketId, itemTemplateSet, pageStartIndex, pageSize);
+    }
+
     public List<MarketSpecialButton> getButtons() {
         return specialButtonMapper.getButtons();
     }

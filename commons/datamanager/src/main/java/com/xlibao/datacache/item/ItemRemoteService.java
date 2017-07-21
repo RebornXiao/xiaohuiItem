@@ -18,31 +18,31 @@ import java.util.List;
 /**
  * @author chinahuangxc on 2017/4/13.
  */
-public class ItemRemoteService {
+class ItemRemoteService {
 
     private static final Logger logger = LoggerFactory.getLogger(ItemRemoteService.class);
 
-    public static List<ItemTemplate> loaderItemTemplates() {
+    static List<ItemTemplate> loaderItemTemplates() {
         String url = DataCacheApplicationContextLoaderNotify.getItemRemoteServiceURL() + "item/loaderItemTemplates";
         return getItemTemplates(url);
     }
 
-    public static ItemTemplate getItemTemplate(long itemTemplateId) {
+    static ItemTemplate getItemTemplate(long itemTemplateId) {
         String url = DataCacheApplicationContextLoaderNotify.getItemRemoteServiceURL() + "item/getItemTemplate?itemTemplateId=" + itemTemplateId;
         return getItemTemplate(url);
     }
 
-    public static ItemTemplate getItemTemplateByName(String itemName) {
+    static ItemTemplate getItemTemplateByName(String itemName) {
         String url = DataCacheApplicationContextLoaderNotify.getItemRemoteServiceURL() + "item/getItemTemplateByName?itemName=" + itemName;
         return getItemTemplate(url);
     }
 
-    public static ItemTemplate getItemTemplateForBarcode(String barcode) {
+    static ItemTemplate getItemTemplateForBarcode(String barcode) {
         String url = DataCacheApplicationContextLoaderNotify.getItemRemoteServiceURL() + "item/getItemTemplateByBarcode?barcode=" + barcode;
         return getItemTemplate(url);
     }
 
-    public static List<ItemTemplate> relationItemTemplates(long itemTypeId) {
+    static List<ItemTemplate> relationItemTemplates(long itemTypeId) {
         String url = DataCacheApplicationContextLoaderNotify.getItemRemoteServiceURL() + "item/relationItemTemplate?itemTypeId=" + itemTypeId;
         return getItemTemplates(url);
     }
@@ -80,12 +80,12 @@ public class ItemRemoteService {
         return itemTemplates;
     }
 
-    public static List<ItemType> loaderItemTypes() {
+    static List<ItemType> loaderItemTypes() {
         String url = DataCacheApplicationContextLoaderNotify.getItemRemoteServiceURL() + "item/loaderItemTypes";
         return getItemTypes(url);
     }
 
-    public static ItemType getItemType(long itemTypeId) {
+    static ItemType getItemType(long itemTypeId) {
         String url = DataCacheApplicationContextLoaderNotify.getItemRemoteServiceURL() + "item/getItemType?itemTypeId=" + itemTypeId;
         String result = HttpUtils.get(url);
         JSONObject response = JSONObject.parseObject(result);
@@ -97,7 +97,7 @@ public class ItemRemoteService {
         return JSONObject.parseObject(response.getString("response"), ItemType.class);
     }
 
-    public static List<ItemType> relationItemTypes(long parentItemTypeId) {
+    static List<ItemType> relationItemTypes(long parentItemTypeId) {
         String url = DataCacheApplicationContextLoaderNotify.getItemRemoteServiceURL() + "item/relationItemTypes?parentItemTypeId=" + parentItemTypeId;
         return getItemTypes(url);
     }
@@ -124,7 +124,7 @@ public class ItemRemoteService {
         return itemTypes;
     }
 
-    public static List<ItemUnit> loaderItemUnits() {
+    static List<ItemUnit> loaderItemUnits() {
         String url = DataCacheApplicationContextLoaderNotify.getItemRemoteServiceURL() + "item/loaderItemUnits";
         String result = HttpUtils.get(url);
         JSONObject response = JSONObject.parseObject(result);
@@ -147,7 +147,7 @@ public class ItemRemoteService {
         return itemUnits;
     }
 
-    public static ItemUnit getItemUnit(long itemUnitId) {
+    static ItemUnit getItemUnit(long itemUnitId) {
         String url = DataCacheApplicationContextLoaderNotify.getItemRemoteServiceURL() + "item/getItemUnit?itemUnitId=" + itemUnitId;
         String result = HttpUtils.get(url);
         JSONObject response = JSONObject.parseObject(result);

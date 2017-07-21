@@ -12,4 +12,6 @@ public interface MarketItemMapper {
 
     List<MarketItem> conditionOrdering(@Param("marketId") long marketId, @Param("itemTemplateSet") String itemTemplateSet, @Param("sortType") int sortType, @Param("sortValue") int sortValue,
                                        @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
+
+    List<MarketItem> getItems(@Param("marketId") long marketId, @Param("itemTemplateSet") String itemTemplateSet, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 }

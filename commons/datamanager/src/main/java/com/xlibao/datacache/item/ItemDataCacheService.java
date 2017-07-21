@@ -536,12 +536,12 @@ public class ItemDataCacheService {
         return relationItemTemplate(itemTypeId);
     }
 
-    public static String assemblyItemTemplateSet(List<ItemTemplate> supplychainItemTemplates) {
-        if (CommonUtils.isEmpty(supplychainItemTemplates)) {
+    public static String assembleItemTemplateSet(List<ItemTemplate> itemTemplates) {
+        if (CommonUtils.isEmpty(itemTemplates)) {
             return "";
         }
         StringBuilder itemTemplateSet = new StringBuilder();
-        for (ItemTemplate itemTemplate : supplychainItemTemplates) {
+        for (ItemTemplate itemTemplate : itemTemplates) {
             itemTemplateSet.append(itemTemplate.getId()).append(CommonUtils.SPLIT_COMMA);
         }
         // 仓库集合
@@ -553,7 +553,10 @@ public class ItemDataCacheService {
 
         @Override
         public int compare(ItemType o1, ItemType o2) {
-            return o1.getSort() < o2.getSort() ? -1 : 1;
+            if (o1.getSort() < o2.getSort()) {
+                return -1;
+            }
+            return o1.getSort().intValue() == o2.getSort().intValue() ? 0 : 1;
         }
     }
 }

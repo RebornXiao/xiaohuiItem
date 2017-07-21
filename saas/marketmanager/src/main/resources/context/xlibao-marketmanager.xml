@@ -21,9 +21,7 @@
     <bean id="viewResolverCommon" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/><!--可为空,方便实现自已的依据扩展名来选择视图解释类的逻辑  -->
-        <property name="viewClass">
-            <value>org.springframework.web.servlet.view.InternalResourceView</value>
-        </property>
+        <property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView"/>
         <property name="order" value="1"/>
     </bean>
 
@@ -38,17 +36,13 @@
 
     <!-- 配置freeMarker的模板路径 -->
     <bean id="freemarkerConfig" class="org.springframework.web.servlet.view.freemarker.FreeMarkerConfigurer">
-        <property name="templateLoaderPath">
-            <value>/WEB-INF/ftl/</value>
-        </property>
+        <property name="templateLoaderPath" value="/WEB-INF/ftl/"/>
         <property name="freemarkerVariables">
             <map>
                 <entry key="xml_escape" value-ref="fmXmlEscape"/>
             </map>
         </property>
-        <property name="defaultEncoding">
-            <value>utf-8</value>
-        </property>
+        <property name="defaultEncoding" value="utf-8"/>
         <property name="freemarkerSettings">
             <props>
                 <prop key="template_update_delay">3600</prop>
@@ -66,6 +60,4 @@
 
     <!-- 扫描Controller -->
     <context:component-scan base-package="com.xlibao.saas.market.manager.controller"/>
-
-
 </beans>

@@ -17,12 +17,22 @@ public class MarketController {
     @Autowired
     private MarketService marketService;
 
+    /***
+     * <pre>
+     *     <b>找到商店</b>
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "findMarket")
     public JSONObject findMarket() {
         return marketService.findMarket();
     }
 
+    /**
+     * <pre>
+     *     <b>过滤商店(寻找商店)</b>
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "filterMarket")
     public JSONObject filterMarket() {

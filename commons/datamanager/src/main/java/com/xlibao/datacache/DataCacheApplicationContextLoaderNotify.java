@@ -14,11 +14,12 @@ public class DataCacheApplicationContextLoaderNotify {
     public static final TimeUnit WAIT_LOCK_TIME_UNIT = TimeUnit.SECONDS;
 
     private static String itemRemoteServiceURL = "";
+    private static String locationRemoteServiceURL = "";
 
     /**
      * <pre>
      *      <b>设置当前环境下的商品服务地址</b>
-     *      <b>如：</b>DataCacheApplicationContextLoaderNotify.setItemRemoteServiceURL("http://www.xlibao.com:8083/");
+     *      <b>如：</b>DataCacheApplicationContextLoaderNotify.setItemRemoteServiceURL("http://item.xlibao.com/");
      *  </pre>
      */
     public static void setItemRemoteServiceURL(String itemRemoteServiceURL) {
@@ -32,5 +33,13 @@ public class DataCacheApplicationContextLoaderNotify {
      */
     public static String getItemRemoteServiceURL() {
         return itemRemoteServiceURL;
+    }
+
+    public static void setLocationRemoteServiceURL(String locationRemoteServiceURL) {
+        DataCacheApplicationContextLoaderNotify.locationRemoteServiceURL = locationRemoteServiceURL;
+    }
+
+    public static String getLocationRemoteServiceURL() {
+        return locationRemoteServiceURL;
     }
 }

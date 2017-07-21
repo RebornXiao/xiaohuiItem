@@ -38,11 +38,10 @@
     </resultMap>
 
     <select id="specialProducts" resultMap="BaseResultMap">
-        select * from market_item where market_id = #{marketId} and status = 1 and restriction_quantity != 0
+        select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0
             <if test="appointType == -100">and #{timeout} > timestampdiff(second, create_time, now())</if>
             <if test="appointType == -99">and discount_type = 1</if>
             <if test="appointType == -98">and discount_type = 2</if>
-
             order by
             <if test="sortType == 0">default_sort</if>
             <if test="sortType == 1">sell_price</if>
@@ -53,12 +52,18 @@
     </select>
 
     <select id="conditionOrdering" resultMap="BaseResultMap">
-        select * from market_item where market_id = #{marketId} and status = 1 and item_template_id in(${itemTemplateSet}) and restriction_quantity != 0 order by
-        <if test="sortType == 0">default_sort</if>
-        <if test="sortType == 1">sell_price</if>
-        <if test="sortType == 2">actual_sales</if>
+        select * from market_item where owner_id = #{marketId} and status = 1 and item_template_id in(${itemTemplateSet}) and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0 order by
+            <if test="sortType == 0">default_sort</if>
+            <if test="sortType == 1">sell_price</if>
+            <if test="sortType == 2">actual_sales</if>
 
-        <if test="sortValue == 1">desc</if>, id
+            <if test="sortValue == 1">desc</if>, id
         limit #{pageStartIndex}, #{pageSize}
+    </select>
+
+    <select id="getItems" resultMap="BaseResultMap">
+        select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0
+             <if test="itemTemplateSet != null"> and item_template_id in(${itemTemplateSet}) </if>
+        order by create_time desc limit #{pageStartIndex}, #{pageSize}
     </select>
 </mapper>

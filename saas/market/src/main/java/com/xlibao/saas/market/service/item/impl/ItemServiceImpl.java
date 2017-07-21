@@ -56,7 +56,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         // SpecialButton
         JSONArray specialButtonMsg = specialButtonMsg();
         // RecommendItemTypes
-        JSONArray recommendItemTypeMsg = recommendMsg(marketId, RecommendItemTypeEnum.ITEM_TYPE.getKey(), latitude, longitude, 0, 0);
+        JSONArray recommendItemTypeMsg = recommendItemTypeMsg(marketId, latitude, longitude);
 
         JSONObject response = new JSONObject();
         response.put("bannerMsg", bannerMsg);
@@ -101,7 +101,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         if (marketId == 0) {
             return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response();
         }
-        JSONArray recommendItemMsg = recommendMsg(marketId, RecommendItemTypeEnum.ITEM.getKey(), latitude, longitude, pageStartIndex, pageSize);
+        JSONObject recommendItemMsg = recommendItemMsg(passportId, marketId, latitude, longitude, pageStartIndex, pageSize);
         return success(recommendItemMsg);
     }
 
@@ -133,12 +133,11 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             // 没有更多数据
             return ErrorCodeEnum.NO_MORE_DATA.response();
         }
-        JSONObject buyMessage = fillBuyMessage(passportId, items);
+        JSONObject response = new JSONObject();
 
-        JSONObject message = new JSONObject();
-        message.put("buyMessage", buyMessage);
-        message.put("pageItemMsg", fillPageItemMessage(items));
-        return success(message);
+        response.put("buyMessage", fillBuyMessage(passportId, items));
+        response.put("pageItemMsg", fillPageItemMessage(items));
+        return success(response);
     }
 
     private long matchMarketId(long passportId, long marketId, double longitude, double latitude) {
@@ -212,26 +211,12 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return response;
     }
 
-    private JSONArray recommendMsg(long marketId, int type, double latitude, double longitude, int pageStartIndex, int pageSize) {
-        RecommendItemTypeEnum recommendItemTypeEnum = RecommendItemTypeEnum.getRecommendItemTypeEnum(type);
-
-        List<MarketRecommendItem> recommendItems = findRecommendItems(marketId, recommendItemTypeEnum, longitude, latitude);
+    private JSONArray recommendItemTypeMsg(long marketId, double latitude, double longitude) {
+        List<MarketRecommendItem> recommendItems = findRecommendItems(marketId, RecommendItemTypeEnum.ITEM_TYPE, longitude, latitude);
         if (CommonUtils.isEmpty(recommendItems)) {
             return new JSONArray();
         }
         JSONArray response = new JSONArray();
-        if (recommendItemTypeEnum == RecommendItemTypeEnum.ITEM) {
-            if (marketId == 0) { // 仅为保护，实际作用不大
-                return response;
-            }
-            StringBuilder itemTemplateSet = new StringBuilder();
-            for (MarketRecommendItem recommendItem : recommendItems) {
-                itemTemplateSet.append(recommendItem.getEntryId()).append(CommonUtils.SPLIT_COMMA);
-            }
-            itemTemplateSet.deleteCharAt(itemTemplateSet.length() - 1);
-
-            return response;
-        }
         for (MarketRecommendItem recommendItem : recommendItems) {
             ItemType itemType = ItemDataCacheService.getItemType(recommendItem.getEntryId());
             if (itemType == null) {
@@ -239,6 +224,30 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             }
             response.add(fillItemTypeMsg(itemType, true));
         }
+        return response;
+    }
+
+    private JSONObject recommendItemMsg(long passportId, long marketId, double latitude, double longitude, int pageStartIndex, int pageSize) {
+        List<MarketRecommendItem> recommendItems = findRecommendItems(marketId, RecommendItemTypeEnum.ITEM, longitude, latitude);
+
+        JSONObject response = new JSONObject();
+        if (marketId == 0) { // 仅为保护，实际作用不大
+            return response;
+        }
+        String itemTemplates = null;
+        if (!CommonUtils.isEmpty(recommendItems)) {
+            StringBuilder itemTemplateSet = new StringBuilder();
+            for (MarketRecommendItem recommendItem : recommendItems) {
+                itemTemplateSet.append(recommendItem.getEntryId()).append(CommonUtils.SPLIT_COMMA);
+            }
+            itemTemplateSet.deleteCharAt(itemTemplateSet.length() - 1);
+
+            itemTemplates = itemTemplateSet.toString();
+        }
+        List<MarketItem> items = dataAccessFactory.getItemDataAccessManager().getItems(marketId, itemTemplates, pageStartIndex, pageSize);
+
+        response.put("buyMessage", fillBuyMessage(passportId, items));
+        response.put("pageItemMsg", fillPageItemMessage(items));
         return response;
     }
 
@@ -290,7 +299,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             return null;
         }
         // 拼装商品集合
-        String itemTemplateSet = ItemDataCacheService.assemblyItemTemplateSet(itemTemplates);
+        String itemTemplateSet = ItemDataCacheService.assembleItemTemplateSet(itemTemplates);
         // 按前端指定的排序条件查找对应的商品列表
         return dataAccessFactory.getItemDataAccessManager().conditionOrdering(marketId, itemTemplateSet, sortType, sortValue, pageStartIndex, pageSize);
     }

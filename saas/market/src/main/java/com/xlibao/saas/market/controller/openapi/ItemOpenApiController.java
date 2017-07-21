@@ -17,6 +17,11 @@ public class ItemOpenApiController {
     @Autowired
     private ItemService itemService;
 
+    /**
+     * <pre>
+     *
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "homepage")
     public JSONObject homepage() {
