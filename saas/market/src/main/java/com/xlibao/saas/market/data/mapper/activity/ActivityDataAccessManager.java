@@ -4,14 +4,12 @@ import com.xlibao.saas.market.data.model.MarketBanner;
 import com.xlibao.saas.market.data.model.MarketRecommendItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
  * @author chinahuangxc on 2017/7/16.
  */
-@Transactional
 @Component
 public class ActivityDataAccessManager {
 

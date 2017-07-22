@@ -3,7 +3,7 @@ package com.xlibao.saas.market.service.market;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.lbs.SimpleLocationUtils;
 import com.xlibao.common.thread.AsyncScheduledService;
-import com.xlibao.saas.market.data.mapper.DataAccessFactory;
+import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketEntry;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import org.slf4j.Logger;
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -36,7 +37,7 @@ public class MarketDataCacheService {
     private static final ReentrantReadWriteLock.WriteLock MARKET_WRITE_LOCK = MARKET_READ_WRITE_LOCK.writeLock();
 
     private static final Map<Long, MarketEntry> markets = new ConcurrentHashMap<>();
-
+    private static final Map<Long, List<Long>> streetMarketCache = new ConcurrentHashMap<>();
     private static final Map<Long, Long> passportCache = new ConcurrentHashMap<>();
 
     void initMarketCache() {
@@ -63,31 +64,44 @@ public class MarketDataCacheService {
     }
 
     private void loaderMarket() {
-        List<MarketEntry> marketEntries = dataAccessFactory.getMarketDataAccessManager().loaderMarkets();
-        logger.info("当前系统商店数量：" + (marketEntries == null ? 0 : marketEntries.size()));
-
-        Map<Long, MarketEntry> marketEntryMap = new ConcurrentHashMap<>();
-        Map<Long, Long> passportCacheMap = new ConcurrentHashMap<>();
-        if (!CommonUtils.isEmpty(marketEntries)) {
-            for (MarketEntry marketEntry : marketEntries) {
-                marketEntryMap.put(marketEntry.getId(), marketEntry);
-                passportCacheMap.put(marketEntry.getPassportId(), marketEntry.getId());
-            }
-        }
         try {
-            if (MARKET_WRITE_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
-                try {
-                    markets.clear();
-                    passportCache.clear();
+            List<MarketEntry> marketEntries = dataAccessFactory.getMarketDataAccessManager().loaderMarkets();
+            logger.info("当前系统商店数量：" + (marketEntries == null ? 0 : marketEntries.size()));
 
-                    markets.putAll(marketEntryMap);
-                    passportCache.putAll(passportCacheMap);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                } finally {
-                    MARKET_WRITE_LOCK.unlock();
+            Map<Long, MarketEntry> marketEntryMap = new ConcurrentHashMap<>();
+            Map<Long, List<Long>> streetMarketMap = new ConcurrentHashMap<>();
+            Map<Long, Long> passportCacheMap = new ConcurrentHashMap<>();
+            if (!CommonUtils.isEmpty(marketEntries)) {
+                for (MarketEntry marketEntry : marketEntries) {
+                    marketEntryMap.put(marketEntry.getId(), marketEntry);
+
+                    List<Long> markets = streetMarketMap.get(marketEntry.getStreetId());
+                    if (markets == null) {
+                        markets = new ArrayList<>();
+                        streetMarketMap.put(marketEntry.getStreetId(), markets);
+                    }
+                    markets.add(marketEntry.getId());
+
+                    passportCacheMap.put(marketEntry.getPassportId(), marketEntry.getId());
                 }
             }
+            if (!MARKET_WRITE_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
+                return;
+            }
+            try {
+                markets.clear();
+                streetMarketCache.clear();
+                passportCache.clear();
+
+                markets.putAll(marketEntryMap);
+                streetMarketCache.putAll(streetMarketMap);
+                passportCache.putAll(passportCacheMap);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                MARKET_WRITE_LOCK.unlock();
+            }
+
         } catch (Throwable cause) {
             cause.printStackTrace();
         }
@@ -107,6 +121,34 @@ public class MarketDataCacheService {
             cause.printStackTrace();
         }
         return dataAccessFactory.getMarketDataAccessManager().getMarket(marketId);
+    }
+
+    public List<MarketEntry> getMarkets(long streetId) {
+        try {
+            if (!MARKET_READ_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
+                return dataAccessFactory.getMarketDataAccessManager().getMarkets(streetId);
+            }
+            try {
+                List<Long> marketIds = streetMarketCache.get(streetId);
+                if (CommonUtils.isEmpty(marketIds)) {
+                    return dataAccessFactory.getMarketDataAccessManager().getMarkets(streetId);
+                }
+                List<MarketEntry> marketEntries = new ArrayList<>();
+                for (Long L : marketIds) {
+                    MarketEntry marketEntry = markets.get(L);
+                    if (marketEntry == null) {
+                        continue;
+                    }
+                    marketEntries.add(marketEntry);
+                }
+                return marketEntries;
+            } finally {
+                MARKET_READ_LOCK.unlock();
+            }
+        } catch (Throwable cause) {
+            cause.printStackTrace();
+        }
+        return dataAccessFactory.getMarketDataAccessManager().getMarkets(streetId);
     }
 
     public MarketEntry getMarketForPassport(long passportId) {

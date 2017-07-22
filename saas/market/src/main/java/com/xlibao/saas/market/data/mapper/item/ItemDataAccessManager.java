@@ -13,7 +13,6 @@ import java.util.List;
 /**
  * @author chinahuangxc on 2017/7/15.
  */
-@Transactional
 @Component
 public class ItemDataAccessManager {
 

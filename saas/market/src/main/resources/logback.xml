@@ -10,7 +10,8 @@
     <!--  控制台日志  -->
     <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %p %replace(%caller{1}){'\t|Caller.{1}0|\r\n|at| ', ''} - %m%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %p %replace(%caller{1}){'\t|Caller.{1}0|\r\n|at| ', ''} - %m%n
+            </pattern>
             <!-- <pattern>[%le][%d][%thread][%40logger{60}][%M\(\)] - %msg%n</pattern> -->
             <charset>GBK</charset> <!--  此处设置字符集 UTF-8时 在IDEA控制台显示内容为乱码 -->
         </encoder>
@@ -29,7 +30,8 @@
         </rollingPolicy>
 
         <encoder>
-            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %p %replace(%caller{1}){'\t|Caller.{1}0|\r\n|at| ', ''} - %m%n</pattern>
+            <pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %p %replace(%caller{1}){'\t|Caller.{1}0|\r\n|at| ', ''} - %m%n
+            </pattern>
             <charset>UTF-8</charset>
         </encoder>
     </appender>
@@ -38,9 +40,9 @@
     <!-- <appender-ref ref="STDOUT"/> -->
     <!-- </logger> -->
 
-    <!-- <logger name="java.sql" level="debug"> -->
-    <!-- <appender-ref ref="STDOUT"/> -->
-    <!-- </logger> -->
+    <!--<logger name="java.sql" level="debug">-->
+    <!--<appender-ref ref="STDOUT"/>-->
+    <!--</logger>-->
 
     <logger name="org.springframework" level="ERROR"/>
     <!-- <logger name="httpclient.wire.header" level="info" /> -->

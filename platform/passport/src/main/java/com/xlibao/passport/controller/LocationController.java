@@ -20,18 +20,24 @@ public class LocationController {
     @ResponseBody
     @RequestMapping("loaderProvinces")
     public JSONObject loaderProvinces() {
-        return null;
+        return locationService.loaderProvinces();
     }
 
     @ResponseBody
     @RequestMapping("loaderCitys")
     public JSONObject loaderCitys() {
-        return null;
+        return locationService.loaderCitys();
     }
 
     @ResponseBody
     @RequestMapping("loaderDistricts")
     public JSONObject loaderDistricts() {
-        return null;
+        return locationService.loaderDistricts();
+    }
+
+    @ResponseBody
+    @RequestMapping("loaderStreets")
+    public JSONObject loaderStreets() {
+        return locationService.loaderStreets();
     }
 }

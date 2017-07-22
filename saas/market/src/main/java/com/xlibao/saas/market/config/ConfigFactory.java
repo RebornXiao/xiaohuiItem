@@ -1,6 +1,8 @@
 package com.xlibao.saas.market.config;
 
 import com.xlibao.datacache.DataCacheApplicationContextLoaderNotify;
+import com.xlibao.datacache.item.ItemDataCacheService;
+import com.xlibao.datacache.location.LocationDataCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -26,7 +28,11 @@ public class ConfigFactory {
     public void initialization() {
         domainName = domainNameConfig;
 
+        DataCacheApplicationContextLoaderNotify.setLocationRemoteServiceURL(domainName.passportRemoteURL);
+        LocationDataCacheService.initLocationCache();
+
         DataCacheApplicationContextLoaderNotify.setItemRemoteServiceURL(domainName.itemRemoteURL);
+        ItemDataCacheService.initItemCache();
 
         xmarket = xmarketConfig;
     }

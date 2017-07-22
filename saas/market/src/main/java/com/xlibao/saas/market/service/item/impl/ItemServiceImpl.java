@@ -11,7 +11,7 @@ import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
-import com.xlibao.saas.market.data.mapper.DataAccessFactory;
+import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.*;
 import com.xlibao.saas.market.service.ErrorCodeEnum;
 import com.xlibao.saas.market.service.XMarketTimeConfig;

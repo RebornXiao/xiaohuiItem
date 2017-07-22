@@ -4,14 +4,12 @@ import com.xlibao.saas.market.data.model.MarketAccessLogger;
 import com.xlibao.saas.market.data.model.MarketEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 /**
  * @author chinahuangxc on 2017/7/15.
  */
-@Transactional
 @Component
 public class MarketDataAccessManager {
 
@@ -30,6 +28,10 @@ public class MarketDataAccessManager {
 
     public MarketEntry getMarket(long marketId) {
         return entryMapper.getMarket(marketId);
+    }
+
+    public List<MarketEntry> getMarkets(long streetId) {
+        return entryMapper.getMarkets(streetId);
     }
 
     public MarketEntry getMarketForPassport(long passportId) {

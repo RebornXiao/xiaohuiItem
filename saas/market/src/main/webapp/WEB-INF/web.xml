@@ -11,7 +11,7 @@
     <context-param>
         <description>配置文件参数</description>
         <param-name>profiles.active</param-name>
-        <param-value>prod</param-value><!-- ${profiles.active} -->
+        <param-value>local</param-value><!-- ${profiles.active} -->
     </context-param>
 
     <context-param>

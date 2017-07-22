@@ -34,7 +34,7 @@
         <property name="username" value="${jdbc_user}"/>
         <property name="password" value="${jdbc_password}"/>
 
-        <property name="filters" value="stat,log4j"/>
+        <property name="filters" value="stat,slf4j"/>
 
         <property name="maxActive" value="30"/>
         <property name="initialSize" value="1"/>
@@ -70,7 +70,7 @@
     </bean>
 
     <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.xlibao.saas.market.data.mapper"/>
+        <property name="basePackage" value="com.xlibao.saas.market.data.mapper.*"/>
     </bean>
 
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">

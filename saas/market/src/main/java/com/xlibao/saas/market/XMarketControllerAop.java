@@ -23,7 +23,7 @@ public class XMarketControllerAop extends BasicWebService {
 
     private static final Logger logger = LoggerFactory.getLogger(XMarketControllerAop.class);
 
-    @Around(value = "execution(* com.xlibao.saas.market.controller.*.*(..)) || execution(* com.xlibao.saas.market.controller.openapi.*.*(..))")
+    @Around(value = "execution(* com.xlibao.saas.market.controller.openapi.*.*(..))")
     public Object around(ProceedingJoinPoint point) throws Throwable {
         Object[] args = point.getArgs();
         try {

@@ -2,7 +2,7 @@ package com.xlibao.saas.market.service.payment.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
-import com.xlibao.saas.market.data.mapper.DataAccessFactory;
+import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.service.payment.PaymentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

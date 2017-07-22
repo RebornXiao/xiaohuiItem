@@ -14,6 +14,7 @@ public class MarketEntry {
     private Integer status;
     private String adminName;
     private String phoneNumber;
+    private Long streetId;
     private String province;
     private String city;
     private String district;
@@ -80,6 +81,14 @@ public class MarketEntry {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber == null ? null : phoneNumber.trim();
+    }
+
+    public Long getStreetId() {
+        return streetId;
+    }
+
+    public void setStreetId(Long streetId) {
+        this.streetId = streetId;
     }
 
     public String getProvince() {

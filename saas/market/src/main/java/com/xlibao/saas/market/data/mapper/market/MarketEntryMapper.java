@@ -11,5 +11,7 @@ public interface MarketEntryMapper {
 
     MarketEntry getMarket(@Param("marketId") long marketId);
 
+    List<MarketEntry> getMarkets(@Param("streetId") long streetId);
+
     MarketEntry getMarketForPassport(@Param("passportId") long passportId);
 }

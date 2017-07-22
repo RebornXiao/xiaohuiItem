@@ -6,4 +6,8 @@
         <result column="city_id" property="cityId" jdbcType="BIGINT"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
     </resultMap>
+
+    <select id="loaderDistricts" resultMap="BaseResultMap">
+        select * from passport_area
+    </select>
 </mapper>

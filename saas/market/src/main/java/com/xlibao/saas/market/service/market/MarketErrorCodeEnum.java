@@ -10,6 +10,8 @@ public enum MarketErrorCodeEnum {
 
     /** 1000 -- 您所在区域暂时未找到合适的商店 */
     CAN_NOT_FIND_MARKET(1000, "您所在区域暂时未找到合适的商店"),
+    /** 1001 -- 错误的商店信息 */
+    ERROR_MARKET_INFORMATION(1001, "错误的商店信息"),
     ;
 
     private int key;

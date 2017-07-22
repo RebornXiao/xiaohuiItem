@@ -9,6 +9,7 @@
         <result column="status" property="status" jdbcType="INTEGER"/>
         <result column="admin_name" property="adminName" jdbcType="VARCHAR"/>
         <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR"/>
+        <result column="street_id" property="streetId" jdbcType="BIGINT"/>
         <result column="province" property="province" jdbcType="VARCHAR"/>
         <result column="city" property="city" jdbcType="VARCHAR"/>
         <result column="district" property="district" jdbcType="VARCHAR"/>
@@ -28,6 +29,10 @@
 
     <select id="getMarket" resultMap="BaseResultMap">
         select * from market_entry where id = #{marketId}
+    </select>
+
+    <select id="getMarkets" resultMap="BaseResultMap">
+        select * from market_entry where street_id = #{streetId} and status = 1
     </select>
 
     <select id="getMarketForPassport" resultMap="BaseResultMap">

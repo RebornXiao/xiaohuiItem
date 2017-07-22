@@ -9,6 +9,7 @@ public enum ChoiceMarketTypeEnum {
     CITY(2, "市"),
     DISTRICT(3, "区"),
     STREET(4, "街道"),
+    MARKET(5, "店铺"),
     ;
 
     private int key;

@@ -1,4 +1,4 @@
-package com.xlibao.saas.market.data.mapper;
+package com.xlibao.saas.market.data;
 
 import com.xlibao.saas.market.data.mapper.activity.ActivityDataAccessManager;
 import com.xlibao.saas.market.data.mapper.item.ItemDataAccessManager;
@@ -8,12 +8,10 @@ import com.xlibao.saas.market.service.item.MarketItemDataCacheService;
 import com.xlibao.saas.market.service.market.MarketDataCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author chinahuangxc on 2017/7/16.
  */
-@Transactional
 @Component
 public class DataAccessFactory {
 
