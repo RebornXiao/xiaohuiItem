@@ -9,5 +9,8 @@
 
     <select id="loaderDistricts" resultMap="BaseResultMap">
         select * from passport_area
+        <if test="cityId != 0">
+            where city_id = #{cityId}
+        </if>
     </select>
 </mapper>

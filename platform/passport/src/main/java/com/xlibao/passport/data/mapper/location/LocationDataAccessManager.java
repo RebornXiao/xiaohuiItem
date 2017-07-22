@@ -28,15 +28,15 @@ public class LocationDataAccessManager {
         return provinceMapper.loaderProvinces();
     }
 
-    public List<PassportCity> loaderCitys() {
-        return cityMapper.loaderCitys();
+    public List<PassportCity> loaderCitys(long provinceId) {
+        return cityMapper.loaderCitys(provinceId);
     }
 
-    public List<PassportArea> loaderDistricts() {
-        return areaMapper.loaderDistricts();
+    public List<PassportArea> loaderDistricts(long cityId) {
+        return areaMapper.loaderDistricts(cityId);
     }
 
-    public List<PassportStreet> loaderStreets() {
-        return streetMapper.loaderStreets();
+    public List<PassportStreet> loaderStreets(long districtId) {
+        return streetMapper.loaderStreets(districtId);
     }
 }

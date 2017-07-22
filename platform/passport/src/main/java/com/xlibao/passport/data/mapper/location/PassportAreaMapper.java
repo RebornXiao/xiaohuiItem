@@ -1,10 +1,11 @@
 package com.xlibao.passport.data.mapper.location;
 
 import com.xlibao.metadata.passport.PassportArea;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface PassportAreaMapper {
 
-    List<PassportArea> loaderDistricts();
+    List<PassportArea> loaderDistricts(@Param("cityId") long cityId);
 }

@@ -34,7 +34,8 @@ public class LocationServiceImpl extends BasicWebService implements LocationServ
 
     @Override
     public JSONObject loaderCitys() {
-        List<PassportCity> citys = locationDataAccessManager.loaderCitys();
+        long provinceId = getLongParameter("provinceId", 0);
+        List<PassportCity> citys = locationDataAccessManager.loaderCitys(provinceId);
 
         JSONArray response = citys.stream().map(city -> JSONObject.parseObject(JSONObject.toJSONString(city))).collect(Collectors.toCollection(JSONArray::new));
         return success(response);
@@ -42,7 +43,8 @@ public class LocationServiceImpl extends BasicWebService implements LocationServ
 
     @Override
     public JSONObject loaderDistricts() {
-        List<PassportArea> districts = locationDataAccessManager.loaderDistricts();
+        long cityId = getLongParameter("cityId", 0);
+        List<PassportArea> districts = locationDataAccessManager.loaderDistricts(cityId);
 
         JSONArray response = districts.stream().map(district -> JSONObject.parseObject(JSONObject.toJSONString(district))).collect(Collectors.toCollection(JSONArray::new));
         return success(response);
@@ -50,7 +52,8 @@ public class LocationServiceImpl extends BasicWebService implements LocationServ
 
     @Override
     public JSONObject loaderStreets() {
-        List<PassportStreet> streets = locationDataAccessManager.loaderStreets();
+        long districtId = getLongParameter("districtId", 0);
+        List<PassportStreet> streets = locationDataAccessManager.loaderStreets(districtId);
 
         JSONArray response = streets.stream().map(street -> JSONObject.parseObject(JSONObject.toJSONString(street))).collect(Collectors.toCollection(JSONArray::new));
         return success(response);
