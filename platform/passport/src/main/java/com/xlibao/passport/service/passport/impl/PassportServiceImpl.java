@@ -11,6 +11,7 @@ import com.xlibao.common.constant.sms.SmsCodeTypeEnum;
 import com.xlibao.common.constant.version.VersionTypeEnum;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.service.PlatformErrorCodeEnum;
 import com.xlibao.metadata.passport.Passport;
 import com.xlibao.metadata.passport.PassportChannel;
 import com.xlibao.metadata.passport.PassportProperties;
@@ -360,7 +361,7 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
     private Passport changeAccessToken(long passportId, String accessToken) {
         Passport passport = getPassport(passportId);
         if (!accessToken.equals(passport.getAccessToken())) {
-            throw new XlibaoRuntimeException(999, "您的登录已过期或帐号存在泄漏风险，请重新登录");
+            throw new XlibaoRuntimeException(PlatformErrorCodeEnum.INVALID_ACCESS.getKey(), PlatformErrorCodeEnum.INVALID_ACCESS.getValue());
         }
         changeAccessToken(passport);
         return passport;

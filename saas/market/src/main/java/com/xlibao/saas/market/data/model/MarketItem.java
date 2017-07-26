@@ -166,7 +166,7 @@ public class MarketItem {
     }
 
     public Integer getMinimumSellCount() {
-        return minimumSellCount;
+        return (minimumSellCount == null || minimumSellCount == 0) ? 1 : minimumSellCount;
     }
 
     public void setMinimumSellCount(Integer minimumSellCount) {

@@ -51,4 +51,27 @@ public class ItemController {
     public JSONObject pageItems() {
         return itemService.pageItems();
     }
+
+    /**
+     * <pre>
+     *     <b>商品分组</b>
+     *
+     *     <b>访问地址：</b>http://domainName/item/splitItems
+     *     <b>访问方式：</b>GET/POST；推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>items</b> - String 分组商品ID，必填参数；格式为：itemId,itemId,itemId 如：100000,100001,100002。
+     *
+     *     <b>返回：</b>
+     *          <b>datas</b> - JSONArray 每个元素都为一个JSONObject，结构：
+     *              <b>marketId</b> - long 仓库ID
+     *              <b>marketName</b> - String 仓库名字
+     *              <b>items</b> - JSONArray 商品ID
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "splitItems")
+    public JSONObject splitItems() {
+        return itemService.splitItems();
+    }
 }

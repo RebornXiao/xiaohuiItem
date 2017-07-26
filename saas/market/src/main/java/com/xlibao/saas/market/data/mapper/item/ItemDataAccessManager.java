@@ -6,7 +6,6 @@ import com.xlibao.saas.market.data.model.MarketItemDailyPurchaseLogger;
 import com.xlibao.saas.market.data.model.MarketSpecialButton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -37,8 +36,16 @@ public class ItemDataAccessManager {
         return itemMapper.conditionOrdering(marketId, itemTemplateSet, sortType, sortValue, pageStartIndex, pageSize);
     }
 
-    public List<MarketItem> getItems(long marketId, String itemTemplateSet, int pageStartIndex, int pageSize) {
-        return itemMapper.getItems(marketId, itemTemplateSet, pageStartIndex, pageSize);
+    public List<MarketItem> getItemsForItemTemplateSet(long marketId, String itemTemplateSet, int pageStartIndex, int pageSize) {
+        return itemMapper.getItemsForItemTemplateSet(marketId, itemTemplateSet, pageStartIndex, pageSize);
+    }
+
+    public List<MarketItem> getItemForItemTemplates(long marketId, String itemTemplateSet) {
+        return itemMapper.getItemForItemTemplates(marketId, itemTemplateSet);
+    }
+
+    public List<MarketItem> getItems(String itemSet) {
+        return itemMapper.getItems(itemSet);
     }
 
     public List<MarketSpecialButton> getButtons() {

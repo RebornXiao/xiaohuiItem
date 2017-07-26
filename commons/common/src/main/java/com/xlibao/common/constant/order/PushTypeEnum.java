@@ -8,9 +8,9 @@ public enum PushTypeEnum {
     /** 0 -- 不进行推送 */
     UN_PUSH(0, "不进行推送"),
     /** 1 -- 下单后推送 */
-    AFTER_CREATED(1, "下单后推送"),
+    AFTER_CREATE(1, "下单后推送"),
     /** 2 -- 支付后推送 */
-    AFTER_PAYMENTED(2, "支付后推送"),
+    AFTER_PAYMENT(2, "支付后推送"),
     ;
 
     private int key;

@@ -5,15 +5,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
+import com.xlibao.common.constant.item.ItemStatusEnum;
+import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.lbs.baidu.AddressComponent;
 import com.xlibao.common.lbs.baidu.BaiduWebAPI;
+import com.xlibao.common.service.PlatformErrorCodeEnum;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
+import com.xlibao.metadata.order.OrderItemSnapshot;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.*;
-import com.xlibao.saas.market.service.ErrorCodeEnum;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.activity.RecommendItemTypeEnum;
 import com.xlibao.saas.market.service.item.*;
@@ -131,13 +134,133 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         }
         if (CommonUtils.isEmpty(items)) {
             // 没有更多数据
-            return ErrorCodeEnum.NO_MORE_DATA.response();
+            return PlatformErrorCodeEnum.NO_MORE_DATA.response();
         }
         JSONObject response = new JSONObject();
 
         response.put("buyMessage", fillBuyMessage(passportId, items));
         response.put("pageItemMsg", fillPageItemMessage(items));
         return success(response);
+    }
+
+    @Override
+    public JSONObject splitItems() {
+        String items = getUTF("items");
+        List<MarketItem> itemList = dataAccessFactory.getItemDataAccessManager().getItems(items);
+
+        Map<Long, JSONArray> groupItems = new HashMap<>();
+
+        for (MarketItem item : itemList) {
+            JSONArray itemArray = groupItems.get(item.getOwnerId());
+            if (itemArray == null) {
+                itemArray = new JSONArray();
+                groupItems.put(item.getOwnerId(), itemArray);
+            }
+            itemArray.add(item.getId());
+        }
+        JSONArray marketItems = new JSONArray();
+        for (Map.Entry<Long, JSONArray> entry : groupItems.entrySet()) {
+            MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(entry.getKey());
+
+            JSONObject marketData = new JSONObject();
+            marketData.put("marketId", marketEntry.getId());
+            marketData.put("marketName", marketEntry.getName());
+            marketData.put("items", entry.getValue());
+
+            marketItems.add(marketData);
+        }
+        return success(marketItems);
+    }
+
+    @Override
+    public OrderItemSnapshot fillOrderItemSnapshot(MarketItem item, MarketItemDailyPurchaseLogger itemDailyPurchaseLogger, int buyCount) {
+        OrderItemSnapshot orderItemSnapshot = fillBaseOrderItemSnapshot(item);
+
+        int normalQuantity = buyCount;
+        int discountQuantity = 0;
+        long normalPrice = item.getSellPrice();
+        long discountPrice = normalPrice;
+        if (item.getDiscountType() != DiscountTypeEnum.NORMAL.getKey()) {
+            normalPrice = item.maxPrice(); // 以高价出售
+            if (item.getRestrictionQuantity() == RestrictionQuantityEnum.UN_LIMIT.getKey()) {
+                // 不限购
+                normalQuantity = 0;
+                discountQuantity = buyCount;
+            } else {
+                int remainDiscountCount = item.getRestrictionQuantity() - (itemDailyPurchaseLogger == null ? 0 : itemDailyPurchaseLogger.getHasBuyCount());
+                if (remainDiscountCount < 0) {
+                    remainDiscountCount = 0;
+                }
+                normalQuantity = buyCount - remainDiscountCount;
+                if (normalQuantity < 0) {
+                    normalQuantity = 0;
+                }
+                discountQuantity = buyCount - normalQuantity;
+                if (discountQuantity < 0) {
+                    discountQuantity = 0;
+                }
+            }
+            discountPrice = item.getDiscountPrice();
+        }
+        long totalPrice = normalQuantity * normalPrice + discountQuantity * discountPrice;
+
+        orderItemSnapshot.setNormalQuantity(normalQuantity);
+        orderItemSnapshot.setDiscountQuantity(discountQuantity);
+        orderItemSnapshot.setNormalPrice(normalPrice);
+        orderItemSnapshot.setDiscountPrice(discountPrice);
+        orderItemSnapshot.setTotalPrice(totalPrice);
+        return orderItemSnapshot;
+    }
+
+    @Override
+    public Map<Long, MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggerMap(List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers) {
+        Map<Long, MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggerMap = new HashMap<>();
+        if (!CommonUtils.isEmpty(itemDailyPurchaseLoggers)) {
+            for (MarketItemDailyPurchaseLogger roleDailyBuyLogger : itemDailyPurchaseLoggers) {
+                itemDailyPurchaseLoggerMap.put(roleDailyBuyLogger.getItemId(), roleDailyBuyLogger);
+            }
+        }
+        return itemDailyPurchaseLoggerMap;
+    }
+
+    @Override
+    public void buyQualifications(List<MarketItem> items, List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers, JSONObject buyItems) {
+        Map<Long, MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggerMap = itemDailyPurchaseLoggerMap(itemDailyPurchaseLoggers);
+        for (MarketItem item : items) {
+            ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(item.getItemTemplateId());
+            ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
+            if (item.getStatus() != ItemStatusEnum.NORMAL.getKey()) {
+                logger.error("用户购买【" + itemTemplate.getName() + "】，目前处于下架状态(状态值：" + item.getStatus() + ")，暂不通过！");
+                throw new XlibaoRuntimeException(ItemErrorCodeEnum.ITEM_STATUS_ERROR_OFF_LINE.getKey(), "抱歉，您购买的【" + itemTemplate.getName() + "】已下架！");
+            }
+            if (item.getRestrictionQuantity() == RestrictionQuantityEnum.UN_SELL.getKey()) {
+                logger.error("用户购买【" + itemTemplate.getName() + "】，目前处于不出售状态，暂不通过！");
+                throw new XlibaoRuntimeException(ItemErrorCodeEnum.ITEM_UN_SELL.getKey(), "抱歉，您购买的【" + itemTemplate.getName() + "】已下架！");
+            }
+            // 本次购买的数量
+            int buyCount = buyItems.getIntValue(String.valueOf(item.getId()));
+            if (buyCount < item.getMinimumSellCount()) {
+                throw new XlibaoRuntimeException(ItemErrorCodeEnum.LESS_THAN_MINIMUM_SELL.getKey(), itemTemplate.getName() + "最低购买数量：" + item.getMinimumSellCount() + itemUnit.getTitle());
+            }
+            if (item.getMaximumSellCount() != RestrictionQuantityEnum.UN_LIMIT.getKey() && buyCount > item.getMaximumSellCount()) {
+                throw new XlibaoRuntimeException(ItemErrorCodeEnum.GREATER_THAN_MAXIMUM_SELL.getKey(), itemTemplate.getName() + "最多购买数量：" + item.getMaximumSellCount() + itemUnit.getTitle());
+            }
+            if (item.getRestrictionQuantity() == RestrictionQuantityEnum.UN_LIMIT.getKey()) { // 不限购
+                if (buyCount > item.getShowStock()) { // 超出库存
+                    throw new XlibaoRuntimeException(ItemErrorCodeEnum.ITEM_STOCK_NOT_ENOUGH.getKey(), "您购买的【" + itemTemplate.getName() + "】库存不足，本次最多可购买：" + item.getShowStock() + itemUnit.getTitle());
+                }
+                continue;
+            }
+            // 限购时获取今天的购买量
+            MarketItemDailyPurchaseLogger itemDailyPurchaseLogger = itemDailyPurchaseLoggerMap.get(item.getId());
+            int hasBuyCount = itemDailyPurchaseLogger == null ? 0 : itemDailyPurchaseLogger.getHasBuyCount();
+            if ((buyCount + hasBuyCount) > item.getRestrictionQuantity()) { // 超过限购量
+                if (item.getBeyondControl() == BeyondControllTypeEnum.CAN_NOT_BEYOND.getKey()) {
+                    throw new XlibaoRuntimeException(ItemErrorCodeEnum.BUY_BEYOND_CONTROLL.getKey(), "您购买的【" + itemTemplate.getName() + "】超出限购数量" +
+                            "（限购" + item.getRestrictionQuantity() + itemUnit.getTitle() + "，已购买" + hasBuyCount + itemUnit.getTitle() + "，本次购买" + buyCount + itemUnit.getTitle() + "）");
+                }
+            }
+        }
     }
 
     private long matchMarketId(long passportId, long marketId, double longitude, double latitude) {
@@ -244,7 +367,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
             itemTemplates = itemTemplateSet.toString();
         }
-        List<MarketItem> items = dataAccessFactory.getItemDataAccessManager().getItems(marketId, itemTemplates, pageStartIndex, pageSize);
+        List<MarketItem> items = dataAccessFactory.getItemDataAccessManager().getItemsForItemTemplateSet(marketId, itemTemplates, pageStartIndex, pageSize);
 
         response.put("buyMessage", fillBuyMessage(passportId, items));
         response.put("pageItemMsg", fillPageItemMessage(items));
@@ -279,7 +402,19 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         if (CommonUtils.isEmpty(itemTypes)) {
             return new JSONArray();
         }
-        return itemTypes.stream().map(itemType -> fillItemTypeMsg(itemType, fillImage)).collect(Collectors.toCollection(JSONArray::new));
+        JSONArray response = new JSONArray();
+        for (ItemType itemType : itemTypes) {
+            List<ItemType> subItemTypes = ItemDataCacheService.relationItemTypes(itemType.getId());
+            if (CommonUtils.isEmpty(subItemTypes)) {
+                continue;
+            }
+            JSONObject data = fillItemTypeMsg(itemType, fillImage);
+
+            JSONArray subItemTypeMsg = subItemTypes.stream().map(it -> fillItemTypeMsg(it, true)).collect(Collectors.toCollection(JSONArray::new));
+            data.put("subItemTypes", subItemTypeMsg);
+            response.add(data);
+        }
+        return response;
     }
 
     private JSONObject fillItemTypeMsg(ItemType itemType, boolean fillImage) {
@@ -308,19 +443,38 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return dataAccessFactory.getItemDataAccessManager().specialProducts(marketId, itemSpecialTypeEnum.getKey(), XMarketTimeConfig.ITEM_NEW_TIME, sortType, sortValue, pageStartIndex, pageSize);
     }
 
+    private OrderItemSnapshot fillBaseOrderItemSnapshot(MarketItem item) {
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(item.getItemTemplateId());
+        ItemType itemType = ItemDataCacheService.getItemType(itemTemplate.getTypeId());
+        ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
+
+        OrderItemSnapshot orderItemSnapshot = new OrderItemSnapshot();
+
+        orderItemSnapshot.setItemId(item.getId());
+        orderItemSnapshot.setItemTemplateId(itemTemplate.getId());
+        orderItemSnapshot.setItemName(itemTemplate.getName());
+        orderItemSnapshot.setItemTypeId(itemType.getId());
+        orderItemSnapshot.setItemTypeName(itemType.getTitle());
+        orderItemSnapshot.setItemUnitId(itemUnit.getId());
+        orderItemSnapshot.setItemUnitName(itemUnit.getTitle());
+        orderItemSnapshot.setItemBarcode(itemTemplate.getBarcode());
+        orderItemSnapshot.setItemCode(itemTemplate.getDefineCode());
+        orderItemSnapshot.setItemBatches(item.getProductBatches());
+        orderItemSnapshot.setIntroductionPage(itemTemplate.getIntroductionPage());
+        orderItemSnapshot.setCostPrice(item.getCostPrice());
+        orderItemSnapshot.setMarketPrice(item.getMarketPrice());
+
+        return orderItemSnapshot;
+    }
+
     private JSONObject fillBuyMessage(long passportId, List<MarketItem> items) {
         if (CommonUtils.isEmpty(items) || passportId <= 0) {
             return new JSONObject();
         }
-        String itemSet = itemSet(items);
+        String itemTemplateSet = itemTemplateSet(items);
         // 获取用户当天的购买记录
-        List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers = dataAccessFactory.getItemDataAccessManager().passportDailyBuyLoggers(passportId, itemSet);
-        Map<Long, MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggerMap = new HashMap<>();
-        if (!CommonUtils.isEmpty(itemDailyPurchaseLoggers)) {
-            for (MarketItemDailyPurchaseLogger roleDailyBuyLogger : itemDailyPurchaseLoggers) {
-                itemDailyPurchaseLoggerMap.put(roleDailyBuyLogger.getItemId(), roleDailyBuyLogger);
-            }
-        }
+        List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers = dataAccessFactory.getItemDataAccessManager().passportDailyBuyLoggers(passportId, itemTemplateSet);
+        Map<Long, MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggerMap = itemDailyPurchaseLoggerMap(itemDailyPurchaseLoggers);
         JSONObject response = new JSONObject();
         for (MarketItem item : items) {
             MarketItemDailyPurchaseLogger roleDailyBuyLogger = itemDailyPurchaseLoggerMap.get(item.getId());
@@ -374,7 +528,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return itemArray;
     }
 
-    private String itemSet(List<MarketItem> items) {
+    private String itemTemplateSet(List<MarketItem> items) {
         StringBuilder itemSet = new StringBuilder();
         for (MarketItem item : items) {
             itemSet.append(item.getItemTemplateId()).append(CommonUtils.SPLIT_COMMA);

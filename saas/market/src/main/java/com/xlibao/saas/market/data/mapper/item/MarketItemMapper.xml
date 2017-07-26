@@ -61,9 +61,17 @@
         limit #{pageStartIndex}, #{pageSize}
     </select>
 
-    <select id="getItems" resultMap="BaseResultMap">
+    <select id="getItemsForItemTemplateSet" resultMap="BaseResultMap">
         select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0
              <if test="itemTemplateSet != null"> and item_template_id in(${itemTemplateSet}) </if>
         order by create_time desc limit #{pageStartIndex}, #{pageSize}
+    </select>
+
+    <select id="getItemForItemTemplates" resultMap="BaseResultMap">
+        select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0 and item_template_id in(${itemTemplateSet})
+    </select>
+
+    <select id="getItems" resultMap="BaseResultMap">
+        select * from market_item where id in (${itemSet})
     </select>
 </mapper>

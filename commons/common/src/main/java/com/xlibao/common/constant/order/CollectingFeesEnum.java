@@ -7,6 +7,7 @@ public enum CollectingFeesEnum {
 
     /** 0 -- 不代收 */
     UN_COLLECTION(0, "不代收"),
+    /** 1 -- 代收(货到付款) */
     COLLECTION(1, "代收"),
     ;
 
