@@ -5,9 +5,11 @@ import java.util.Date;
 public class MarketItemStockLockLogger {
 
     private Long id;
+    private String orderSequenceNumber;
     private Long itemId;
     private Integer lockQuantity;
     private Integer lockType;
+    private Integer lockStatus;
     private Date lockTime;
 
     public Long getId() {
@@ -16,6 +18,14 @@ public class MarketItemStockLockLogger {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getOrderSequenceNumber() {
+        return orderSequenceNumber;
+    }
+
+    public void setOrderSequenceNumber(String orderSequenceNumber) {
+        this.orderSequenceNumber = orderSequenceNumber;
     }
 
     public Long getItemId() {
@@ -40,6 +50,14 @@ public class MarketItemStockLockLogger {
 
     public void setLockType(Integer lockType) {
         this.lockType = lockType;
+    }
+
+    public Integer getLockStatus() {
+        return lockStatus;
+    }
+
+    public void setLockStatus(Integer lockStatus) {
+        this.lockStatus = lockStatus;
     }
 
     public Date getLockTime() {

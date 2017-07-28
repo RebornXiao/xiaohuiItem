@@ -2,7 +2,7 @@ package com.xlibao.saas.market.data.model;
 
 import java.util.Date;
 
-public class MarketOrderPaymentLogger {
+public class MarketOrderStatusLogger {
 
     private Long id;
     private String orderSequenceNumber;

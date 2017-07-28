@@ -11,10 +11,10 @@ public enum TransTypeEnum {
     RECHARGE(2, "充值"),
     /** 3 -- 代付 */
     OTHER_PAYMENT(3, "代付"),
-    /** 4 -- 供应链收入 */
-    SUPPLYCHAIN_INCOME(4, "供应链收入"),
-    /** 5 -- 供应链支付 */
-    SUPPLYCHAIN_PAYMENT(5, "供应链支付"),
+    /** 4 -- 便利店收入 */
+    MARKET_INCOME(4, "便利店收入"),
+    /** 5 -- 便利店支付 */
+    MARKET_PAYMENT(5, "便利店支付"),
     /** 6 -- 提现 */
     DRAW_CASH(6, "提现"),
     ;

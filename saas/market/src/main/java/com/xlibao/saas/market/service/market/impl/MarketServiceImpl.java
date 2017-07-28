@@ -37,25 +37,18 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         long passportId = getLongParameter("passportId", 0);
         long marketId = getLongParameter("marketId", 0);
 
-        double longitude = getDoubleParameter("longitude", 0.0);
-        double latitude = getDoubleParameter("latitude", 0.0);
-
         MarketEntry marketEntry = null;
         MarketFindTypeEnum findType = MarketFindTypeEnum.CLIENT_PROVIDE;
         if (marketId != 0) {
             marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
         }
-        if (marketId == 0) {
+        if (marketEntry == null) {
             logger.error("没有找到指定的商店(market id:" + marketId + ", passport id:" + passportId + ")，尝试获取上次访问的商店");
             MarketAccessLogger accessLogger = dataAccessFactory.getMarketDataAccessManager().getLastAccessLogger(passportId);
             if (accessLogger != null) { // 寻找上次访问的商店
                 logger.info("找到用户最后一次访问的商店(market id:" + accessLogger.getMarketId() + ", passport id:" + passportId + ")");
                 marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(accessLogger.getMarketId());
                 findType = MarketFindTypeEnum.RECENT_ACCESS;
-            } else { // 获取该地址最近的商店
-                logger.error("没法获取用户最后一次访问的商店(passport id:" + passportId + ")，尝试查找附近距离用户最近且在服务范围内商店(" + longitude + ", " + latitude + ")");
-                marketEntry = dataAccessFactory.getMarketDataCacheService().findRecentMarket(longitude, latitude);
-                findType = MarketFindTypeEnum.LOCATION;
             }
         }
         if (marketEntry == null) {
@@ -92,6 +85,15 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         }
         // 1001 -- 错误的商店信息
         return MarketErrorCodeEnum.ERROR_MARKET_INFORMATION.response();
+    }
+
+    @Override
+    public JSONObject showMarkets() {
+        long passportId = getLongParameter("passportId", 0);
+        double longitude = getDoubleParameter("longitude", 0.0);
+        double latitude = getDoubleParameter("latitude", 0.0);
+
+        return null;
     }
 
     private <T> JSONArray locationMessage(List<T> t) {

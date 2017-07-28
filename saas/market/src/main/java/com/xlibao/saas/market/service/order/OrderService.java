@@ -10,4 +10,6 @@ public interface OrderService {
     JSONObject prepareCreateOrder();
 
     JSONObject generateOrder();
+
+    JSONObject paymentOrder();
 }

@@ -10,4 +10,6 @@ public interface MarketService {
     JSONObject findMarket();
 
     JSONObject filterMarket();
+
+    JSONObject showMarkets();
 }

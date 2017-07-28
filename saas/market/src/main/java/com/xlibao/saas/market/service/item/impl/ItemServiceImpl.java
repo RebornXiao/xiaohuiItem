@@ -256,7 +256,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             int hasBuyCount = itemDailyPurchaseLogger == null ? 0 : itemDailyPurchaseLogger.getHasBuyCount();
             if ((buyCount + hasBuyCount) > item.getRestrictionQuantity()) { // 超过限购量
                 if (item.getBeyondControl() == BeyondControllTypeEnum.CAN_NOT_BEYOND.getKey()) {
-                    throw new XlibaoRuntimeException(ItemErrorCodeEnum.BUY_BEYOND_CONTROLL.getKey(), "您购买的【" + itemTemplate.getName() + "】超出限购数量" +
+                    throw new XlibaoRuntimeException(ItemErrorCodeEnum.BUY_BEYOND_CONTROL.getKey(), "您购买的【" + itemTemplate.getName() + "】超出限购数量" +
                             "（限购" + item.getRestrictionQuantity() + itemUnit.getTitle() + "，已购买" + hasBuyCount + itemUnit.getTitle() + "，本次购买" + buyCount + itemUnit.getTitle() + "）");
                 }
             }

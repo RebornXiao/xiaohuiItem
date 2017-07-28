@@ -25,7 +25,7 @@ public class OrderController {
      *     每个序号有效期为5分钟，5分钟如果未完成下单操作，那么多次请求均为同一序号；
      *     若5分钟内下单后重新请求，则生成新的序号，该过程主要保护用户不会进行重复下单。
      *
-     *     <b>访问地址：</b>http://domainName/order/prepareCreateOrder
+     *     <b>访问地址：</b>http://domainName/market/order/prepareCreateOrder
      *     <b>访问方式：</b>GET/POST 推荐使用POST
      *
      *     <b>参数：</b>
@@ -46,7 +46,7 @@ public class OrderController {
      * <pre>
      *     <b>生成订单</b>
      *
-     *     <b>访问地址：</b>http://domainName/order/generateOrder
+     *     <b>访问地址：</b>http://domainName/market/order/generateOrder
      *     <b>访问方式：</b>GET/POST 推荐使用POST
      *
      *     <b>参数：</b>
@@ -74,5 +74,56 @@ public class OrderController {
     @RequestMapping(value = "generateOrder")
     public JSONObject generateOrder() {
         return orderService.generateOrder();
+    }
+
+    /**
+     * <pre>
+     *     <b>支付订单</b>
+     *
+     *     该方法仅作为供应链的支付入口，具体的支付过程实际由支付中心进行。
+     *
+     *     <b>访问地址：</b>http://domainName/market/order/paymentOrder
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>passportId</b> - long 通行证ID，必填参数。
+     *          <b>sequenceNumber</b> - String 订单序列号。
+     *          <b>paymentType</b> - String 支付类型，必填参数；参考：{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum}
+     *
+     *     <b>返回结果：</b>
+     *
+     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#BALANCE}时，返回：
+     *              <b>partnerId</b> - String 合作商户ID(供应链基于平台的合作商户号)，以xlb908开头。
+     *              <b>appId</b> - String 应用ID(平台分配给供应链系统的支付应用ID)，以908开头。
+     *              <b>prePaymentId</b> - String 预支付ID，由支付中心生成。
+     *              <b>randomParameter</b> - String 供应链本次支付过程生成的一个32位随机数
+     *              <b>timeStamp</b> - long 服务器发起支付时的时间
+     *              <b>sign</b> - String 签名参数
+     *            请求方在获得以上参数后，将上述参数填充到JSONObject数据结构中，如：{"partnerId" : "partnerId", "appId" : "appId", "prePaymentId" : "prePaymentId", "randomParameter" : "randomParameter", "timeStamp" : "timeStamp", "sign" : "sign"}。
+     *            然后将上述的JSONObject数据结果当成一个字符串(注意需要进行URLEncode.encode)填充到另一个JSONObject中，key为<b>paymentParameter</b>；连同
+     *              <b>passportId</b> - long 通行证ID
+     *              <b>paymentPassword</b> - String 支付密码
+     *            向支付中心发起余额支付请求，地址为：http://paymentDomainName/paymentController/balancePayment
+     *
+     *           支付中心负责返回支付结果的成败
+     *
+     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#ALIPAY}时，返回：paymentURL(支付宝支付链接)
+     *            前端直接将上述参数填充至支付宝提供的SDK中
+     *
+     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_NATIVE}时，返回：
+     *              <b>appid</b> - String 微信分配的appId。
+     *              <b>partnerid</b> - String 微信支付分配的商户号。
+     *              <b>prepayid</b> - String 预支付交易会话ID prepayid，微信返回的支付交易会话ID。
+     *              <b>package</b> - String 扩展字段 package 暂填写固定值Sign=WXPay
+     *              <b>noncestr</b> - String 随机字符串 noncestr 不长于32位
+     *              <b>timestamp</b> - int 时间戳
+     *              <b>sign</b> - String MD5加密后的签名字符串
+     *            前端直接将上述参数填充至微信提供的SDK中
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "paymentOrder")
+    public JSONObject paymentOrder() {
+        return orderService.paymentOrder();
     }
 }

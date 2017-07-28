@@ -1,4 +1,4 @@
-package com.xlibao.saas.market.controller;
+package com.xlibao.saas.market.controller.openapi;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.saas.market.service.payment.PaymentService;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author chinahuangxc on 2017/3/6.
  */
 @Controller
-@RequestMapping(value = "/market/paymentListener")
+@RequestMapping(value = "/market/payment/openapi")
 public class PaymentListenerController {
 
     @Autowired

@@ -3,7 +3,9 @@ package com.xlibao.saas.market.data.mapper.item;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.saas.market.data.model.MarketItem;
 import com.xlibao.saas.market.data.model.MarketItemDailyPurchaseLogger;
+import com.xlibao.saas.market.data.model.MarketItemStockLockLogger;
 import com.xlibao.saas.market.data.model.MarketSpecialButton;
+import com.xlibao.saas.market.service.item.ItemLockTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -48,11 +50,31 @@ public class ItemDataAccessManager {
         return itemMapper.getItems(itemSet);
     }
 
+    public int lockItemStock(long itemId, int lockQuantity) {
+        return itemMapper.lockItemStock(itemId, lockQuantity);
+    }
+
+    public int itemPending(long itemId, int quantity) {
+        return itemMapper.itemPending(itemId, quantity);
+    }
+
+    public int incrementPending(long itemId, int quantity) {
+        return itemMapper.incrementPending(itemId, quantity);
+    }
+
     public List<MarketSpecialButton> getButtons() {
         return specialButtonMapper.getButtons();
     }
 
     public List<MarketItemDailyPurchaseLogger> passportDailyBuyLoggers(long passportId, String itemSet) {
         return itemDailyPurchaseLoggerMapper.passportDailyBuyLoggers(passportId, itemSet, CommonUtils.todayForCH());
+    }
+
+    public int createItemStockLogger(MarketItemStockLockLogger itemStockLockLogger) {
+        return itemStockLockLoggerMapper.createItemStockLogger(itemStockLockLogger);
+    }
+
+    public List<MarketItemStockLockLogger> getItemStockLockLoggers(String orderSequenceNumber, ItemLockTypeEnum itemLockTypeEnum, int status) {
+        return itemStockLockLoggerMapper.getItemStockLockLoggers(orderSequenceNumber, itemLockTypeEnum.getKey(), status) ;
     }
 }

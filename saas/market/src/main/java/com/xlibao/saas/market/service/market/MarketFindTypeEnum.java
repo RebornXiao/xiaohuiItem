@@ -5,8 +5,11 @@ package com.xlibao.saas.market.service.market;
  */
 public enum MarketFindTypeEnum {
 
+    /** 1 -- 选择商店 */
     CLIENT_PROVIDE(1, "选择商店"),
+    /** 2 -- 最近访问 */
     RECENT_ACCESS(2, "最近访问"),
+    /** 3 -- 距离最近 */
     LOCATION(3, "距离最近"),
     ;
 

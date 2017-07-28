@@ -15,7 +15,7 @@ public enum ItemErrorCodeEnum {
     /** 2002 -- 商品下架状态 */
     ITEM_STATUS_ERROR_OFF_LINE(2002, "商品下架状态"),
     /** 2003 -- 超出限购数量 */
-    BUY_BEYOND_CONTROLL(2003, "超出限购数量"),
+    BUY_BEYOND_CONTROL(2003, "超出限购数量"),
     /** 2004 -- 商品库存不足 */
     ITEM_STOCK_NOT_ENOUGH(2004, "库存不足"),
     /** 2005 -- 商品存于不销售状态 */

@@ -74,4 +74,16 @@
     <select id="getItems" resultMap="BaseResultMap">
         select * from market_item where id in (${itemSet})
     </select>
+
+    <update id="lockItemStock">
+        update market_item set lock_stock = lock_stock + #{lockQuantity} where id = #{itemId} and (stock + oversold_quantity - lock_stock - pending_quantity - #{lockQuantity}) > 0
+    </update>
+
+    <update id="itemPending">
+        update market_item set lock_stock = lock_stock - #{quantity}, pending_quantity = pending_quantity + #{quantity} where id = #{itemId}
+    </update>
+
+    <update id="incrementPending">
+        update market_item set pending_quantity = pending_quantity + #{quantity} where id = #{itemId}
+    </update>
 </mapper>

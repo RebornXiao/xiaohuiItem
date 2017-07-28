@@ -18,4 +18,10 @@ public interface MarketItemMapper {
     List<MarketItem> getItemForItemTemplates(@Param("marketId") long marketId, @Param("itemTemplateSet") String itemTemplateSet);
 
     List<MarketItem> getItems(@Param("itemSet") String itemSet);
+
+    int lockItemStock(@Param("itemId") long itemId, @Param("lockQuantity") int lockQuantity);
+
+    int itemPending(@Param("itemId") long itemId, @Param("quantity") int quantity);
+
+    int incrementPending(@Param("itemId") long itemId, @Param("quantity") int quantity);
 }
