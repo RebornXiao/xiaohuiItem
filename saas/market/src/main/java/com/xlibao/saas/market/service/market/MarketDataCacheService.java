@@ -11,9 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -39,6 +37,8 @@ public class MarketDataCacheService {
     private static final Map<Long, MarketEntry> markets = new ConcurrentHashMap<>();
     private static final Map<Long, List<Long>> streetMarketCache = new ConcurrentHashMap<>();
     private static final Map<Long, Long> passportCache = new ConcurrentHashMap<>();
+
+    private final MarketDistanceComparator marketDistanceComparator = new MarketDistanceComparator();
 
     void initMarketCache() {
         Callable<Boolean> loaderMarketCallable = new Callable<Boolean>() {
@@ -175,14 +175,13 @@ public class MarketDataCacheService {
         return dataAccessFactory.getMarketDataAccessManager().getMarketForPassport(passportId);
     }
 
-    public MarketEntry findRecentMarket(double longitude, double latitude) {
+    public List<MarketEntry> findRecentMarket(double longitude, double latitude) {
         try {
             if (!MARKET_READ_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
                 return null;
             }
-            MarketEntry market = null;
+            List<MarketEntry> marketEntries = new ArrayList<>();
             try {
-                int lastDistance = 0;
                 for (MarketEntry marketEntry : markets.values()) {
                     if (marketEntry.getStatus() == MarketStatusEnum.CLOSE.getKey()) {
                         // 关闭状态
@@ -196,12 +195,14 @@ public class MarketDataCacheService {
                     if (distance > marketEntry.getCoveringDistance()) { // 超出配送距离
                         continue;
                     }
-                    if (market == null || distance < lastDistance) {
-                        lastDistance = distance;
-                        market = marketEntry;
-                    }
+                    MarketEntry market = marketEntry.clone();
+                    market.setDistance(distance);
+                    marketEntries.add(market);
                 }
-                return market;
+                if (!CommonUtils.isEmpty(marketEntries)) {
+                    Collections.sort(marketEntries, marketDistanceComparator);
+                }
+                return marketEntries;
             } finally {
                 MARKET_READ_LOCK.unlock();
             }
@@ -227,5 +228,25 @@ public class MarketDataCacheService {
         // 仓库集合
         marketSet = marketSet.deleteCharAt(marketSet.length() - 1);
         return marketSet.toString();
+    }
+
+    private class MarketDistanceComparator implements Comparator<MarketEntry> {
+
+        @Override
+        public int compare(MarketEntry source, MarketEntry target) {
+            if (source.getDistance() < target.getDistance()) {
+                return -1;
+            }
+            if (source.getDistance() > target.getDistance()) {
+                return 1;
+            }
+            if (source.getCreateTime().getTime() < target.getCreateTime().getTime()) {
+                return -1;
+            }
+            if (source.getCreateTime().getTime() > target.getCreateTime().getTime()) {
+                return 1;
+            }
+            return 0;
+        }
     }
 }

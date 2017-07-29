@@ -2,6 +2,7 @@ package com.xlibao.saas.market.service;
 
 import com.xlibao.saas.market.service.item.ItemApplicationContextNotify;
 import com.xlibao.saas.market.service.market.MarketApplicationContextNotify;
+import com.xlibao.saas.market.service.order.OrderApplicationContextNotify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +20,8 @@ public class ApplicationContextLoaderNotify {
     private MarketApplicationContextNotify marketApplicationContextNotify;
     @Autowired
     private ItemApplicationContextNotify itemApplicationContextNotify;
+    @Autowired
+    private OrderApplicationContextNotify orderApplicationContextNotify;
 
     /**
      * <pre>
@@ -37,5 +40,6 @@ public class ApplicationContextLoaderNotify {
 
         marketApplicationContextNotify.loaderNotify();
         itemApplicationContextNotify.loaderNotify();
+        orderApplicationContextNotify.loaderNotify();
     }
 }

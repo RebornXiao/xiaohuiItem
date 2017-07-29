@@ -23,7 +23,6 @@ import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketEntry;
 import com.xlibao.saas.market.data.model.MarketItem;
 import com.xlibao.saas.market.data.model.MarketItemDailyPurchaseLogger;
-import com.xlibao.saas.market.service.XMarketServiceConfig;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.item.ItemErrorCodeEnum;
 import com.xlibao.saas.market.service.order.OrderEventListenerManager;
@@ -226,43 +225,39 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         }
         List<OrderItemSnapshot> orderItemSnapshots = order.getItemSnapshots();
 
-        JSONObject buyItems = new JSONObject();
+        JSONObject buyItemTemplates = new JSONObject();
         Map<Long, OrderItemSnapshot> itemSnapshotMapperMap = new HashMap<>();
         for (OrderItemSnapshot itemSnapshot : orderItemSnapshots) {
             itemSnapshotMapperMap.put(itemSnapshot.getItemId(), itemSnapshot);
-            buyItems.put(String.valueOf(itemSnapshot.getItemId()), itemSnapshot.getNormalQuantity() + itemSnapshot.getDiscountQuantity());
+            buyItemTemplates.put(String.valueOf(itemSnapshot.getItemTemplateId()), itemSnapshot.totalQuantity());
         }
-        List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers = dataAccessFactory.getItemDataAccessManager().passportDailyBuyLoggers(passportId, processItemTemplateSet(buyItems));
-        // 购买资格检查
-        List<MarketItem> items = buyQualifications(buyItems, itemDailyPurchaseLoggers);
 
-        Map<Long, List<OrderItemSnapshot>> itemSnapshotMap = groupItems(passportId, buyItems, items, itemDailyPurchaseLoggers);
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarketForPassport(order.getShippingPassportId());
+        List<OrderItemSnapshot> itemSnapshots = generateItemSnapshots(passportId, marketEntry.getId(), buyItemTemplates);
 
         long actualPrice = 0;
         long totalPrice = 0;
-        for (List<OrderItemSnapshot> itemSnapshots : itemSnapshotMap.values()) {
-            for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
-                OrderItemSnapshot snapshot = itemSnapshotMapperMap.get(itemSnapshot.getItemId());
-                if (!snapshot.isMatch(itemSnapshot)) {
-                    // 修改商品快照属性 远程服务
-                    OrderRemoteService.modifyItemSnapshot(order.getId(), itemSnapshot.getItemId(), itemSnapshot.getNormalPrice(), itemSnapshot.getDiscountPrice(), itemSnapshot.getNormalQuantity(), itemSnapshot.getDiscountQuantity(), itemSnapshot.getTotalPrice());
-                }
-                actualPrice += itemSnapshot.getTotalPrice();
-                totalPrice += (itemSnapshot.getNormalPrice() * (itemSnapshot.getNormalQuantity() + itemSnapshot.getDiscountQuantity()));
+        for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
+            OrderItemSnapshot snapshot = itemSnapshotMapperMap.get(itemSnapshot.getItemId());
+            if (!snapshot.isMatch(itemSnapshot)) {
+                // 修改商品快照属性 远程服务
+                OrderRemoteService.modifyItemSnapshot(order.getId(), itemSnapshot.getItemId(), itemSnapshot.getNormalPrice(), itemSnapshot.getDiscountPrice(), itemSnapshot.getNormalQuantity(), itemSnapshot.getDiscountQuantity(), itemSnapshot.getTotalPrice());
             }
+            actualPrice += itemSnapshot.getTotalPrice();
+            totalPrice += (itemSnapshot.getNormalPrice() * (itemSnapshot.totalQuantity()));
         }
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarketForPassport(order.getShippingPassportId());
+        long deliveryCost = marketEntry.getDeliveryCost();
         // 仓库的配送费
-        actualPrice += warehouseProperties.getDistributionCost();
-        totalPrice += warehouseProperties.getDistributionCost();
+        actualPrice += deliveryCost;
+        totalPrice += deliveryCost;
 
-        if (!order.isPriceMatch(actualPrice, totalPrice, totalPrice - actualPrice, warehouseProperties.getDistributionCost())) {
-            OrderRemoteService.correctOrderPrice(order.getId(), actualPrice, totalPrice, totalPrice - actualPrice, warehouseProperties.getDistributionCost());
+        if (!order.isPriceMatch(actualPrice, totalPrice, totalPrice - actualPrice, deliveryCost)) {
+            OrderRemoteService.correctOrderPrice(order.getId(), actualPrice, totalPrice, totalPrice - actualPrice, deliveryCost);
 
-            order.setActualPrice(actualPrice + warehouseProperties.getDistributionCost());
-            order.setTotalPrice(totalPrice + warehouseProperties.getDistributionCost());
+            order.setActualPrice(actualPrice);
+            order.setTotalPrice(totalPrice);
             order.setDiscountPrice(totalPrice - actualPrice);
-            order.setDistributionFee(warehouseProperties.getDistributionCost());
+            order.setDistributionFee(deliveryCost);
         }
     }
 

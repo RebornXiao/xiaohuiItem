@@ -37,6 +37,9 @@ public class OrderEventListenerManager {
     }
 
     public void notifyOrderPayment(OrderEntry orderEntry) {
+        // 先处理通知其他模块前的业务
+        // TODO 1、通知订单系统修改订单的状态
+        // TODO 2、记录远程通知结果
         for (Map.Entry<String, OrderEventListener> entrys : ORDER_EVENT_LISTENER_MAP.entrySet()) {
             try {
                 entrys.getValue().notifyOrderPayment(orderEntry);

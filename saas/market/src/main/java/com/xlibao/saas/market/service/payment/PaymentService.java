@@ -7,11 +7,5 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface PaymentService {
 
-    JSONObject notifyOrderBalancePayment();
-
-    JSONObject notifyNativeAlipayPayment();
-
-    JSONObject notifyNativeWeixinAppPayment();
-
-    JSONObject notifyNativeWeixinJSPayment();
+    JSONObject notifyPaymentOrder();
 }

@@ -3,6 +3,7 @@ package com.xlibao.saas.market.service.market.impl;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
+import com.xlibao.common.CommonUtils;
 import com.xlibao.datacache.location.LocationDataCacheService;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketAccessLogger;
@@ -89,11 +90,16 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
 
     @Override
     public JSONObject showMarkets() {
-        long passportId = getLongParameter("passportId", 0);
+        // long passportId = getLongParameter("passportId", 0);
         double longitude = getDoubleParameter("longitude", 0.0);
         double latitude = getDoubleParameter("latitude", 0.0);
 
-        return null;
+        List<MarketEntry> marketEntries = dataAccessFactory.getMarketDataCacheService().findRecentMarket(longitude, latitude);
+        if (CommonUtils.isEmpty(marketEntries)) {
+            return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response();
+        }
+        JSONArray response = marketEntries.stream().map(MarketEntry::message).collect(Collectors.toCollection(JSONArray::new));
+        return success(response);
     }
 
     private <T> JSONArray locationMessage(List<T> t) {

@@ -54,7 +54,7 @@ public class PaymentRemoteService extends BasicWebService {
 
         CommonUtils.fillSignature(signParameters, ConfigFactory.getXMarketConfig().getPaymentAppkey());
 
-        String parameter = HttpRequest.post(ConfigFactory.getDomainNameConfig().paymentRemoteURL + "paymentController/unifiedOrder", signParameters);
+        String parameter = HttpRequest.post(ConfigFactory.getDomainNameConfig().orderRemoteURL + "order/payment/unifiedOrder", signParameters);
 
         JSONObject response = JSONObject.parseObject(parameter);
 

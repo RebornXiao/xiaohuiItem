@@ -27,6 +27,8 @@ public class MarketEntry {
     private Long deliveryCost;
     private Date createTime;
 
+    private int distance = 0;
+
     public Long getId() {
         return id;
     }
@@ -179,6 +181,40 @@ public class MarketEntry {
         this.createTime = createTime;
     }
 
+    public void setDistance(int distance) {
+        this.distance = distance;
+    }
+
+    public int getDistance() {
+        return distance;
+    }
+
+    @Override
+    public MarketEntry clone() {
+        MarketEntry marketEntry = new MarketEntry();
+        marketEntry.setId(getId());
+        marketEntry.setPassportId(getPassportId());
+        marketEntry.setName(getName());
+        marketEntry.setType(getType());
+        marketEntry.setStatus(getStatus());
+        marketEntry.setAdminName(getAdminName());
+        marketEntry.setPhoneNumber(getPhoneNumber());
+        marketEntry.setStreetId(getStreetId());
+        marketEntry.setProvince(getProvince());
+        marketEntry.setCity(getCity());
+        marketEntry.setDistrict(getDistrict());
+        marketEntry.setStreet(getStreet());
+        marketEntry.setStreetNumber(getStreetNumber());
+        marketEntry.setAddress(getAddress());
+        marketEntry.setLocation(getLocation());
+        marketEntry.setCoveringDistance(getCoveringDistance());
+        marketEntry.setDeliveryMode(getDeliveryMode());
+        marketEntry.setDeliveryCost(getDeliveryCost());
+        marketEntry.setCreateTime(getCreateTime());
+
+        return marketEntry;
+    }
+
     public JSONObject message() {
         JSONObject response = new JSONObject();
 
@@ -194,6 +230,7 @@ public class MarketEntry {
         response.put("coveringDistance", CommonUtils.formatDistance(getCoveringDistance()));
         response.put("deliveryMode", getDeliveryMode());
         response.put("deliveryCost", getDeliveryCost());
+        response.put("formatDistance", CommonUtils.formatDistance(distance));
 
         return response;
     }

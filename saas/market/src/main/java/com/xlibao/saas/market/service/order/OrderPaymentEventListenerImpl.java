@@ -18,6 +18,6 @@ public class OrderPaymentEventListenerImpl implements PaymentEventListener {
 
     @Override
     public void notifyPayment(OrderEntry order, String paymentType) {
-
+        // 支付完成的回调通知
     }
 }
