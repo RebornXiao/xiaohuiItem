@@ -7,6 +7,7 @@ import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import com.xlibao.saas.market.data.DataAccessFactory;
+import com.xlibao.saas.market.data.model.MarketItemLocation;
 import com.xlibao.saas.market.data.model.MarketItemStockLockLogger;
 import com.xlibao.saas.market.listener.OrderEventListener;
 import org.slf4j.Logger;
@@ -32,32 +33,34 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
 
     @Override
     public void notifyCreatedOrder(OrderEntry orderEntry) {
-        if (orderEntry.getType() == OrderTypeEnum.SALE_ORDER_TYPE.getKey()) {
-            logger.info("订单建立完成，正在锁定库存，订单序列号为：" + orderEntry.getOrderSequenceNumber());
+        if (orderEntry.getType() != OrderTypeEnum.SALE_ORDER_TYPE.getKey()) {
+            return;
+        }
+        logger.info("订单建立完成，正在锁定库存，订单序列号为：" + orderEntry.getOrderSequenceNumber());
 
-            List<OrderItemSnapshot> itemSnapshots = orderEntry.getItemSnapshots();
-            for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
-                logger.info("正在对订单[" + orderEntry.getOrderSequenceNumber() + "]的商品进行锁定操作，当前商品：" + itemSnapshot.getItemName() + "(" + itemSnapshot.getItemId() + ")；锁定数量：" + itemSnapshot.totalQuantity());
-                // 锁定库存
-                int result = dataAccessFactory.getItemDataAccessManager().lockItemStock(itemSnapshot.getItemId(), itemSnapshot.totalQuantity());
-                if (result <= 0) {
-                    // 干脆整批不锁定
-                    logger.error("【更新锁定库存】对订单[" + orderEntry.getOrderSequenceNumber() + "]的商品进行锁定操作时发生了错误，当前商品：" + itemSnapshot.getItemName() + "(" + itemSnapshot.getItemId() + ")；锁定数量：" + itemSnapshot.totalQuantity());
-                    throw new XlibaoRuntimeException("锁定商品库存失败");
-                }
-                MarketItemStockLockLogger itemStockLockLogger = new MarketItemStockLockLogger();
-                itemStockLockLogger.setOrderSequenceNumber(orderEntry.getOrderSequenceNumber());
-                itemStockLockLogger.setItemId(itemSnapshot.getItemId());
-                itemStockLockLogger.setLockQuantity(itemSnapshot.totalQuantity());
-                itemStockLockLogger.setLockType(ItemLockTypeEnum.CREATE_ORDER.getKey());
-                itemStockLockLogger.setLockStatus((int) GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
-                itemStockLockLogger.setLockTime(new Date());
-                result = dataAccessFactory.getItemDataAccessManager().createItemStockLogger(itemStockLockLogger);
-                if (result <= 0) {
-                    // 干脆整批不锁定
-                    logger.error("【添加锁定记录】对订单[" + orderEntry.getOrderSequenceNumber() + "]的商品进行锁定操作时发生了错误，当前商品：" + itemSnapshot.getItemName() + "(" + itemSnapshot.getItemId() + ")；锁定数量：" + itemSnapshot.totalQuantity());
-                    throw new XlibaoRuntimeException("锁定商品库存失败");
-                }
+        List<OrderItemSnapshot> itemSnapshots = orderEntry.getItemSnapshots();
+        for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
+            logger.info("正在对订单[" + orderEntry.getOrderSequenceNumber() + "]的商品进行锁定操作，当前商品：" + itemSnapshot.getItemName() + "(" + itemSnapshot.getItemId() + ")；锁定数量：" + itemSnapshot.totalQuantity());
+            // 锁定库存
+            int result = dataAccessFactory.getItemDataAccessManager().lockItemStock(itemSnapshot.getItemId(), itemSnapshot.totalQuantity());
+            if (result <= 0) {
+                // 干脆整批不锁定
+                logger.error("【更新锁定库存】对订单[" + orderEntry.getOrderSequenceNumber() + "]的商品进行锁定操作时发生了错误，当前商品：" + itemSnapshot.getItemName() + "(" + itemSnapshot.getItemId() + ")；锁定数量：" + itemSnapshot.totalQuantity());
+                throw new XlibaoRuntimeException("锁定商品库存失败");
+            }
+            MarketItemStockLockLogger itemStockLockLogger = new MarketItemStockLockLogger();
+            itemStockLockLogger.setOrderSequenceNumber(orderEntry.getOrderSequenceNumber());
+            itemStockLockLogger.setItemId(itemSnapshot.getItemId());
+            itemStockLockLogger.setItemTemplateId(itemSnapshot.getItemTemplateId());
+            itemStockLockLogger.setLockQuantity(itemSnapshot.totalQuantity());
+            itemStockLockLogger.setLockType(ItemLockTypeEnum.CREATE_ORDER.getKey());
+            itemStockLockLogger.setLockStatus((int) GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
+            itemStockLockLogger.setLockTime(new Date());
+            result = dataAccessFactory.getItemDataAccessManager().createItemStockLogger(itemStockLockLogger);
+            if (result <= 0) {
+                // 干脆整批不锁定
+                logger.error("【添加锁定记录】对订单[" + orderEntry.getOrderSequenceNumber() + "]的商品进行锁定操作时发生了错误，当前商品：" + itemSnapshot.getItemName() + "(" + itemSnapshot.getItemId() + ")；锁定数量：" + itemSnapshot.totalQuantity());
+                throw new XlibaoRuntimeException("锁定商品库存失败");
             }
         }
     }
@@ -68,6 +71,7 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
         if (!CommonUtils.isEmpty(itemStockLockLoggers)) { // 原来存在锁定的记录 进行解锁同时新增挂起数量
             for (MarketItemStockLockLogger itemStockLockLogger : itemStockLockLoggers) {
                 dataAccessFactory.getItemDataAccessManager().itemPending(itemStockLockLogger.getItemId(), itemStockLockLogger.getLockQuantity());
+                decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemStockLockLogger.getItemId(), itemStockLockLogger.getItemTemplateId(), itemStockLockLogger.getLockQuantity());
             }
             return;
         }
@@ -75,6 +79,28 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
         List<OrderItemSnapshot> itemSnapshots = orderEntry.getItemSnapshots();
         for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
             dataAccessFactory.getItemDataAccessManager().incrementPending(itemSnapshot.getItemId(), itemSnapshot.totalQuantity());
+            decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemSnapshot.getItemId(), itemSnapshot.getItemTemplateId(), itemSnapshot.totalQuantity());
+        }
+    }
+
+    private void decrementItemLocationStock(String orderSequenceNumber, long itemId, long itemTemplateId, int quantity) {
+        List<MarketItemLocation> itemLocations = dataAccessFactory.getItemDataAccessManager().getItemLocations(itemId);
+        for (MarketItemLocation itemLocation : itemLocations) {
+            int decrementStock = quantity;
+            if (itemLocation.getStock() < quantity) { // 库存不足时 将库存清空
+                decrementStock = itemLocation.getStock();
+            }
+            int result = dataAccessFactory.getItemDataAccessManager().updateItemLocationStock(itemLocation.getId(), itemLocation.getStock());
+            if (result > 0) { // 数据库执行成功后减少未出货数量
+                quantity -= decrementStock;
+            }
+            if (quantity <= 0) {
+                break;
+            }
+        }
+        if (quantity > 0) {
+            logger.error("【" + orderSequenceNumber + "】严重问题，商品库存不足，商品ID：" + itemId + "，需要扣除数量：" + quantity);
+            ItemErrorCodeEnum.ITEM_STOCK_NOT_ENOUGH.throwException();
         }
     }
 

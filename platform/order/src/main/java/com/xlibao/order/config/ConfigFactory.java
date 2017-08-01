@@ -16,17 +16,26 @@ public class ConfigFactory {
 
     @Autowired
     private DomainNameConfig domainNameConfig;
+    @Autowired
+    private OrderConfig orderConfig;
 
     private static DomainNameConfig domainName;
+    private static OrderConfig order;
 
     @PostConstruct
     public void initialization() {
         domainName = domainNameConfig;
 
         PassportRemoteService.setPassportRemoteServiceURL(domainName.passportRemoteURL);
+
+        order = orderConfig;
     }
 
     public static DomainNameConfig getDomainNameConfig() {
         return domainName;
+    }
+
+    public static OrderConfig getOrderConfig() {
+        return order;
     }
 }

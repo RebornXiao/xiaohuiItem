@@ -1,7 +1,13 @@
 package com.xlibao.common.support;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
+import com.xlibao.common.DefineRandom;
+import com.xlibao.common.constant.payment.PaymentTypeEnum;
+import com.xlibao.common.http.HttpRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,7 +15,28 @@ import java.util.Map;
 /**
  * @author chinahuangxc on 2017/5/24.
  */
-public class SharePaymentRemoteService {
+public class SharePaymentRemoteService extends BasicWebService {
+
+    private static final Logger logger = LoggerFactory.getLogger(SharePaymentRemoteService.class);
+
+    public static JSONObject paymentOrder(Map<String, String> signParameters, String partnerId, String appId, String appKey, String urlPrefix, String paymentType) {
+        signParameters.put("partnerId", partnerId);
+        signParameters.put("appId", appId);
+        signParameters.put("randomParameter", DefineRandom.randomString(32));
+
+        CommonUtils.fillSignature(signParameters, appKey);
+
+        String parameter = HttpRequest.post(urlPrefix + "payment/unifiedOrder", signParameters);
+
+        JSONObject response = JSONObject.parseObject(parameter);
+
+        logger.info("请求支付订单结果：" + response);
+
+        if (response.getIntValue("code") == 0 && PaymentTypeEnum.BALANCE.getKey().equals(paymentType)) {
+            return success(fillBalanceParameter(partnerId, appId, appKey, response.getJSONObject("response").getString("prePaymentId"), DefineRandom.randomChar(32)));
+        }
+        return response;
+    }
 
     public static JSONObject fillBalanceParameter(String partnerId, String appId, String appKey, String prePaymentId, String randomParameter) {
         JSONObject parameters = new JSONObject();

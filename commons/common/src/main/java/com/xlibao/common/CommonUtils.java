@@ -169,6 +169,11 @@ public class CommonUtils {
         return MINUTE_MILLISECOND_TIME * minute;
     }
 
+    public static int daysForMonth() {
+        Calendar calendar = Calendar.getInstance();
+        return calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+    }
+
     /**
      * <pre>
      * 是否仍然处于冷却时间
@@ -605,7 +610,6 @@ public class CommonUtils {
         return lastDayOfMonth(month - 1);
     }
 
-
     public static int lastDayOfMonth(int month) {
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.MONTH, month);
@@ -992,6 +996,8 @@ public class CommonUtils {
 //        for (int i = 1; i <= 12; i++) {
 //            System.out.println(lastDayOfMonthForCH(i));
 //        }
+
+        System.out.println(daysForMonth());
         System.out.println(luhn("4392250033791558"));
         System.out.println(luhn("6222023602013173927"));
         System.out.println(formatNumber(1023 / 100f, "0.00"));

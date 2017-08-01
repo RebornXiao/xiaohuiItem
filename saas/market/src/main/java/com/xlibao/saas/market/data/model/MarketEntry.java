@@ -10,6 +10,7 @@ public class MarketEntry {
     private Long id;
     private Long passportId;
     private String name;
+    private String image;
     private Integer type;
     private Integer status;
     private String adminName;
@@ -51,6 +52,14 @@ public class MarketEntry {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Integer getType() {

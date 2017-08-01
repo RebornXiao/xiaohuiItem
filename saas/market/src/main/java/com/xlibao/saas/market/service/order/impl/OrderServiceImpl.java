@@ -14,7 +14,7 @@ import com.xlibao.common.constant.order.PushTypeEnum;
 import com.xlibao.common.constant.payment.TransTypeEnum;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
-import com.xlibao.common.service.PlatformErrorCodeEnum;
+import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
@@ -131,7 +131,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         correctingOrderCost(passportId, order);
         // // 总共需要支付的费用
         long paymentAmount = order.getActualPrice();
-        // 支付过程由支付中心执行
+        // 支付过程由订单中心执行
         return PaymentRemoteService.paymentOrder(passportId, passportId, orderSequenceNumber, paymentType, String.valueOf(TransTypeEnum.MARKET_PAYMENT.getKey()), paymentAmount, TransTypeEnum.PAYMENT.getKey(),
                 paymentAmount, TransTypeEnum.PAYMENT.getValue(), "", GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), 0, "");
     }

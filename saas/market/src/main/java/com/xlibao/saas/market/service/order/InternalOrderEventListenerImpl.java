@@ -1,9 +1,11 @@
 package com.xlibao.saas.market.service.order;
 
 import com.xlibao.metadata.order.OrderEntry;
+import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.listener.OrderEventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class InternalOrderEventListenerImpl implements OrderEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(InternalOrderEventListenerImpl.class);
+
+    @Autowired
+    private DataAccessFactory dataAccessFactory;
 
     @Override
     public void notifyCreatedOrder(OrderEntry entry) {

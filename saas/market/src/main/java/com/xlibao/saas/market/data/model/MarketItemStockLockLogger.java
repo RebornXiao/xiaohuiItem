@@ -7,6 +7,7 @@ public class MarketItemStockLockLogger {
     private Long id;
     private String orderSequenceNumber;
     private Long itemId;
+    private Long itemTemplateId;
     private Integer lockQuantity;
     private Integer lockType;
     private Integer lockStatus;
@@ -66,5 +67,13 @@ public class MarketItemStockLockLogger {
 
     public void setLockTime(Date lockTime) {
         this.lockTime = lockTime;
+    }
+
+    public long getItemTemplateId() {
+        return itemTemplateId;
+    }
+
+    public void setItemTemplateId(long itemTemplateId) {
+        this.itemTemplateId = itemTemplateId;
     }
 }

@@ -9,7 +9,7 @@ import com.xlibao.common.constant.item.ItemStatusEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.lbs.baidu.AddressComponent;
 import com.xlibao.common.lbs.baidu.BaiduWebAPI;
-import com.xlibao.common.service.PlatformErrorCodeEnum;
+import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
@@ -52,7 +52,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         double longitude = getDoubleParameter("longitude", 0.0);
         double latitude = getDoubleParameter("latitude", 0.0);
         // 匹配可用的商店ID
-        marketId = matchMarketId(passportId, marketId, longitude, latitude);
+        marketId = matchMarketId(passportId, marketId);
 
         // Banner
         JSONArray bannerMsg = bannerMsg(marketId, latitude, longitude);
@@ -100,7 +100,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
 
-        marketId = matchMarketId(passportId, marketId, longitude, latitude);
+        marketId = matchMarketId(passportId, marketId);
         if (marketId == 0) {
             return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response();
         }
@@ -263,17 +263,11 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         }
     }
 
-    private long matchMarketId(long passportId, long marketId, double longitude, double latitude) {
+    private long matchMarketId(long passportId, long marketId) {
         if (marketId == 0) { // 若没有指定商店 那么寻找上次访问的商店
             MarketAccessLogger accessLogger = dataAccessFactory.getMarketDataAccessManager().getLastAccessLogger(passportId);
             if (accessLogger != null) {
                 marketId = accessLogger.getMarketId();
-            }
-        }
-        if (marketId == 0) { // 若无法找到上次访问的商店 那么根据当前位置找到最近的商店
-            MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().findRecentMarket(longitude, latitude);
-            if (marketEntry != null) {
-                marketId = marketEntry.getId();
             }
         }
         return marketId;

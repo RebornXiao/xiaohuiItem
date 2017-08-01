@@ -21,7 +21,8 @@ public class OrderControllerAop extends BasicWebService {
 
     private static final Logger logger = LoggerFactory.getLogger(OrderControllerAop.class);
 
-    @Around(value = "execution(* com.xlibao.order.controller.OrderController.*(..))")
+    @Around(value = "execution(* com.xlibao.order.controller.OrderController.*(..)) || " +
+            "execution(* com.xlibao.order.controller.OrderPaymentController.*(..))")
     public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
         try {
             PassportRemoteService.signatureSecurity(getHttpServletRequest());

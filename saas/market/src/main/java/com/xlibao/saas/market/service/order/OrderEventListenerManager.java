@@ -31,20 +31,17 @@ public class OrderEventListenerManager {
             try {
                 entrys.getValue().notifyCreatedOrder(orderEntry);
             } catch (Exception ex) {
-                logger.error("通知订单创建完成的后续操作发生了异常，正在执行的系统：" + entrys.getKey(), ex);
+                logger.error("【" + orderEntry.getOrderSequenceNumber() + "】通知订单创建完成的后续操作发生了异常，正在执行的系统：" + entrys.getKey(), ex);
             }
         }
     }
 
     public void notifyOrderPayment(OrderEntry orderEntry) {
-        // 先处理通知其他模块前的业务
-        // TODO 1、通知订单系统修改订单的状态
-        // TODO 2、记录远程通知结果
         for (Map.Entry<String, OrderEventListener> entrys : ORDER_EVENT_LISTENER_MAP.entrySet()) {
             try {
                 entrys.getValue().notifyOrderPayment(orderEntry);
             } catch (Exception ex) {
-                logger.error("通知订单支付完成的后续操作发生了异常，正在执行的系统：" + entrys.getKey(), ex);
+                logger.error("【" + orderEntry.getOrderSequenceNumber() + "】通知订单支付完成的后续操作发生了异常，正在执行的系统：" + entrys.getKey(), ex);
             }
         }
     }
@@ -54,7 +51,7 @@ public class OrderEventListenerManager {
             try {
                 entrys.getValue().notifyDeliveredOrderEntry(orderEntry);
             } catch (Exception ex) {
-                logger.error("通知订单开始配送的后续操作发生了异常，正在执行的系统：" + entrys.getKey(), ex);
+                logger.error("【" + orderEntry.getOrderSequenceNumber() + "】通知订单开始配送的后续操作发生了异常，正在执行的系统：" + entrys.getKey(), ex);
             }
         }
     }
@@ -64,7 +61,7 @@ public class OrderEventListenerManager {
             try {
                 entrys.getValue().notifyConfirmedOrderEntry(orderEntry);
             } catch (Exception ex) {
-                logger.error("通知订单开始配送的后续操作发生了异常，正在执行的系统：" + entrys.getKey(), ex);
+                logger.error("【" + orderEntry.getOrderSequenceNumber() + "】通知订单开始配送的后续操作发生了异常，正在执行的系统：" + entrys.getKey(), ex);
             }
         }
     }
@@ -74,7 +71,7 @@ public class OrderEventListenerManager {
             try {
                 entrys.getValue().notifyCanceledOrderEntry(orderEntry);
             } catch (Exception ex) {
-                logger.error("通知订单取消的后续操作发生了异常，正在执行的系统：" + entrys.getKey(), ex);
+                logger.error("【" + orderEntry.getOrderSequenceNumber() + "】通知订单取消的后续操作发生了异常，正在执行的系统：" + entrys.getKey(), ex);
             }
         }
     }

@@ -1,4 +1,4 @@
-package com.xlibao.common.service;
+package com.xlibao.common.exception;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
@@ -12,8 +12,13 @@ public enum PlatformErrorCodeEnum {
     NO_MORE_DATA(100, "没有更多数据"),
     /** 200 -- 错误的手机号 */
     PHONE_NUMBER_ERROR(200, "错误的手机号"),
+    /** 201 -- 应用设置拦截消息 */
+    SETTING_ERROR(201,"应用设置拦截消息"),
     /** 999 -- 您的登录已过期或帐号存在泄漏风险，请重新登录 */
     INVALID_ACCESS(999, "您的登录已过期或帐号存在泄漏风险，请重新登录"),
+
+    /** 300 -- 签名验证失败 */
+    SIGN_ERROR(300, "签名验证失败"),
     ;
 
     private int key;
@@ -38,5 +43,13 @@ public enum PlatformErrorCodeEnum {
 
     public JSONObject response() {
         return response(getValue());
+    }
+
+    public void throwException() {
+        throwException(getValue());
+    }
+
+    public void throwException(String message) {
+        throw new XlibaoRuntimeException(getKey(), message);
     }
 }

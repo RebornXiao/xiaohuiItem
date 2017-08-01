@@ -8,14 +8,23 @@ import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.GlobalConstantConfig;
 import com.xlibao.common.constant.device.DeviceTypeEnum;
 import com.xlibao.common.constant.message.TargetTypeEnum;
-import com.xlibao.common.constant.order.*;
+import com.xlibao.common.constant.order.OrderRoleTypeEnum;
+import com.xlibao.common.constant.order.OrderSequenceNumberStatusEnum;
+import com.xlibao.common.constant.order.OrderStatusEnum;
+import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
+import com.xlibao.common.constant.payment.TransStatusEnum;
+import com.xlibao.common.constant.payment.TransTypeEnum;
+import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.exception.code.OrderErrorCodeEnum;
 import com.xlibao.common.lbs.SimpleLocationUtils;
 import com.xlibao.common.support.PassportRemoteService;
+import com.xlibao.common.support.SharePaymentRemoteService;
 import com.xlibao.metadata.order.*;
 import com.xlibao.metadata.passport.Passport;
+import com.xlibao.order.config.ConfigFactory;
 import com.xlibao.order.data.mapper.order.OrderDataAccessManager;
 import com.xlibao.order.service.order.OrderEventListenerManager;
 import com.xlibao.order.service.order.OrderService;
@@ -101,21 +110,68 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             case ALLOCATION_ORDER_TYPE:  // 调拨订单
             case PURCHASE_ORDER_TYPE:  // 采购订单
                 return generateSaleOrder(orderSequence);
-            case SCAN_ORDER_TYPE: { // 扫码订单
-                return generateScanOrder(orderSequence);
-            }
-            case CHANNEL_ORDER_TYPE: { // 渠道订单
-                // TODO 暂未启用
-                // return generateChannelOrder(orderSequence);
-            }
-            case PARTNER_ORDER_TYPE: { // 合作订单
-                // TODO 暂未启用
-                // return generatePartnerOrder(orderSequence);
-            }
             default: {
                 throw new XlibaoRuntimeException("错误的订单类型，错误码：" + orderSequence.getType());
             }
         }
+    }
+
+    @Override
+    public JSONObject unifiedPayment() {
+        Map<String, String> signParameters = new HashMap<>();
+
+        String paymentType = getUTF("paymentType", PaymentTypeEnum.WEIXIN_NATIVE.getKey());
+
+        signParameters.put("passportId", getUTF("passportId"));
+        signParameters.put("paymentType", paymentType);
+        signParameters.put("transType", getUTF("transType", String.valueOf(TransTypeEnum.PAYMENT.getKey())));
+        signParameters.put("partnerUserId", getUTF("partnerUserId", ""));
+        signParameters.put("partnerTradeNumber", getUTF("partnerTradeNumber"));
+        signParameters.put("transUnitAmount", getUTF("transUnitAmount"));
+        signParameters.put("transNumber", getUTF("transNumber"));
+        signParameters.put("transTotalAmount", getUTF("transTotalAmount", "0"));
+        signParameters.put("transTitle", getUTF("transTitle", ""));
+        signParameters.put("remark", getUTF("remark", ""));
+        signParameters.put("useCoupon", getUTF("useCoupon", ""));
+        signParameters.put("discountAmount", getUTF("discountAmount", "0"));
+        signParameters.put("extendParameter", getUTF("extendParameter", ""));
+        signParameters.put("notifyUrl", ConfigFactory.getDomainNameConfig().orderRemoteURL + "order/payment/callbackPaymentOrder");
+
+        return SharePaymentRemoteService.paymentOrder(signParameters, ConfigFactory.getOrderConfig().getPartnerId(), ConfigFactory.getOrderConfig().getPaymentAppId(), ConfigFactory.getOrderConfig().getPaymentAppkey(),
+                ConfigFactory.getDomainNameConfig().paymentRemoteURL, paymentType);
+    }
+
+    @Override
+    public JSONObject callbackPaymentOrder() {
+        String data = getUTF("data");
+        JSONObject parameters = JSONObject.parseObject(data);
+
+        Map<String, String> p = new HashMap<>();
+        for (String k : parameters.keySet()) {
+            p.put(k, parameters.getString(k));
+        }
+        String remoteSign = p.remove("sign");
+        // 验证签名 本地验证
+        if (!CommonUtils.matchSignature(p, remoteSign, ConfigFactory.getOrderConfig().getPaymentAppkey())) {
+            return PlatformErrorCodeEnum.SIGN_ERROR.response();
+        }
+        String partnerId = parameters.getString("partnerId");
+        int transStatus = parameters.getIntValue("transStatus");
+        String paymentType = parameters.getString("paymentType");
+        String partnerTradeNumber = parameters.getString("partnerTradeNumber");
+
+        logger.info("通知订单支付结果，订单标志为：" + partnerTradeNumber + "，支付类型：" + paymentType + "，支付状态：" + transStatus + "，合作商户号：" + partnerId);
+
+        if (!partnerId.equals(ConfigFactory.getOrderConfig().getPartnerId())) {
+            logger.error("非本商户订单[" + partnerTradeNumber + "]，错误的支付回调，我方商户号：" + ConfigFactory.getOrderConfig().getPartnerId() + "；回调商户号：" + partnerId);
+            return success("非法请求");
+        }
+        if ((transStatus & TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey()) != TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey()) {
+            return success("success");
+        }
+        OrderEntry orderEntry = getOrder(partnerTradeNumber);
+        paymentOrder(orderEntry, orderEntry.getStatus(), paymentType, 0);
+        return success("success");
     }
 
     @Override
@@ -200,25 +256,29 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
         OrderEntry orderEntry = getOrder(orderId);
 
+        return paymentOrder(orderEntry, beforeStatus, transType, daySortNumber);
+    }
+
+    private JSONObject paymentOrder(OrderEntry orderEntry, int beforeStatus, String transType, int daySortNumber) {
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CANCEL.getKey()) { // 已取消
-            return fail("订单已被取消");
+            OrderErrorCodeEnum.CANCELED_ORDER.throwException();
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) { // 已支付
-            return fail("订单已支付");
+            OrderErrorCodeEnum.HAS_PAYMENT_ORDER.throwException();
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey()) { // 已完成
-            return fail("订单已完成");
+            OrderErrorCodeEnum.COMPLETE_ORDER.throwException();
         }
         if (beforeStatus != orderEntry.getStatus()) {
-            return fail("根据您的应用设置，当前状态不能进行支付操作");
+            PlatformErrorCodeEnum.SETTING_ERROR.throwException("根据您的应用设置，当前状态不能进行支付操作");
         }
         int result = orderDataAccessManager.paymentOrder(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_PAYMENT, beforeStatus, transType, daySortNumber);
         if (result <= 0) {
-            throw new XlibaoRuntimeException("订单支付失败");
+            OrderErrorCodeEnum.FAIL_PAYMENT_ORDER.throwException();
         }
         orderEntry.setStatus(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey());
         orderEntry.setTransType(transType);
-        orderEventListenerManager.notifyPaymentedOrderEntry(orderEntry, beforeStatus);
+        orderEventListenerManager.notifyPaymentOrderEntry(orderEntry, beforeStatus);
         return success("订单支付成功");
     }
 

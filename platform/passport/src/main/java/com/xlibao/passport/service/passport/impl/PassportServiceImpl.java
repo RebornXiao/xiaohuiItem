@@ -11,7 +11,7 @@ import com.xlibao.common.constant.sms.SmsCodeTypeEnum;
 import com.xlibao.common.constant.version.VersionTypeEnum;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
-import com.xlibao.common.service.PlatformErrorCodeEnum;
+import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.metadata.passport.Passport;
 import com.xlibao.metadata.passport.PassportChannel;
 import com.xlibao.metadata.passport.PassportProperties;

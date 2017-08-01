@@ -31,9 +31,9 @@ public class OrderEventListenerManager {
         }
     }
 
-    public void notifyPaymentedOrderEntry(OrderEntry orderEntry, int beforeStatus) {
+    public void notifyPaymentOrderEntry(OrderEntry orderEntry, int beforeStatus) {
         for (OrderEventListener orderEventListener : orderEventListenerMap.values()) {
-            orderEventListener.notifyPaymentedOrderEntry(orderEntry, beforeStatus);
+            orderEventListener.notifyPaymentOrderEntry(orderEntry, beforeStatus);
         }
     }
 
@@ -51,7 +51,7 @@ public class OrderEventListenerManager {
 
     public void notifyDistributionedOrderEntry(OrderEntry orderEntry, int beforeStatus) {
         for (OrderEventListener orderEventListener : orderEventListenerMap.values()) {
-            orderEventListener.notifyDistributionedOrderEntry(orderEntry, beforeStatus);
+            orderEventListener.notifyDistributionOrder(orderEntry, beforeStatus);
         }
     }
 

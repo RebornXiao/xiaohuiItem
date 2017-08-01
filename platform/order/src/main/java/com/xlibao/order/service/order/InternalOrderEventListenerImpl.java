@@ -34,7 +34,7 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
     }
 
     @Override
-    public void notifyPaymentedOrderEntry(OrderEntry orderEntry, int beforeStatus) {
+    public void notifyPaymentOrderEntry(OrderEntry orderEntry, int beforeStatus) {
         // 新增支付订单日志
         createOrderStateLogger(orderEntry, beforeStatus, orderEntry.getPartnerUserId(), orderEntry.getReceiptNickName(), "支付“" + OrderTypeEnum.getOrderTypeEnum(orderEntry.getType()).getValue() + "”，支付方式：" + orderEntry.getTransType());
 
@@ -60,7 +60,7 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
     }
 
     @Override
-    public void notifyDistributionedOrderEntry(OrderEntry orderEntry, int beforeStatus) {
+    public void notifyDistributionOrder(OrderEntry orderEntry, int beforeStatus) {
         createOrderStateLogger(orderEntry, beforeStatus, String.valueOf(orderEntry.getCourierPassportId()), orderEntry.getCourierNickName(), "配送“" + OrderTypeEnum.getOrderTypeEnum(orderEntry.getType()).getValue() + "”");
 
         notifyEventListener(orderEntry);

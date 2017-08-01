@@ -31,8 +31,8 @@ public class BasicRemoteService {
             // 填充签名参数 参数key为：sign 参与的密钥字段名：key
             CommonUtils.fillSignature(parameters, ConfigFactory.getXMarketConfig().getOrderAppkey());
             String data = HttpRequest.post(ConfigFactory.getDomainNameConfig().orderRemoteURL + url, parameters);
-            JSONObject response = JSONObject.parseObject(data);
 
+            JSONObject response = JSONObject.parseObject(data);
             int code = response.getIntValue("code");
             if (code != 0) {
                 throw new XlibaoRuntimeException(code, response.getString("msg"));

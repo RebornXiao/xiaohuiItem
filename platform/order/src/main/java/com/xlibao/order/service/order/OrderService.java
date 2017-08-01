@@ -22,6 +22,10 @@ public interface OrderService {
      */
     JSONObject generateOrder();
 
+    JSONObject unifiedPayment();
+
+    JSONObject callbackPaymentOrder();
+
     /**
      * <pre>
      *     <b>获取订单</b>

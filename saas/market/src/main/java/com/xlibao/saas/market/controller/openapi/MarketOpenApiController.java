@@ -30,6 +30,17 @@ public class MarketOpenApiController {
 
     /**
      * <pre>
+     *     <b>展示可用的商店</b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "showMarkets")
+    public JSONObject showMarkets() {
+        return marketService.showMarkets();
+    }
+
+    /**
+     * <pre>
      *     <b>过滤商店(寻找商店)</b>
      * </pre>
      */

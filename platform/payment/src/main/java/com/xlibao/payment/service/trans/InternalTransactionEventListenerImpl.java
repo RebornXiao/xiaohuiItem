@@ -101,7 +101,7 @@ public class InternalTransactionEventListenerImpl implements TransactionEventLis
         data.put("transTotalAmount", transactionLogger.getTransTotalAmount());
         data.put("transCreateTime", transactionLogger.getTransCreateTime().getTime());
         data.put("paymentTime", transactionLogger.getPaymentTime().getTime());
-        data.put("useConpon", transactionLogger.getUseCoupon());
+        data.put("useCoupon", transactionLogger.getUseCoupon());
         data.put("discountAmount", transactionLogger.getDiscountAmount());
         data.put("extendParameter", CommonUtils.nullToEmpty(transactionLogger.getExtendParameter()));
 

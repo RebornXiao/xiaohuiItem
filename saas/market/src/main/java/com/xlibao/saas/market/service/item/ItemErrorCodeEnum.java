@@ -2,6 +2,7 @@ package com.xlibao.saas.market.service.item;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
+import com.xlibao.common.exception.XlibaoRuntimeException;
 
 /**
  * @author chinahuangxc on 2017/7/20.
@@ -50,5 +51,13 @@ public enum ItemErrorCodeEnum {
 
     public JSONObject response() {
         return response(getValue());
+    }
+
+    public void throwException() {
+        throwException(getValue());
+    }
+
+    public void throwException(String message) {
+        throw new XlibaoRuntimeException(getKey(), message);
     }
 }

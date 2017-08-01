@@ -5,6 +5,7 @@
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="order_sequence_number" property="orderSequenceNumber" jdbcType="VARCHAR"/>
         <result column="item_id" property="itemId" jdbcType="BIGINT"/>
+        <result column="item_template_id" property="itemTemplateId" jdbcType="BIGINT"/>
         <result column="lock_quantity" property="lockQuantity" jdbcType="INTEGER"/>
         <result column="lock_type" property="lockType" jdbcType="INTEGER"/>
         <result column="lock_status" property="lockStatus" jdbcType="INTEGER"/>
@@ -12,7 +13,11 @@
     </resultMap>
 
     <insert id="createItemStockLogger">
-        insert into market_item_stock_lock_logger(order_sequence_number, item_id, lock_quantity, lock_type, lock_status, lock_time)
-        values(#{orderSequenceNumber}, #{itemId}, #{lockQuantity}, #{lockType}, #{lockStatus}, #{lockTime})
+        insert into market_item_stock_lock_logger(order_sequence_number, item_id, item_template_id, lock_quantity, lock_type, lock_status, lock_time)
+        values(#{orderSequenceNumber}, #{itemId}, #{itemTemplateId}, #{lockQuantity}, #{lockType}, #{lockStatus}, #{lockTime})
     </insert>
+
+    <select id="getItemStockLockLoggers" resultMap="BaseResultMap">
+        select * from market_item_stock_lock_logger where order_sequence_number = #{orderSequenceNumber} and lock_type = #{key} and lock_status = #{status}
+    </select>
 </mapper>

@@ -10,13 +10,13 @@ public interface OrderEventListener {
 
     void notifyCreatedOrderEntry(OrderEntry orderEntry);
 
-    void notifyPaymentedOrderEntry(OrderEntry orderEntry, int beforeStatus);
+    void notifyPaymentOrderEntry(OrderEntry orderEntry, int beforeStatus);
 
     void notifyPushedOrderEntry(OrderEntry orderEntry, int pushType, String pushTitle, String pushContent, byte write, String... targets);
 
     void notifyAcceptedOrderEntry(OrderEntry orderEntry, int beforeStatus);
 
-    void notifyDistributionedOrderEntry(OrderEntry orderEntry, int beforeStatus);
+    void notifyDistributionOrder(OrderEntry orderEntry, int beforeStatus);
 
     void notifyArrivedOrderEntry(OrderEntry orderEntry, int beforeStatus);
 

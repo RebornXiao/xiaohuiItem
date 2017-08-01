@@ -9,4 +9,8 @@
         <result column="last_modify_time" property="lastModifyTime" jdbcType="TIMESTAMP"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
+
+    <select id="getItemLocations" resultMap="BaseResultMap">
+        select * from market_item_location where item_id = #{itemId} and stock > 0
+    </select>
 </mapper>
