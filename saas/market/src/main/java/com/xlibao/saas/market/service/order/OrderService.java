@@ -12,4 +12,8 @@ public interface OrderService {
     JSONObject generateOrder();
 
     JSONObject paymentOrder();
+
+    JSONObject showOrders();
+
+    JSONObject orderDetail();
 }

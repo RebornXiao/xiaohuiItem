@@ -24,12 +24,14 @@ public enum OrderStatusEnum {
     ORDER_STATUS_DISTRIBUTION(64, "配送中"),
     /** 128、送达 */
     ORDER_STATUS_ARRIVE(128, "送达"),
-    /** 256、确认收货 */
-    ORDER_STATUS_CONFIRM(256, "确认收货"),
+    /** 256、已完成 */
+    ORDER_STATUS_CONFIRM(256, "已完成"),
     /** 512、已收款 */
     ORDER_STATUS_RECEIVABLES(512, "已收款"),
     /** 1024、分批配送 */
     ORDER_STATUS_BATCH(1024, "分批配送"),
+    /** 2048、退款 */
+    ORDER_STATUS_REFUND(2048, "退款"),
     ;
 
     private int key;

@@ -9,6 +9,7 @@
         <result column="partner_user_id" property="partnerUserId" jdbcType="VARCHAR"/>
         <result column="type" property="type" jdbcType="INTEGER"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="deliver_type" property="deliverType" jdbcType="INTEGER"/>
         <result column="deliver_status" property="deliverStatus" jdbcType="INTEGER"/>
         <result column="refund_status" property="refundStatus" jdbcType="INTEGER"/>
         <result column="payment_type" property="paymentType" jdbcType="VARCHAR"/>
@@ -74,7 +75,8 @@
     </select>
 
     <select id="showConsumerOrders" resultMap="BaseResultMap">
-        select * from order_entry where partner_id = #{partnerId} and status in (${orderStatusSet})
+        select * from order_entry where partner_id = #{partnerId}
+          <if test="status != 0"> and status in (${orderStatusSet}) </if>
           <if test="target == 0"> and partner_user_id = #{partnerUserId} </if>
           <if test="target == 1"> and receipt_user_id = #{partnerUserId} </if>
           <if test="type != -1"> and type = #{type} </if>

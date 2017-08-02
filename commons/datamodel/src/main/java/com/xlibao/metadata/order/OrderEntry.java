@@ -12,6 +12,7 @@ public class OrderEntry {
     private String partnerUserId;
     private Integer type;
     private Integer status;
+    private Integer deliverType;
     private Integer deliverStatus;
     private Integer refundStatus;
     private String paymentType;
@@ -132,6 +133,14 @@ public class OrderEntry {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getDeliverType() {
+        return deliverType;
+    }
+
+    public void setDeliverType(Integer deliverType) {
+        this.deliverType = deliverType;
     }
 
     /**

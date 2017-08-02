@@ -7,14 +7,11 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.GlobalConstantConfig;
 import com.xlibao.common.constant.device.DeviceTypeEnum;
-import com.xlibao.common.constant.order.CollectingFeesEnum;
-import com.xlibao.common.constant.order.OrderStatusEnum;
-import com.xlibao.common.constant.order.OrderTypeEnum;
-import com.xlibao.common.constant.order.PushTypeEnum;
+import com.xlibao.common.constant.order.*;
 import com.xlibao.common.constant.payment.TransTypeEnum;
+import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
-import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
@@ -25,8 +22,10 @@ import com.xlibao.saas.market.data.model.MarketItem;
 import com.xlibao.saas.market.data.model.MarketItemDailyPurchaseLogger;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.item.ItemErrorCodeEnum;
+import com.xlibao.saas.market.service.order.DeliverTypeEnum;
 import com.xlibao.saas.market.service.order.OrderEventListenerManager;
 import com.xlibao.saas.market.service.order.OrderService;
+import com.xlibao.saas.market.service.order.StatusEnterEnum;
 import com.xlibao.saas.market.service.support.ItemSupport;
 import com.xlibao.saas.market.service.support.remote.OrderRemoteService;
 import com.xlibao.saas.market.service.support.remote.PaymentRemoteService;
@@ -129,11 +128,145 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         }
         // 重新计价
         correctingOrderCost(passportId, order);
-        // // 总共需要支付的费用
+        // 总共需要支付的费用
         long paymentAmount = order.getActualPrice();
         // 支付过程由订单中心执行
         return PaymentRemoteService.paymentOrder(passportId, passportId, orderSequenceNumber, paymentType, String.valueOf(TransTypeEnum.MARKET_PAYMENT.getKey()), paymentAmount, TransTypeEnum.PAYMENT.getKey(),
                 paymentAmount, TransTypeEnum.PAYMENT.getValue(), "", GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), 0, "");
+    }
+
+    @Override
+    public JSONObject showOrders() {
+        long passportId = getPassportId();
+        int roleType = getIntParameter("roleType");
+        int orderType = getIntParameter("orderType");
+        int statusEnter = getIntParameter("statusEnter");
+        int pageIndex = getIntParameter("pageIndex", GlobalConstantConfig.DEFAULT_PAGE_INDEX);
+        int pageSize = getPageSize();
+
+        List<OrderEntry> orders = OrderRemoteService.showOrders(passportId, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), roleType, orderStatusSet(roleType, statusEnter), orderType, pageIndex, pageSize);
+        JSONArray response = fillShowOrderMsg(roleType, orders);
+        return success(response);
+    }
+
+    @Override
+    public JSONObject orderDetail() {
+        long passportId = getPassportId();
+        int roleType = getIntParameter("roleType");
+        long orderId = getLongParameter("orderId");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderId);
+
+        return fillOrderDetailMsg(orderEntry, roleType, passportId);
+    }
+
+    private String orderStatusSet(int roleType, int statusEnter) {
+        if (roleType == OrderRoleTypeEnum.CONSUMER.getKey()) { // 消费者
+            if (statusEnter == StatusEnterEnum.ALL.getKey()) { // 用户 全部
+                return String.valueOf(0);
+            }
+            if (statusEnter == StatusEnterEnum.WAIT_PAYMENT.getKey()) { // 用户 待支付
+                return String.valueOf(OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey());
+            }
+            if (statusEnter == StatusEnterEnum.WAIT_RECEIPT.getKey()) { // 用户 待收货
+                return String.valueOf(OrderStatusEnum.ORDER_STATUS_ARRIVE.getKey());
+            }
+            if (statusEnter == StatusEnterEnum.REFUND.getKey()) { // 用户 退款中
+                return String.valueOf(OrderStatusEnum.ORDER_STATUS_REFUND.getKey());
+            }
+        }
+        return OrderStatusEnum.ORDER_STATUS_CANCEL.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey();
+    }
+
+    private JSONArray fillShowOrderMsg(int roleType, List<OrderEntry> orderEntries) {
+        if (roleType != OrderRoleTypeEnum.CONSUMER.getKey()) {
+            return new JSONArray();
+        }
+        JSONArray response = new JSONArray();
+
+        for (OrderEntry orderEntry : orderEntries) {
+            JSONObject data = new JSONObject();
+
+            MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
+            data.put("marketId", marketEntry.getId());
+            data.put("marketName", marketEntry.getName());
+            data.put("marketFormatAddress", marketEntry.formatAddress());
+            data.put("actualPrice", orderEntry.getActualPrice());
+
+            fillItemSnapshotMsg(data, orderEntry);
+            response.add(data);
+        }
+        return response;
+    }
+
+    private JSONObject fillOrderDetailMsg(OrderEntry orderEntry, int roleType, long passportId) {
+        if (roleType != OrderRoleTypeEnum.CONSUMER.getKey()) {
+            return fail("您没有权限查看该订单详情");
+        }
+        if (Long.parseLong(orderEntry.getPartnerUserId()) != passportId && Long.parseLong(orderEntry.getReceiptUserId()) != passportId) {
+            return fail("您没有权限查看该订单详情");
+        }
+        JSONObject orderMsg = new JSONObject();
+
+        int orderStatus = orderEntry.getStatus();
+        String statusValue = OrderStatusEnum.getOrderStatusEnum(orderStatus).getValue();
+
+        orderMsg.put("orderId", orderEntry.getId());
+        orderMsg.put("sequenceNumber", orderEntry.getSequenceNumber());
+        orderMsg.put("orderSequenceNumber", orderEntry.getOrderSequenceNumber());
+        orderMsg.put("createTime", CommonUtils.dateFormat(orderEntry.getCreateTime().getTime()));
+        orderMsg.put("deliverType", orderEntry.getDeliverType());
+        orderMsg.put("deliverValue", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "到店自提" : "小惠配送");
+        orderMsg.put("orderStatus", orderStatus);
+        orderMsg.put("statusValue", statusValue);
+
+        orderMsg.put("deliverTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "配送进度" : "自提进度");
+        orderMsg.put("deliverResult", orderStatus == OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey() ? "已签收" : "已取货");
+
+        // 实收费用
+        orderMsg.put("actualPrice", orderEntry.getActualPrice());
+        // 配送费
+        orderMsg.put("distributionFee", orderEntry.getDistributionFee());
+        // 优惠费用
+        orderMsg.put("discountPrice", orderEntry.getDiscountPrice());
+
+        orderMsg.put("addressTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货地址：" : "收货地址：");
+        orderMsg.put("address", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? orderEntry.formatReceiptAddress() : orderEntry.formatShippingAddress());
+        orderMsg.put("targetTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货点：" : "收货人：");
+        orderMsg.put("targetName", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "小惠便利店" + orderEntry.getReceiptNickName() : orderEntry.getShippingNickName());
+
+        fillItemSnapshotMsg(orderMsg, orderEntry);
+
+        return success(orderMsg);
+    }
+
+    private void fillItemSnapshotMsg(JSONObject response, OrderEntry orderEntry) {
+        int totalItemQuantity = 0;
+
+        List<OrderItemSnapshot> itemSnapshots = orderEntry.getItemSnapshots();
+
+        JSONArray items = new JSONArray();
+        for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
+            long itemTemplateId = itemSnapshot.getItemTemplateId();
+
+            ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemTemplateId);
+
+            JSONObject item = new JSONObject();
+
+            item.put("itemSnapshotId", itemSnapshot.getId());
+            item.put("itemId", itemSnapshot.getItemId());
+            item.put("itemTemplateId", itemSnapshot.getItemTemplateId());
+            item.put("itemName", itemSnapshot.getItemName());
+            item.put("image", itemTemplate == null ? "" : itemTemplate.getImageUrl());
+            item.put("price", itemSnapshot.getNormalPrice());
+            item.put("quantity", itemSnapshot.totalQuantity());
+
+            items.add(item);
+
+            totalItemQuantity += itemSnapshot.totalQuantity();
+        }
+        response.put("items", items);
+        response.put("totalItemQuantity", totalItemQuantity);
     }
 
     private List<OrderItemSnapshot> generateItemSnapshots(long passportId, long marketId, JSONObject buyItemTemplates) {
@@ -170,8 +303,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         order.setUserSource(deviceType);
         order.setPushType(PushTypeEnum.UN_PUSH.getKey());
 
-        order.setShippingPassportId(marketEntry.getPassportId());
-        order.setShippingNickName(marketEntry.getAdminName());
+        order.setShippingPassportId(marketEntry.getId());
+        order.setShippingNickName(marketEntry.getName());
         order.setShippingProvince(marketEntry.getProvince());
         order.setShippingCity(marketEntry.getCity());
         order.setShippingDistrict(marketEntry.getDistrict());

@@ -233,8 +233,7 @@ public class MarketEntry {
         response.put("adminName", CommonUtils.nullToEmpty(getAdminName()));
         response.put("showPhoneNumber", CommonUtils.hideChar(getPhoneNumber(), 4, 7));
         response.put("hidePhoneNumber", getPhoneNumber());
-        response.put("formatAddress", CommonUtils.nullToEmpty(getProvince()) + CommonUtils.nullToEmpty(getCity()) + CommonUtils.nullToEmpty(getDistrict()) +
-                CommonUtils.nullToEmpty(getStreet()) + CommonUtils.nullToEmpty(getStreetNumber()));
+        response.put("formatAddress", formatAddress());
         response.put("address", CommonUtils.nullToEmpty(getAddress()));
         response.put("coveringDistance", CommonUtils.formatDistance(getCoveringDistance()));
         response.put("deliveryMode", getDeliveryMode());
@@ -242,5 +241,9 @@ public class MarketEntry {
         response.put("formatDistance", CommonUtils.formatDistance(distance));
 
         return response;
+    }
+
+    public String formatAddress() {
+        return CommonUtils.nullToEmpty(getProvince()) + CommonUtils.nullToEmpty(getCity()) + CommonUtils.nullToEmpty(getDistrict()) + CommonUtils.nullToEmpty(getStreet()) + CommonUtils.nullToEmpty(getStreetNumber());
     }
 }
