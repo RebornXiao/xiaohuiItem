@@ -60,9 +60,6 @@ public class NettyNetServer {
      * @param config 超时配置
      */
     public void init(NettyConfig config) {
-        if (config == null) {
-            config = new NettyConfig();
-        }
         this.config = config;
 
     }
@@ -77,6 +74,9 @@ public class NettyNetServer {
      * @throws Exception 异常
      */
     public void start(int port, AbstractChannelInboundHandlerAdapter channelInboundHandlerAdapter) throws Exception {
+        if (config == null) { // 保证NettyConfig不为null
+            config = new NettyConfig();
+        }
         AbstractChannelInitializer channelInitializer = new AbstractChannelInitializer(channelInboundHandlerAdapter);
 
         bossGroup = new NioEventLoopGroup();

@@ -39,7 +39,7 @@ public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandle
 
         Channel channel = context.channel();
 
-        NettySession session = createNettySession();
+        NettySession session = newSession();
         session.init(channel);
         logger.info("通道激活成功 session id " + session.getId());
 
@@ -56,7 +56,7 @@ public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandle
         // 通道无效时通知关闭
         NettySession session = getSession(context.channel());
 
-        logger.info("通道失效了 session id " + session.getId());
+        logger.error("通道失效了 session id " + session.getId());
 
         notifySessionClosed(session);
     }
@@ -66,6 +66,9 @@ public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandle
         context.fireChannelRead(msg);
 
         NettySession session = getSession(context.channel());
+
+        logger.info("消息读取 session id " + session.getId() + ", message " + msg);
+
         MessageInputStream message = (MessageInputStream) msg;
         notifyMessageReceived(session, message);
     }
@@ -84,9 +87,10 @@ public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandle
             return;
         }
         IdleStateEvent event = (IdleStateEvent) evt;
-        if (null == event.state()) {
+        if (event.state() == null) {
             return;
         }
+        logger.warn("Session idle " + session.getId() + ", idle type " + event.state());
         switch (event.state()) {
             case READER_IDLE:
                 notifySessionIdle(session, TIME_OUT_READER);
@@ -113,16 +117,16 @@ public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandle
 
         notifyExceptionCaught(cause);
 
-        // log.error("exceptionCaught 异常" + ", " + context.channel());
+        logger.error("通话通道发生异常：" + context.channel(), cause);
+
         context.fireExceptionCaught(cause);
-        context.close();
     }
 
     private NettySession getSession(Channel channel) {
         return channel.attr(attributeKey).get();
     }
 
-    private NettySession createNettySession() {
+    private NettySession newSession() {
         return new NettySession();
     }
 

@@ -1,5 +1,6 @@
 package com.xlibao.io.service.netty;
 
+import com.xlibao.io.entry.MessageOutputStream;
 import io.netty.channel.Channel;
 
 import java.util.HashMap;
@@ -46,5 +47,9 @@ public class NettySession {
 
     public Object getAttribute(String key) {
         return attributes.get(key);
+    }
+
+    public void send(MessageOutputStream message) {
+        this.channel.writeAndFlush(message);
     }
 }
