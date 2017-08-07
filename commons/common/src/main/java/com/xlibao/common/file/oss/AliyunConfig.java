@@ -9,9 +9,9 @@ public class AliyunConfig {
 	// ECS访问节点
 	private static String OSS_INTERNAL_END_POINT = "oss-cn-shenzhen-internal.aliyuncs.com";
 	// 阿里云分配的Access key id
-	private static String ACCESS_KEY_ID = "LTAID6hYVA5uzY4c";
+	private static String ACCESS_KEY_ID = "LTAIzupnl78sRpBm";
 	//阿里云分配的Access key secret
-	private static String ACCESS_KEY_SECRET = "xmxtP7WAvEkkEh0QPeP221tpj0zuYg";
+	private static String ACCESS_KEY_SECRET = "4zbTwU9ghdfpmr2XPE8GHQsDeIv3eP";
 	// 开放读取权限
 	public static final CannedAccessControlList PUBLIC_READ = CannedAccessControlList.PublicRead;
 	// 私有权限

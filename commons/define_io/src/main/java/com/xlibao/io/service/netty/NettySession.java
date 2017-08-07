@@ -2,6 +2,9 @@ package com.xlibao.io.service.netty;
 
 import io.netty.channel.Channel;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class NettySession {
 
     private String ip;
@@ -9,10 +12,12 @@ public class NettySession {
     private Channel channel;
     private String id;
 
+    private Map<String, Object> attributes = new HashMap<>();
+
     public NettySession() {
     }
 
-    protected final void init(Channel channel) {
+    public void init(Channel channel) {
         this.channel = channel;
         this.id = channel.id().asShortText();
         this.ip = "192.168.1.1";
@@ -33,5 +38,13 @@ public class NettySession {
 
     public Channel getChannel() {
         return channel;
+    }
+
+    public void setAttribute(String key, Object value) {
+        attributes.put(key, value);
+    }
+
+    public Object getAttribute(String key) {
+        return attributes.get(key);
     }
 }

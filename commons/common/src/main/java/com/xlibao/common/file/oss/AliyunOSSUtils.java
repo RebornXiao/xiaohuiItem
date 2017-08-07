@@ -96,12 +96,12 @@ public class AliyunOSSUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        File file = new File("C:\\Users\\chinahuangxc\\Desktop\\Navigation");
-        for (File f : file.listFiles()) {
-            String address = uploadImageFile("ksupplychain", "supplychain/home", f.getAbsolutePath());
-            System.out.println(address);
-        }
-//        String address = uploadImageFile("ksupplychain", "supplychain/itemType", "C:\\Users\\chinahuangxc\\Desktop\\100034.png");
-//        System.out.println(address);
+        File file = new File("C:\\06-assets");
+//        for (File f : file.listFiles()) {
+//            String address = uploadImageFile("xmarket", "market/app/icon", f.getAbsolutePath());
+//            System.out.println(address);
+//        }
+        String address = uploadImageFile("xmarket", "market/app/icon", "C:\\06-assets\\W-locationIcon@3x.png");
+        System.out.println(address);
     }
 }

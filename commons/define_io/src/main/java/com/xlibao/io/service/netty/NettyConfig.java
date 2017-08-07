@@ -1,13 +1,35 @@
 package com.xlibao.io.service.netty;
 
-/**
- * Created by zhumg on 8/7.
- */
 public class NettyConfig {
-    //写超时
-    public int writeOutTime = 20;
-    //读超时
-    public int readOutTime = 20;
-    //所有都超时是
-    public int allOutTime = 30;
+
+    // 写超时
+    private int writeOutTime = 10;
+    // 读超时
+    private int readOutTime = 10;
+    // 读写同时超时
+    private int bothOutTime = 15;
+
+    public void setReadOutTime(int readOutTime) {
+        this.readOutTime = readOutTime;
+    }
+
+    public void setWriteOutTime(int writeOutTime) {
+        this.writeOutTime = writeOutTime;
+    }
+
+    public void setBothOutTime(int bothOutTime) {
+        this.bothOutTime = bothOutTime;
+    }
+
+    public int getReadOutTime() {
+        return readOutTime;
+    }
+
+    public int getWriteOutTime() {
+        return writeOutTime;
+    }
+
+    public int getBothOutTime() {
+        return bothOutTime;
+    }
 }

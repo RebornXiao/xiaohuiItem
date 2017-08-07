@@ -33,7 +33,7 @@ public class NettyDecoder extends ByteToMessageDecoder {
 //        }
 //        NettyByteInputMessage inputMessage = new NettyByteInputMessage(id, in);
 //        Message message = coder.input(inputMessage);
-//        //如果读取的数据还有大把，则代表读数据出错，提示
+//        // 如果读取的数据还有大把，则代表读数据出错，提示
 //        if (inputMessage.getIndex() < size) {
 //            System.err.println("未完整读完消息，可能出错：id=" + id + ", 当前读到：" + inputMessage.getIndex() + ", 消息长度：" + size);
 //        }
