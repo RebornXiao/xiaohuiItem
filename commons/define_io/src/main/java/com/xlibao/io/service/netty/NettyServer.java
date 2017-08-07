@@ -30,26 +30,12 @@ public class NettyServer {
     EventLoopGroup bossGroup;
     EventLoopGroup workerGroup;
     ServerBootstrap b;
+    NettyConfig config;
 
-    @Override
-    public void init(C config) {
+    public void init(NettyConfig config) {
         this.config = config;
-        try {
-            coderMgr = (ProtocolCoderMgr) Class.forName(config.coderMgrPath).newInstance();
-        } catch (Exception e) {
-            throw new RuntimeException("必须指定coderMgr", e);
-        }
-        if (config.executorMgrPath != null) {
-            try {
-                executorMgr = (ProtocolExecutorMgr) Class.forName(config.executorMgrPath).newInstance();
-            } catch (Exception e) {
-                log.warn("警告，没有指定 executorMgrPath 节点，ProtocolExecutorMgr 实现类");
-                e.printStackTrace();
-            }
-        }
     }
 
-    @Override
     public void start(int port) throws Exception {
         if (runing) {
             return;
@@ -68,7 +54,6 @@ public class NettyServer {
         }
     }
 
-    @Override
     public void close() {
         if (!runing) {
             return;
@@ -85,22 +70,6 @@ public class NettyServer {
         }
     }
 
-    @Override
-    public void addServerListener(ServerListener listener) {
-        this.listeners.add(listener);
-    }
-
-    @Override
-    public void addSessionCreaterInterceptor(SessionCreaterInterceptor sessionCreaterInterceptor) {
-        this.createrInterceptors.add(sessionCreaterInterceptor);
-    }
-
-    @Override
-    public void addSessionMessageInterceptor(SessionMessageInterceptor sessionMessageInterceptor) {
-        this.messageInterceptors.add(sessionMessageInterceptor);
-    }
-
-    @Override
     public boolean isRuning() {
         return runing;
     }
@@ -109,9 +78,8 @@ public class NettyServer {
         @Override
         public void initChannel(SocketChannel ch) throws Exception {
             ChannelPipeline cp = ch.pipeline();
-            if (coderMgr != null) {
-                cp.addLast(new NettyDecoder(coderMgr)).addLast(new NettyEncoder(coderMgr));
-            }
+            cp.addLast(new NettyDecoder()).addLast(new NettyEncoder());
+
             if (config != null) {
                 cp.addLast(new IdleStateHandler(config.readOutTime, config.writeOutTime, config.allOutTime, TimeUnit.SECONDS));
             }
@@ -122,62 +90,62 @@ public class NettyServer {
                     super.channelActive(ctx);
                     NettySession ns = createNettySession();
                     ns.init(ctx.channel());
-                    log.info("channelActive 连接进入, " + ns.getSessionId());
-                    //如果需要被拦截
-                    for (int i = 0; i < createrInterceptors.size(); i++) {
-                        if (createrInterceptors.get(i).onCreater(ns)) {
-                            //直接关闭
-                            log.info("拦截了 连接进入, " + ns.getSessionId());
-                            ns.close();
-                            return;
-                        }
-                    }
-                    ctx.channel().attr(SKEY).set(ns);//保存到channel
-                    for (int i = 0; i < listeners.size(); i++) {
-                        listeners.get(i).onSessionEnter(ns);
-                    }
+//                    log.info("channelActive 连接进入, " + ns.getSessionId());
+//                    //如果需要被拦截
+//                    for (int i = 0; i < createrInterceptors.size(); i++) {
+//                        if (createrInterceptors.get(i).onCreater(ns)) {
+//                            //直接关闭
+//                            log.info("拦截了 连接进入, " + ns.getSessionId());
+//                            ns.close();
+//                            return;
+//                        }
+//                    }
+//                    ctx.channel().attr(SKEY).set(ns);//保存到channel
+//                    for (int i = 0; i < listeners.size(); i++) {
+//                        listeners.get(i).onSessionEnter(ns);
+//                    }
                 }
 
                 @Override
                 public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
                     NettySession ns = toNettySession(ctx.channel());
-                    log.info("channelRead 消息读取 " + msg + ", " + ns.getSessionId());
-                    Message message = (Message) msg;
-                    for (int i = 0; i < messageInterceptors.size(); i++) {
-                        if (messageInterceptors.get(i).onMessage(ns, message)) {
-                            //直接关闭
-                            ns.close();
-                            return;
-                        }
-                    }
-                    //直接执行
-                    if (executorMgr != null) {
-                        MessageExecutor executor = executorMgr.getExecutor(message.getId());
-                        if (executor != null) {
-                            try {
-                                executor.executor(ns, msg);
-                            } catch (Throwable e) {
-                                log.error("executor handler error , id = " + message.getId());
-                                e.printStackTrace();
-                            }
-                        } else {
-                            log.error("executor is null, id = " + message.getId());
-                        }
-                    }
-                    //直接执行msg
-                    for (int i = 0; i < listeners.size(); i++) {
-                        listeners.get(i).onSessionMessage(ns, message);
-                    }
+//                    log.info("channelRead 消息读取 " + msg + ", " + ns.getSessionId());
+//                    Message message = (Message) msg;
+//                    for (int i = 0; i < messageInterceptors.size(); i++) {
+//                        if (messageInterceptors.get(i).onMessage(ns, message)) {
+//                            //直接关闭
+//                            ns.close();
+//                            return;
+//                        }
+//                    }
+//                    //直接执行
+//                    if (executorMgr != null) {
+//                        MessageExecutor executor = executorMgr.getExecutor(message.getId());
+//                        if (executor != null) {
+//                            try {
+//                                executor.executor(ns, msg);
+//                            } catch (Throwable e) {
+//                                log.error("executor handler error , id = " + message.getId());
+//                                e.printStackTrace();
+//                            }
+//                        } else {
+//                            log.error("executor is null, id = " + message.getId());
+//                        }
+//                    }
+//                    //直接执行msg
+//                    for (int i = 0; i < listeners.size(); i++) {
+//                        listeners.get(i).onSessionMessage(ns, message);
+//                    }
                 }
 
                 @Override
                 public void channelInactive(ChannelHandlerContext ctx) throws Exception {
                     //启动成功通知
                     NettySession ns = toNettySession(ctx.channel());
-                    log.info("channelInactive 连接离开 " + ns.getSessionId());
-                    for (int i = 0; i < listeners.size(); i++) {
-                        listeners.get(i).onSessionExit(ns);
-                    }
+//                    log.info("channelInactive 连接离开 " + ns.getSessionId());
+//                    for (int i = 0; i < listeners.size(); i++) {
+//                        listeners.get(i).onSessionExit(ns);
+//                    }
                 }
 
                 @Override
@@ -185,9 +153,9 @@ public class NettyServer {
                         throws Exception {
                     cause.printStackTrace();
                     log.error("exceptionCaught 异常" + ", " + ctx.channel());
-                    for (int i = 0; i < listeners.size(); i++) {
-                        listeners.get(i).onException(cause, 0);
-                    }
+//                    for (int i = 0; i < listeners.size(); i++) {
+//                        listeners.get(i).onException(cause, 0);
+//                    }
                     ctx.fireExceptionCaught(cause);
                     ctx.close();
                 }
@@ -204,26 +172,26 @@ public class NettyServer {
                     }
                     switch (event.state()) {
                         case READER_IDLE:
-                            log.warn("read idle " + ns.getSessionId());
-                            System.out.println("read idle " + ns.getSessionId());
-                            for (int i = 0; i < listeners.size(); i++) {
-                                listeners.get(i).onSessionIdle(ns, ConnectionSession.TIME_OUT_READER);
-                            }
+//                            log.warn("read idle " + ns.getSessionId());
+//                            System.out.println("read idle " + ns.getSessionId());
+//                            for (int i = 0; i < listeners.size(); i++) {
+//                                listeners.get(i).onSessionIdle(ns, ConnectionSession.TIME_OUT_READER);
+//                            }
                             break;
                         case WRITER_IDLE:
-                            log.warn("write idle " + ns.getSessionId());
-                            for (int i = 0; i < listeners.size(); i++) {
-                                listeners.get(i).onSessionIdle(ns, ConnectionSession.TIME_OUT_WRITER);
-                            }
+//                            log.warn("write idle " + ns.getSessionId());
+//                            for (int i = 0; i < listeners.size(); i++) {
+//                                listeners.get(i).onSessionIdle(ns, ConnectionSession.TIME_OUT_WRITER);
+//                            }
                             break;
                         case ALL_IDLE:
-                            log.warn("all idle " + ns.getSessionId());
-                            for (int i = 0; i < listeners.size(); i++) {
-                                listeners.get(i).onSessionIdle(ns, ConnectionSession.TIME_OUT_ALL);
-                            }
+//                            log.warn("all idle " + ns.getSessionId());
+//                            for (int i = 0; i < listeners.size(); i++) {
+//                                listeners.get(i).onSessionIdle(ns, ConnectionSession.TIME_OUT_ALL);
+//                            }
                             break;
                         default:
-                            log.warn("未知 idle " + ns.getSessionId());
+//                            log.warn("未知 idle " + ns.getSessionId());
                             break;
                     }
                 }

@@ -25,18 +25,18 @@ public class NettyDecoder extends ByteToMessageDecoder {
         }
         // 读取ID
         int id = in.readInt();
-        //System.err.println("decode消息，id=" + id + ", length：" + length + ", size：" + size);
-        // 直接生成内容
-        MessageCoder<Message> coder = coderMgr.getCoderById(id);
-        if (coder == null) {
-            throw new RuntimeException("无法找到 MessageCoder , NettyDecoder id=" + id);
-        }
-        NettyByteInputMessage inputMessage = new NettyByteInputMessage(id, in);
-        Message message = coder.input(inputMessage);
-        //如果读取的数据还有大把，则代表读数据出错，提示
-        if (inputMessage.getIndex() < size) {
-            System.err.println("未完整读完消息，可能出错：id=" + id + ", 当前读到：" + inputMessage.getIndex() + ", 消息长度：" + size);
-        }
-        out.add(message);
+//        //System.err.println("decode消息，id=" + id + ", length：" + length + ", size：" + size);
+//        // 直接生成内容
+//        MessageCoder<Message> coder = coderMgr.getCoderById(id);
+//        if (coder == null) {
+//            throw new RuntimeException("无法找到 MessageCoder , NettyDecoder id=" + id);
+//        }
+//        NettyByteInputMessage inputMessage = new NettyByteInputMessage(id, in);
+//        Message message = coder.input(inputMessage);
+//        //如果读取的数据还有大把，则代表读数据出错，提示
+//        if (inputMessage.getIndex() < size) {
+//            System.err.println("未完整读完消息，可能出错：id=" + id + ", 当前读到：" + inputMessage.getIndex() + ", 消息长度：" + size);
+//        }
+//        out.add(message);
     }
 }
