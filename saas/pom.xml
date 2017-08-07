@@ -13,6 +13,7 @@
     <modules>
         <module>market</module>
         <module>marketmanager</module>
+        <module>marketshop</module>
     </modules>
 
     <dependencies>

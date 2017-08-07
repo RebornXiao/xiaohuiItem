@@ -9,4 +9,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping(value = "/market/manager/market")
 public class MarketManagerController {
+
+    /**
+     * <pre>
+     *      <b>获取货架数据</b>
+     * </pre>
+     *
+     * @return String 页面地址
+     */
+    @RequestMapping(value = "marketShelvesData")
+    public String marketShelvesData() {
+        return "";
+    }
 }
