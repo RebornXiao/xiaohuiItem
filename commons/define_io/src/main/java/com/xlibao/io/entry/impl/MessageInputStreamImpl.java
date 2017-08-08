@@ -74,7 +74,7 @@ public class MessageInputStreamImpl implements MessageInputStream {
 
     @Override
     public char readChar() {
-        return readChar();
+        return bis.readChar();
     }
 
     @Override

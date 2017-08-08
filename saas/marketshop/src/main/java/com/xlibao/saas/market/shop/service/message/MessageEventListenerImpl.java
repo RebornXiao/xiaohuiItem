@@ -3,8 +3,8 @@ package com.xlibao.saas.market.shop.service.message;
 import com.xlibao.io.entry.MessageInputStream;
 import com.xlibao.io.service.netty.MessageEventListener;
 import com.xlibao.io.service.netty.NettySession;
-import com.xlibao.saas.market.shop.service.message.filter.MessageDecoder;
-import com.xlibao.saas.market.shop.service.message.filter.MessageEncoder;
+import com.xlibao.io.service.netty.filter.DefaultMessageDecoder;
+import com.xlibao.io.service.netty.filter.DefaultMessageEncoder;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToMessageEncoder;
 
@@ -15,12 +15,12 @@ public class MessageEventListenerImpl implements MessageEventListener {
 
     @Override
     public ByteToMessageDecoder newDecoder() {
-        return new MessageDecoder();
+        return new DefaultMessageDecoder();
     }
 
     @Override
     public MessageToMessageEncoder newEncoder() {
-        return new MessageEncoder<String>();
+        return new DefaultMessageEncoder();
     }
 
     @Override

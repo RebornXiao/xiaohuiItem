@@ -14,8 +14,6 @@ import java.util.List;
  */
 public class MessageDecoder extends ByteToMessageDecoder {
 
-    // 16进制数字字符集
-    private static String hexString = "0123456789ABCDEF";
     // 结束符
     private static String END_CHARACTER = "FFFF";
 
@@ -28,7 +26,7 @@ public class MessageDecoder extends ByteToMessageDecoder {
 
         byteBuf.readBytes(bytes);
 
-        String parameter = decode(bytes);
+        String parameter = CommonUtils.byte2Hex(bytes);
         if (!parameter.contains(END_CHARACTER)) { // 不包含结束符
             byteBuf.readerIndex(position);
             return;
@@ -36,7 +34,7 @@ public class MessageDecoder extends ByteToMessageDecoder {
         int index = parameter.lastIndexOf(END_CHARACTER);
 
         parameter = parameter.substring(0, index + 4);
-        int currentIndex = hex2byte(parameter).length;
+        int currentIndex = CommonUtils.hex2byte(parameter).length;
         if (currentIndex < bytes.length) {
             // 设置位置
             byteBuf.readerIndex(currentIndex);
@@ -46,29 +44,5 @@ public class MessageDecoder extends ByteToMessageDecoder {
             MessageInputStream messageInputStream = new MessageInputStreamImpl(value.getBytes());
             messages.add(messageInputStream);
         }
-    }
-
-    private String decode(byte[] bytes) {
-        StringBuilder builder = new StringBuilder();
-        for (byte b : bytes) {
-            builder.append(hexString.charAt((b & 0xf0) >> 4));
-            builder.append(hexString.charAt((b & 0x0f)));
-        }
-        return builder.toString();
-    }
-
-    private static byte[] hex2byte(String hex) {
-        hex = hex.replaceAll(CommonUtils.SPACE, "");
-
-        char[] hex2char = hex.toCharArray();
-        byte[] bytes = new byte[hex.length() / 2];
-
-        byte temp;
-        for (int p = 0; p < bytes.length; p++) {
-            temp = (byte) (hexString.indexOf(hex2char[2 * p]) * 16);
-            temp += hexString.indexOf(hex2char[2 * p + 1]);
-            bytes[p] = (byte) (temp & 0xff);
-        }
-        return bytes;
     }
 }

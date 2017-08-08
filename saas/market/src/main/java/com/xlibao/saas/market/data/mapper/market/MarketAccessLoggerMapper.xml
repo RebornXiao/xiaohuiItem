@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xlibao.saas.market.data.mapper.market.MarketAccessLoggerMapper">
-    <resultMap id="BaseResultMap" type="com.xlibao.saas.market.data.model.MarketAccessLogger">
+<mapper namespace="com.xlibao.saas.market.properties.mapper.market.MarketAccessLoggerMapper">
+    <resultMap id="BaseResultMap" type="com.xlibao.saas.market.properties.model.MarketAccessLogger">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="passport_id" property="passportId" jdbcType="BIGINT"/>
         <result column="market_id" property="marketId" jdbcType="BIGINT"/>

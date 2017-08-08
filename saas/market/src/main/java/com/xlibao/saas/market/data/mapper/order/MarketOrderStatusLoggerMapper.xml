@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xlibao.saas.market.data.mapper.order.MarketOrderStatusLoggerMapper">
-    <resultMap id="BaseResultMap" type="com.xlibao.saas.market.data.model.MarketOrderStatusLogger">
+<mapper namespace="com.xlibao.saas.market.properties.mapper.order.MarketOrderStatusLoggerMapper">
+    <resultMap id="BaseResultMap" type="com.xlibao.saas.market.properties.model.MarketOrderStatusLogger">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="order_sequence_number" property="orderSequenceNumber" jdbcType="VARCHAR"/>
         <result column="local_status" property="localStatus" jdbcType="INTEGER"/>

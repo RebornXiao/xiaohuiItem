@@ -21,15 +21,15 @@ public class NettyConfig {
         this.bothOutTime = bothOutTime;
     }
 
-    public int getReadOutTime() {
+    int getReadOutTime() {
         return readOutTime;
     }
 
-    public int getWriteOutTime() {
+    int getWriteOutTime() {
         return writeOutTime;
     }
 
-    public int getBothOutTime() {
+    int getBothOutTime() {
         return bothOutTime;
     }
 }

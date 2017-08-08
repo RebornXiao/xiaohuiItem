@@ -68,6 +68,9 @@ public class CommonUtils {
     /** 分隔符 -- 换行 */
     public static final String ENTER = "\r\n";
 
+    // 16进制数字字符集
+    private static String hexString = "0123456789ABCDEF";
+
     private static final Map<Integer, String> WEEK_FOR_CH = new HashMap<>();
 
     private static final Logger logger = LoggerFactory.getLogger(CommonUtils.class);
@@ -915,6 +918,30 @@ public class CommonUtils {
         Character.UnicodeBlock ub = Character.UnicodeBlock.of(c);
         return ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A
                 || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION;
+    }
+
+    public static String byte2Hex(byte[] bytes) {
+        StringBuilder builder = new StringBuilder();
+        for (byte b : bytes) {
+            builder.append(hexString.charAt((b & 0xf0) >> 4));
+            builder.append(hexString.charAt((b & 0x0f)));
+        }
+        return builder.toString();
+    }
+
+    public static byte[] hex2byte(String hex) {
+        hex = hex.replaceAll(CommonUtils.SPACE, "");
+
+        char[] hex2char = hex.toCharArray();
+        byte[] bytes = new byte[hex.length() / 2];
+
+        byte temp;
+        for (int p = 0; p < bytes.length; p++) {
+            temp = (byte) (hexString.indexOf(hex2char[2 * p]) * 16);
+            temp += hexString.indexOf(hex2char[2 * p + 1]);
+            bytes[p] = (byte) (temp & 0xff);
+        }
+        return bytes;
     }
 
     public static void main(String[] args) {

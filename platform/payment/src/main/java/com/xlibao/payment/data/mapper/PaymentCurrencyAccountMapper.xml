@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xlibao.payment.data.mapper.PaymentCurrencyAccountMapper">
-    <resultMap id="BaseResultMap" type="com.xlibao.payment.data.model.PaymentCurrencyAccount">
+<mapper namespace="com.xlibao.payment.properties.mapper.PaymentCurrencyAccountMapper">
+    <resultMap id="BaseResultMap" type="com.xlibao.payment.properties.model.PaymentCurrencyAccount">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="passport_id" property="passportId" jdbcType="BIGINT"/>
         <result column="channel_id" property="channelId" jdbcType="BIGINT"/>
@@ -14,7 +14,7 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <insert id="createCurrencyAccount"  useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.payment.data.model.PaymentCurrencyAccount">
+    <insert id="createCurrencyAccount"  useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.payment.properties.model.PaymentCurrencyAccount">
         insert into payment_currency_account(passport_id, channel_id, currency_type, name, current_amount, freeze_amount, total_into_amount, total_output_amount, create_time)
         values(#{passportId}, #{channelId}, #{currencyType}, #{name}, #{currentAmount}, #{freezeAmount}, #{totalIntoAmount}, #{totalOutputAmount}, #{createTime})
     </insert>

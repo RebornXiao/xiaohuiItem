@@ -1,16 +1,11 @@
 package com.xlibao.io.service.netty;
 
-import com.xlibao.io.entry.MessageInputStream;
-import com.xlibao.io.service.netty.filter.NettyDecoder;
-import com.xlibao.io.service.netty.filter.NettyEncoder;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.ByteToMessageDecoder;
-import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,8 +26,8 @@ import java.util.concurrent.TimeUnit;
  *          NettyNetServer.getInstance().init(nettyConfig);
  *          // 其中 ----
  *          // <b>9527</b>为监听端口，可自定义；
- *          // <b>AbstractChannelInboundHandlerAdapter</b>为具体的业务适配器，需继承抽象类 {@link AbstractChannelInboundHandlerAdapter}
- *          NettyNetServer.getInstance().start(9527, new AbstractChannelInboundHandlerAdapter());
+ *          // <b>MessageEventListener</b>为具体的业务监听器
+ *          NettyNetServer.getInstance().start(9527, new MessageEventListenerImpl());
  * </pre>
  */
 public class NettyNetServer {
@@ -64,7 +59,6 @@ public class NettyNetServer {
      */
     public void init(NettyConfig config) {
         this.config = config;
-
     }
 
     /**
@@ -130,53 +124,6 @@ public class NettyNetServer {
             channelPipeline.addLast(new IdleStateHandler(config.getReadOutTime(), config.getWriteOutTime(), config.getBothOutTime(), TimeUnit.SECONDS));
             // 设置适配器
             channelPipeline.addLast(channelInboundHandlerAdapter);
-        }
-    }
-
-    public static void main(String[] args) throws Exception {
-        NettyConfig nettyConfig = new NettyConfig();
-        nettyConfig.setReadOutTime(10);
-        nettyConfig.setWriteOutTime(10);
-        nettyConfig.setBothOutTime(15);
-
-        NettyNetServer.getInstance().init(nettyConfig);
-        // 其中 ----
-        // <b>9527</b>为监听端口，可自定义；
-        // <b>AbstractChannelInboundHandlerAdapter</b>为具体的业务适配器，需继承抽象类 {@link AbstractChannelInboundHandlerAdapter}
-        NettyNetServer.getInstance().start(9527, new MessageEventListenerImpl());
-    }
-
-    private static class MessageEventListenerImpl implements MessageEventListener {
-
-        @Override
-        public ByteToMessageDecoder newDecoder() {
-            return new NettyDecoder();
-        }
-
-        @Override
-        public MessageToMessageEncoder newEncoder() {
-            return new NettyEncoder<String>();
-        }
-
-        @Override
-        public void notifyChannelActive(NettySession session) throws Exception {
-        }
-
-        @Override
-        public void notifyMessageReceived(NettySession session, MessageInputStream message) throws Exception {
-            // logger.info("读取消息" + message.readUTF());
-        }
-
-        @Override
-        public void notifySessionClosed(NettySession session) {
-        }
-
-        @Override
-        public void notifyExceptionCaught(Throwable cause) {
-        }
-
-        @Override
-        public void notifySessionIdle(NettySession session, int idleType) {
         }
     }
 }

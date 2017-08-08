@@ -1,6 +1,5 @@
 package com.xlibao.io.service.mina;
 
-import com.xlibao.common.CommonUtils;
 import com.xlibao.common.DefineThreadFactory;
 import com.xlibao.io.service.mina.filter.MessageProtocolCodecFactory;
 import org.apache.mina.core.buffer.IoBuffer;
@@ -13,7 +12,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.TimeUnit;
 
@@ -101,74 +99,7 @@ public class MinaNetServer {
         acceptor.dispose();
     }
 
-    public static void main(String[] args) throws IOException {
-//        OutputStream os;
-//        ServerSocket server = null;
-//        try {
-//            try {
-//                server = new ServerSocket(10000);
-//            } catch (Exception e) {
-//                System.out.println("Can't Listen!");
-//            }
-//            Socket socket = null;
-//            try {
-//                socket = server.accept();
-//            } catch (Exception e) {
-//                System.out.println("Error!!!");
-//            }
-//            byte[] b = new byte[1024];
-//            byte[] bb;
-//
-//            while (true) {
-//                System.out.println("正在监听数据......");
-//                int n = System.in.read(b);
-//                bb = hex2byte(new String(b, 0, n));
-//                //System.out.println(n);
-//                System.out.println("发送编码到设备: " + new String(b, 0, n));
-//                os = socket.getOutputStream();
-//                //os.write(b, 0, n);
-//                os.write(bb);
-//            }
-//            //socket.close();
-//            //os.close();
-//        } catch (Exception e) {
-//            System.out.println("Error: Port is Used!" + e);
-//            e.printStackTrace();
-//        } finally {
-//            //socket.close();
-//        }
-        String value = hexString;
-
-        byte[] bs = hex2byte(value);
-
-        StringBuilder sb = new StringBuilder();
-        for (byte b : bs) {
-            sb.append(hexString.charAt((b & 0xf0) >> 4));
-            sb.append(hexString.charAt((b & 0x0f)));
-        }
-        System.out.println("------ " + sb);
-
-        System.out.println(encode("中文"));
-        System.out.println(decode(encode("中文")));
-    }
-
-    // 16进制数字字符集
-    private static String hexString = "0123456789ABCDEF";
-
-    private static byte[] hex2byte(String hex) {
-        hex = hex.replaceAll(CommonUtils.SPACE, "");
-
-        char[] hex2char = hex.toCharArray();
-        byte[] bytes = new byte[hex.length() / 2];
-
-        byte temp;
-        for (int p = 0; p < bytes.length; p++) {
-            temp = (byte) (hexString.indexOf(hex2char[2 * p]) * 16);
-            temp += hexString.indexOf(hex2char[2 * p + 1]);
-            bytes[p] = (byte) (temp & 0xff);
-        }
-        return bytes;
-    }
+    private static final String hexString = "0123456789ABCDEF";
 
     /**
      * 将字符串编码成16进制数字,适用于所有字符（包括中文）
