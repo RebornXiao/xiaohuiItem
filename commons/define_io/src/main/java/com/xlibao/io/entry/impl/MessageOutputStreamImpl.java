@@ -17,8 +17,8 @@ public class MessageOutputStreamImpl implements MessageOutputStream {
     private short msgId;
     private int msgSequence;
 
-    public MessageOutputStreamImpl(int size) {
-        bos = new ByteOutputStreamImpl(size);
+    public MessageOutputStreamImpl() {
+        bos = new ByteOutputStreamImpl(DEFAULT_MSG_SIZE);
     }
     /**
      * 初始化消息输出流

@@ -1,31 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-package com.xlibao.io.service.netty.filter;
+package com.xlibao.saas.market.shop.service.message.filter;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
 /**
- * 输出数据时，编码 ，即 output message 消息长度，消息体
- *
- * @author zhumg
- * @datetime 2016-7-31 17:46:44
+ * @author chinahuangxc on 2017/8/8.
  */
-public class NettyEncoder extends MessageToMessageEncoder<String> {
-
-    private static final Logger logger = LoggerFactory.getLogger(NettyEncoder.class);
+public class MessageEncoder<T> extends MessageToMessageEncoder<T> {
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, String msg, List<Object> out) throws Exception {
-        ByteBuf bb = ctx.alloc().ioBuffer();
+    protected void encode(ChannelHandlerContext context, T msg, List<Object> out) throws Exception {
+        ByteBuf bb = context.alloc().ioBuffer();
         // 填充
 //        NettyByteOutputMessage outputMessage = new NettyByteOutputMessage(msg.getId(), bb);
 //        MessageCoder coder = coderMgr.getCoderById(msg.getId());
@@ -41,7 +29,7 @@ public class NettyEncoder extends MessageToMessageEncoder<String> {
 //            ex.printStackTrace();
 //        }
 //        outputMessage.flush();
-         // 添加进去
+        // 添加进去
 //        out.add(bb);
     }
 }

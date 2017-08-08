@@ -13,6 +13,10 @@ public class MessageInputStreamImpl implements MessageInputStream {
     private int msgSequence;
     private ByteInputStream bis = null;
 
+    public MessageInputStreamImpl(byte[] data) {
+        bis = new ByteInputStreamImpl(data);
+    }
+
     /**
      * 由通讯解码器填充的消息输入流
      *
@@ -25,7 +29,7 @@ public class MessageInputStreamImpl implements MessageInputStream {
         this.type = type;
         this.id = ((short) id);
         this.msgSequence = msgSequence;
-        this.bis = new ByteInputStreamImpl(data);
+        bis = new ByteInputStreamImpl(data);
     }
 
     @Override

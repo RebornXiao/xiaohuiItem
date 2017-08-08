@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @author chinahuangxc on 2017/8/7.
  */
-public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandlerAdapter implements ChannelInboundHandler {
+public class AbstractChannelInboundHandlerAdapter extends ChannelHandlerAdapter implements ChannelInboundHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(AbstractChannelInboundHandlerAdapter.class);
 
@@ -22,6 +22,12 @@ public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandle
     public static final int TIME_OUT_READER = 0;
     public static final int TIME_OUT_WRITER = 1;
     public static final int TIME_OUT_BOTH = 2;
+
+    private MessageEventListener messageEventListener;
+
+    void registerMessageEventListener(MessageEventListener messageEventListener) {
+        this.messageEventListener = messageEventListener;
+    }
 
     @Override
     public void channelRegistered(ChannelHandlerContext context) throws Exception {
@@ -46,7 +52,7 @@ public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandle
         // 保存session 到 channel
         channel.attr(attributeKey).set(session);
         // 通知具体业务
-        notifyChannelActive(session);
+        messageEventListener.notifyChannelActive(session);
     }
 
     @Override
@@ -58,7 +64,7 @@ public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandle
 
         logger.error("通道失效了 session id " + session.getId());
 
-        notifySessionClosed(session);
+        messageEventListener.notifySessionClosed(session);
     }
 
     @Override
@@ -70,7 +76,7 @@ public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandle
         logger.info("消息读取 session id " + session.getId() + ", message " + msg);
 
         MessageInputStream message = (MessageInputStream) msg;
-        notifyMessageReceived(session, message);
+        messageEventListener.notifyMessageReceived(session, message);
     }
 
     @Override
@@ -93,13 +99,13 @@ public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandle
         logger.warn("Session idle " + session.getId() + ", idle type " + event.state());
         switch (event.state()) {
             case READER_IDLE:
-                notifySessionIdle(session, TIME_OUT_READER);
+                messageEventListener.notifySessionIdle(session, TIME_OUT_READER);
                 break;
             case WRITER_IDLE:
-                notifySessionIdle(session, TIME_OUT_WRITER);
+                messageEventListener.notifySessionIdle(session, TIME_OUT_WRITER);
                 break;
             case ALL_IDLE:
-                notifySessionIdle(session, TIME_OUT_BOTH);
+                messageEventListener.notifySessionIdle(session, TIME_OUT_BOTH);
                 break;
             default:
                 break;
@@ -115,7 +121,7 @@ public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandle
     public void exceptionCaught(ChannelHandlerContext context, Throwable cause) throws Exception {
         context.fireExceptionCaught(cause);
 
-        notifyExceptionCaught(cause);
+        messageEventListener.notifyExceptionCaught(cause);
 
         logger.error("通话通道发生异常：" + context.channel(), cause);
 
@@ -129,14 +135,4 @@ public abstract class AbstractChannelInboundHandlerAdapter extends ChannelHandle
     private NettySession newSession() {
         return new NettySession();
     }
-
-    abstract void notifyChannelActive(NettySession session) throws Exception;
-
-    abstract void notifyMessageReceived(NettySession session, MessageInputStream message) throws Exception;
-
-    abstract void notifySessionClosed(NettySession session);
-
-    abstract void notifyExceptionCaught(Throwable cause);
-
-    abstract void notifySessionIdle(NettySession session, int idleType);
 }

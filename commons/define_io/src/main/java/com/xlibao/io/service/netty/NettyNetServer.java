@@ -1,5 +1,6 @@
 package com.xlibao.io.service.netty;
 
+import com.xlibao.io.entry.MessageInputStream;
 import com.xlibao.io.service.netty.filter.NettyDecoder;
 import com.xlibao.io.service.netty.filter.NettyEncoder;
 import io.netty.bootstrap.ServerBootstrap;
@@ -8,6 +9,8 @@ import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.ByteToMessageDecoder;
+import io.netty.handler.codec.MessageToMessageEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +22,7 @@ import java.util.concurrent.TimeUnit;
  *     <b>Netty网络服务端</b>
  *     <b>注意：</b>必须在启动服务器时启动服务；若存在于web服务中，请在初始化servlet时进行初始化
  *
- *     <b>demo</b>
+ *     <b>Demo</b>
  *          NettyConfig nettyConfig = new NettyConfig();
  *          nettyConfig.setReadOutTime(10);
  *          nettyConfig.setWriteOutTime(10);
@@ -69,15 +72,15 @@ public class NettyNetServer {
      *     <b>启动监听服务</b>
      * </pre>
      *
-     * @param port                         监听端口
-     * @param channelInboundHandlerAdapter 通道处理适配器
+     * @param port                 监听端口
+     * @param messageEventListener 消息动作监听器
      * @throws Exception 异常
      */
-    public void start(int port, AbstractChannelInboundHandlerAdapter channelInboundHandlerAdapter) throws Exception {
+    public void start(int port, MessageEventListener messageEventListener) throws Exception {
         if (config == null) { // 保证NettyConfig不为null
             config = new NettyConfig();
         }
-        AbstractChannelInitializer channelInitializer = new AbstractChannelInitializer(channelInboundHandlerAdapter);
+        AbstractChannelInitializer channelInitializer = new AbstractChannelInitializer(messageEventListener);
 
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup();
@@ -109,21 +112,71 @@ public class NettyNetServer {
 
     private class AbstractChannelInitializer extends ChannelInitializer<SocketChannel> {
 
-        private AbstractChannelInboundHandlerAdapter channelInboundHandlerAdapter;
+        private MessageEventListener messageEventListener;
 
-        private AbstractChannelInitializer(AbstractChannelInboundHandlerAdapter channelInboundHandlerAdapter) {
-            this.channelInboundHandlerAdapter = channelInboundHandlerAdapter;
+        private AbstractChannelInitializer(MessageEventListener messageEventListener) {
+            this.messageEventListener = messageEventListener;
         }
 
         @Override
         protected void initChannel(SocketChannel socketChannel) throws Exception {
+            AbstractChannelInboundHandlerAdapter channelInboundHandlerAdapter = new AbstractChannelInboundHandlerAdapter();
+            channelInboundHandlerAdapter.registerMessageEventListener(messageEventListener);
+
             ChannelPipeline channelPipeline = socketChannel.pipeline();
             // 设置解码器、编码器
-            channelPipeline.addLast(new NettyDecoder()).addLast(new NettyEncoder());
+            channelPipeline.addLast(messageEventListener.newDecoder()).addLast(messageEventListener.newEncoder());
             // 设置超时处理
             channelPipeline.addLast(new IdleStateHandler(config.getReadOutTime(), config.getWriteOutTime(), config.getBothOutTime(), TimeUnit.SECONDS));
             // 设置适配器
             channelPipeline.addLast(channelInboundHandlerAdapter);
+        }
+    }
+
+    public static void main(String[] args) throws Exception {
+        NettyConfig nettyConfig = new NettyConfig();
+        nettyConfig.setReadOutTime(10);
+        nettyConfig.setWriteOutTime(10);
+        nettyConfig.setBothOutTime(15);
+
+        NettyNetServer.getInstance().init(nettyConfig);
+        // 其中 ----
+        // <b>9527</b>为监听端口，可自定义；
+        // <b>AbstractChannelInboundHandlerAdapter</b>为具体的业务适配器，需继承抽象类 {@link AbstractChannelInboundHandlerAdapter}
+        NettyNetServer.getInstance().start(9527, new MessageEventListenerImpl());
+    }
+
+    private static class MessageEventListenerImpl implements MessageEventListener {
+
+        @Override
+        public ByteToMessageDecoder newDecoder() {
+            return new NettyDecoder();
+        }
+
+        @Override
+        public MessageToMessageEncoder newEncoder() {
+            return new NettyEncoder<String>();
+        }
+
+        @Override
+        public void notifyChannelActive(NettySession session) throws Exception {
+        }
+
+        @Override
+        public void notifyMessageReceived(NettySession session, MessageInputStream message) throws Exception {
+            // logger.info("读取消息" + message.readUTF());
+        }
+
+        @Override
+        public void notifySessionClosed(NettySession session) {
+        }
+
+        @Override
+        public void notifyExceptionCaught(Throwable cause) {
+        }
+
+        @Override
+        public void notifySessionIdle(NettySession session, int idleType) {
         }
     }
 }
