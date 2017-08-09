@@ -3,13 +3,12 @@ package com.xlibao.io.service.netty;
 import com.xlibao.io.entry.MessageOutputStream;
 import io.netty.channel.Channel;
 
+import java.net.InetSocketAddress;
 import java.util.HashMap;
 import java.util.Map;
 
 public class NettySession {
 
-    private String ip;
-    private int port;
     private Channel channel;
     private String id;
 
@@ -21,24 +20,18 @@ public class NettySession {
     public void init(Channel channel) {
         this.channel = channel;
         this.id = channel.id().asShortText();
-        this.ip = "192.168.1.1";
-        this.port = 1212;
     }
 
     public String getId() {
         return id;
     }
 
-    public String getIp() {
-        return ip;
+    public String getIP() {
+        return ((InetSocketAddress) channel.remoteAddress()).getHostName();
     }
 
     public int getPort() {
-        return port;
-    }
-
-    public Channel getChannel() {
-        return channel;
+        return ((InetSocketAddress) channel.remoteAddress()).getPort();
     }
 
     public void setAttribute(String key, Object value) {
@@ -49,7 +42,13 @@ public class NettySession {
         return attributes.get(key);
     }
 
+    public String netTrack() {
+        return "会话ID：" + getId() + " 地址：" + getIP() + " 链接端口：" + getPort();
+    }
+
     public void send(MessageOutputStream message) {
-        this.channel.writeAndFlush(message);
+        if (message != null) {
+            channel.writeAndFlush(message);
+        }
     }
 }

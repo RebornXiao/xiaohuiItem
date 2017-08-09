@@ -10,6 +10,8 @@ import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 /**
  * @author chinahuangxc on 2017/8/7.
  */
@@ -19,11 +21,9 @@ public class AbstractChannelInboundHandlerAdapter extends ChannelHandlerAdapter 
 
     private static final AttributeKey<NettySession> attributeKey = AttributeKey.valueOf("nettySession");
 
-    public static final int TIME_OUT_READER = 0;
-    public static final int TIME_OUT_WRITER = 1;
-    public static final int TIME_OUT_BOTH = 2;
-
     private MessageEventListener messageEventListener;
+
+    private AtomicInteger idleTimes = new AtomicInteger(0);
 
     void registerMessageEventListener(MessageEventListener messageEventListener) {
         this.messageEventListener = messageEventListener;
@@ -47,7 +47,7 @@ public class AbstractChannelInboundHandlerAdapter extends ChannelHandlerAdapter 
 
         NettySession session = newSession();
         session.init(channel);
-        logger.info("通道激活成功 session id " + session.getId());
+        logger.info("激活Socket成功，" + session.netTrack());
 
         // 保存session 到 channel
         channel.attr(attributeKey).set(session);
@@ -62,7 +62,7 @@ public class AbstractChannelInboundHandlerAdapter extends ChannelHandlerAdapter 
         // 通道无效时通知关闭
         NettySession session = getSession(context.channel());
 
-        logger.error("通道失效了 session id " + session.getId());
+        logger.error("会话通道失效 " + session.netTrack());
 
         messageEventListener.notifySessionClosed(session);
     }
@@ -71,11 +71,13 @@ public class AbstractChannelInboundHandlerAdapter extends ChannelHandlerAdapter 
     public void channelRead(ChannelHandlerContext context, Object msg) throws Exception {
         context.fireChannelRead(msg);
 
+        idleTimes.set(0);
+
         NettySession session = getSession(context.channel());
-
-        logger.info("消息读取 session id " + session.getId() + ", message " + msg);
-
         MessageInputStream message = (MessageInputStream) msg;
+
+        logger.info("消息读取 session id " + session.getId() + ", message id is " + message.getMsgId());
+
         messageEventListener.notifyMessageReceived(session, message);
     }
 
@@ -96,16 +98,20 @@ public class AbstractChannelInboundHandlerAdapter extends ChannelHandlerAdapter 
         if (event.state() == null) {
             return;
         }
-        logger.warn("Session idle " + session.getId() + ", idle type " + event.state());
+        if (idleTimes.get() >= 3) {
+            logger.error(session.netTrack() + " 空闲次数到达上限：" + idleTimes.get());
+        }
+        logger.warn("会话通道空闲中，" + session.netTrack() + ", idle type " + event.state() + "；当前会话空闲次数：" + idleTimes.get());
         switch (event.state()) {
             case READER_IDLE:
-                messageEventListener.notifySessionIdle(session, TIME_OUT_READER);
+                messageEventListener.notifySessionIdle(session, NettyConfig.TIME_OUT_READER);
                 break;
             case WRITER_IDLE:
-                messageEventListener.notifySessionIdle(session, TIME_OUT_WRITER);
+                messageEventListener.notifySessionIdle(session, NettyConfig.TIME_OUT_WRITER);
                 break;
             case ALL_IDLE:
-                messageEventListener.notifySessionIdle(session, TIME_OUT_BOTH);
+                idleTimes.incrementAndGet();
+                messageEventListener.notifySessionIdle(session, NettyConfig.TIME_OUT_BOTH);
                 break;
             default:
                 break;
@@ -115,17 +121,20 @@ public class AbstractChannelInboundHandlerAdapter extends ChannelHandlerAdapter 
     @Override
     public void channelWritabilityChanged(ChannelHandlerContext context) throws Exception {
         context.fireChannelWritabilityChanged();
+        idleTimes.set(0);
     }
 
     @Override
     public void exceptionCaught(ChannelHandlerContext context, Throwable cause) throws Exception {
-        context.fireExceptionCaught(cause);
-
         messageEventListener.notifyExceptionCaught(cause);
 
-        logger.error("通话通道发生异常：" + context.channel(), cause);
-
-        context.fireExceptionCaught(cause);
+        NettySession session = getSession(context.channel());
+        if ("远程主机强迫关闭了一个现有的连接。".equals(cause.getMessage())) {
+            logger.error("会话通道发生异常：" + session.netTrack() + "，异常信息：" + cause.getMessage());
+        } else {
+            logger.error("会话通道发生异常：" + session.netTrack(), cause);
+        }
+        // context.fireExceptionCaught(cause);
     }
 
     private NettySession getSession(Channel channel) {

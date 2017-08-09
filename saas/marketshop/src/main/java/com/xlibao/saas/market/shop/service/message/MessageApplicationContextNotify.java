@@ -3,6 +3,7 @@ package com.xlibao.saas.market.shop.service.message;
 import com.xlibao.io.service.netty.NettyConfig;
 import com.xlibao.io.service.netty.NettyNetServer;
 import com.xlibao.saas.market.shop.config.ConfigFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -10,6 +11,9 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class MessageApplicationContextNotify {
+
+    @Autowired
+    private MessageEventListenerImpl messageEventListener;
 
     public void init() {
         NettyConfig nettyConfig = new NettyConfig();
@@ -20,7 +24,7 @@ public class MessageApplicationContextNotify {
         try {
             NettyNetServer.getInstance().init(nettyConfig);
             // 启动Netty服务
-            NettyNetServer.getInstance().start(Integer.parseInt(ConfigFactory.getSocketService().getServicePort()), new MessageEventListenerImpl());
+            NettyNetServer.getInstance().start(Integer.parseInt(ConfigFactory.getSocketService().getServicePort()), messageEventListener);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

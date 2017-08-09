@@ -17,7 +17,7 @@ public class DefaultMessageEncoder extends MessageToMessageEncoder<MessageOutput
         ByteBuf byteBuf = context.alloc().ioBuffer();
 
         byteBuf.writeBytes(message.toBytes());
-        //添加进去
+        // 添加进去
         out.add(byteBuf);
     }
 }

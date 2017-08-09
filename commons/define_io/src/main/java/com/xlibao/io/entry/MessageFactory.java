@@ -4,17 +4,11 @@ import com.xlibao.io.entry.impl.MessageOutputStreamImpl;
 
 public class MessageFactory {
 
-    /**
-     * 内部消息类型
-     */
+    /** 内部消息类型 */
     public static final byte MSG_TYPE_INTERNAL = 0;
-    /**
-     * 平台消息类型
-     */
+    /** 平台消息类型 */
     public static final byte MSG_TYPE_PLATFORM = 2;
-    /**
-     * 逻辑消息类型
-     */
+    /** 逻辑消息类型 */
     public static final byte MSG_TYPE_LOGIC = 4;
 
     public static final short MSG_ID_HEARTBEAT = 88;

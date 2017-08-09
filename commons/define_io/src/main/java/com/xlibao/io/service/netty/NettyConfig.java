@@ -2,6 +2,13 @@ package com.xlibao.io.service.netty;
 
 public class NettyConfig {
 
+    /** 空闲类型 -- 读 */
+    public static final int TIME_OUT_READER = 0;
+    /** 空闲类型 -- 写 */
+    public static final int TIME_OUT_WRITER = 1;
+    /** 空闲类型 -- 读、写 */
+    public static final int TIME_OUT_BOTH = 2;
+
     // 写超时
     private int writeOutTime = 10;
     // 读超时

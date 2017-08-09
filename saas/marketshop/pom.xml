@@ -6,7 +6,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>market_shop</artifactId>
+    <artifactId>marketshop</artifactId>
     <packaging>war</packaging>
     <name>智能超市商店服务</name>
 
