@@ -1,0 +1,51 @@
+<template name="icon">
+	<image class="icon" src="{{url}}" style="width: {{w}};height:{{h}};"></image>
+</template>
+<template name="temp_Order_take">
+<view class="row-order">
+	<view class="hd">
+		<text class="store">天河北店</text>
+		<text class="addres">地址：广州市天河区天河北路886号</text>
+	</view>
+	<view class="bd">
+		<image class="item-img" src="{{item.imageUrl}}" ></image>
+		<text class="title">{{item.name}}</text>
+	</view>
+	<view class="ft">
+		<text class="text">共3件商品，实付款：￥45.00</text>
+		<button type="warn">扫码取货</button>
+	</view>
+</view>
+</template>
+
+<template name="temp_offcanvas_navbar"> 
+		<navigator redirect hover-class="other-navigator-hover" url="../index/index" bindtap="onCanvas" >
+		<view class="navigator-text"><icon class="iconfont icon-shouye-xianxing cus-fs-18" ></icon>首页</view>
+		</navigator>
+		<navigator url="../cart/cart" bindtap="onCanvas" >
+		<view class="navigator-text"><icon class="iconfont icon-caigou-xianxing cus-fs-18" ></icon>购物车</view>
+		</navigator>
+		<navigator url="../order/order" bindtap="onCanvas" >
+		<view class="navigator-text"><icon class="iconfont icon-danju-xianxing cus-fs-18" ></icon>我的订单</view>
+		</navigator>
+		<navigator url="../my/my" bindtap="onCanvas" >
+		<view class="navigator-text"><icon class="iconfont icon-yonghu-xianxing cus-fs-18" ></icon>个人信息</view>
+		</navigator>
+		<navigator url="../order/order" bindtap="onCanvas" >
+		<view class="navigator-text"><icon class="iconfont icon-weizhi-xianxing cus-fs-18" ></icon>收货地址</view>
+		</navigator>
+		<navigator url="../order/order" bindtap="onCanvas" >
+		<view class="navigator-text"><icon class="iconfont icon-wenti-xianxing cus-fs-18" ></icon>常见问题</view>
+		</navigator> 
+</template>
+ 
+<template name="temp_offcanvas_address">
+
+	<view wx:if="{{show}}" class="navigator-text cus-border-bt-solid" bindtap="onMarket" data-id="{{id}}">
+		<view class="store" data-id="{{id}}">
+			{{name}}
+			<view class="tags dist" data-id="{{id}}">{{formatDistance}}</view>
+		</view> 
+		<text class="addres" data-id="{{id}}">地址：{{formatAddress}}</text>
+	</view>
+</template>

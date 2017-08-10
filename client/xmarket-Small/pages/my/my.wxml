@@ -1,0 +1,38 @@
+<view class="index">
+
+	<view class="hd">  
+	    <image class="portrait" src="{{userInfo.avatarUrl}}" background-size="cover"></image>
+	    <view class="info">
+	    	<text>{{userInfo.nickName}}</text>
+	    	<text>18516590624</text>	
+	    </view>
+	    <view class="navigator-arrow" style="position:absolute;top:55px;right:16px;"></view>
+	</view>
+	<view class="tab">
+		<view class="item" style="width: 20%">
+			<icon class="iconfont icon-danju-xianxing"></icon>全部
+		</view>
+		<view class="item" style="width: 20%;">
+			<icon class="iconfont icon-yinhangqia-xianxing"></icon>待付款
+		</view>
+		<view class="item" style="width: 20%;">
+			<icon class="iconfont icon-yunshuzhongwuliu-xianxing"></icon>待收货
+		</view>
+		<view class="item" style="width: 20%;">
+			<icon class="iconfont icon-tuikuan"></icon>退款
+		</view>
+	</view>
+
+  	<view class="navigator-box navigator-box-show">
+	  	<navigator class="navigator" url="pages/set-navigation-bar-title/set-navigation-bar-title">
+			<view class="navigator-box navigator-box-show"><icon class="iconfont icon-weizhi-xianxing"></icon></view>
+			<view class="navigator-text">收货地址</view>
+			<view class="navigator-arrow"></view>
+		</navigator>
+	  	<navigator class="navigator" url="pages/set-navigation-bar-title/set-navigation-bar-title">
+			<view class="navigator-box navigator-box-show"><icon class="iconfont icon-wenti-xianxing"></icon></view>
+			<view class="navigator-text">常见问题</view>
+			<view class="navigator-arrow"></view>
+		</navigator>
+	</view>
+</view>

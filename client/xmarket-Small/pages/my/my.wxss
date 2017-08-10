@@ -1,0 +1,51 @@
+/**my.wxss**/
+
+.hd {
+  background: #DDF0ED;
+  padding: 20px;
+  border-bottom:8px solid #f8f8f8;
+}
+
+.hd .portrait{
+  width: 128rpx;
+  height: 128rpx;
+  border-radius: 50%;
+  box-sizing: border-box;
+  vertical-align: middle;
+}
+
+.hd .info{
+  display: inline-block;
+  padding-left:8px;
+  position:relative;
+  top:15px;
+}
+.hd .info text{
+  display: block;
+  padding: 4px;
+  color: #fff;
+}
+
+
+
+.tab{
+  display:flex;
+  background: #fff;
+  border-bottom:8px solid #f8f8f8;
+}
+.tab .item{
+  position: relative;
+  text-align: center;
+  padding:5px 10px 10px 10px;
+}
+
+.tab .item .iconfont{
+  display: block;
+  padding-bottom:4px;
+  color: #888;
+}
+
+.navigator {
+  padding:8px 30rpx;
+  font-size:15px;
+}

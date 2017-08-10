@@ -1,0 +1,51 @@
+<import src="../../template/temp-goods.wxml"/>
+
+<view class="index cus-height-100">
+	<view class="navbar">
+		<view class="left">{{market.name}}</view>
+		<view class="right"></view>
+	</view>
+
+	<view class="row " style="height:calc(100% - 45px - 55%)">
+		<scroll-view scroll-y="true" style="height: 100%;" bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-top="">
+			<template is="temp_Goods_Pay" data="{{...item}}" data-cart="{{cart}}" wx:for="{{goodData}}" wx:key="{{item.id}}"/>
+		</scroll-view>
+	</view>
+
+
+	<view class="payPanel" style="height:55%">
+		<view class="tab">
+			<view class="item {{status.tabActive == 0 ? 'active':''}}" style="width: 50%" bindtap="onTab" data-tabactive="0">我要自提</view>
+			<view class="item {{status.tabActive == 1 ? 'active':''}}" style="width: 50%;border-left: 1px solid #f1f1f1;" bindtap="onTab" data-tabactive="1">我要配送</view>
+		</view>
+		
+		<view wx:if="{{status.tabActive == 0}}" class="navigator-text cus-border-bt-solid" >
+			<view class="store" data-id="">
+				取货点：{{market.name}}
+			</view> 
+			<text class="addres" data-id="">取货地址：{{market.formatAddress}}</text>
+		</view>
+		<view wx:if="{{status.tabActive == 1}}" class="navigator-text cus-border-bt-solid" >
+			<view class="store" data-id="">
+				陈先生    136****2258
+			</view> 
+			<text class="addres" data-id="">广东广州市天河区天河北路16号</text>
+			<navigator hover-class="navigator-hover" url="../order/order"> 
+			<icon class="cus-position-right iconfont icon-xiayiyeqianjinchakangengduo"></icon>
+			</navigator>
+		</view>
+
+		<view class="payInfo">
+			<view class="cell">商品金额：<view class="text-danger">￥1.8</view></view>
+			<view wx:if="{{status.tabActive == 1}}" class="cell">运费：<view class="text-danger">{{market.deliveryCost}}</view></view>
+			<view class="cus-hr"></view>
+			<view class="cell">实付金额：<view class="text-danger fsize">￥1.1</view></view>
+			<view class="cell">节省：<view class="text-muted">￥0.7</view></view>
+
+			<view class="buts">
+				<button type="primary">微信支付</button>
+			</view>
+		</view>
+
+	</view>
+</view>	

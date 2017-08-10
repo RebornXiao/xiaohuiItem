@@ -1,0 +1,29 @@
+
+	<scroll-view scroll-y="true" class="index" style="height: calc(100% - 40px)">
+		<view class="row">
+			<view class="cell">
+				<label>陈先生  136****2258</label>
+				<text>广东广州市天河区天河北路16号</text>
+			</view>
+			<view class="cus-hr"></view>
+			<view class="cell-flex">
+				<view class="item">
+					<label class="checkbox">
+						<checkbox data-check="{{status.checkAll}}" checked="{{status.checkAll ? 'checked':''}}" catchtap="onCartCheckAll"></checkbox>默认地址
+					</label>
+				</view>
+				<view class="item">
+					<label>
+						<icon class="iconfont icon-bianjishuru-xianxing"></icon>编辑
+					</label>
+					<label>
+						<icon class="iconfont icon-cuowuguanbiquxiao"></icon>删除
+					</label>
+				</view>
+			</view>
+		</view>
+
+
+	</scroll-view>
+
+<view class="butAdd" >添加地址</view>	

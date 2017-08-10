@@ -1,0 +1,75 @@
+<view class="index cus-height-100">
+
+	<view class="tab">
+		<view class="item {{status.tabActive == 0 ? 'active':''}}" style="width: 20%" bindtap="onTab" data-tabactive="0">全部</view>
+		<view class="item {{status.tabActive == 1 ? 'active':''}}" style="width: 20%;" bindtap="onTab" data-tabactive="1">待付款</view>
+		<view class="item {{status.tabActive == 2 ? 'active':''}}" style="width: 20%;" bindtap="onTab" data-tabactive="2">待收货</view>
+		<view class="item {{status.tabActive == 3 ? 'active':''}}" style="width: 20%;" bindtap="onTab" data-tabactive="3">退款</view>
+	</view>
+   <scroll-view scroll-y="true" style="height: calc(100% - 45px);">
+	   <view class="order">
+			<view class="hd">
+				<view class="left">淘金店</view>
+				<view class="right">已完成</view>
+			</view>
+	   		<scroll-view scroll-x="true" style="height: 85;" class="bd" bindtap="onOrderInfo" data-id="10000">
+	   			<view class="item">
+	   				<image class="item-img" src="http://oss.0085.com/supplyerp/1490696078398.jpg" data-id="10000"></image>
+	   				<text  class="item-title" data-id="10000">广东 甘竹 鱼罐头 豆豉鲮鱼227g</text>
+	   			</view>
+	   		</scroll-view>
+			<view class="ft">
+				<view class="left">共3件商品，实付款：￥21.90</view>
+				<view class="right">
+					<button class="real">扫码取货</button>
+					<button>再次购买</button>
+				</view>
+			</view>
+	   </view>
+
+	   <view class="order">
+			<view class="hd">
+				<view class="left">淘金店</view>
+				<view class="right">已完成</view>
+			</view>
+	   		<scroll-view scroll-x="true" style="height: 85;" class="bd" bindtap="onOrderInfo" data-id="10000">
+	   			<view class="item multiple"  data-id="10000">
+	   				<image class="item-img" src="http://oss.0085.com/supplyerp/1490696078398.jpg" data-id="10000"></image>
+	   				<text  class="item-title"  data-id="10000">广东 甘竹 鱼罐头 豆豉鲮鱼227g</text>
+	   			</view>
+	   			<view class="item multiple">
+	   				<image class="item-img" src="http://oss.0085.com/supplyerp/1490696078398.jpg" ></image>
+	   				<text  class="item-title">广东 甘竹 鱼罐头 豆豉鲮鱼227g</text>
+	   			</view>
+	   			<view class="item multiple">
+	   				<image class="item-img" src="http://oss.0085.com/supplyerp/1490696078398.jpg" ></image>
+	   				<text  class="item-title">广东 甘竹 鱼罐头 豆豉鲮鱼227g</text>
+	   			</view>
+	   			<view class="item multiple">
+	   				<image class="item-img" src="http://oss.0085.com/supplyerp/1490696078398.jpg" ></image>
+	   				<text  class="item-title">广东 甘竹 鱼罐头 豆豉鲮鱼227g</text>
+	   			</view>
+	   			<view class="item multiple">
+	   				<image class="item-img" src="http://oss.0085.com/supplyerp/1490696078398.jpg" ></image>
+	   				<text  class="item-title">广东 甘竹 鱼罐头 豆豉鲮鱼227g</text>
+	   			</view>
+	   			<view class="item multiple">
+	   				<image class="item-img" src="http://oss.0085.com/supplyerp/1490696078398.jpg" ></image>
+	   				<text  class="item-title">广东 甘竹 鱼罐头 豆豉鲮鱼227g</text>
+	   			</view>
+	   			<view class="item multiple">
+	   				<image class="item-img" src="http://oss.0085.com/supplyerp/1490696078398.jpg" ></image>
+	   				<text  class="item-title">广东 甘竹 鱼罐头 豆豉鲮鱼227g</text>
+	   			</view>
+	   		</scroll-view>
+			<view class="ft">
+				<view class="left">共3件商品，实付款：￥21.90</view>
+				<view class="right">
+					<button class="real">扫码取货</button>
+					<button>再次购买</button>
+				</view>
+			</view>
+	   </view>
+   </scroll-view>
+
+</view>

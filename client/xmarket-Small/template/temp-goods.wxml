@@ -1,0 +1,142 @@
+
+<template name="temp_hot">
+
+</template>
+
+<!-- 商品模板 -->
+<template name="temp_goods">
+	<view class="item">
+		<image class="item-img" src="{{imageUrl}}" ></image>
+		<view>
+			<view class="text-large">{{name}}</view>
+			<view>
+				<text class="text-muted text-small">库存：{{stock}}</text>    
+				<text class="text-secon text-small text-indent">满3瓶，￥8.2/瓶</text>
+			</view>
+			<view>
+				<text class="text-main text-small">￥</text>
+				<block wx:if="{{discountType == 0}}">
+					<text class="text-main text-large-2x">{{sellPrice / 100}}</text>
+				</block>
+				<block wx:if="{{discountType != 0}}">
+					<text class="text-main text-large-2x">{{discountPrice / 100}}</text>
+					<text class="text-delete text-small text-indent-small">￥{{sellPrice / 100}}</text>
+				</block>
+			</view>	
+		</view>
+		<view class="cart-buts">
+			<image src="http://xmarket.oss-cn-shenzhen.aliyuncs.com/market/app/icon/minusIcon@3x.png" data-type="MINUS" data-id="{{itemId}}" catchtap="onCart" class="{{num == 0 ?'hide':''}}"></image>
+			<text class="{{num == 0 ?'hide':''}}">{{num}}</text>
+			<image src="http://xmarket.oss-cn-shenzhen.aliyuncs.com/market/app/icon/Addicon@3x.png" data-type="ADD" data-id="{{itemId}}" catchtap="onCart"></image>
+		</view>
+	</view>
+</template>
+
+<!-- 商品购物车模板 -->
+<template name="temp_goods_cart">
+	<view class="item">
+		<label class="checkbox" style="margin-top: 25px;">
+			<checkbox style="transform:scale(.6);" data-id="{{itemId}}" checked="{{check ? 'checked':''}}" data-type="CHECK" catchtap="onCart"></checkbox>
+		</label>
+		<image class="item-img" src="{{imageUrl}}" ></image>
+		<view>
+			<view class="text-large">{{name}}</view>
+			<view>
+				<text class="text-muted text-small">库存：{{stock}}</text>    
+				<text class="text-secon text-small text-indent">满3瓶，￥8.2/瓶</text>
+			</view>
+			<view>
+				<text class="text-main text-small">￥</text>
+				<block wx:if="{{discountType == 0}}">
+					<text class="text-main text-large-2x">{{sellPrice / 100}}</text>
+				</block>
+				<block wx:if="{{discountType != 0}}">
+					<text class="text-main text-large-2x">{{discountPrice / 100}}</text>
+					<text class="text-delete text-small text-indent-small">￥{{sellPrice / 100}}</text>
+				</block>
+			</view>	
+		</view>
+		<view class="cart-buts">
+			<image src="http://xmarket.oss-cn-shenzhen.aliyuncs.com/market/app/icon/minusIcon@3x.png" data-type="MINUS" data-id="{{itemId}}" catchtap="onCart" class="{{num == 0 ?'hide':''}}"></image>
+			<text class="{{num == 0 ?'hide':''}}">{{num}}</text>
+			<image src="http://xmarket.oss-cn-shenzhen.aliyuncs.com/market/app/icon/Addicon@3x.png" data-type="ADD" data-id="{{itemId}}" catchtap="onCart"></image>
+		</view>
+	</view>
+</template>
+
+
+
+
+
+
+<template name="temp_Goods_">
+<view class="row-item cus-margin-t-10" data-itemTemplateId="{{itemTemplateId}}" data-itemId="{{itemId}}">
+	<image class="item-img" src="{{imageUrl}}" ></image>
+	<view class="item-bd">
+		<text class="title">{{name}}</text>
+		<text class="desc cus-padding-10">库存：{{stock}}{{unitName}}</text>
+		<view class="other cus-padding-left-10">
+			<text class="{{discountType != 0 ? 'oldMoney cus-padding-right-5 cus-line-through' : 'money'}}">￥{{sellPrice / 100}}</text>
+			<block wx:if="{{discountType == 1}}">
+			<text class="money">￥{{discountPrice / 100}}</text>
+			</block>
+		</view>
+	</view>
+	<view class="cartBut">
+		<button type="primary" data-type="MINUS" data-id="{{itemId}}" catchtap="onCart" style="display: {{num == 0 ?'none':'block'}}"><icon class="iconfont icon-jian"></icon></button>
+		<input value="{{num}}" disabled="disabled" />
+		<button type="primary" data-type="ADD" data-id="{{itemId}}" catchtap="onCart"><icon class="iconfont icon-jia"></icon></button>
+	</view>
+</view>
+</template>
+
+
+<template name="temp_Goods_Checkbox">
+<view class="row-item cus-margin-t-10" data-itemTemplateId="{{itemTemplateId}}" data-itemId="{{itemId}}">
+	<label class="checkbox">
+		<checkbox data-id="{{itemId}}" checked="{{check ? 'checked':''}}" data-type="CHECK" catchtap="onCart"></checkbox>
+	</label>
+	<image class="item-img" src="{{imageUrl}}" ></image>
+	<view class="item-bd">
+		<text class="title">{{name}}</text>
+		<text class="desc cus-padding-10">库存：{{stock}}{{unitName}}</text>
+		<view class="other cus-padding-left-10">
+			<text class="{{discountType != 0 ? 'oldMoney cus-padding-right-5 cus-line-through' : 'money'}}">￥{{sellPrice / 100}}</text>
+			<block wx:if="{{discountType == 1}}">
+				<text class="money">￥{{discountPrice / 100}}</text>
+			</block>
+		</view>
+	</view>
+	<view class="cartBut">
+		<button type="primary" data-type="MINUS" data-id="{{itemId}}" catchtap="onCart" style="display: {{num == 0 ?'none':'block'}}"><icon class="iconfont icon-jian"></icon></button>
+		<input value="{{num}}" disabled="disabled" />
+		<button type="primary" data-type="ADD" data-id="{{itemId}}" catchtap="onCart"><icon class="iconfont icon-jia"></icon></button>
+	</view>
+</view>
+</template>
+
+<template name="temp_Goods_Pay">
+<view class="row-item cus-margin-t-10" data-itemTemplateId="{{itemTemplateId}}" data-itemId="{{itemId}}">
+	<image class="item-img" src="{{imageUrl}}" ></image>
+	<view class="item-bd">
+		<text class="title">{{name}}</text>
+		<text class="desc cus-padding-10">库存：{{stock}}{{unitName}}</text>
+		<view class="other cus-padding-left-10">
+			<text class="{{discountType != 0 ? 'oldMoney cus-padding-right-5 cus-line-through' : 'money'}}">￥{{sellPrice / 100}}</text>
+			<block wx:if="{{discountType == 1}}">
+				<text class="money">￥{{discountPrice / 100}}</text>
+			</block>
+		</view>
+	</view>
+	<view class="cartBut">X5</view>
+</view>
+</template>
+
+
+
+
+
+
+
+
+

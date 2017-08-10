@@ -1,0 +1,31 @@
+<import src="../../template/temp-goods.wxml"/>
+
+<view class="index cus-height-100">
+	<view class="navbar">
+		<view class="left">
+			<label class="checkbox">
+				<checkbox data-check="{{status.checkAll}}" checked="{{status.checkAll ? 'checked':''}}" catchtap="onCartCheckAll"></checkbox>全选
+			</label>
+		</view>
+		<view class="center"></view>
+		<view class="right" data-type="REMOVER" catchtap="onCart">
+			清空购物车
+		</view>
+	</view>
+	<view class="row " style="height:calc(100% - 45px - 60px)">
+		<scroll-view scroll-y="true" style="height: 100%;" bindscrolltoupper="upper" bindscrolltolower="lower" bindscroll="scroll" scroll-top="">
+			<template is="temp_Goods_Checkbox" data="{{...item}}" data-cart="{{cart}}" wx:for="{{goodData}}" wx:key="{{item.id}}"/>
+		</scroll-view>
+	</view>
+
+
+	<view class="navCart">
+		<view class="left">
+			<label class="checkbox">
+				<checkbox data-check="{{status.checkAll}}" checked="{{status.checkAll ? 'checked':''}}" catchtap="onCartCheckAll"></checkbox>全选
+			</label>
+		</view>
+		<view class="center">合计：￥{{checkTotal.totalMoney / 100}}</view>
+		<view class="right">去结算</view>
+	</view>
+</view>	

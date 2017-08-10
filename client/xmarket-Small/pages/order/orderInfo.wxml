@@ -1,0 +1,95 @@
+<view class="index cus-height-100">
+	<view class="row">
+		<view class="cell">
+			<label>订单编号:</label>
+			<text>59554819427</text>
+		</view>
+		<view class="cell">
+			<label>下单时间:</label>
+			<text>2017-07-16  15:37:41</text>
+		</view>
+		<view class="cell">
+			<label>收货方式:</label>
+			<text>小惠配送</text>
+		</view>
+		<view class="cell">
+			<label>状态:</label>
+			<text>已完成</text>
+		</view>
+		<button class="butPay">再次购买</button>
+	</view>
+
+	<view class="row" style="padding: 0px;">
+		<view class="cell">
+			<view class="left"><label>配送进度:</label></view>
+			<view class="right real">(到店自提)已完成</view>
+		</view>
+	</view>
+
+	<view class="row">
+		<view class="cell">
+			<view class="left"><label>商品总额:</label></view>
+			<view class="right real">￥33.80</view>
+		</view>
+		<view class="cell">
+			<view class="left"><label>运费:</label></view>
+			<view class="right real">￥0.00</view>
+		</view>
+		<view class="cell">
+			<view class="left" style="width: 100%"><label>收货地址:</label>广东广州市天河区天河北路16号</view>
+		</view>
+		<view class="cell">
+			<view class="left" style="width: 100%"><label>收货人:</label>陈先生  136****2258</view>
+		</view>
+		<view class="cus-hr"></view>
+		<view class="cell">
+			<view class="right" style="width: 100%;text-align: right;">共3件商品，实付款：<labei class="real">￥33.80</labei></view>
+		</view>
+		<view class="cell">
+			<view class="right" style="width: 100%;text-align: right;">节省：     <labei class="real">￥0.80</labei></view>
+		</view>
+	</view>
+ 
+	<view class="row">
+		<view class="item">
+			<image src="http://oss.0085.com/supplyerp/1490696078398.jpg" ></image>
+			<view class="content">
+				<view class="">彩虹糖原果味120g单瓶装</view>
+				<view class="real">￥10000</view>
+				<view class="cus-position-right blue">x5</view>
+			</view>
+		</view>
+		<view class="item">
+			<image src="http://oss.0085.com/supplyerp/1490696078398.jpg" ></image>
+			<view class="content">
+				<view class="">彩虹糖原果味120g单瓶装</view>
+				<view class="real">￥10000</view>
+				<view class="cus-position-right blue">x5</view>
+			</view>
+		</view>
+		<view class="item">
+			<image src="http://oss.0085.com/supplyerp/1490696078398.jpg" ></image>
+			<view class="content">
+				<view class="">彩虹糖原果味120g单瓶装</view>
+				<view class="real">￥10000</view>
+				<view class="cus-position-right blue">x5</view>
+			</view>
+		</view>
+		<view class="item">
+			<image src="http://oss.0085.com/supplyerp/1490696078398.jpg" ></image>
+			<view class="content">
+				<view class="">彩虹糖原果味120g单瓶装</view>
+				<view class="real">￥10000</view>
+				<view class="cus-position-right blue">x5</view>
+			</view>
+		</view>
+		<view class="item">
+			<image src="http://oss.0085.com/supplyerp/1490696078398.jpg" ></image>
+			<view class="content">
+				<view class="">彩虹糖原果味120g单瓶装</view>
+				<view class="real">￥10000</view>
+				<view class="cus-position-right blue">x5</view>
+			</view>
+		</view>
+	</view>
+</view>

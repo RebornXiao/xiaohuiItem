@@ -1,0 +1,91 @@
+/** orderInfo.wxss **/
+.index{
+  background: #f8f8f8;
+}
+.row{
+  background: #fff;
+  padding: 8px 0;
+  position: relative;
+  margin-bottom:8px;
+}
+
+.row .cell{
+  padding: 8px;
+} 
+.row .cell label{
+  color: #666;
+  padding-right: 8px;
+}
+.row .cell text{
+  color: #333;
+}
+
+
+
+.row .cell .left{
+  display: inline-flex;
+  width: 60%;
+}
+.row .cell .right{
+  display: inline-flex;
+  justify-content:flex-end;
+  width: 40%;
+}
+
+
+
+.row button{
+  font-size:12px;
+  background-color: #fff;
+  color: #ff3300;
+  margin-right:0px;
+  padding-left:6px;
+  padding-right:6px;
+}
+.row button::after{ 
+  border: 1px solid rgba(255, 51, 0, 0.2);
+}
+
+.butPay{
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+
+}
+
+.item {
+  box-sizing: border-box;
+  padding: 4px 4px;
+  border-bottom: 1px solid #f8f8f8;
+}
+.item image{
+    width: 80px;
+    height: 80px;
+    box-sizing: border-box;
+    border: 0;
+    vertical-align: top!important;
+}
+.item .content{
+  display:inline-block;
+}
+.item .content view{
+  padding: 4px;
+}
+.item .content view::before{
+  padding-top: 8px;
+}
+.item .content view::after{
+  padding-top: 8px;
+}
+
+
+.real{
+  color:#ff3300;
+  font-size:13px;
+}
+
+.blue{
+  color:#3dc0f1;
+}
+
+
