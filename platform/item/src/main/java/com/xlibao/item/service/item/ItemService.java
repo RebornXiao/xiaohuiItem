@@ -44,4 +44,12 @@ public interface ItemService {
     JSONObject saveItemBrand();
 
     JSONObject saveItemRelationship();
+
+    JSONObject searchItemUnitPageByName();
+
+    JSONObject searchItemTypePageByName();
+
+    JSONObject searchItemTypePage();
+
+    JSONObject searchItemTemplatesPage();
 }

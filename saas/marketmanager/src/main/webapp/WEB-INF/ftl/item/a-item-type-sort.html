@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="description" content="A fully featured admin theme which can be used to build CRM, CMS, etc.">
+    <meta name="author" content="Coderthemes">
+
+    <link rel="shortcut icon" href="assets/images/favicon_1.ico">
+
+    <title>Minton - Responsive Admin Dashboard Template</title>
+
+    <!-- Plugins css -->
+    <link href="assets/plugins/nestable/jquery.nestable.css" rel="stylesheet">
+
+    <link href="assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/core.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/icons.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/components.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/pages.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/menu.css" rel="stylesheet" type="text/css">
+    <link href="assets/css/responsive.css" rel="stylesheet" type="text/css">
+
+    <script src="assets/js/modernizr.min.js"></script>
+
+
+</head>
+
+
+<body class="fixed-left">
+
+    <!-- Begin page -->
+    <div id="wrapper">
+
+        <!-- Top Bar Start -->
+        <div class="topbar" style="height: 58px">
+
+            <!-- LOGO -->
+            <div class="topbar-left">
+                <div class="text-center">
+                    <a href="index.html" class="logo"><i class="fa fa-windows"></i> <span>智能超市后台管理系统</span> </a>
+                </div>
+            </div>
+
+            <!-- Navbar -->
+            <div class="navbar navbar-default" role="navigation">
+                <div class="container">
+                    <div class="">
+                        <div class="pull-left">
+                            <button class="button-menu-mobile open-left waves-effect">
+                                    <i class="fa fa-bars"></i>
+                                </button>
+                            <span class="clearfix"></span>
+                        </div>
+
+                        <ul class="nav navbar-nav navbar-right pull-right">
+                            <li><a href="" />当前用户：</a>
+                                <li class="dropdown">
+                                    <a href="#" class="dropdown-toggle waves-effect" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"> zhumg <span
+                                            class="caret"></span></a>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#"><i class="fa fa-user"></i>&nbsp;帐户信息</a></li>
+                                        <li><a href="#"><i class="fa fa-sign-out"></i>&nbsp;退出</a></li>
+                                    </ul>
+                                </li>
+                        </ul>
+
+                    </div>
+                    <!--/.nav-collapse -->
+                </div>
+            </div>
+        </div>
+        <!-- Top Bar End -->
+
+
+        <!-- ========== Left Sidebar Start ========== -->
+        <div class="left side-menu">
+            <div class="sidebar-inner slimscrollleft">
+
+                <div id="sidebar-menu">
+                    <ul>
+
+                        <li>
+                            <a href="index.html" class="waves-effect waves-primary subdrop"><i
+                                        class="fa fa-home"></i><span> 首  页 </span></a>
+                        </li>
+
+
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect waves-primary"><i class="fa fa-th-list"></i> <span> 订单管理 </span>
+                                 <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
+                            <ul class="list-unstyled">
+                                <li><a href="ui-buttons.html">今日订单</a></li>
+                                <li><a href="ui-buttons.html">全部订单</a></li>
+                                <li><a href="ui-buttons.html">已付款订单</a></li>
+                                <li><a href="ui-buttons.html">已付款未取货订单</a></li>
+                                <li><a href="ui-buttons.html">未付款订单</a></li>
+                                <li><a href="ui-buttons.html">异常订单</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect waves-primary"><i
+                                        class="fa fa-cubes"></i><span> 商品管理 </span> 
+                                        <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
+                            <ul class="list-unstyled">
+                                <li><a href="components-grid.html">商品模板库</a></li>
+                                <li><a href="components-carousel.html">商品分类</a></li>
+                                <li><a href="components-widgets.html">商品单位</a></li>
+                                <li><a href="components-nestable-list.html">商品规格</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect waves-primary"><i class="fa fa-sitemap"></i>
+                                    <span> 店铺管理 </span> 
+                                    <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
+                            <ul class="list-unstyled">
+                                <li><a href="icons-ionicons.html">新增店铺</a></li>
+                                <li><a href="icons-glyphicons.html">店铺列表</a></li>
+                                <li><a href="icons-materialdesign.html">店铺格子</a></li>
+                                <li><a href="icons-themifyicon.html">店铺商品</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect waves-primary"><i class="fa fa-users"></i><span> 用户管理 </span> 
+                                    <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
+                            <ul class="list-unstyled">
+                                <li><a href="form-elements.html">用户列表</a></li>
+                                <li><a href="form-advanced.html">活跃用户</a></li>
+                                <li><a href="form-validation.html">沉默用户</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect waves-primary"><i class="fa fa-line-chart"></i><span> 统计报表 </span>
+                                        <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
+                            <ul class="list-unstyled">
+                                <li><a href="tables-basic.html">订单数据统计</a></li>
+                                <li><a href="tables-datatable.html">店铺数据统计</a></li>
+                                <li><a href="tables-editable.html">用户数据统计</a></li>
+                            </ul>
+                        </li>
+
+                        <li class="has_sub">
+                            <a href="javascript:void(0);" class="waves-effect waves-primary"><i
+                                        class="fa fa-cog"></i><span> 系统设置 </span> 
+                                        <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
+                            <ul class="list-unstyled">
+                                <li><a href="chart-flot.html">个人信息</a></li>
+                            </ul>
+                        </li>
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Left Sidebar End -->
+
+
+        <!-- ============================================================== -->
+        <!-- Start right Content here -->
+        <!-- ============================================================== -->
+
+        <div class="content-page">
+            <!-- Start content -->
+            <div class="content">
+                <div class="container">
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="page-title-box">
+                                <ol class="breadcrumb pull-right">
+                                    <li><a href="#">首页</a></li>
+                                    <li><a href="#">商品管理</a></li>
+                                    <li><a href="#">商品分类</a></li>
+                                    <li class="active"><a href="#">分类排序</a></li>
+                                </ol>
+                                <h4 class="page-title"><b>分类排序</b></h4>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">当前处理排序：全部一级分类</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="row">
+                                        <div class="col-sm-4"></div>
+                                        <div class="col-sm-4 text-center">
+                                            <button type="button" class="btn waves-effect waves-light btn-primary "> <i class="fa fa-pencil"></i> 保存调整后的排序 </button>
+                                        </div>
+                                        <div class="col-sm-4"></div>
+                                    </div>
+
+                                    <div class="row m-t-30">
+                                        <div class="col-sm-4"></div>
+                                        <div class="col-sm-4">
+                                            <div class="dd" id="item_type_sort">
+                                                <ol class="dd-list">
+                                                    <li class="dd-item" data-id="1">
+                                                        <div class="dd-handle">Item 1</div>
+                                                    </li>
+                                                    <li class="dd-item" data-id="2">
+                                                        <div class="dd-handle">Item 2</div>
+                                                    </li>
+                                                    <li class="dd-item" data-id="3">
+                                                        <div class="dd-handle">Item 3</div>
+                                                    </li>
+                                                    <li class="dd-item" data-id="4">
+                                                        <div class="dd-handle">Item 4</div>
+                                                    </li>
+                                                </ol>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End of row -->
+
+                        <footer class="footer text-right">
+                            2017 小惠科技智能超市
+                        </footer>
+
+                    </div>
+                </div>
+                <!-- END wrapper -->
+            </div>
+        </div>
+
+        <script>
+            var resizefunc = [];
+        </script>
+
+        <!-- jQuery  -->
+        <script src="assets/js/jquery.min.js"></script>
+        <script src="assets/js/bootstrap.min.js"></script>
+
+        <!-- 导航相关的效果js -->
+        <script src="assets/js/detect.js"></script>
+        <script src="assets/js/fastclick.js"></script>
+        <script src="assets/js/jquery.slimscroll.js"></script>
+        <script src="assets/js/jquery.core.js"></script>
+        <script src="assets/js/jquery.app.js"></script>
+
+        <!-- 拖动排序js -->
+        <script src="assets/plugins/nestable/jquery.nestable.js"></script>
+        <script src="assets/pages/nestable.js"></script>
+
+</body>
+
+</html>

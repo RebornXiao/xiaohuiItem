@@ -22,4 +22,10 @@ public interface ItemUnitMapper {
     @Update(" update item_unit SET title = #{unit.title}, status = #{unit.status} where id = #{unit.id}")
     void update(@Param("unit") ItemUnit unit);
 
+    /** 根据 商品类型 名称 搜索 返回数量 */
+    List<ItemUnit> searchItemUnitByName(@Param("searchKey") String searchKey, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
+
+    /** 根据 商品类型 名称 搜索 返回数量 */
+    Integer searchItemUnitCountByName(@Param("searchKey") String searchKey);
+
 }

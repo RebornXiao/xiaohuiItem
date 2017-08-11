@@ -24,4 +24,9 @@ public interface ItemTemplateMapper {
     List<ItemTemplate> getItemTemplateList(@Param("template") ItemTemplate template, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
 
     int getItemTemplateListCount(@Param("template") ItemTemplate template);
+
+
+    List<ItemTemplate> searchItemTemplates(@Param("searchType") String searchType, @Param("searchKey") String searchKey, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
+
+    int searchItemTemplateCount(@Param("searchType") String searchType, @Param("searchKey") String searchKey);
 }

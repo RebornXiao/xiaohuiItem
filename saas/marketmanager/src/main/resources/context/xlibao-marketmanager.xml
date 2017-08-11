@@ -19,15 +19,16 @@
     <bean id="viewResolverCommon" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/jsp/"/>
         <property name="suffix" value=".jsp"/><!--可为空,方便实现自已的依据扩展名来选择视图解释类的逻辑  -->
-        <property name="viewClass" value="org.springframework.web.servlet.view.InternalResourceView"/>
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
         <property name="order" value="1"/>
     </bean>
 
     <!-- 配置freeMarker视图解析器 -->
     <bean id="viewResolverFtl" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
-        <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>
+        <property name="viewClass" value="com.xlibao.saas.market.manager.BaseFreeMarkerView"/>
         <property name="contentType" value="text/html; charset=utf-8"/>
         <property name="cache" value="true"/>
+        <property name="requestContextAttribute" value="base" />
         <property name="suffix" value=".ftl"/>
         <property name="order" value="0"/>
     </bean>
@@ -43,7 +44,7 @@
         <property name="defaultEncoding" value="utf-8"/>
         <property name="freemarkerSettings">
             <props>
-                <prop key="template_update_delay">3600</prop>
+                <prop key="template_update_delay">0</prop><!-- 控制模板缓存时间，测试期间 设置为0，即不缓存 3600 -->
             </props>
         </property>
     </bean>
@@ -58,4 +59,10 @@
 
     <!-- 扫描Controller -->
     <context:component-scan base-package="com.xlibao.saas.market.manager.controller"/>
+
+    <!--文件上传 -->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="100000"/>
+    </bean>
+
 </beans>

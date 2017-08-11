@@ -139,4 +139,32 @@ public class ItemController {
     public JSONObject saveItemRelationship() {
         return itemService.saveItemRelationship();
     }
+
+
+    /**
+     * zhumg
+     */
+    @ResponseBody
+    @RequestMapping(value = "searchItemUnitPageByName", method = RequestMethod.POST)
+    public JSONObject searchItemUnitPageByName() {
+        return itemService.searchItemUnitPageByName();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "searchItemTypePageByName", method = RequestMethod.POST)
+    public JSONObject searchItemTypePageByName() {
+        return itemService.searchItemTypePageByName();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "searchItemTypePage", method = RequestMethod.POST)
+    public JSONObject searchItemTypePage() {
+        return itemService.searchItemTypePage();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "searchItemTemplatesPage", method = RequestMethod.POST)
+    public JSONObject searchItemTemplatesPage() {
+        return itemService.searchItemTemplatesPage();
+    }
 }

@@ -28,4 +28,20 @@
         <if test="title != null" > and title like '%'+#{title}+'%' </if>
         <if test="status != -1" > and status = #{status} </if>
     </select>
+
+
+    <select id="searchItemUnitByName" resultMap="BaseResultMap">
+        select * from item_unit
+        <!-- 不为空，才以此条件进行搜索 -->
+        <if test="searchKey != null" > and title like '%'+#{searchKey}+'%' </if>
+        <!-- 为0，取全部 -->
+        <if test="pageSize == 0" >
+           order by id desc limit #{pageStartIndex}, #{pageSize}
+        </if>
+    </select>
+
+    <select id="searchItemUnitCountByName" resultType="Integer">
+        select COUNT(id) from item_unit
+        <if test="searchKey != null" > and title like '%'+#{searchKey}+'%' </if>
+    </select>
 </mapper>

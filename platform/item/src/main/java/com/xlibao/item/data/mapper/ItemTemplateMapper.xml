@@ -95,4 +95,38 @@
         select count(id) from item_template
         <include refid="Example_Entity_Where_Clause"/>
     </select>
+
+
+
+    <select id="searchItemTemplates" resultMap="BaseResultMap">
+        select *  from item_template
+        <if test="searchKey != null" >
+            <if test="searchType == 'title'" >
+                where title like '%'+#{searchKey}+'%'
+            </if>
+            <if test="searchType == 'define_code'" >
+                where define_code like '%'+#{searchKey}+'%'
+            </if>
+            <if test="searchType == 'barcode'" >
+                where barcode like '%'+#{searchKey}+'%'
+            </if>
+        </if>
+        order by upload_time desc limit #{pageStartIndex}, #{pageSize}
+    </select>
+
+    <select id="searchItemTemplateCount" resultType="Integer">
+        select count(*) from item_template
+        <if test="searchKey != null" >
+            <if test="searchType == 'title'" >
+                where title like '%'+#{searchKey}+'%'
+            </if>
+            <if test="searchType == 'define_code'" >
+                where define_code like '%'+#{searchKey}+'%'
+            </if>
+            <if test="searchType == 'barcode'" >
+                where barcode like '%'+#{searchKey}+'%'
+            </if>
+        </if>
+    </select>
+
 </mapper>
