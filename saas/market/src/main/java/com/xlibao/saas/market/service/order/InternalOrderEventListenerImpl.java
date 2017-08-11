@@ -1,5 +1,6 @@
 package com.xlibao.saas.market.service.order;
 
+import com.xlibao.common.constant.order.DeliverTypeEnum;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.listener.OrderEventListener;

@@ -76,7 +76,7 @@ public class AbstractChannelInboundHandlerAdapter extends ChannelHandlerAdapter 
         NettySession session = getSession(context.channel());
         MessageInputStream message = (MessageInputStream) msg;
 
-        logger.info("消息读取 session id " + session.getId() + ", message id is " + message.getMsgId());
+        logger.info("消息读取 session id " + session.getId() + ", message id is " + message.getMsgId() + " message content " + message.readUTF());
 
         messageEventListener.notifyMessageReceived(session, message);
     }

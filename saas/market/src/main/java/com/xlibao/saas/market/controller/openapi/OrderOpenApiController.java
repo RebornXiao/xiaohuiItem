@@ -17,6 +17,12 @@ public class OrderOpenApiController {
     @Autowired
     private OrderService orderService;
 
+    @ResponseBody
+    @RequestMapping(value = "showOrders")
+    public JSONObject showOrders() {
+        return orderService.showOrders();
+    }
+
     /**
      * <pre>
      *     <b>预下单</b>

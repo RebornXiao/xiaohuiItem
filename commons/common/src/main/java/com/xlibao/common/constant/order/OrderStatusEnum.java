@@ -18,7 +18,7 @@ public enum OrderStatusEnum {
     ORDER_STATUS_PAYMENT(8, "已支付"),
     /** 16、已接单 */
     ORDER_STATUS_ACCEPT(16, "已接单"),
-    /** 32、发货中 */
+    /** 32、发货中(出货) */
     ORDER_STATUS_DELIVER(32, "发货中"),
     /** 64、配送中 */
     ORDER_STATUS_DISTRIBUTION(64, "配送中"),

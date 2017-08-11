@@ -228,6 +228,10 @@ public class OrderDataAccessManager {
         return unacceptLoggerMapper.getUnacceptLogger(orderId, passportId);
     }
 
+    public List<OrderUnacceptLogger> getUnacceptLoggers(long passportId, int pageStartIndex, int pageSize) {
+        return unacceptLoggerMapper.getUnacceptLoggers(passportId, pageStartIndex, pageSize);
+    }
+
     public int removeUnacceptLoggers(long orderId) {
         return unacceptLoggerMapper.removeUnacceptLoggers(orderId);
     }

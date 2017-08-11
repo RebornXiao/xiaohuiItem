@@ -105,10 +105,10 @@ public class OrderRemoteService extends BasicRemoteService {
         return orders;
     }
 
-    public static List<OrderEntry> showOrders(long roleId, byte target, int roleType, String orderStatusSet, int type, int pageIndex, int pageSize) {
+    public static List<OrderEntry> showOrders(long passportId, byte target, int roleType, String orderStatusSet, int type, int pageIndex, int pageSize) {
         Map<String, String> parameters = initialParameter();
 
-        parameters.put("targetUserId", String.valueOf(roleId));
+        parameters.put("targetUserId", String.valueOf(passportId));
         parameters.put("target", String.valueOf(target));
         parameters.put("roleType", String.valueOf(roleType));
         parameters.put("orderStatusSet", orderStatusSet);
@@ -207,5 +207,14 @@ public class OrderRemoteService extends BasicRemoteService {
         parameters.put("timeout", String.valueOf(timeout));
 
         return postOrderMsg("order/findInvalidOrderSize", parameters);
+    }
+
+    public static JSONObject acceptOrder(long passportId, long orderId) {
+        Map<String, String> parameters = initialParameter();
+
+        parameters.put("courierPassportId", String.valueOf(passportId));
+        parameters.put("orderId", String.valueOf(orderId));
+
+        return postOrderMsg("order/acceptOrder", parameters);
     }
 }

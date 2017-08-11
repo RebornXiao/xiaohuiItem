@@ -19,5 +19,4 @@
         select * from item_brand where id = #{itemBrandId}
         <if test="status != -1" > and status = #{status} </if>
     </select>
-
 </mapper>

@@ -3,6 +3,8 @@ package com.xlibao.order.data.mapper.order;
 import com.xlibao.metadata.order.OrderUnacceptLogger;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.List;
+
 public interface OrderUnacceptLoggerMapper {
 
     int createUnacceptLogger(OrderUnacceptLogger unacceptLogger);
@@ -16,4 +18,6 @@ public interface OrderUnacceptLoggerMapper {
     int repushOrders(@Param("orderId") long orderId);
 
     int removeUnacceptLoggers(@Param("orderId") long orderId);
+
+    List<OrderUnacceptLogger> getUnacceptLoggers(long passportId, int pageStartIndex, int pageSize);
 }

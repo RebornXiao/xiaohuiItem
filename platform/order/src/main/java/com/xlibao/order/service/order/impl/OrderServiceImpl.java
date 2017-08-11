@@ -320,8 +320,9 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     @Override
     public JSONObject acceptOrder() {
         long courierPassportId = getLongParameter("courierPassportId");
+        long orderId = getLongParameter("orderId", 0);
 
-        OrderUnacceptLogger unacceptLogger = orderDataAccessManager.getNewestUnacceptLogger(courierPassportId);
+        OrderUnacceptLogger unacceptLogger = (orderId == 0) ? orderDataAccessManager.getNewestUnacceptLogger(courierPassportId) : orderDataAccessManager.getUnacceptLogger(orderId, courierPassportId);
         if (unacceptLogger == null) {
             return fail("没有可接取的订单记录");
         }
@@ -716,8 +717,22 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                 orders = orderDataAccessManager.showMerchantOrders(partnerId, Long.parseLong(targetUserId), orderStatusSet, type, pageStartIndex, pageSize);
                 break;
             case COURIER: // 快递员
-                orders = orderDataAccessManager.showCourierOrders(partnerId, Long.parseLong(targetUserId), orderStatusSet, type, pageStartIndex, pageSize);
-                break;
+            {
+                if (target == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) {
+                    // 查询未接订单记录
+                    List<OrderUnacceptLogger> orderUnacceptLoggers = orderDataAccessManager.getUnacceptLoggers(Long.parseLong(targetUserId), pageStartIndex, pageSize);
+                    StringBuilder orderSet = new StringBuilder();
+                    for (OrderUnacceptLogger unacceptLogger : orderUnacceptLoggers) {
+                        orderSet.append(unacceptLogger.getOrderId()).append(CommonUtils.SPLIT_COMMA);
+                    }
+                    orderSet.deleteCharAt(orderSet.length() - 1);
+                    // TODO
+                    orders = orderDataAccessManager.showCourierOrders(partnerId, Long.parseLong(targetUserId), orderStatusSet, type, pageStartIndex, pageSize);
+                } else {
+                    orders = orderDataAccessManager.showCourierOrders(partnerId, Long.parseLong(targetUserId), orderStatusSet, type, pageStartIndex, pageSize);
+                }
+            }
+            break;
             default:
                 throw new XlibaoIllegalArgumentException("错误的角色类型，错误码：" + roleType);
         }

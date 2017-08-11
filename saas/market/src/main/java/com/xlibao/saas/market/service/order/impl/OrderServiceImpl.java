@@ -22,6 +22,7 @@ import com.xlibao.saas.market.data.model.MarketItem;
 import com.xlibao.saas.market.data.model.MarketItemDailyPurchaseLogger;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.item.ItemErrorCodeEnum;
+import com.xlibao.saas.market.service.order.OrderErrorCodeEnum;
 import com.xlibao.saas.market.service.order.OrderEventListenerManager;
 import com.xlibao.saas.market.service.order.OrderService;
 import com.xlibao.saas.market.service.order.StatusEnterEnum;
@@ -166,8 +167,38 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if (!Objects.equals(orderEntry.getShippingPassportId(), marketEntry.getId())) {
             // TODO 推送通知用户订单权限出错
             // msg：对不起，该订单不能在本店取货
+            return fail();
+        }
+        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey()) {
+            // TODO 推送通知用户订单未支付
+            return fail();
+        }
+        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
+            // TODO 推送通知用户订单处于配送中
+            return fail();
+        }
+        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_ARRIVE.getKey()) {
+            // TODO 通知用户该订单已取货
+            return fail();
         }
         return null;
+    }
+
+    @Override
+    public JSONObject acceptOrder() {
+        // 接单者
+        long passportId = getLongParameter("passportId");
+        // 订单ID
+        long orderId = getLongParameter("orderId");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderId);
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) {
+            return OrderErrorCodeEnum.ORDER_STATUS_ERROR.response("不能接取该订单，用户设置为自提状态");
+        }
+        if (orderEntry.getCourierPassportId() != null && orderEntry.getCourierPassportId() > 0) {
+            return OrderErrorCodeEnum.ORDER_HAS_ACCEPT.response();
+        }
+        return OrderRemoteService.acceptOrder(passportId, orderId);
     }
 
     private String orderStatusSet(int roleType, int statusEnter) {
@@ -189,7 +220,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     }
 
     private JSONArray fillShowOrderMsg(int roleType, List<OrderEntry> orderEntries) {
-        if (roleType != OrderRoleTypeEnum.CONSUMER.getKey()) {
+        if (roleType != OrderRoleTypeEnum.CONSUMER.getKey() && roleType != OrderRoleTypeEnum.COURIER.getKey()) {
             return new JSONArray();
         }
         JSONArray response = new JSONArray();

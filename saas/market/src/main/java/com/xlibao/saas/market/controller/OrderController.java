@@ -190,8 +190,8 @@ public class OrderController {
      *          <b>sequenceNumber</b> - String 公用序号，预下单时生产
      *          <b>orderSequenceNumber</b> - String 订单序列号
      *          <b>createTime</b> - String 下单时间，格式：yyyy-MM-dd HH:mm:ss
-     *          <b>deliverType</b> - int 配送类型，参考：{@link com.xlibao.saas.market.service.order.DeliverTypeEnum#PICKED_UP} -- 自提
-     *                                              {@link com.xlibao.saas.market.service.order.DeliverTypeEnum#DISTRIBUTION} -- 配送
+     *          <b>deliverType</b> - int 配送类型，参考：{@link com.xlibao.common.constant.order.DeliverTypeEnum#PICKED_UP} -- 自提
+     *                                              {@link com.xlibao.common.constant.order.DeliverTypeEnum#DISTRIBUTION} -- 配送
      *          <b>deliverValue</b> - String 用于展示的配送方式；如："到店自提"、"小惠配送"
      *          <b>orderStatus</b> - int 订单状态，具体参考：{@link com.xlibao.common.constant.order.OrderStatusEnum}中的key
      *          <b>statusValue</b> - String 订单状态值，具体参考：{@link com.xlibao.common.constant.order.OrderStatusEnum}中的value
@@ -218,5 +218,11 @@ public class OrderController {
     @RequestMapping(value = "orderDetail")
     public JSONObject orderDetail() {
         return orderService.orderDetail();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "acceptOrder")
+    public JSONObject acceptOrder() {
+        return orderService.acceptOrder();
     }
 }

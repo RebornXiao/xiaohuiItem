@@ -8,6 +8,6 @@
 
     <modelVersion>4.0.0</modelVersion>
     <artifactId>datamodel</artifactId>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>部分数据模型</name>
 </project>

@@ -22,6 +22,10 @@
         select * from order_unaccept_logger where target_passport_id = #{passportId} order by id desc limit 1
     </select>
 
+    <select id="getUnacceptLoggers" resultMap="BaseResultMap">
+        select * from order_unaccept_logger where target_passport_id = #{passportId} limit #{pageStartIndex}, #{pageSize}
+    </select>
+
     <select id="unAcceptOrderSize" resultType="int">
         select count(*) from order_unaccept_logger where target_passport_id = #{passportId}
     </select>
