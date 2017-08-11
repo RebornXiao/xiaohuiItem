@@ -27,7 +27,9 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
 
     @Override
     public void notifyOrderPayment(OrderEntry order) {
-        // 推送给硬件进行拣货操作
+        if (order.getDeliverType() == DeliverTypeEnum.DISTRIBUTION.getKey()) { // 配送时 通知配送者
+
+        }
     }
 
     @Override

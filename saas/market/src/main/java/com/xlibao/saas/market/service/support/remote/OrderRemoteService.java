@@ -165,7 +165,7 @@ public class OrderRemoteService extends BasicRemoteService {
         logger.info("修改商品快照结果：" + response);
     }
 
-    public static void correctOrderPrice(long orderId, long actualPrice, long totalPrice, long discountPrice, long distributionFee) {
+    public static void correctOrderPrice(long orderId, long actualPrice, long totalPrice, long discountPrice, long distributionFee, int deliverType) {
         Map<String, String> parameters = initialParameter();
 
         parameters.put("orderId", String.valueOf(orderId));
@@ -173,6 +173,7 @@ public class OrderRemoteService extends BasicRemoteService {
         parameters.put("totalPrice", String.valueOf(totalPrice));
         parameters.put("discountPrice", String.valueOf(discountPrice));
         parameters.put("distributionFee", String.valueOf(distributionFee));
+        parameters.put("deliverType", String.valueOf(deliverType));
 
         JSONObject response = postOrderMsg("order/correctOrderPrice", parameters);
 

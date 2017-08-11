@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xlibao.saas.market.properties.mapper.market.MarketCabinetLoggerMapper">
-    <resultMap id="BaseResultMap" type="com.xlibao.saas.market.properties.model.MarketCabinetLogger">
+<mapper namespace="com.xlibao.saas.market.data.mapper.market.MarketCabinetLoggerMapper">
+    <resultMap id="BaseResultMap" type="com.xlibao.saas.market.data.model.MarketCabinetLogger">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="cabinet_id" property="cabinetId" jdbcType="BIGINT"/>
         <result column="order_id" property="orderId" jdbcType="BIGINT"/>

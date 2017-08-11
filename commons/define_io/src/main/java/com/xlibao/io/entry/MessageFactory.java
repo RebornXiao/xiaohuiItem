@@ -17,16 +17,12 @@ public class MessageFactory {
         return new MessageOutputStreamImpl(MSG_TYPE_LOGIC, msgId, 0);
     }
 
-    public static MessageOutputStream createLogicMessage(short msgId, int msgSequence) {
-        return new MessageOutputStreamImpl(MSG_TYPE_LOGIC, msgId, msgSequence);
+    public static MessageOutputStream createInternalMessage(short msgId) {
+        return new MessageOutputStreamImpl(MSG_TYPE_INTERNAL, msgId, 0);
     }
 
     public static MessageOutputStream createPlatformMessage(short msgId) {
         return new MessageOutputStreamImpl(MSG_TYPE_PLATFORM, msgId, 0);
-    }
-
-    public static MessageOutputStream createPlatformMessage(short msgId, int msgSequence) {
-        return new MessageOutputStreamImpl(MSG_TYPE_PLATFORM, msgId, msgSequence);
     }
 
     public static MessageOutputStream createMessageOutputStream(byte msgType, short msgId) {

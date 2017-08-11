@@ -107,8 +107,8 @@ public class OrderDataAccessManager {
         return entryMapper.updateOrderStatus(orderId, orderStatus, matchBeforeStatus, deliverStatus, beforeDeliverStatus);
     }
 
-    public int correctOrderPrice(long orderId, long actualPrice, long totalPrice, long discountPrice, long distributionFee) {
-        return entryMapper.correctOrderPrice(orderId, actualPrice, totalPrice, discountPrice, distributionFee);
+    public int correctOrderPrice(long orderId, long actualPrice, long totalPrice, long discountPrice, long distributionFee, int deliverType) {
+        return entryMapper.correctOrderPrice(orderId, actualPrice, totalPrice, discountPrice, distributionFee, deliverType);
     }
 
     public int fillDailyRowSort(long orderId, int daySortNumber) {

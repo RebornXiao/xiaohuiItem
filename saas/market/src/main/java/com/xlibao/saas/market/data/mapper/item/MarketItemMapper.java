@@ -24,4 +24,6 @@ public interface MarketItemMapper {
     int itemPending(@Param("itemId") long itemId, @Param("quantity") int quantity);
 
     int incrementPending(@Param("itemId") long itemId, @Param("quantity") int quantity);
+
+    int decrementItemStock(@Param("itemId") long itemId, @Param("quantity") int quantity);
 }

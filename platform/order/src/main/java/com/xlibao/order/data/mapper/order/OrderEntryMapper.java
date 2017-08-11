@@ -34,7 +34,8 @@ public interface OrderEntryMapper {
 
     int updateOrderStatus(@Param("orderId") long orderId, @Param("status") int status, @Param("matchBeforeStatus") int matchBeforeStatus, @Param("deliverStatus") int deliverStatus, @Param("beforeDeliverStatus") int beforeDeliverStatus);
 
-    int correctOrderPrice(@Param("orderId") long orderId, @Param("actualPrice") long actualPrice, @Param("totalPrice") long totalPrice, @Param("discountPrice") long discountPrice, @Param("distributionFee") long distributionFee);
+    int correctOrderPrice(@Param("orderId") long orderId, @Param("actualPrice") long actualPrice, @Param("totalPrice") long totalPrice, @Param("discountPrice") long discountPrice,
+                          @Param("distributionFee") long distributionFee, @Param("deliverType") int deliverType);
 
     int fillDailyRowSort(@Param("orderId") long orderId, @Param("daySortNumber") int daySortNumber);
 

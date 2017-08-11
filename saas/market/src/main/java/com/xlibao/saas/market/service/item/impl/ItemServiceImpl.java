@@ -165,6 +165,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             JSONObject marketData = new JSONObject();
             marketData.put("marketId", marketEntry.getId());
             marketData.put("marketName", marketEntry.getName());
+            marketData.put("marketImage", marketEntry.getImage());
             marketData.put("items", entry.getValue());
 
             marketItems.add(marketData);

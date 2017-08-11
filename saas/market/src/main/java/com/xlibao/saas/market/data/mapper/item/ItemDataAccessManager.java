@@ -59,6 +59,10 @@ public class ItemDataAccessManager {
         return itemMapper.incrementPending(itemId, quantity);
     }
 
+    public int decrementItemStock(long itemId, int quantity) {
+        return itemMapper.decrementItemStock(itemId, quantity);
+    }
+
     public List<MarketItemLocation> getItemLocations(long itemId) {
         return itemLocationMapper.getItemLocations(itemId);
     }
@@ -81,5 +85,9 @@ public class ItemDataAccessManager {
 
     public List<MarketItemStockLockLogger> getItemStockLockLoggers(String orderSequenceNumber, ItemLockTypeEnum itemLockTypeEnum, int status) {
         return itemStockLockLoggerMapper.getItemStockLockLoggers(orderSequenceNumber, itemLockTypeEnum.getKey(), status);
+    }
+
+    public int modifyStockLockStatus(long id, int status) {
+        return itemStockLockLoggerMapper.modifyStockLockStatus(id, status);
     }
 }

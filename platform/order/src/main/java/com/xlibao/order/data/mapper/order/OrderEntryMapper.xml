@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xlibao.order.properties.mapper.order.OrderEntryMapper">
+<mapper namespace="com.xlibao.order.data.mapper.order.OrderEntryMapper">
     <resultMap id="BaseResultMap" type="com.xlibao.metadata.order.OrderEntry">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="sequence_number" property="sequenceNumber" jdbcType="VARCHAR"/>
@@ -54,10 +54,10 @@
     </resultMap>
 
     <insert id="createOrderEntry" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.metadata.order.OrderEntry">
-        insert into order_entry(sequence_number, order_sequence_number, partner_id, partner_user_id, type, status, deliver_status, push_type, user_source, trans_type, shipping_passport_id, shipping_nick_name, shipping_province, shipping_city, shipping_district,
+        insert into order_entry(sequence_number, order_sequence_number, partner_id, partner_user_id, type, status, deliver_status, deliver_type, push_type, user_source, trans_type, shipping_passport_id, shipping_nick_name, shipping_province, shipping_city, shipping_district,
             shipping_address, shipping_location, shipping_phone, receipt_user_id, receipt_nick_name, receipt_province, receipt_city, receipt_district, receipt_address, receipt_phone, receipt_location, current_location, total_distance,
             collecting_fees, actual_price, total_price, discount_price, distribution_fee, price_logger, body, detail, remark, payment_time, confirm_time)
-        values(#{sequenceNumber}, #{orderSequenceNumber}, #{partnerId}, #{partnerUserId}, #{type}, #{status}, #{deliverStatus}, #{pushType}, #{userSource}, #{transType}, #{shippingPassportId}, #{shippingNickName}, #{shippingProvince}, #{shippingCity}, #{shippingDistrict},
+        values(#{sequenceNumber}, #{orderSequenceNumber}, #{partnerId}, #{partnerUserId}, #{type}, #{status}, #{deliverStatus}, #{deliverType}, #{pushType}, #{userSource}, #{transType}, #{shippingPassportId}, #{shippingNickName}, #{shippingProvince}, #{shippingCity}, #{shippingDistrict},
             #{shippingAddress}, #{shippingLocation}, #{shippingPhone}, #{receiptUserId}, #{receiptNickName}, #{receiptProvince}, #{receiptCity}, #{receiptDistrict}, #{receiptAddress}, #{receiptPhone}, #{receiptLocation}, #{currentLocation},
             #{totalDistance}, #{collectingFees}, #{actualPrice}, #{totalPrice}, #{discountPrice}, #{distributionFee}, #{priceLogger}, #{body}, #{detail}, #{remark}, #{paymentTime}, #{confirmTime})
     </insert>
@@ -124,7 +124,7 @@
     </update>
 
     <update id="correctOrderPrice">
-        update order_entry set actual_price = #{actualPrice}, total_price = #{totalPrice}, discount_price = #{discountPrice}, distribution_fee = #{distributionFee} where id = #{orderId}
+        update order_entry set actual_price = #{actualPrice}, total_price = #{totalPrice}, discount_price = #{discountPrice}, distribution_fee = #{distributionFee}, deliver_type = #{deliveyType} where id = #{orderId}
     </update>
 
     <update id="fillDailyRowSort">

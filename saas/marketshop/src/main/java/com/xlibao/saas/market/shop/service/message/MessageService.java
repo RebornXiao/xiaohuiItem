@@ -7,5 +7,5 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface MessageService {
 
-    JSONObject sendPush();
+    JSONObject sendHardwarePush();
 }

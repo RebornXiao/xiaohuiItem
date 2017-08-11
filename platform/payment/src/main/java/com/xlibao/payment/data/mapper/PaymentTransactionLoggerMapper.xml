@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xlibao.payment.properties.mapper.PaymentTransactionLoggerMapper">
-    <resultMap id="BaseResultMap" type="com.xlibao.payment.properties.model.PaymentTransactionLogger">
+<mapper namespace="com.xlibao.payment.data.mapper.PaymentTransactionLoggerMapper">
+    <resultMap id="BaseResultMap" type="com.xlibao.payment.data.model.PaymentTransactionLogger">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="passport_id" property="passportId" jdbcType="BIGINT"/>
         <result column="trans_sequence_number" property="transSequenceNumber" jdbcType="VARCHAR"/>
@@ -41,7 +41,7 @@
         <result column="extend_parameter" property="extendParameter" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <insert  id="createPaymentTransactionLogger" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.payment.properties.model.PaymentTransactionLogger">
+    <insert  id="createPaymentTransactionLogger" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.payment.data.model.PaymentTransactionLogger">
         insert into payment_transaction_logger(passport_id, trans_sequence_number, payment_type, trans_type, partner_id, app_id, partner_user_id, partner_trade_number, channel_id, trans_unit_amount,
             trans_number, trans_total_amount, trans_title, remark, use_conpon, discount_amount, notify_front_url, notify_url, extend_parameter,
             account_number, account_name, account_type, currency_type, bank_name, bank_branch_code, bank_simple_name)

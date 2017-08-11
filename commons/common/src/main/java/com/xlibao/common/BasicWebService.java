@@ -27,23 +27,15 @@ import java.util.Map;
  */
 public class BasicWebService {
 
-    /**
-     * 通用成功标志 -- 0
-     */
+    /** 通用成功标志 -- 0 */
     public static final int SUCCESS_CODE = 0;
-    /**
-     * 通用成功描述 -- 请求成功
-     */
+    /** 通用成功描述 -- 请求成功 */
     private static final String SUCCESS_MSG = "请求成功";
 
-    /**
-     * 通用失败标志 -- 1
-     */
+    /** 通用失败标志 -- 1 */
     public static final int FAIL_CODE = 1;
-    /**
-     * 通用失败描述 -- 请求失败
-     */
-    private static final String FAIL_MSG = "请求失败";
+    /** 通用失败描述 -- 请求失败 */
+    public static final String FAIL_MSG = "请求失败";
 
     public static JSONObject success() {
         return success(SUCCESS_MSG);

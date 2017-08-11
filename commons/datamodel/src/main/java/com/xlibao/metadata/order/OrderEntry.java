@@ -604,8 +604,8 @@ public class OrderEntry {
         this.stateLoggers = stateLoggers;
     }
 
-    public boolean isPriceMatch(long actualPrice, long totalPrice, long discountPrice, long distributionFee) {
-        return actualPrice == getActualPrice() && totalPrice == getTotalPrice() && discountPrice == getDiscountPrice() && distributionFee == getDistributionFee();
+    public boolean isPriceMatch(long actualPrice, long totalPrice, long discountPrice, long distributionFee, int deliverType) {
+        return actualPrice == getActualPrice() && totalPrice == getTotalPrice() && discountPrice == getDiscountPrice() && distributionFee == getDistributionFee() && deliverType == getDeliverType();
     }
 
     /**

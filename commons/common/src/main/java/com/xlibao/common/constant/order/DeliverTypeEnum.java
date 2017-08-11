@@ -1,4 +1,4 @@
-package com.xlibao.saas.market.service.order;
+package com.xlibao.common.constant.order;
 
 /**
  * @author chinahuangxc on 2017/8/2.

@@ -8,6 +8,8 @@ import com.xlibao.common.BasicWebService;
  */
 public enum PlatformErrorCodeEnum {
 
+    /** 99 -- 服务器无响应 */
+    REMOTE_TIMEOUT(99, "远程服务器无响应"),
     /** 100 -- 没有更多数据 */
     NO_MORE_DATA(100, "没有更多数据"),
     /** 200 -- 错误的手机号 */
@@ -19,6 +21,8 @@ public enum PlatformErrorCodeEnum {
 
     /** 300 -- 签名验证失败 */
     SIGN_ERROR(300, "签名验证失败"),
+    /** 400 -- 找不到目标 */
+    NOT_FOUND_TARGET(400, "找不到目标"),
     ;
 
     private int key;

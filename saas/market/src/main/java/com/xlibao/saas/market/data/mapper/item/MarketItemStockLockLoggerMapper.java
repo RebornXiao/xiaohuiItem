@@ -10,4 +10,6 @@ public interface MarketItemStockLockLoggerMapper {
     int createItemStockLogger(MarketItemStockLockLogger itemStockLockLogger);
 
     List<MarketItemStockLockLogger> getItemStockLockLoggers(@Param("orderSequenceNumber") String orderSequenceNumber, @Param("key") int key, @Param("status") int status);
+
+    int modifyStockLockStatus(@Param("id") long id, @Param("status") int status);
 }

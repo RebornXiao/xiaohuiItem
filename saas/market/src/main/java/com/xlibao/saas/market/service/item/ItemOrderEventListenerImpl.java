@@ -1,15 +1,18 @@
 package com.xlibao.saas.market.service.item;
 
 import com.xlibao.common.CommonUtils;
-import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.datacache.item.ItemDataCacheService;
+import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import com.xlibao.saas.market.data.DataAccessFactory;
+import com.xlibao.saas.market.data.model.MarketEntry;
 import com.xlibao.saas.market.data.model.MarketItemLocation;
 import com.xlibao.saas.market.data.model.MarketItemStockLockLogger;
 import com.xlibao.saas.market.listener.OrderEventListener;
+import com.xlibao.saas.market.service.support.remote.MarketShopRemoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +57,7 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
             itemStockLockLogger.setItemTemplateId(itemSnapshot.getItemTemplateId());
             itemStockLockLogger.setLockQuantity(itemSnapshot.totalQuantity());
             itemStockLockLogger.setLockType(ItemLockTypeEnum.CREATE_ORDER.getKey());
-            itemStockLockLogger.setLockStatus((int) GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
+            itemStockLockLogger.setLockStatus(ItemStockLockStatusEnum.LOCK.getKey());
             itemStockLockLogger.setLockTime(new Date());
             result = dataAccessFactory.getItemDataAccessManager().createItemStockLogger(itemStockLockLogger);
             if (result <= 0) {
@@ -67,24 +70,41 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
 
     @Override
     public void notifyOrderPayment(OrderEntry orderEntry) {
-        List<MarketItemStockLockLogger> itemStockLockLoggers = dataAccessFactory.getItemDataAccessManager().getItemStockLockLoggers(orderEntry.getOrderSequenceNumber(), ItemLockTypeEnum.CREATE_ORDER, GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
+        List<MarketItemStockLockLogger> itemStockLockLoggers = dataAccessFactory.getItemDataAccessManager().getItemStockLockLoggers(orderEntry.getOrderSequenceNumber(), ItemLockTypeEnum.CREATE_ORDER, ItemStockLockStatusEnum.LOCK.getKey());
+        // 推送给硬件进行拣货操作(缓存)
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
+
+        StringBuilder message = new StringBuilder().append("0001").append(orderEntry.getOrderSequenceNumber());
         if (!CommonUtils.isEmpty(itemStockLockLoggers)) { // 原来存在锁定的记录 进行解锁同时新增挂起数量
             for (MarketItemStockLockLogger itemStockLockLogger : itemStockLockLoggers) {
+                // 对商品进行库存挂起操作
                 dataAccessFactory.getItemDataAccessManager().itemPending(itemStockLockLogger.getItemId(), itemStockLockLogger.getLockQuantity());
-                decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemStockLockLogger.getItemId(), itemStockLockLogger.getItemTemplateId(), itemStockLockLogger.getLockQuantity());
+                // 设定锁定记录为：出货状态
+                dataAccessFactory.getItemDataAccessManager().modifyStockLockStatus(itemStockLockLogger.getId(), ItemStockLockStatusEnum.SHIPMENT.getKey());
+                String msg = decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemStockLockLogger.getItemId(), itemStockLockLogger.getItemTemplateId(), itemStockLockLogger.getLockQuantity());
+                message.append(msg);
             }
+            // 发送消息给硬件做出货操作
+            MarketShopRemoteService.sendMessage(marketEntry.getPassportId(), message.toString());
             return;
         }
         // 如果本来没有锁定的记录 那么则只需要进行挂起
         List<OrderItemSnapshot> itemSnapshots = orderEntry.getItemSnapshots();
         for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
             dataAccessFactory.getItemDataAccessManager().incrementPending(itemSnapshot.getItemId(), itemSnapshot.totalQuantity());
-            decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemSnapshot.getItemId(), itemSnapshot.getItemTemplateId(), itemSnapshot.totalQuantity());
+            String msg = decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemSnapshot.getItemId(), itemSnapshot.getItemTemplateId(), itemSnapshot.totalQuantity());
+            message.append(msg);
         }
+        // 发送消息给硬件做出货操作
+        MarketShopRemoteService.sendMessage(marketEntry.getPassportId(), message.toString());
     }
 
-    private void decrementItemLocationStock(String orderSequenceNumber, long itemId, long itemTemplateId, int quantity) {
+    private String decrementItemLocationStock(String orderSequenceNumber, long itemId, long itemTemplateId, int quantity) {
         List<MarketItemLocation> itemLocations = dataAccessFactory.getItemDataAccessManager().getItemLocations(itemId);
+
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemTemplateId);
+        // 组合硬件消息
+        StringBuilder msgBuilder = new StringBuilder();
         for (MarketItemLocation itemLocation : itemLocations) {
             int decrementStock = quantity;
             if (itemLocation.getStock() < quantity) { // 库存不足时 将库存清空
@@ -94,14 +114,17 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
             if (result > 0) { // 数据库执行成功后减少未出货数量
                 quantity -= decrementStock;
             }
+            // 商品位置 数量(16进制，4位 不足时前面补0)
+            msgBuilder.append(itemLocation).append(CommonUtils.toHexString(decrementStock, 4, "0"));
             if (quantity <= 0) {
                 break;
             }
         }
         if (quantity > 0) {
-            logger.error("【" + orderSequenceNumber + "】严重问题，商品库存不足，商品ID：" + itemId + "，需要扣除数量：" + quantity);
+            logger.error("【" + orderSequenceNumber + "】严重问题，商品库存不足，商品ID：" + itemId + "(" + itemTemplate.getName() + ")，需要扣除数量：" + quantity);
             ItemErrorCodeEnum.ITEM_STOCK_NOT_ENOUGH.throwException();
         }
+        return msgBuilder.toString();
     }
 
     @Override

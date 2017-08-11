@@ -345,5 +345,4 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         response.put("pageIndex", getIntParameter("pageIndex", 1) - 1);
         return success(response);
     }
-
 }

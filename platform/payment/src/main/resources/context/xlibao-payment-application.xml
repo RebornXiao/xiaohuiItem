@@ -20,7 +20,7 @@
     <aop:aspectj-autoproxy/>
 
     <!-- 加载指定环境下的配置文件 -->
-    <context:property-placeholder location="classpath:properties/*/*/${profiles.active}*.properties"/>
+    <context:property-placeholder location="classpath:properties/*/${profiles.active}*.properties"/>
 
     <!-- 自动扫描(自动注入) -->
     <context:component-scan base-package="com.xlibao.payment">
@@ -66,11 +66,11 @@
             </array>
         </property>
 
-        <property name="typeAliasesPackage" value="com.xlibao.payment.properties.model.*"/>
+        <property name="typeAliasesPackage" value="com.xlibao.payment.data.model.*"/>
     </bean>
 
     <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.xlibao.payment.properties.mapper"/>
+        <property name="basePackage" value="com.xlibao.payment.data.mapper"/>
     </bean>
 
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">

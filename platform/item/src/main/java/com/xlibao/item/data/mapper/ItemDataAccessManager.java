@@ -1,9 +1,7 @@
 package com.xlibao.item.data.mapper;
 
-import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.constant.item.ItemStatusEnum;
 import com.xlibao.metadata.item.*;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -136,10 +134,6 @@ public class ItemDataAccessManager {
     public void updateItemRelationship(ItemRelationship itemRelationship) {
         relationshipMapper.update(itemRelationship);
     }
-
-
-
-
 
     public List<ItemUnit> searchItemUnitByName(String searchKey, int pageSize, int pageStartIndex) {
         return unitMapper.searchItemUnitByName(searchKey, pageSize, pageStartIndex);

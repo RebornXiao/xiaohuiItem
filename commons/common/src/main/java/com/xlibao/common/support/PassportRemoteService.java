@@ -111,6 +111,23 @@ public class PassportRemoteService {
         return JSONObject.parseObject(response.getString("response"), Passport.class);
     }
 
+    public static JSONObject loginPassport(String username, String password, int deviceType, int versionIndex) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("username", username);
+        parameters.put("password", password);
+        parameters.put("deviceType", String.valueOf(deviceType));
+        parameters.put("versionIndex", String.valueOf(versionIndex));
+
+        String data = HttpRequest.post(passportRemoteServiceURL + "passport/loginPassport/", parameters);
+
+        JSONObject response = JSONObject.parseObject(data);
+        int code = response.getIntValue("code");
+        if (code != 0) {
+            throw new XlibaoRuntimeException(code, response.getString("msg"));
+        }
+        return response;
+    }
+
     public static String changeAccessToken(long passportId, String accessToken) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("passportId", String.valueOf(passportId));

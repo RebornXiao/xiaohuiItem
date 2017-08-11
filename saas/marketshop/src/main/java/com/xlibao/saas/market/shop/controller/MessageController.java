@@ -18,8 +18,8 @@ public class MessageController {
     private MessageService messageService;
 
     @ResponseBody
-    @RequestMapping(value = "sendPush")
-    public JSONObject sendPush() {
-        return messageService.sendPush();
+    @RequestMapping(value = "sendHardwarePush")
+    public JSONObject sendHardwarePush() {
+        return messageService.sendHardwarePush();
     }
 }

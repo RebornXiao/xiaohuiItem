@@ -8,10 +8,7 @@ import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.GlobalConstantConfig;
 import com.xlibao.common.constant.device.DeviceTypeEnum;
 import com.xlibao.common.constant.message.TargetTypeEnum;
-import com.xlibao.common.constant.order.OrderRoleTypeEnum;
-import com.xlibao.common.constant.order.OrderSequenceNumberStatusEnum;
-import com.xlibao.common.constant.order.OrderStatusEnum;
-import com.xlibao.common.constant.order.OrderTypeEnum;
+import com.xlibao.common.constant.order.*;
 import com.xlibao.common.constant.payment.PaymentTypeEnum;
 import com.xlibao.common.constant.payment.TransStatusEnum;
 import com.xlibao.common.constant.payment.TransTypeEnum;
@@ -780,8 +777,9 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         long totalPrice = getLongParameter("totalPrice");
         long discountPrice = getLongParameter("discountPrice");
         long distributionFee = getLongParameter("distributionFee");
+        int deliverType = getIntParameter("deliverType", DeliverTypeEnum.PICKED_UP.getKey());
 
-        int result = orderDataAccessManager.correctOrderPrice(orderId, actualPrice, totalPrice, discountPrice, distributionFee);
+        int result = orderDataAccessManager.correctOrderPrice(orderId, actualPrice, totalPrice, discountPrice, distributionFee, deliverType);
 
         return result <= 0 ? fail("修改订单价格失败") : success("修改订单费用成功");
     }

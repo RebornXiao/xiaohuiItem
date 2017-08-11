@@ -16,4 +16,6 @@ public interface OrderService {
     JSONObject showOrders();
 
     JSONObject orderDetail();
+
+    JSONObject pickUpItems();
 }

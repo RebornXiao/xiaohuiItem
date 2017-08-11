@@ -22,7 +22,6 @@ import com.xlibao.saas.market.data.model.MarketItem;
 import com.xlibao.saas.market.data.model.MarketItemDailyPurchaseLogger;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.item.ItemErrorCodeEnum;
-import com.xlibao.saas.market.service.order.DeliverTypeEnum;
 import com.xlibao.saas.market.service.order.OrderEventListenerManager;
 import com.xlibao.saas.market.service.order.OrderService;
 import com.xlibao.saas.market.service.order.StatusEnterEnum;
@@ -35,10 +34,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author chinahuangxc on 2017/7/10.
@@ -119,15 +115,14 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         long passportId = getPassportId();
         String orderSequenceNumber = getUTF("orderSequenceNumber");
         String paymentType = getUTF("paymentType");
-        // 优惠券ID
-        // long personalCouponId = getLongParameter("personalCouponId", 0);
+        int deliverType = getIntParameter("deliverType", DeliverTypeEnum.PICKED_UP.getKey());
 
         OrderEntry order = OrderRemoteService.getOrder(orderSequenceNumber);
         if ((order.getStatus() & OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) == OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) {
             throw new XlibaoRuntimeException("订单已支付！");
         }
         // 重新计价
-        correctingOrderCost(passportId, order);
+        correctingOrderCost(passportId, deliverType, order);
         // 总共需要支付的费用
         long paymentAmount = order.getActualPrice();
         // 支付过程由订单中心执行
@@ -158,6 +153,21 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         OrderEntry orderEntry = OrderRemoteService.getOrder(orderId);
 
         return fillOrderDetailMsg(orderEntry, roleType, passportId);
+    }
+
+    @Override
+    public JSONObject pickUpItems() {
+        long passportId = getLongParameter("passportId");
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarketForPassport(passportId);
+        if (!Objects.equals(orderEntry.getShippingPassportId(), marketEntry.getId())) {
+            // TODO 推送通知用户订单权限出错
+            // msg：对不起，该订单不能在本店取货
+        }
+        return null;
     }
 
     private String orderStatusSet(int roleType, int statusEnter) {
@@ -322,6 +332,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         order.setReceiptLocation(receiptLocation);
 
         order.setStatus(OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey());
+        order.setDeliverType(DeliverTypeEnum.PICKED_UP.getKey());
 
         order.setRemark(remark);
 
@@ -332,24 +343,20 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         long totalPrice = 0;
         for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
             actualPrice += itemSnapshot.getTotalPrice();
-            totalPrice += (itemSnapshot.getNormalPrice() * (itemSnapshot.getNormalQuantity() + itemSnapshot.getDiscountQuantity()));
+            totalPrice += (itemSnapshot.getNormalPrice() * itemSnapshot.totalQuantity());
         }
         long discountPrice = totalPrice - actualPrice;
-        order.setActualPrice(actualPrice + marketEntry.getDeliveryCost());
-        order.setTotalPrice(totalPrice + marketEntry.getDeliveryCost());
+        order.setActualPrice(actualPrice);
+        order.setTotalPrice(totalPrice);
         order.setDiscountPrice(discountPrice);
         order.setPriceLogger(discountPrice <= 0 ? "无优惠" : "订单优惠(折扣)：" + CommonUtils.formatNumber(discountPrice / 100f, "#.##") + "元");
-        order.setDistributionFee(marketEntry.getDeliveryCost());
+        order.setDistributionFee(0L);
 
         order.setItemSnapshots(itemSnapshots);
         return order;
     }
 
-    private void correctingOrderCost(long passportId, OrderEntry order) {
-        if ((System.currentTimeMillis() - XMarketTimeConfig.PRICE_PROTECTION_TIME) < order.getCreateTime().getTime()) {
-            // 设定的价格保护时间
-            return;
-        }
+    private void correctingOrderCost(long passportId, int deliverType, OrderEntry order) {
         long timeout = (order.getCreateTime().getTime() + XMarketTimeConfig.ORDER_INVALID_TIME) - System.currentTimeMillis();
         if (timeout <= 0) {
             OrderRemoteService.cancelOrder(order.getId(), order.getPartnerUserId(), order.getStatus(), "订单过期");
@@ -364,33 +371,39 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             itemSnapshotMapperMap.put(itemSnapshot.getItemId(), itemSnapshot);
             buyItemTemplates.put(String.valueOf(itemSnapshot.getItemTemplateId()), itemSnapshot.totalQuantity());
         }
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(order.getShippingPassportId());
 
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarketForPassport(order.getShippingPassportId());
-        List<OrderItemSnapshot> itemSnapshots = generateItemSnapshots(passportId, marketEntry.getId(), buyItemTemplates);
+        boolean isPriceProtectionTime = (System.currentTimeMillis() - XMarketTimeConfig.PRICE_PROTECTION_TIME) < order.getCreateTime().getTime();
+        List<OrderItemSnapshot> itemSnapshots = isPriceProtectionTime ? orderItemSnapshots : generateItemSnapshots(passportId, marketEntry.getId(), buyItemTemplates);
 
         long actualPrice = 0;
         long totalPrice = 0;
         for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
             OrderItemSnapshot snapshot = itemSnapshotMapperMap.get(itemSnapshot.getItemId());
-            if (!snapshot.isMatch(itemSnapshot)) {
+            if (!isPriceProtectionTime && !snapshot.isMatch(itemSnapshot)) {
                 // 修改商品快照属性 远程服务
                 OrderRemoteService.modifyItemSnapshot(order.getId(), itemSnapshot.getItemId(), itemSnapshot.getNormalPrice(), itemSnapshot.getDiscountPrice(), itemSnapshot.getNormalQuantity(), itemSnapshot.getDiscountQuantity(), itemSnapshot.getTotalPrice());
             }
             actualPrice += itemSnapshot.getTotalPrice();
             totalPrice += (itemSnapshot.getNormalPrice() * (itemSnapshot.totalQuantity()));
         }
-        long deliveryCost = marketEntry.getDeliveryCost();
+        long deliverCost = 0;
+        if (deliverType == DeliverTypeEnum.DISTRIBUTION.getKey()) {
+            deliverCost = marketEntry.getDeliveryCost();
+        }
         // 仓库的配送费
-        actualPrice += deliveryCost;
-        totalPrice += deliveryCost;
+        actualPrice += deliverCost;
+        totalPrice += deliverCost;
 
-        if (!order.isPriceMatch(actualPrice, totalPrice, totalPrice - actualPrice, deliveryCost)) {
-            OrderRemoteService.correctOrderPrice(order.getId(), actualPrice, totalPrice, totalPrice - actualPrice, deliveryCost);
+        long discountPrice = totalPrice - actualPrice;
+        if (!order.isPriceMatch(actualPrice, totalPrice, discountPrice, deliverCost, deliverType)) {
+            OrderRemoteService.correctOrderPrice(order.getId(), actualPrice, totalPrice, discountPrice, deliverCost, deliverType);
 
             order.setActualPrice(actualPrice);
             order.setTotalPrice(totalPrice);
-            order.setDiscountPrice(totalPrice - actualPrice);
-            order.setDistributionFee(deliveryCost);
+            order.setDiscountPrice(discountPrice);
+            order.setDistributionFee(deliverCost);
+            order.setDeliverType(deliverType);
         }
     }
 

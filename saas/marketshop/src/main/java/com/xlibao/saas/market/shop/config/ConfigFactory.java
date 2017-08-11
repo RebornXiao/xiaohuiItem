@@ -15,15 +15,23 @@ public class ConfigFactory {
 
     @Autowired
     private SocketServiceConfig socketServiceConfig;
+    @Autowired
+    private DomainNameConfig domainNameConfig;
 
     private static SocketServiceConfig socketService;
+    private static DomainNameConfig domainName;
 
     @PostConstruct
     public void initialization() {
         socketService = socketServiceConfig;
+        domainName = domainNameConfig;
     }
 
     public static SocketServiceConfig getSocketService() {
         return socketService;
+    }
+
+    public static DomainNameConfig getDomainName() {
+        return domainName;
     }
 }

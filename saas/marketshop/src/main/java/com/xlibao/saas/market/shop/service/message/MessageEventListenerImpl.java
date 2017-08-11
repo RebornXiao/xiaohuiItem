@@ -47,6 +47,10 @@ public class MessageEventListenerImpl implements MessageEventListener {
             messageHandlerAdapter.shopMessageExecute(session, message);
             return;
         }
+        if (msgType == MessageFactory.MSG_TYPE_PLATFORM) {
+            messageHandlerAdapter.platformMessageExecute(session, message);
+            return;
+        }
         if (msgType == MessageFactory.MSG_TYPE_LOGIC) { // 逻辑消息
             messageHandlerAdapter.logicMessageExecute(session, message);
         }
