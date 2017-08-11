@@ -283,8 +283,8 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
     @Override
     public JSONObject searchItemUnitPageByName() {
-        String searchKey = getUTF("searchKey");
-        int pageSize = getIntParameter("pageSize", GlobalConstantConfig.DEFAULT_PAGE_SIZE);
+        String searchKey = getUTF("searchKey", null);
+        int pageSize = getIntParameter("pageSize", 0);//默认所有单位全部返回
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
 
         List<ItemUnit> itemUnit = itemDataAccessManager.searchItemUnitByName(searchKey, pageSize, pageStartIndex);
@@ -299,8 +299,8 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
     @Override
     public JSONObject searchItemTypePageByName() {
-        String searchKey = getUTF("searchKey");
-        int pageSize = getIntParameter("pageSize", GlobalConstantConfig.DEFAULT_PAGE_SIZE);
+        String searchKey = getUTF("searchKey", null);
+        int pageSize = getPageSize();//必须分页
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
 
         List<ItemType> types = itemDataAccessManager.searchItemTypePageByName(searchKey, pageSize, pageStartIndex);
@@ -315,8 +315,8 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
     @Override
     public JSONObject searchItemTypePage() {
-        long parentItemTypeId = getLongParameter("parentItemTypeId");
-        int pageSize = getIntParameter("pageSize", GlobalConstantConfig.DEFAULT_PAGE_SIZE);
+        long parentItemTypeId = getLongParameter("parentItemTypeId", 0);
+        int pageSize = getIntParameter("pageSize", 0);//默认所有类型全部返回
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
 
         List<ItemType> types = itemDataAccessManager.pageItemType(parentItemTypeId, pageSize, pageStartIndex);
@@ -331,9 +331,9 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
     @Override
     public JSONObject searchItemTemplatesPage() {
-        String searchKey = getUTF("searchKey");
-        String searchType = getUTF("searchType");
-        int pageSize = getIntParameter("pageSize", GlobalConstantConfig.DEFAULT_PAGE_SIZE);
+        String searchKey = getUTF("searchKey", null);
+        String searchType = getUTF("searchType", null);
+        int pageSize = getPageSize();//必须分页
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
 
         List<ItemTemplate> items = itemDataAccessManager.searchItemTemplates(searchType, searchKey, pageSize, pageStartIndex);

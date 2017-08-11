@@ -2,6 +2,8 @@
 <!-- Start right Content here -->
 <!-- ============================================================== -->
 
+<#--<script src="${base}/assets/pages/item-list.js" />-->
+
 <div class="content-page">
     <!-- Start content -->
     <div class="content">
@@ -27,7 +29,7 @@
                             <button id="addBtn" type="button" class="btn waves-effect waves-light btn-default "><i
                                     class="fa fa-pencil"></i> 添加商品模板
                             </button>
-                            <button type="button" class="btn waves-effect waves-light btn-default "> 批量删除</button>
+                            <button id="manyDelBtn" type="button" class="btn waves-effect waves-light btn-default "> 批量删除</button>
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
@@ -35,7 +37,8 @@
                                     <input type="text" id="example-input3-group3" name="example-input3-group3"
                                            class="form-control" placeholder="输入商品名称或者商品条码进行模糊搜索">
                                             <span class="input-group-btn">
-                                                <button id="searchBtn" type="button" class="btn waves-effect waves-light btn-default"> <i
+                                                <button id="searchBtn" type="button"
+                                                        class="btn waves-effect waves-light btn-default"> <i
                                                         class="fa fa-search"></i> 搜索 </button>
                                             </span>
                                 </div>
@@ -43,7 +46,8 @@
                         </div>
                         <div class="col-md-6">
                             <div class="form-group pull-right">
-                                <button id="inBtn" type="button" class="btn btn-default waves-effect waves-light">导入 Excel 商品模板库
+                                <button id="inBtn" type="button" class="btn btn-default waves-effect waves-light">导入
+                                    Excel 商品模板库
                                 </button>
                                 <div class="btn-group">
                                     <button type="button"
@@ -63,8 +67,8 @@
                             <thead class="table_head">
                             <tr>
                                 <th>
-                                    <div  id="selectAllBtn" class="checkbox checkbox-primary checkbox-inline">
-                                        <input type="checkbox" id="inlineCheckbox2" value="option1" checked="">
+                                    <div class="checkbox checkbox-primary checkbox-inline">
+                                        <input type="checkbox" id="selectAllBtn">
                                         <label for="inlineCheckbox2">全选</label>
                                     </div>
                                 </th>
@@ -79,26 +83,25 @@
                                 <th>操作</th>
                             </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="itemListTable">
 
                             <#list itemlist as item>
 
                             <tr>
                                 <td>
                                     <div class="checkbox checkbox-primary checkbox-inline checkbox-single">
-                                        <input type="checkbox" id="singleCheckbox2" value="option2" checked=""
-                                               aria-label="Single checkbox Two">
+                                        <input type="checkbox">
                                         <label></label>
                                     </div>
                                 </td>
                                 <td>${item.defineCode}</td>
                                 <td>${item.name}</td>
-                                <td>234234234</td>
-                                <td>饮料</td>
-                                <td>瓶</td>
-                                <td>1</td>
-                                <td>2</td>
-                                <td>2017-10-10</td>
+                                <td>${item.barcode}</td>
+                                <td>${item.typeName}</td>
+                                <td>${item.unitName}</td>
+                                <td>${item.castPrice}</td>
+                                <td>${item.defaultPrice}</td>
+                                <td>${item.uploadTime}</td>
                                 <td>
                                     <button type="button" class="btn waves-effect waves-light btn-warning btn-sm">编辑
                                     </button>
@@ -114,6 +117,14 @@
                     </div>
                 </div>
             </div>
+
+            <div class="row">
+
+
+            </div>
+
+
             <!-- end container -->
         </div>
         <!-- end content -->
+

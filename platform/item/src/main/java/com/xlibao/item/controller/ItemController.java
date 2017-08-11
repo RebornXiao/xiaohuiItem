@@ -145,25 +145,25 @@ public class ItemController {
      * zhumg
      */
     @ResponseBody
-    @RequestMapping(value = "searchItemUnitPageByName", method = RequestMethod.POST)
+    @RequestMapping(value = "searchItemUnitPageByName")
     public JSONObject searchItemUnitPageByName() {
         return itemService.searchItemUnitPageByName();
     }
 
     @ResponseBody
-    @RequestMapping(value = "searchItemTypePageByName", method = RequestMethod.POST)
+    @RequestMapping(value = "searchItemTypePageByName")
     public JSONObject searchItemTypePageByName() {
         return itemService.searchItemTypePageByName();
     }
 
     @ResponseBody
-    @RequestMapping(value = "searchItemTypePage", method = RequestMethod.POST)
+    @RequestMapping(value = "searchItemTypePage")
     public JSONObject searchItemTypePage() {
         return itemService.searchItemTypePage();
     }
 
     @ResponseBody
-    @RequestMapping(value = "searchItemTemplatesPage", method = RequestMethod.POST)
+    @RequestMapping(value = "searchItemTemplatesPage")
     public JSONObject searchItemTemplatesPage() {
         return itemService.searchItemTemplatesPage();
     }
