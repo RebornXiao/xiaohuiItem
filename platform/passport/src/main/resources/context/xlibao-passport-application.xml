@@ -66,11 +66,11 @@
             </array>
         </property>
 
-        <property name="typeAliasesPackage" value="com.xlibao.passport.properties.model.*"/>
+        <property name="typeAliasesPackage" value="com.xlibao.passport.data.model.*"/>
     </bean>
 
     <bean class="tk.mybatis.spring.mapper.MapperScannerConfigurer">
-        <property name="basePackage" value="com.xlibao.passport.properties.mapper.*"/>
+        <property name="basePackage" value="com.xlibao.passport.data.mapper.*"/>
     </bean>
 
     <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">

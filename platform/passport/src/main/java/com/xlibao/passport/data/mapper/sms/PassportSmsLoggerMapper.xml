@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
-<mapper namespace="com.xlibao.passport.properties.mapper.sms.PassportSmsLoggerMapper">
-    <resultMap id="BaseResultMap" type="com.xlibao.passport.properties.model.PassportSmsLogger">
+<mapper namespace="com.xlibao.passport.data.mapper.sms.PassportSmsLoggerMapper">
+    <resultMap id="BaseResultMap" type="com.xlibao.passport.data.model.PassportSmsLogger">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="phone" property="phone" jdbcType="VARCHAR"/>
         <result column="content" property="content" jdbcType="VARCHAR"/>
@@ -11,7 +11,7 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <insert id="createSmsLogger" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.passport.properties.model.PassportSmsLogger">
+    <insert id="createSmsLogger" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.passport.data.model.PassportSmsLogger">
         insert into passport_sms_logger(phone, content, code, type, status) values(#{phone}, #{content}, #{code}, #{type}, #{status})
     </insert>
 
