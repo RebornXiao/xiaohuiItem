@@ -14,7 +14,7 @@
         <!-- LOGO -->
         <div class="topbar-left">
             <div class="text-center">
-                <a href="index.html" class="logo"><i class="fa fa-windows"></i> <span>智能超市后台管理系统</span> </a>
+                <a href="${base}/market/manager/passport/index.do" class="logo"><i class="fa fa-windows"></i> <span>智能超市后台管理系统</span> </a>
             </div>
         </div>
 
@@ -58,7 +58,7 @@
                 <ul>
 
                     <li>
-                        <a href="index.html" class="waves-effect waves-primary <#if tab=="index"> active subdrop </#if> "><i
+                        <a href="${base}/market/manager/passport/index.do" class="waves-effect waves-primary <#if tab=="index"> active subdrop </#if> "><i
                                 class="fa fa-home"></i><span> 首  页 </span></a>
                     </li>
 
@@ -67,8 +67,8 @@
                         <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="order"> active subdrop </#if> "><i class="fa fa-th-list"></i>
                             <span> 订单管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
-                        <ul class="list-unstyled">
-                            <li <#if tab_child=="all"> class="active" </#if> ><a href="/market/manager/order/orderlist.do">订单列表</a></li>
+                        <ul class="list-unstyled" <#if tab=="order"> style="display: block;" </#if> >
+                            <li <#if tab_child=="all"> class="active" </#if> ><a href="${base}/market/manager/order/orderlist.do">订单列表</a></li>
                         </ul>
                     </li>
 
@@ -76,10 +76,10 @@
                         <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="item"> active subdrop </#if>"><i
                                 class="fa fa-cubes"></i><span> 商品管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
-                        <ul class="list-unstyled">
-                            <li <#if tab_child=="template"> class="active" </#if> ><a href="/market/manager/item/itemlist.do">商品模板库</a></li>
-                            <li <#if tab_child=="types"> class="active" </#if> ><a href="/market/manager/item/itemtypes.do">商品分类</a></li>
-                            <li <#if tab_child=="unit"> class="active" </#if> ><a href="/market/manager/item/itemunits.do">商品单位</a></li>
+                        <ul class="list-unstyled" <#if tab=="item"> style="display: block;" </#if> >
+                            <li <#if tab_child=="itemplates"> class="active" </#if> ><a href="${base}/market/manager/item/itemlist.do">商品模板库</a></li>
+                            <li <#if tab_child=="iypes"> class="active" </#if> ><a href="${base}/market/manager/item/itemtypes.do">商品分类</a></li>
+                            <li <#if tab_child=="iunits"> class="active" </#if> ><a href="${base}/market/manager/item/itemunits.do">商品单位</a></li>
                         </ul>
                     </li>
 
@@ -87,11 +87,11 @@
                         <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="store"> active subdrop </#if>"><i class="fa fa-sitemap"></i>
                             <span> 店铺管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
-                        <ul class="list-unstyled">
-                            <li><a href="/market/manager/item/storeadd.do">新增店铺</a></li>
-                            <li><a href="/market/manager/item/storelist.do">店铺列表</a></li>
-                            <li><a href="/market/manager/item/storelist.do">店铺格子</a></li>
-                            <li><a href="/market/manager/item/storelist.do">店铺商品</a></li>
+                        <ul class="list-unstyled" <#if tab=="store"> style="display: block;" </#if> >
+                            <li><a href="${base}/market/manager/item/storeadd.do">新增店铺</a></li>
+                            <li><a href="${base}/market/manager/item/storelist.do">店铺列表</a></li>
+                            <li><a href="${base}/market/manager/item/storelist.do">店铺格子</a></li>
+                            <li><a href="${base}/market/manager/item/storelist.do">店铺商品</a></li>
                         </ul>
                     </li>
 
@@ -99,8 +99,8 @@
                         <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="user"> active subdrop </#if>"><i
                                 class="fa fa-users"></i><span> 用户管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
-                        <ul class="list-unstyled">
-                            <li><a href="/market/manager/passport/userlist.do">用户列表</a></li>
+                        <ul class="list-unstyled" <#if tab=="user"> style="display: block;" </#if> >
+                            <li><a href="${base}/market/manager/passport/userlist.do">用户列表</a></li>
                             <li><a href="form-advanced.html">活跃用户</a></li>
                             <li><a href="form-validation.html">沉默用户</a></li>
                         </ul>
@@ -110,7 +110,7 @@
                         <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="table"> active subdrop </#if>"><i
                                 class="fa fa-line-chart"></i><span> 统计报表 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
-                        <ul class="list-unstyled">
+                        <ul class="list-unstyled" <#if tab=="table"> style="display: block;" </#if> >
                             <li><a href="tables-basic.html">订单数据统计</a></li>
                             <li><a href="tables-datatable.html">店铺数据统计</a></li>
                             <li><a href="tables-editable.html">用户数据统计</a></li>
@@ -121,7 +121,7 @@
                         <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="sys"> active subdrop </#if>"><i
                                 class="fa fa-cog"></i><span> 系统设置 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
-                        <ul class="list-unstyled">
+                        <ul class="list-unstyled" <#if tab=="sys"> style="display: block;" </#if> >
                             <li><a href="chart-flot.html">个人信息</a></li>
                         </ul>
                     </li>

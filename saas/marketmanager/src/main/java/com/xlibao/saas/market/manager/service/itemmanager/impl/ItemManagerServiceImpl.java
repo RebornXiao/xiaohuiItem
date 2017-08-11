@@ -26,25 +26,25 @@ import java.util.Map;
 public class ItemManagerServiceImpl implements ItemManagerService {
 
     public JSONObject searchItemUnitPageByName(String searchKey, int pageSize, int pageIndex) {
-        String json = HttpUtils.get(ConfigFactory.getDomainNameConfig() + "/item/searchItemUnitPageByName?searchKey="+searchKey+"&pageSize="+pageSize+"&pageIndex="+pageIndex);
+        String json = HttpUtils.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemUnitPageByName?searchKey="+searchKey+"&pageSize="+pageSize+"&pageIndex="+pageIndex);
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
 
     public JSONObject searchItemTypePageByName(String searchKey, int pageSize, int pageIndex) {
-        String json = HttpUtils.get(ConfigFactory.getDomainNameConfig() + "/item/searchItemTypePageByName?searchKey="+searchKey+"&pageSize="+pageSize+"&pageIndex="+pageIndex);
+        String json = HttpUtils.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemTypePageByName?searchKey="+searchKey+"&pageSize="+pageSize+"&pageIndex="+pageIndex);
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
 
     public JSONObject searchItemTypePage(long parentItemTypeId, int pageSize, int pageIndex) {
-        String json = HttpUtils.get(ConfigFactory.getDomainNameConfig() + "/item/searchItemTypePage?parentItemTypeId="+parentItemTypeId+"&pageSize="+pageSize+"&pageIndex="+pageIndex);
+        String json = HttpUtils.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemTypePage?parentItemTypeId="+parentItemTypeId+"&pageSize="+pageSize+"&pageIndex="+pageIndex);
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
 
     public JSONObject searchItemTemplatesPage(String searchType, String searchKey, int pageSize, int pageIndex) {
-        String json = HttpUtils.get(ConfigFactory.getDomainNameConfig() + "/item/searchItemTemplatesPage?searchType="+searchType+"&searchKey="+searchKey+"&pageSize="+pageSize+"&pageIndex="+pageIndex);
+        String json = HttpUtils.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemTemplatesPage?searchType="+searchType+"&searchKey="+searchKey+"&pageSize="+pageSize+"&pageIndex="+pageIndex);
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
@@ -63,7 +63,7 @@ public class ItemManagerServiceImpl implements ItemManagerService {
     }
 
     public List<ItemType> getItemTypes(int parentItemTypeId) {
-        String json = HttpUtils.get(ConfigFactory.getDomainNameConfig() + "/item/searchItemTypePage?parentItemTypeId=0");
+        String json = HttpUtils.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemTypePage?parentItemTypeId=0");
         JSONObject response = JSONObject.parseObject(json);
         int code = response.getIntValue("code");
         if (code != 0) {
@@ -81,7 +81,7 @@ public class ItemManagerServiceImpl implements ItemManagerService {
     }
 
     public List<ItemUnit> getItemUnits() {
-        String json = HttpUtils.get(ConfigFactory.getDomainNameConfig() + "/item/searchItemUnitPageByName");
+        String json = HttpUtils.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemUnitPageByName");
         JSONObject response = JSONObject.parseObject(json);
         int code = response.getIntValue("code");
         if (code != 0) {

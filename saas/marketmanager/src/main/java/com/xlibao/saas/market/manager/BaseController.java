@@ -1,5 +1,6 @@
 package com.xlibao.saas.market.manager;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.saas.market.manager.config.LogicConfig;
 import org.springframework.ui.ModelMap;
@@ -22,5 +23,15 @@ public class BaseController extends BasicWebService {
         map.put(LogicConfig.TAB_NAME, menuTab);
         map.put(LogicConfig.TAB_CHILD_NAME, menuTabChild);
         return LogicConfig.FTL_PAGE;
+    }
+
+    public String remoteFail(ModelMap map, JSONObject json, String tab, String tab_child) {
+        map.put(LogicConfig.ERROR_NAME, "远程调用异常\n" + json.getString("msg"));
+        return jumpPage(map, LogicConfig.FTL_PAGE, tab, tab_child);
+    }
+
+    public String fail(ModelMap map, String msg, String tab, String tab_child) {
+        map.put(LogicConfig.ERROR_NAME, msg);
+        return jumpPage(map, LogicConfig.FTL_PAGE, tab, tab_child);
     }
 }
