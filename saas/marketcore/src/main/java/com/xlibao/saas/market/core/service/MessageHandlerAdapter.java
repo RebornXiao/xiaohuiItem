@@ -1,39 +1,39 @@
-package com.xlibao.saas.market.shop.service;
+package com.xlibao.saas.market.core.service;
 
-import com.xlibao.common.CommonUtils;
 import com.xlibao.io.entry.MessageFactory;
 import com.xlibao.io.entry.MessageInputStream;
-import com.xlibao.io.entry.MessageOutputStream;
 import com.xlibao.io.service.netty.NettySession;
 import com.xlibao.market.protocol.ShopProtocol;
-import com.xlibao.saas.market.shop.service.shop.ShopService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 /**
  * @author chinahuangxc on 2017/8/9.
  */
-@Component
 public class MessageHandlerAdapter {
 
     private static final Logger logger = LoggerFactory.getLogger(MessageHandlerAdapter.class);
 
-    @Autowired
-    private ShopService shopService;
+    private static final MessageHandlerAdapter instance = new MessageHandlerAdapter();
+
+    private MessageHandlerAdapter() {}
+
+    public static MessageHandlerAdapter getInstance() {
+        return instance;
+    }
+
+    public void hardwareMessageExecute(NettySession session, String content) {
+        String msgType = content.substring(4, 8);
+        logger.info("Message type is " + msgType);
+    }
 
     public void platformMessageExecute(NettySession session, MessageInputStream message) {
         short msgId = message.getMsgId();
 
-        MessageOutputStream response = null;
         switch (msgId) {
             case MessageFactory.MSG_ID_HEARTBEAT: // 心跳 回复当前服务器时间
-                response = MessageFactory.createResponseMessage(message);
-                response.writeUTF(CommonUtils.nowFormat());
                 break;
         }
-        session.send(response);
     }
 
     public void shopMessageExecute(NettySession session, MessageInputStream message) {
@@ -42,7 +42,6 @@ public class MessageHandlerAdapter {
         logger.info("来自硬件的消息，消息ID：" + msgId + "；" + session.netTrack());
         switch (msgId) {
             case ShopProtocol.CS_HARDWARE:
-                shopService.hardwareMessage(message, session);
                 break;
         }
     }
@@ -50,13 +49,9 @@ public class MessageHandlerAdapter {
     public void logicMessageExecute(NettySession session, MessageInputStream message) {
         short msgId = message.getMsgId();
 
-        MessageOutputStream response = null;
-
         switch (msgId) {
             case ShopProtocol.CS_SECURITY_VERIFICATION:
-                response = shopService.securityVerification(message, session);
                 break;
         }
-        session.send(response);
     }
 }

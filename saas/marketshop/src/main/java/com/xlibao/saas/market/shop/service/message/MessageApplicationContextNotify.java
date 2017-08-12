@@ -17,9 +17,9 @@ public class MessageApplicationContextNotify {
 
     public void init() {
         NettyConfig nettyConfig = new NettyConfig();
-        nettyConfig.setReadOutTime(Integer.parseInt(ConfigFactory.getSocketService().getReadOutTime()));
-        nettyConfig.setWriteOutTime(Integer.parseInt(ConfigFactory.getSocketService().getWriteOutTime()));
-        nettyConfig.setBothOutTime(Integer.parseInt(ConfigFactory.getSocketService().getBothOutTime()));
+        nettyConfig.setReadTimeout(Integer.parseInt(ConfigFactory.getSocketService().getReadTimeout()));
+        nettyConfig.setWriteTimeout(Integer.parseInt(ConfigFactory.getSocketService().getWriteTimeout()));
+        nettyConfig.setBothTimeout(Integer.parseInt(ConfigFactory.getSocketService().getBothTimeout()));
 
         try {
             NettyNetServer.getInstance().init(nettyConfig);

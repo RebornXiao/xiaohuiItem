@@ -14,6 +14,8 @@
         <module>market</module>
         <module>marketmanager</module>
         <module>marketshop</module>
+        <module>marketcore</module>
+        <module>messageprotocol</module>
     </modules>
 
     <dependencies>

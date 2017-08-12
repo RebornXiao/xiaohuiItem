@@ -5,6 +5,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerAdapter;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandler;
+import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
 import io.netty.util.AttributeKey;
 import org.slf4j.Logger;
@@ -76,7 +77,7 @@ public class AbstractChannelInboundHandlerAdapter extends ChannelHandlerAdapter 
         NettySession session = getSession(context.channel());
         MessageInputStream message = (MessageInputStream) msg;
 
-        logger.info("消息读取 session id " + session.getId() + ", message id is " + message.getMsgId() + " message content " + message.readUTF());
+        // logger.info("消息读取 session id " + session.getId() + ", message id is " + message.getMsgId() + " message content " + message.readUTF());
 
         messageEventListener.notifyMessageReceived(session, message);
     }
@@ -98,10 +99,9 @@ public class AbstractChannelInboundHandlerAdapter extends ChannelHandlerAdapter 
         if (event.state() == null) {
             return;
         }
-        if (idleTimes.get() >= 3) {
+        if (idleTimes.get() >= 3 && event.state() == IdleState.ALL_IDLE) {
             logger.error(session.netTrack() + " 空闲次数到达上限：" + idleTimes.get());
         }
-        logger.warn("会话通道空闲中，" + session.netTrack() + ", idle type " + event.state() + "；当前会话空闲次数：" + idleTimes.get());
         switch (event.state()) {
             case READER_IDLE:
                 messageEventListener.notifySessionIdle(session, NettyConfig.TIME_OUT_READER);
@@ -110,6 +110,7 @@ public class AbstractChannelInboundHandlerAdapter extends ChannelHandlerAdapter 
                 messageEventListener.notifySessionIdle(session, NettyConfig.TIME_OUT_WRITER);
                 break;
             case ALL_IDLE:
+                logger.debug("会话通道空闲中，" + session.netTrack() + ", idle type " + event.state() + "；当前会话空闲次数：" + idleTimes.get());
                 idleTimes.incrementAndGet();
                 messageEventListener.notifySessionIdle(session, NettyConfig.TIME_OUT_BOTH);
                 break;

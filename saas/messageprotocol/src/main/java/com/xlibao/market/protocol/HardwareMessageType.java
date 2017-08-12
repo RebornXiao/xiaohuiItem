@@ -1,4 +1,4 @@
-package com.xlibao.saas.market.shop.service.shop;
+package com.xlibao.market.protocol;
 
 /**
  * @author chinahuangxc on 2017/8/10.

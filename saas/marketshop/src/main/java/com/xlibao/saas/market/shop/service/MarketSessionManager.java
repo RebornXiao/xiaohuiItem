@@ -4,7 +4,7 @@ import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.io.entry.MessageFactory;
 import com.xlibao.io.entry.MessageOutputStream;
 import com.xlibao.io.service.netty.NettySession;
-import com.xlibao.saas.market.shop.service.shop.ShopProtocol;
+import com.xlibao.market.protocol.ShopProtocol;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;

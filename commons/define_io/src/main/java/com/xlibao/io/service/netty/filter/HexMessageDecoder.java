@@ -1,4 +1,4 @@
-package com.xlibao.saas.market.shop.service.message.filter;
+package com.xlibao.io.service.netty.filter;
 
 import com.xlibao.common.CommonUtils;
 import com.xlibao.io.entry.MessageInputStream;
@@ -10,9 +10,9 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import java.util.List;
 
 /**
- * @author chinahuangxc on 2017/8/8.
+ * @author chinahuangxc on 2017/8/12.
  */
-public class MessageDecoder extends ByteToMessageDecoder {
+public class HexMessageDecoder extends ByteToMessageDecoder {
 
     // 结束符
     private static String END_CHARACTER = "FFFF";
