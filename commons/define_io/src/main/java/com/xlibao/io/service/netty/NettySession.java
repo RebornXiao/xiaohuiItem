@@ -1,5 +1,6 @@
 package com.xlibao.io.service.netty;
 
+import com.xlibao.common.CommonUtils;
 import com.xlibao.io.entry.MessageOutputStream;
 import io.netty.channel.Channel;
 
@@ -50,5 +51,15 @@ public class NettySession {
         if (message != null) {
             channel.writeAndFlush(message);
         }
+    }
+
+    public void send(String message) {
+        if (CommonUtils.isNotNullString(message)) {
+            channel.writeAndFlush(message);
+        }
+    }
+
+    public void close() throws Exception {
+        channel.close().sync();
     }
 }

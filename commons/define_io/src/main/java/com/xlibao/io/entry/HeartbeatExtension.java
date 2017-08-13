@@ -5,7 +5,7 @@ package com.xlibao.io.entry;
  */
 public interface HeartbeatExtension {
 
-    String hearbeatParameters();
+    String heartbeatParameters();
 
-    void notifyHearbeatResult(long userKey, String callbackValue);
+    void notifyHeartbeatResult(long userKey, String callbackValue);
 }

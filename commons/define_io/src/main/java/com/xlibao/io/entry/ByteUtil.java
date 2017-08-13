@@ -27,9 +27,6 @@ public class ByteUtil {
         data[(startIndex++)] = ((byte) (longValue));
     }
 
-    public static void writeUTF(byte[] data, int startIndex, String str) {
-    }
-
     public static short readShort(byte[] data, int startIndex) {
         int a = data[(startIndex++)];
         int b = data[(startIndex++)];

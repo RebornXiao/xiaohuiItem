@@ -9,6 +9,4 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping(value = "/market/shop/item")
 public class ItemController {
-
-
 }

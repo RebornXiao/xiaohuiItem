@@ -10,33 +10,33 @@ public class NettyConfig {
     public static final int TIME_OUT_BOTH = 2;
 
     // 写超时
-    private int writeOutTime = 10;
+    private int writeTimeout = 10;
     // 读超时
-    private int readOutTime = 10;
+    private int readTimeout = 10;
     // 读写同时超时
-    private int bothOutTime = 15;
+    private int bothTimeout = 15;
 
-    public void setReadOutTime(int readOutTime) {
-        this.readOutTime = readOutTime;
+    public void setReadTimeout(int readTimeout) {
+        this.readTimeout = readTimeout;
     }
 
-    public void setWriteOutTime(int writeOutTime) {
-        this.writeOutTime = writeOutTime;
+    public void setWriteTimeout(int writeTimeout) {
+        this.writeTimeout = writeTimeout;
     }
 
-    public void setBothOutTime(int bothOutTime) {
-        this.bothOutTime = bothOutTime;
+    public void setBothTimeout(int bothTimeout) {
+        this.bothTimeout = bothTimeout;
     }
 
-    int getReadOutTime() {
-        return readOutTime;
+    int getReadTimeout() {
+        return readTimeout;
     }
 
-    int getWriteOutTime() {
-        return writeOutTime;
+    int getWriteTimeout() {
+        return writeTimeout;
     }
 
-    int getBothOutTime() {
-        return bothOutTime;
+    int getBothTimeout() {
+        return bothTimeout;
     }
 }

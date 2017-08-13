@@ -3,6 +3,7 @@ package com.xlibao.common;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.ByteArrayOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -23,89 +24,49 @@ import java.util.regex.Pattern;
  */
 public class CommonUtils {
 
-    /**
-     * 日期格式 -- "年-月" 如：2001-01
-     */
+    /** 日期格式 -- "年-月" 如：2001-01 */
     public static final String Y_M = "yyyy-MM";
-    /**
-     * 日期格式 -- "年-月-日" 如：2001-01-01
-     */
+    /** 日期格式 -- "年-月-日" 如：2001-01-01 */
     public static final String Y_M_D = "yyyy-MM-dd";
-    /**
-     * 日期格式 -- "年-月-日 时" 如：2001-01-01 20
-     */
+    /** 日期格式 -- "年-月-日 时" 如：2001-01-01 20 */
     public static final String Y_M_D_HH = "yyyy-MM-dd HH";
-    /**
-     * 日期格式 -- "年-月-日 时:分" 如：2001-01-01 20:20
-     */
+    /** 日期格式 -- "年-月-日 时:分" 如：2001-01-01 20:20 */
     public static final String Y_M_D_HH_MM = "yyyy-MM-dd HH:mm";
-    /**
-     * 日期格式 -- "年-月-日 时:分:秒" 如：2001-01-01 20:20:00
-     */
+    /** 日期格式 -- "年-月-日 时:分:秒" 如：2001-01-01 20:20:00 */
     public static final String Y_M_D_HH_MM_SS = "yyyy-MM-dd HH:mm:ss";
-    /**
-     * 日期格式 -- "月-日 时:分" 如：01-01 20:20
-     */
+    /** 日期格式 -- "月-日 时:分" 如：01-01 20:20 */
     public static final String M_D_H_MM = "MM-dd HH:mm";
-    /**
-     * 日期格式 -- "月日" 如：0101
-     */
+    /** 日期格式 -- "月日" 如：0101 */
     public static final String MD = "MMdd";
-    /**
-     * 日期格式 -- "日" 如：01
-     */
+    /** 日期格式 -- "日" 如：01 */
     public static final String D = "dd";
-    /**
-     * 日期格式(中国格式) -- "点分" 如：9点10分
-     */
+    /** 日期格式(中国格式) -- "点分" 如：9点10分 */
     public static final String HH_MM_CH = "HH点mm分";
 
-    /**
-     * 毫秒数 -- 1分钟
-     */
+    /** 毫秒数 -- 1分钟 */
     public static final long MINUTE_MILLISECOND_TIME = TimeUnit.MINUTES.toMillis(1);
-    /**
-     * 毫秒数 -- 半小时
-     */
+    /** 毫秒数 -- 半小时 */
     public static final long HALF_AN_HOURS_MILLISECOND_TIME = MINUTE_MILLISECOND_TIME * 30;
-    /**
-     * 毫秒数 -- 1小时
-     */
+    /** 毫秒数 -- 1小时 */
     public static final long HOURS_MILLISECOND_TIME = HALF_AN_HOURS_MILLISECOND_TIME * 2;
-    /**
-     * 毫秒数 -- 1天
-     */
+    /** 毫秒数 -- 1天 */
     public static final long DAY_MILLISECOND_TIME = HOURS_MILLISECOND_TIME * 24;
-    /**
-     * 毫秒数 -- 1周
-     */
+    /** 毫秒数 -- 1周 */
     public static final long WEEK_MILLISECOND_TIME = DAY_MILLISECOND_TIME * 7;
 
-    /**
-     * 校准时区
-     */
+    /** 校准时区 */
     public static final long TIME_ZONE_OFFSET_MILLIS = TimeZone.getDefault().getRawOffset();
 
-    /**
-     * 一个固定内存的对象 用于某些Map场景 当value值为固定对象且没有存在意义时 可直接使用该对象 主要是为了节省内存空间
-     */
+    /** 一个固定内存的对象 用于某些Map场景 当value值为固定对象且没有存在意义时 可直接使用该对象 主要是为了节省内存空间 */
     public static final Object STATIC_FINAl = new Object();
 
-    /**
-     * 分隔符 -- 空格
-     */
+    /** 分隔符 -- 空格 */
     public static final String SPACE = " ";
-    /**
-     * 分隔符 -- 英文逗号
-     */
+    /** 分隔符 -- 英文逗号 */
     public static final String SPLIT_COMMA = ",";
-    /**
-     * 分隔符 -- 英文下划线
-     */
+    /** 分隔符 -- 英文下划线 */
     public static final String SPLIT_UNDER_LINE = "_";
-    /**
-     * 分隔符 -- 换行
-     */
+    /** 分隔符 -- 换行 */
     public static final String ENTER = "\r\n";
 
     // 16进制数字字符集
@@ -960,6 +921,20 @@ public class CommonUtils {
                 || ub == Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B || ub == Character.UnicodeBlock.CJK_SYMBOLS_AND_PUNCTUATION || ub == Character.UnicodeBlock.HALFWIDTH_AND_FULLWIDTH_FORMS || ub == Character.UnicodeBlock.GENERAL_PUNCTUATION;
     }
 
+    /**
+     * 将字符串转换为16进制后获取对应的2进制字节数组
+     */
+    public static byte[] encodeHexString(String value) {
+        return hex2byte(encodeHexParameter(value));
+    }
+
+    /**
+     * 将16进制对应的2进制字节转换为字符串
+     */
+    public static String decodeHexBytes(byte[] bytes) {
+        return decodeHexMessage(byte2Hex(bytes));
+    }
+
     public static String byte2Hex(byte[] bytes) {
         StringBuilder builder = new StringBuilder();
         for (byte b : bytes) {
@@ -982,6 +957,33 @@ public class CommonUtils {
             bytes[p] = (byte) (temp & 0xff);
         }
         return bytes;
+    }
+
+    /**
+     * 将字符串编码成16进制数字,适用于所有字符（包括中文）
+     */
+    public static String encodeHexParameter(String parameter) {
+        // 根据默认编码获取字节数组
+        byte[] bytes = parameter.getBytes();
+        StringBuilder sb = new StringBuilder(bytes.length * 2);
+        // 将字节数组中每个字节拆解成2位16进制整数
+        for (byte b : bytes) {
+            sb.append(hexString.charAt((b & 0xf0) >> 4));
+            sb.append(hexString.charAt(b & 0x0f));
+        }
+        return sb.toString();
+    }
+
+    /**
+     * 将16进制数字解码成字符串,适用于所有字符（包括中文）
+     */
+    public static String decodeHexMessage(String bytes) {
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(bytes.length() / 2);
+        // 将每2位16进制整数组装成一个字节
+        for (int i = 0; i < bytes.length(); i += 2) {
+            byteArrayOutputStream.write((hexString.indexOf(bytes.charAt(i)) << 4 | hexString.indexOf(bytes.charAt(i + 1))));
+        }
+        return new String(byteArrayOutputStream.toByteArray());
     }
 
     public static String toHexString(int n, int length, String prefixMark) {

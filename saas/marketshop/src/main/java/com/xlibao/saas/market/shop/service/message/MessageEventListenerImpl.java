@@ -65,6 +65,6 @@ public class MessageEventListenerImpl implements MessageEventListener {
     }
 
     @Override
-    public void notifySessionIdle(NettySession session, int idleType) {
+    public void notifySessionIdle(NettySession session, int idleType, int idleTimes) {
     }
 }

@@ -1,4 +1,4 @@
-package com.xlibao.saas.market.shop.service.shop;
+package com.xlibao.market.protocol;
 
 /**
  * @author chinahuangxc on 2017/8/9.
@@ -43,5 +43,10 @@ public interface ShopProtocol {
      */
     short CS_SECURITY_VERIFICATION = 10000;
 
+    /**
+     * <pre>
+     *
+     * </pre>
+     */
     short CS_HARDWARE = 10001;
 }

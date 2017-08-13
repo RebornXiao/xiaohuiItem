@@ -1,9 +1,14 @@
-package com.xlibao.saas.market.shop.service.shop;
+package com.xlibao.market.protocol;
 
 /**
  * @author chinahuangxc on 2017/8/10.
  */
 public interface HardwareMessageType {
+
+    /** 硬件消息起始符 */
+    String HARDWARE_MSG_START = "AAAA";
+    /** 硬件消息结束符 */
+    String HARDWARE_MSG_END = "FFFF";
 
     /** 发送配货货命令（将商品放到预存箱）即：出货 */
     String SHIPMENT = "0001";

@@ -4,7 +4,7 @@ import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.io.entry.MessageFactory;
 import com.xlibao.io.entry.MessageOutputStream;
 import com.xlibao.io.service.netty.NettySession;
-import com.xlibao.saas.market.shop.service.shop.ShopProtocol;
+import com.xlibao.market.protocol.ShopProtocol;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -21,6 +21,8 @@ public class MarketSessionManager {
     public void put(long passportId, NettySession session) {
         // 不管原来是否存在 都直接存放(若原来存在 则替换)
         marketSessions.put(passportId, session);
+        // 设置会话中的属性
+        session.setAttribute("passportId", passportId);
     }
 
     public void sendHardwarePush(long passportId, String content) {

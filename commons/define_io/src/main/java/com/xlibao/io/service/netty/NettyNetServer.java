@@ -2,15 +2,13 @@ package com.xlibao.io.service.netty;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * <pre>
@@ -74,7 +72,7 @@ public class NettyNetServer {
         if (config == null) { // 保证NettyConfig不为null
             config = new NettyConfig();
         }
-        AbstractChannelInitializer channelInitializer = new AbstractChannelInitializer(messageEventListener);
+        AbstractChannelInitializer channelInitializer = new AbstractChannelInitializer(messageEventListener, config);
 
         bossGroup = new NioEventLoopGroup();
         workerGroup = new NioEventLoopGroup();
@@ -82,8 +80,8 @@ public class NettyNetServer {
         ServerBootstrap serverBootstrap = new ServerBootstrap();
         serverBootstrap.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class).childOption(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT).localAddress(port).childHandler(channelInitializer);
 
-        ChannelFuture f = serverBootstrap.bind(port).sync();
-        logger.info("-----------------------------> 服务器启动成功(" + f + ")，当前监听端口：" + port + " <-----------------------------");
+        ChannelFuture future = serverBootstrap.bind(port).sync();
+        logger.info("-----------------------------> 服务器启动成功(" + future + ")，当前监听端口：" + port + " <-----------------------------");
     }
 
     /**
@@ -101,29 +99,6 @@ public class NettyNetServer {
         } finally {
             bossGroup = null;
             workerGroup = null;
-        }
-    }
-
-    private class AbstractChannelInitializer extends ChannelInitializer<SocketChannel> {
-
-        private MessageEventListener messageEventListener;
-
-        private AbstractChannelInitializer(MessageEventListener messageEventListener) {
-            this.messageEventListener = messageEventListener;
-        }
-
-        @Override
-        protected void initChannel(SocketChannel socketChannel) throws Exception {
-            AbstractChannelInboundHandlerAdapter channelInboundHandlerAdapter = new AbstractChannelInboundHandlerAdapter();
-            channelInboundHandlerAdapter.registerMessageEventListener(messageEventListener);
-
-            ChannelPipeline channelPipeline = socketChannel.pipeline();
-            // 设置解码器、编码器
-            channelPipeline.addLast(messageEventListener.newDecoder()).addLast(messageEventListener.newEncoder());
-            // 设置超时处理
-            channelPipeline.addLast(new IdleStateHandler(config.getReadOutTime(), config.getWriteOutTime(), config.getBothOutTime(), TimeUnit.SECONDS));
-            // 设置适配器
-            channelPipeline.addLast(channelInboundHandlerAdapter);
         }
     }
 }
