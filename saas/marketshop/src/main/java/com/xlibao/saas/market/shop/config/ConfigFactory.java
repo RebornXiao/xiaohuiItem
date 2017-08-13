@@ -1,5 +1,6 @@
 package com.xlibao.saas.market.shop.config;
 
+import com.xlibao.common.support.PassportRemoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -25,13 +26,14 @@ public class ConfigFactory {
     public void initialization() {
         socketService = socketServiceConfig;
         domainName = domainNameConfig;
+        PassportRemoteService.setPassportRemoteServiceURL(domainName.passportRemoteURL);
     }
 
-    public static SocketServiceConfig getSocketService() {
+    public static SocketServiceConfig getSocketServiceConfig() {
         return socketService;
     }
 
-    public static DomainNameConfig getDomainName() {
+    public static DomainNameConfig getDomainNameConfig() {
         return domainName;
     }
 }

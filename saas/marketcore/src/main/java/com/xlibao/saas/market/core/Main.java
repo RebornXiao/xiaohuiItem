@@ -16,25 +16,32 @@ public class Main {
         ServerConfig serverConfig = new ServerConfig();
         serverConfig.init(args[0]);
 
-        NettyConfig config = initConfig(serverConfig);
+        connectorMarketServer();
 
-        MessageEventListener messageEventListener = MessageEventFactory.getInstance().getMessageEventListener();
+        // 硬件业务消息监听器
         MessageEventListener hexMessageEventListener = MessageEventFactory.getInstance().getHexMessageEventListener();
 
-        // 启动客户端
-        NettyClient.getInstance().init(config);
-        NettyClient.getInstance().start(serverConfig.getServerIP(), serverConfig.getServerPort(), messageEventListener);
+        NettyConfig config = initConfig();
 
         // 启动服务器
         NettyNetServer.getInstance().init(config);
-        NettyNetServer.getInstance().start(serverConfig.getListenerPort(), hexMessageEventListener);
+        NettyNetServer.getInstance().start(ServerConfig.getListenerPort(), hexMessageEventListener);
     }
 
-    private static NettyConfig initConfig(ServerConfig serverConfig) {
+    public static void connectorMarketServer() throws Exception {
+        NettyConfig config = initConfig();
+        // 商店业务消息监听器
+        MessageEventListener marketMessageEventListener = MessageEventFactory.getInstance().getMarketMessageEventListener();
+        // 启动客户端
+        NettyClient.getInstance().init(config);
+        NettyClient.getInstance().start(ServerConfig.getServerIP(), ServerConfig.getServerPort(), marketMessageEventListener);
+    }
+
+    private static NettyConfig initConfig() {
         NettyConfig nettyConfig = new NettyConfig();
-        nettyConfig.setReadTimeout(serverConfig.getReadTimeout());
-        nettyConfig.setWriteTimeout(serverConfig.getWriteTimeout());
-        nettyConfig.setBothTimeout(serverConfig.getBothTimeout());
+        nettyConfig.setReadTimeout(ServerConfig.getReadTimeout());
+        nettyConfig.setWriteTimeout(ServerConfig.getWriteTimeout());
+        nettyConfig.setBothTimeout(ServerConfig.getBothTimeout());
 
         return nettyConfig;
     }

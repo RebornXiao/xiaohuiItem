@@ -5,6 +5,7 @@ import com.xlibao.io.service.netty.MessageEventListener;
 import com.xlibao.io.service.netty.NettySession;
 import com.xlibao.io.service.netty.filter.HexMessageDecoder;
 import com.xlibao.io.service.netty.filter.HexMessageEncoder;
+import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.saas.market.core.message.SessionManager;
 import com.xlibao.saas.market.core.service.MessageHandlerAdapter;
 import io.netty.handler.codec.ByteToMessageDecoder;
@@ -21,7 +22,7 @@ public class HexMessageEventListenerImpl implements MessageEventListener {
 
     @Override
     public ByteToMessageDecoder newDecoder() {
-        return new HexMessageDecoder();
+        return new HexMessageDecoder(HardwareMessageType.HARDWARE_MSG_END);
     }
 
     @Override
@@ -34,6 +35,8 @@ public class HexMessageEventListenerImpl implements MessageEventListener {
         logger.info("作为服务端(与硬件交互) 建立一个Socket监听通道 " + session.netTrack());
 
         SessionManager.getInstance().setHardwareSession(session);
+        // 建立连接后的消息补发操作
+        MessageHandlerAdapter.getInstance().afterHardwareChannelActive(session);
     }
 
     @Override
@@ -57,6 +60,6 @@ public class HexMessageEventListenerImpl implements MessageEventListener {
     }
 
     @Override
-    public void notifySessionIdle(NettySession session, int idleType) {
+    public void notifySessionIdle(NettySession session, int idleType, int idleTimes) {
     }
 }

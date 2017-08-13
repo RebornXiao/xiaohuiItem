@@ -24,6 +24,7 @@ public class MessageHandlerAdapter {
     private ShopService shopService;
 
     public void platformMessageExecute(NettySession session, MessageInputStream message) {
+        logger.info("【心跳消息】" + session.getAttribute("passportId") + "发起心跳消息");
         short msgId = message.getMsgId();
 
         MessageOutputStream response = null;

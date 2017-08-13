@@ -58,4 +58,8 @@ public class NettySession {
             channel.writeAndFlush(message);
         }
     }
+
+    public void close() throws Exception {
+        channel.close().sync();
+    }
 }

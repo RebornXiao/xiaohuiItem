@@ -4,6 +4,7 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.datacache.item.ItemDataCacheService;
+import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
@@ -74,7 +75,7 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
         // 推送给硬件进行拣货操作(缓存)
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
 
-        StringBuilder message = new StringBuilder().append("0001").append(orderEntry.getOrderSequenceNumber());
+        StringBuilder message = new StringBuilder().append(HardwareMessageType.SHIPMENT).append(orderEntry.getOrderSequenceNumber());
         if (!CommonUtils.isEmpty(itemStockLockLoggers)) { // 原来存在锁定的记录 进行解锁同时新增挂起数量
             for (MarketItemStockLockLogger itemStockLockLogger : itemStockLockLoggers) {
                 // 对商品进行库存挂起操作

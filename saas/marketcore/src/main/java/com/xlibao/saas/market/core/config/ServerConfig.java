@@ -18,9 +18,9 @@ public class ServerConfig {
 
     private static final String CONFIG_PATH = "resources" + File.separator + "config" + File.separator + "serverConfig.xml";
 
-    private String serverIP = "";
-    private int serverPort = 0;
-    private int listenerPort = 0;
+    private static String serverIP = "";
+    private static int serverPort = 0;
+    private static int listenerPort = 0;
 
     private static int readTimeout = 10;
     private static int writeTimeout = 10;
@@ -49,15 +49,15 @@ public class ServerConfig {
         }
     }
 
-    public String getServerIP() {
+    public static String getServerIP() {
         return serverIP;
     }
 
-    public int getServerPort() {
+    public static int getServerPort() {
         return serverPort;
     }
 
-    public int getListenerPort() {
+    public static int getListenerPort() {
         return listenerPort;
     }
 

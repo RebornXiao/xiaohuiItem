@@ -21,5 +21,5 @@ public interface MessageEventListener {
 
     void notifyExceptionCaught(Throwable cause);
 
-    void notifySessionIdle(NettySession session, int idleType);
+    void notifySessionIdle(NettySession session, int idleType, int idleTimes);
 }

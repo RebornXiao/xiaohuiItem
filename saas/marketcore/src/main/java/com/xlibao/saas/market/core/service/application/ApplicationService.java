@@ -12,5 +12,5 @@ public interface ApplicationService {
 
     void platformMessageExecute(NettySession session, MessageInputStream message);
 
-    void hardwareMessageExecute(NettySession session, MessageInputStream message);
+    void toHardwareMessageExecute(NettySession session, MessageInputStream message);
 }

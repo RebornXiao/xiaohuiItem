@@ -17,14 +17,14 @@ public class MessageApplicationContextNotify {
 
     public void init() {
         NettyConfig nettyConfig = new NettyConfig();
-        nettyConfig.setReadTimeout(Integer.parseInt(ConfigFactory.getSocketService().getReadTimeout()));
-        nettyConfig.setWriteTimeout(Integer.parseInt(ConfigFactory.getSocketService().getWriteTimeout()));
-        nettyConfig.setBothTimeout(Integer.parseInt(ConfigFactory.getSocketService().getBothTimeout()));
+        nettyConfig.setReadTimeout(Integer.parseInt(ConfigFactory.getSocketServiceConfig().getReadTimeout()));
+        nettyConfig.setWriteTimeout(Integer.parseInt(ConfigFactory.getSocketServiceConfig().getWriteTimeout()));
+        nettyConfig.setBothTimeout(Integer.parseInt(ConfigFactory.getSocketServiceConfig().getBothTimeout()));
 
         try {
             NettyNetServer.getInstance().init(nettyConfig);
             // 启动Netty服务
-            NettyNetServer.getInstance().start(Integer.parseInt(ConfigFactory.getSocketService().getServicePort()), messageEventListener);
+            NettyNetServer.getInstance().start(Integer.parseInt(ConfigFactory.getSocketServiceConfig().getServicePort()), messageEventListener);
         } catch (Exception ex) {
             ex.printStackTrace();
         }

@@ -21,7 +21,7 @@ public class MarketSessionManager {
     public void put(long passportId, NettySession session) {
         // 不管原来是否存在 都直接存放(若原来存在 则替换)
         marketSessions.put(passportId, session);
-
+        // 设置会话中的属性
         session.setAttribute("passportId", passportId);
     }
 

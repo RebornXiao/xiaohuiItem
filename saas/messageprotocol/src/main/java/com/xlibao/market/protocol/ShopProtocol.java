@@ -43,5 +43,10 @@ public interface ShopProtocol {
      */
     short CS_SECURITY_VERIFICATION = 10000;
 
+    /**
+     * <pre>
+     *
+     * </pre>
+     */
     short CS_HARDWARE = 10001;
 }

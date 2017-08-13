@@ -21,6 +21,7 @@ public class ApplicationServiceImpl implements ApplicationService {
     @Override
     public void logicMessageExecute(NettySession session, MessageInputStream message) {
         short msgId = message.getMsgId();
+        logger.info("【逻辑消息】消息ID：" + msgId);
         if (msgId == ShopProtocol.CS_SECURITY_VERIFICATION) {
             securityVerification(session, message);
         }
@@ -28,19 +29,19 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public void platformMessageExecute(NettySession session, MessageInputStream message) {
-        logger.debug("【平台消息】心跳结果：" + message.readUTF() + "；" + session.netTrack());
+        logger.info("【平台消息】" + session.getAttribute("passportId") + "，心跳结果：" + message.readUTF() + "；" + session.netTrack());
     }
 
     @Override
-    public void hardwareMessageExecute(NettySession session, MessageInputStream message) {
+    public void toHardwareMessageExecute(NettySession session, MessageInputStream message) {
         String content = message.readUTF();
-        logger.info("【硬件】接收到硬件消息，消息内容：" + content + "；" + session.netTrack());
-
+        logger.info("【硬件消息】发送给硬件的消息，消息内容：" + content + "；" + session.netTrack());
+        // 发送消息到硬件处理
         SessionManager.getInstance().sendHardwareMessage(content);
     }
 
     private void securityVerification(NettySession session, MessageInputStream message) {
-        byte result = message.readByte();   // 结果标志位，参考：{@link com.xlibao.common.GlobalAppointmentOptEnum#LOGIC_TRUE}、{@link com.xlibao.common.GlobalAppointmentOptEnum#LOGIC_FALSE}
+        byte result = message.readByte();
 
         if (result == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()) {
             // TODO 登录错误
@@ -48,13 +49,13 @@ public class ApplicationServiceImpl implements ApplicationService {
             return;
         }
         String msg = message.readUTF();
+        logger.info("权限验证结果消息内容：" + msg);
 
         JSONObject parameters = JSONObject.parseObject(msg);
+        session.setAttribute("passportId", parameters.getJSONObject("response").getLongValue("passportId"));
+        SessionManager.getInstance().setMarketSession(session);
 
-        session.setAttribute("passportId", parameters.getLongValue("passportId"));
-        SessionManager.getInstance().setLogicSession(session);
-
-        // TODO 启动心跳线程
+        // 启动心跳线程
         new HeartbeatCallable().start();
     }
 }

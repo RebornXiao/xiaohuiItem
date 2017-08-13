@@ -1,7 +1,7 @@
 package com.xlibao.saas.market.core.message;
 
 import com.xlibao.io.service.netty.MessageEventListener;
-import com.xlibao.saas.market.core.message.client.MessageEventListenerImpl;
+import com.xlibao.saas.market.core.message.client.MarketMessageEventListenerImpl;
 import com.xlibao.saas.market.core.message.hardware.HexMessageEventListenerImpl;
 
 /**
@@ -9,7 +9,7 @@ import com.xlibao.saas.market.core.message.hardware.HexMessageEventListenerImpl;
  */
 public class MessageEventFactory {
 
-    private MessageEventListener messageEventListener = new MessageEventListenerImpl();
+    private MessageEventListener marketMessageEventListener = new MarketMessageEventListenerImpl();
 
     private MessageEventListener hexMessageEventListener = new HexMessageEventListenerImpl();
 
@@ -22,8 +22,8 @@ public class MessageEventFactory {
         return instance;
     }
 
-    public MessageEventListener getMessageEventListener() {
-        return messageEventListener;
+    public MessageEventListener getMarketMessageEventListener() {
+        return marketMessageEventListener;
     }
 
     public MessageEventListener getHexMessageEventListener() {

@@ -5,8 +5,9 @@ import com.xlibao.io.service.netty.MessageEventListener;
 import com.xlibao.io.service.netty.NettyConfig;
 import com.xlibao.io.service.netty.NettyNetServer;
 import com.xlibao.io.service.netty.NettySession;
-import com.xlibao.saas.market.shop.service.message.filter.MessageDecoder;
-import com.xlibao.saas.market.shop.service.message.filter.MessageEncoder;
+import com.xlibao.io.service.netty.filter.HexMessageDecoder;
+import com.xlibao.io.service.netty.filter.HexMessageEncoder;
+import com.xlibao.market.protocol.HardwareMessageType;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToMessageEncoder;
 
@@ -29,12 +30,12 @@ public class NettyExample {
 
         @Override
         public ByteToMessageDecoder newDecoder() {
-            return new MessageDecoder();
+            return new HexMessageDecoder(HardwareMessageType.HARDWARE_MSG_END);
         }
 
         @Override
         public MessageToMessageEncoder newEncoder() {
-            return new MessageEncoder();
+            return new HexMessageEncoder();
         }
 
         @Override
@@ -60,7 +61,7 @@ public class NettyExample {
         }
 
         @Override
-        public void notifySessionIdle(NettySession session, int idleType) {
+        public void notifySessionIdle(NettySession session, int idleType, int idleTimes) {
 
         }
     }

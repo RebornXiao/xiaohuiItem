@@ -15,7 +15,11 @@ import java.util.List;
 public class HexMessageDecoder extends ByteToMessageDecoder {
 
     // 结束符
-    private static String END_CHARACTER = "FFFF";
+    private String END_CHARACTER = "\r\n";
+
+    public HexMessageDecoder(String endCharacter) {
+        END_CHARACTER = endCharacter;
+    }
 
     @Override
     protected void decode(ChannelHandlerContext context, ByteBuf byteBuf, List<Object> messages) throws Exception {
