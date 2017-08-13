@@ -28,6 +28,9 @@
                         <button id="addBtn" type="button" class="btn waves-effect waves-light btn-primary "><i
                                 class="fa fa-pencil"></i> 添加商品模板
                         </button>
+                        <button id="manyDelBtn" type="button" class="btn waves-effect waves-light btn-primary ">
+                            批量删除
+                        </button>
                         <div class="input-group">
                             <div class="input-group-btn">
                                 <button id="searchMenu" type="button" search_name="名称"
@@ -41,7 +44,7 @@
                                     </li>
                                 </ul>
                             </div>
-                            <input type="text" id="searchKeyTxt"
+                            <input type="text" id="searchKey"
                                    class="form-control" placeholder="按名称查">
                             <span class="input-group-btn">
                                     <button id="searchBtn" type="button"
@@ -72,6 +75,14 @@
                     <table class="table table-striped table-bordered m-t-10">
                         <thead class="table_head">
                         <tr>
+                            <th>
+                                <div class="checkbox checkbox-primary checkbox-inline">
+                                    <input id="allSelectBtn" type="checkbox">
+                                    <label for="allSelectBtn">
+                                        全选
+                                    </label>
+                                </div>
+                            </th>
                             <th>商品ID</th>
                             <th>商品名称</th>
                             <th>商品自定义编码</th>
@@ -89,6 +100,14 @@
                         <#if (itemlist?size > 0)>
                             <#list itemlist as item>
                             <tr>
+                                <td>
+                                    <div class="checkbox checkbox-primary checkbox-inline">
+                                        <input id="checkbox_${item_index}" type="checkbox" data_id="${item.id?c}">
+                                        <label for="checkbox_${item_index}">
+                                            &nbsp;&nbsp;&nbsp;&nbsp;
+                                        </label>
+                                    </div>
+                                </td>
                                 <td>${item.id?c}</td>
                                 <td>${item.name}</td>
                                 <td>${item.defineCode}</td>
@@ -103,13 +122,18 @@
                                             class="btn waves-effect waves-light btn-warning btn-sm"
                                             data_id="${item.id?c}">编辑
                                     </button>
+                                    <button id="delBtn" type="button"
+                                            class="btn waves-effect waves-light btn-danger btn-sm"
+                                            data_id="${item.id?c}">
+                                        删除
+                                    </button>
                                 </td>
                             </tr>
 
                             </#list>
                         <#else>
                         <tr>
-                            <td colSpan="11" height="200px">
+                            <td rowspan="11">
                                 <p class="text-center">暂无任何数据</p>
                             </td>
                         </tr>
@@ -120,14 +144,14 @@
             </div>
 
 
+        <#if (itemlist?size > 15)>
             <div class="row small_page">
-                <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/manager/item/itemList.do?searchType=${searchType}&searchKey=${searchKey}&pageSize=5&pageIndex=" />
-                </div>
+                    <@paginate page=1 count=10 action="sdf" />
             </div>
+        </#if>
 
-            <!-- end container -->
+        <!-- end container -->
         </div>
 
         <script type="text/javascript">
@@ -135,28 +159,11 @@
             $(document).ready(function () {
 
                 //默认按名称
-                var searchTypeValue = "${searchType}";
-
+                var searchTypeValue = "name";
                 var _searchMenu = $("#searchMenu");
-                var _searchKeyTxt = $("#searchKeyTxt");
+                var _searchKey = $("#searchKey");
                 var _itemListTable = $("#itemListTable");
-
-                //根据搜索类型，设置选中项
-                if (searchTypeValue == null || searchTypeValue == "") {
-                    searchTypeValue = "name";
-                }
-
-                if (searchTypeValue == "define_code") {
-                    _searchMenu.html("按自定义编码搜索<span class=\"caret\"></span>");
-                } else if (searchTypeValue == "barcode") {
-                    _searchMenu.html("按条形码搜索<span class=\"caret\"></span>");
-                } else {
-                    searchTypeValue = "name";
-                    _searchMenu.html("按名称搜索<span class=\"caret\"></span>");
-                }
-
-                //设置搜索框内容
-                _searchKeyTxt.val("${searchKey}");
+                var _allSelectBtn = $("#allSelectBtn");
 
                 //搜索选择
                 $("#searchType li a").on('click', function () {
@@ -165,18 +172,14 @@
                     searchTypeValue = $(this).attr("search_type")
                     _searchMenu.html(txt + "<span class=\"caret\"></span>");
                     _searchMenu.attr("search_name", sName)
-                    _searchKeyTxt.attr("placeholder", txt);
+                    _searchKey.attr("placeholder", txt);
                 });
 
                 $("#searchBtn").on('click', function () {
                     //搜索
-                    var sValue = _searchKeyTxt.val();
+                    var sValue = _searchKey.val();
                     if (sValue == "") {
                         swal("请输入商品" + _searchMenu.attr("search_name") + "进行搜索!");
-                        return;
-                    }
-                    if (containSpecial.test(sValue)) {
-                        swal("包括了特殊符号，无法搜索!");
                         return;
                     }
                     location.href = "${base}/market/manager/item/itemList.do?searchType=" + searchTypeValue + "&searchKey=" + sValue;
@@ -189,10 +192,43 @@
 
             <#if (itemlist?size > 0)>
 
+                //批量删除
+                $("#manyDelBtn").on('click', function () {
+                    //查找选中的项
+                    var ids = "";
+                    _itemListTable.find('input:checkbox').each(function () {
+                        if ($(this).is(':checked')) {
+                            ids = ids + $(this).attr("data_id") + ",";
+                        }
+                    });
+                    if (ids != "") {
+                        showDelTi(function () {
+
+                        });
+                    }
+                });
+
+                //全选按钮
+                _allSelectBtn.on('click', function () {
+                    var s = _allSelectBtn.is(':checked')
+                    _itemListTable.find('input:checkbox').each(function () {
+                        $(this).prop('checked', s);
+                    });
+                });
+
                 //单项编辑
                 _itemListTable.find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
                         location.href = "${base}/market/manager/item/itemEdit.do?id=" + $(this).attr("data_id");
+                    });
+                });
+
+                //单项删除
+                _itemListTable.find('button[id=delBtn]').each(function () {
+                    $(this).on('click', function () {
+                        showDelTi(function () {
+
+                        });
                     });
                 });
 

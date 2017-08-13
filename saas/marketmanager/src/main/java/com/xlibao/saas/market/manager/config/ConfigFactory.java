@@ -28,11 +28,11 @@ public class ConfigFactory {
     public void initialization() {
         domainName = domainNameConfig;
 
-        DataCacheApplicationContextLoaderNotify.setLocationRemoteServiceURL(domainName.passportRemoteURL);
-        LocationDataCacheService.initLocationCache();
+        //DataCacheApplicationContextLoaderNotify.setLocationRemoteServiceURL(domainName.passportRemoteURL);
+        //LocationDataCacheService.initLocationCache();
 
-        DataCacheApplicationContextLoaderNotify.setItemRemoteServiceURL(domainName.itemRemoteURL);
-        ItemDataCacheService.initItemCache();
+        //DataCacheApplicationContextLoaderNotify.setItemRemoteServiceURL(domainName.itemRemoteURL);
+        //ItemDataCacheService.initItemCache();
 
         xmarket = xmarketConfig;
     }

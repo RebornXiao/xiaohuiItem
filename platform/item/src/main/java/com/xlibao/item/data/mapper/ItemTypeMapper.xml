@@ -22,7 +22,6 @@
 
     <select id="getItemType" resultMap="BaseResultMap">
         select * from item_type where id = #{itemTypeId}
-        <if test="status != -1" > and status = #{status} </if>
     </select>
 
 
@@ -43,13 +42,13 @@
 
     <select id="searchItemTypePageByName" resultMap="BaseResultMap">
         select * from item_type
-        <if test="searchKey != null" > where title like '%'+#{searchKey}+'%' </if>
+        <if test="searchKey != null" > where title like "%"#{searchKey}"%" </if>
         order by id desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="searchItemTypeCountByName" resultType="Integer">
         select COUNT(id) from item_type
-        <if test="searchKey != null" > where title like '%'+#{searchKey}+'%' </if>
+        <if test="searchKey != null" > where title like "%"#{searchKey}"%" </if>
     </select>
 
 </mapper>

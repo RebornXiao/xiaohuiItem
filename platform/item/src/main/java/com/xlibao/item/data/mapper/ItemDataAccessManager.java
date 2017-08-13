@@ -86,8 +86,8 @@ public class ItemDataAccessManager {
         return typeMapper.relationItemTypes(parentItemTypeId, statusEnum.getKey());
     }
 
-    public ItemType getItemType(long itemTypeId, ItemStatusEnum statusEnum) {
-        return typeMapper.getItemType(itemTypeId, statusEnum.getKey());
+    public ItemType getItemType(long itemTypeId) {
+        return typeMapper.getItemType(itemTypeId);
     }
 
     public Long addItemType(ItemType type) {
@@ -102,10 +102,13 @@ public class ItemDataAccessManager {
         return unitMapper.loaderItemUnits(statusEnum.getKey());
     }
 
-    public ItemUnit getItemUnit(long itemUnitId, ItemStatusEnum statusEnum) {
-        return unitMapper.getItemUnit(itemUnitId, statusEnum.getKey());
+    public ItemUnit getItemUnit(long itemUnitId) {
+        return unitMapper.getItemUnit(itemUnitId);
     }
 
+    public ItemUnit getItemUnitByTitle(String title) {
+        return unitMapper.getItemUnitByTitle(title);
+    }
 
     public List<ItemUnit> getItemUnitList(String title, int status, int pageSize, int pageStartIndex) {
         return unitMapper.getItemUnitList(title, status, pageSize, pageStartIndex);
@@ -115,12 +118,12 @@ public class ItemDataAccessManager {
         return unitMapper.getItemUnitListCount(title, status);
     }
 
-    public Long addItemUnit(ItemUnit unit) {
-        return unitMapper.add(unit);
+    public Long addItemUnit(String title, byte status) {
+        return unitMapper.add(title, status);
     }
 
-    public void updateItemUnit(ItemUnit itemUnit) {
-        unitMapper.update(itemUnit);
+    public void updateItemUnit(long id, String title, byte status) {
+        unitMapper.update(id, title, status);
     }
 
     public ItemRelationship getItemRelationship(Long id) {
@@ -166,4 +169,5 @@ public class ItemDataAccessManager {
     public int searchItemTemplateCount(String searchType, String searchKey) {
         return templateMapper.searchItemTemplateCount(searchType, searchKey);
     }
+
 }

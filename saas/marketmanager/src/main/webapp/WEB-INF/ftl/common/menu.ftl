@@ -58,45 +58,45 @@
                 <ul>
 
                     <li>
-                        <a href="${base}/market/manager/passport/index.do" class="waves-effect waves-primary <#if tab=="index"> active subdrop </#if> "><i
+                        <a href="${base}/market/manager/passport/index.do" class="waves-effect waves-primary <#if tab=="index"> active </#if> "><i
                                 class="fa fa-home"></i><span> 首  页 </span></a>
                     </li>
 
 
                     <li class="has_sub">
-                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="order"> active subdrop </#if> "><i class="fa fa-th-list"></i>
+                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="order"> active </#if> "><i class="fa fa-th-list"></i>
                             <span> 订单管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="order"> style="display: block;" </#if> >
-                            <li <#if tab_child=="all"> class="active" </#if> ><a href="${base}/market/manager/order/orderlist.do">订单列表</a></li>
+                            <li <#if tab_child=="all"> class="active" </#if> ><a href="${base}/market/manager/order/orderList.do">订单列表</a></li>
                         </ul>
                     </li>
 
                     <li class="has_sub">
-                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="item"> active subdrop </#if>"><i
+                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="item"> active </#if>"><i
                                 class="fa fa-cubes"></i><span> 商品管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="item"> style="display: block;" </#if> >
-                            <li <#if tab_child=="itemplates"> class="active" </#if> ><a href="${base}/market/manager/item/itemlist.do">商品模板库</a></li>
-                            <li <#if tab_child=="iypes"> class="active" </#if> ><a href="${base}/market/manager/item/itemtypes.do">商品分类</a></li>
-                            <li <#if tab_child=="iunits"> class="active" </#if> ><a href="${base}/market/manager/item/itemunits.do">商品单位</a></li>
+                            <li <#if tab_child=="itemplates"> class="active" </#if> ><a href="${base}/market/manager/item/itemList.do">商品模板库</a></li>
+                            <li <#if tab_child=="itypes"> class="active" </#if> ><a href="${base}/market/manager/item/itemTypes.do">商品分类</a></li>
+                            <li <#if tab_child=="iunits"> class="active" </#if> ><a href="${base}/market/manager/item/itemUnits.do">商品单位</a></li>
                         </ul>
                     </li>
 
                     <li class="has_sub">
-                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="store"> active subdrop </#if>"><i class="fa fa-sitemap"></i>
+                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="store"> active </#if>"><i class="fa fa-sitemap"></i>
                             <span> 店铺管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="store"> style="display: block;" </#if> >
-                            <li><a href="${base}/market/manager/item/storeadd.do">新增店铺</a></li>
-                            <li><a href="${base}/market/manager/item/storelist.do">店铺列表</a></li>
+                            <li><a href="${base}/market/manager/item/storeAdd.do">新增店铺</a></li>
+                            <li><a href="${base}/market/manager/item/storeList.do">店铺列表</a></li>
                             <li><a href="${base}/market/manager/item/storelist.do">店铺格子</a></li>
                             <li><a href="${base}/market/manager/item/storelist.do">店铺商品</a></li>
                         </ul>
                     </li>
 
                     <li class="has_sub">
-                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="user"> active subdrop </#if>"><i
+                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="user"> active </#if>"><i
                                 class="fa fa-users"></i><span> 用户管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="user"> style="display: block;" </#if> >
@@ -107,7 +107,7 @@
                     </li>
 
                     <li class="has_sub">
-                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="table"> active subdrop </#if>"><i
+                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="table"> active </#if>"><i
                                 class="fa fa-line-chart"></i><span> 统计报表 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="table"> style="display: block;" </#if> >

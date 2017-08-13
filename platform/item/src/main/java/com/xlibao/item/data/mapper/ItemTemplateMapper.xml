@@ -47,7 +47,7 @@
                 and uploaders_passport_id = ${template.uploadersPassportId}
             </if>
             <if test="template.uploadTime != null and template.uploadTime != ''">
-                and upload_time like '%' + #{template.uploadTime} + '%'
+                and upload_time like "%"#{template.uploadTime}"%"
             </if>
         </trim>
     </sql>
@@ -79,7 +79,7 @@
         select * from item_template where barcode = #{barcode}
     </select>
 
-    <update id="update">
+    <update id="updateItemTemplate">
         update item_template set name = #{name}, define_code = #{defineCode}, brand_id = #{brandId}, barcode = #{barcode}, type_id = #{typeId}, unit_id = #{unitId}, cost_price = #{costPrice}, default_price = #{defaultPrice},
         image_url = #{imageUrl}, banner_url = #{bannerUrl}, introduction_page = #{introductionPage}, description = #{description}, status = #{status}, uploaders_passport_id = #{uploadersPassportId}, upload_time = #{uploadTime}
         where id = #{id}
@@ -99,16 +99,16 @@
 
 
     <select id="searchItemTemplates" resultMap="BaseResultMap">
-        select *  from item_template
+        select * from item_template
         <if test="searchKey != null" >
-            <if test="searchType == 'title'" >
-                where title like '%'+#{searchKey}+'%'
+            <if test="searchType == 'name'" >
+                where name like "%"#{searchKey}"%"
             </if>
             <if test="searchType == 'define_code'" >
-                where define_code like '%'+#{searchKey}+'%'
+                where define_code like "%"#{searchKey}"%"
             </if>
             <if test="searchType == 'barcode'" >
-                where barcode like '%'+#{searchKey}+'%'
+                where barcode like "%"#{searchKey}"%"
             </if>
         </if>
         order by upload_time desc limit #{pageStartIndex}, #{pageSize}
@@ -117,14 +117,14 @@
     <select id="searchItemTemplateCount" resultType="Integer">
         select count(*) from item_template
         <if test="searchKey != null" >
-            <if test="searchType == 'title'" >
-                where title like '%'+#{searchKey}+'%'
+            <if test="searchType == 'name'" >
+                where name like "%"#{searchKey}"%"
             </if>
             <if test="searchType == 'define_code'" >
-                where define_code like '%'+#{searchKey}+'%'
+                where define_code like "%"#{searchKey}"%"
             </if>
             <if test="searchType == 'barcode'" >
-                where barcode like '%'+#{searchKey}+'%'
+                where barcode like "%"#{searchKey}"%"
             </if>
         </if>
     </select>

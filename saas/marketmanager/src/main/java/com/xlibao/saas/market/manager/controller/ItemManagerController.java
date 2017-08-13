@@ -1,21 +1,21 @@
 package com.xlibao.saas.market.manager.controller;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.xlibao.common.BasicWebService;
-import com.xlibao.common.GlobalConstantConfig;
-import com.xlibao.common.http.HttpUtils;
+import com.xlibao.common.CommonUtils;
+import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
 import com.xlibao.saas.market.manager.BaseController;
-import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.config.LogicConfig;
 import com.xlibao.saas.market.manager.service.itemmanager.ItemManagerService;
+import com.xlibao.saas.market.manager.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 import java.util.Map;
@@ -30,12 +30,12 @@ public class ItemManagerController extends BaseController {
     @Autowired
     private ItemManagerService itemManagerService;
 
-    @RequestMapping("/itemlist")
+    @RequestMapping("/itemList")
     public String getItemList(ModelMap map) {
 
         //取得商品列表
-        String searchType = getUTF("searchType", null);
-        String searchKey = getUTF("searchKey", null);
+        String searchType = getUTF("searchType", "");
+        String searchKey = getUTF("searchKey", "");
         int pageSize = getPageSize();
         int pageIndex = getIntParameter("pageIndex", 1);
 
@@ -51,7 +51,10 @@ public class ItemManagerController extends BaseController {
         //单位列表
         Map<Long, ItemUnit> itemUnitMap = itemManagerService.itemUnitsToMap(itemManagerService.getItemUnits());
 
-        JSONArray items = itemJson.getJSONObject("response").getJSONArray("data");
+
+        JSONObject response = itemJson.getJSONObject("response");
+
+        JSONArray items = response.getJSONArray("data");
         for (int i = 0; i < items.size(); i++) {
             JSONObject item = items.getJSONObject(i);
             long type_id = item.getLong("typeId");//类型ID
@@ -64,57 +67,154 @@ public class ItemManagerController extends BaseController {
 
             long unit_id = item.getLong("unitId");//单位ID
             ItemUnit itemUnit = itemUnitMap.get(unit_id);
-            if(itemUnit != null) {
+            if (itemUnit != null) {
                 item.put("unitName", itemUnit.getTitle());
             } else {
                 item.put("typeName", "无");
             }
+            //重置成本价
+            Utils.changePrice(item, "defaultPrice");
+            //重置零售价
+            Utils.changePrice(item, "costPrice");
+            //重置日期
+            Utils.changeData(item, "uploadTime");
         }
 
         map.put("itemlist", items);
-        map.put("count", itemJson.getIntValue("count"));
+        map.put("searchType", searchType);
+        map.put("searchKey", searchKey);
+        map.put("pageIndex", pageIndex);
+        map.put("count", response.getIntValue("count"));
 
-        return jumpPage(map, LogicConfig.FTL_ITEMLIST, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
+        return jumpPage(map, LogicConfig.FTL_ITEM_LIST, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
     }
 
+    @RequestMapping("/itemEdit")
     public String itemEdit(ModelMap map) {
 
-        return LogicConfig.TAB_CHILD_NAME;
+        long itemTemplaterId = getLongParameter("id", 0);
+
+        if (itemTemplaterId != 0) {
+            JSONObject itemJson = itemManagerService.getItemTemplate(itemTemplaterId);
+
+            if (itemJson.getIntValue("code") != 0) {
+                return remoteFail(map, itemJson, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
+            }
+            JSONObject item = itemJson.getJSONObject("response");
+            //重置成本价
+            Utils.changePrice(item, "defaultPrice");
+            //重置零售价
+            Utils.changePrice(item, "costPrice");
+
+            map.put("item", item);
+        }
+
+        //所有单位
+        map.put("itemUnits", itemManagerService.getItemUnits());
+
+        //所有类型
+        map.put("itemTypes", itemManagerService.getSelectItemTypes());
+
+        return jumpPage(map, LogicConfig.FTL_ITEM_EDIT, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
     }
 
-    @RequestMapping("/itemtypes")
+    @RequestMapping("/itemEditSave")
+    public String itemEditSave(ModelMap map) {
+        return jumpPage(map, LogicConfig.FTL_ITEM_EDIT, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
+    }
+
+    @RequestMapping("/itemTypes")
     public String getItemTypes(ModelMap map) {
 
-        String searchKey = getUTF("searchKey", null);
-        long parentItemTypeId = getLongParameter("parentItemTypeId", -1);
+        String searchKey = getUTF("searchKey", "");
+        long parentItemTypeId = getLongParameter("id", 0);
         int pageSize = getPageSize();
         int pageIndex = getIntParameter("pageIndex", 1);
 
         JSONObject typesJson = null;
-        if(parentItemTypeId == -1) {
+        if (CommonUtils.isNotNullString(searchKey)) {
             //直接搜索
-            typesJson = itemManagerService.searchItemTypePage(parentItemTypeId, pageSize, pageIndex);
-        } else {
-            //以分类获取
             typesJson = itemManagerService.searchItemTypePageByName(searchKey, pageSize, pageIndex);
+        } else {
+            //以父分类ID进行获取
+            typesJson = itemManagerService.searchItemTypePage(parentItemTypeId, pageSize, pageIndex);
+            //如果是查子，则将父也查出来
+            if (parentItemTypeId != 0) {
+                ItemType itemType = itemManagerService.getItemType(parentItemTypeId);
+                if (itemType != null) {
+                    map.put("itemType", itemType);
+                }
+            }
         }
 
         if (typesJson.getIntValue("code") != 0) {
             return remoteFail(map, typesJson, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
         }
 
-        JSONArray types = typesJson.getJSONObject("response").getJSONArray("data");
+        JSONObject response = typesJson.getJSONObject("response");
 
-        map.put("itemTypes", types);
-        map.put("count", typesJson.getIntValue("count"));
+        map.put("searchKey", searchKey);
+        map.put("itemTypes", response.getJSONArray("data"));
+        map.put("pageIndex", pageIndex);
+        map.put("count", response.getIntValue("count"));
 
-        return jumpPage(map, LogicConfig.FTL_ITEMLIST, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
+        return jumpPage(map, LogicConfig.FTL_ITEM_TYPES, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
     }
 
-    @RequestMapping("/itemunits")
+    @RequestMapping("/itemTypeEdit")
+    public String itemTypeEdit(ModelMap map) {
+
+        long itemTypeId = getLongParameter("id", 0);//修改某个分类，这个指定了某个分类的值
+        long pid = getLongParameter("parentId", 0);//添加子类时，这个值指定了父ID
+
+        //是否是编辑一级
+        boolean one = false;
+
+        if (itemTypeId != 0) {
+            ItemType itemType = itemManagerService.getItemType(itemTypeId);
+            map.put("itemType", itemType);
+            if(itemType.getParentId() == 0) {
+                one = true;
+            }
+        }
+
+        if (pid != 0) {
+            ItemType itemType = itemManagerService.getItemType(pid);
+            map.put("pItemType", itemType);
+        }
+
+        //发回所有1级，以添加2级时，绑定
+        if(!one) {
+            map.put("itemTypes", itemManagerService.getItemTypes(0));
+        }
+
+        return jumpPage(map, LogicConfig.FTL_ITEM_TYPE_EDIT, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
+    }
+
+    @RequestMapping("/itemTypeSort")
+    public String itemTypeSort(ModelMap map) {
+
+        Long id = getLongParameter("id", 0);
+
+        List<ItemType> types = itemManagerService.getItemTypes(0);//取得所有一级
+
+        //如果有选中其中的一级进行排序子类
+        if(id != 0) {
+            map.put("cItemTypes", itemManagerService.getItemTypes(id));
+        } else {
+            map.put("cItemTypes", types);
+        }
+        map.put("itemTypes", types);
+        map.put("selectId", id);
+
+        return jumpPage(map, LogicConfig.FTL_ITEM_TYPE_SORT, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
+    }
+
+
+    @RequestMapping("/itemUnits")
     public String getItemUnit(ModelMap map) {
 
-        String searchKey = getUTF("searchKey", null);
+        String searchKey = getUTF("searchKey", "");
         int pageSize = getPageSize();
         int pageIndex = getIntParameter("pageIndex", 1);
 
@@ -127,8 +227,35 @@ public class ItemManagerController extends BaseController {
         JSONArray units = unitJson.getJSONObject("response").getJSONArray("data");
 
         map.put("itemUnits", units);
-        map.put("count", unitJson.getIntValue("count"));
+        map.put("searchKey", searchKey);
+        map.put("pageIndex", pageIndex);
+        map.put("count", unitJson.getJSONObject("response").getIntValue("count"));
 
-        return jumpPage(map, LogicConfig.FTL_ITEMLIST, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_UNIT);
+        return jumpPage(map, LogicConfig.FTL_ITEM_UNITS, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_UNIT);
+    }
+
+    @RequestMapping("/itemUnitEdit")
+    public String itemUnitEdit(ModelMap map) {
+        long itemUnitId = getLongParameter("id", 0);
+        if (itemUnitId != 0) {
+            JSONObject unitJson = itemManagerService.getItemUnit(itemUnitId);
+            if (unitJson.getIntValue("code") != 0) {
+                return remoteFail(map, unitJson, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_UNIT);
+            }
+            map.put("itemUnit", unitJson.getJSONObject("response"));
+        }
+        return jumpPage(map, LogicConfig.FTL_ITEM_UNIT_EDIT, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_UNIT);
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/itemUnitEditSave", method = RequestMethod.POST)
+    public JSONObject itemUnitEditSave() {
+
+        long itemUnitId = getLongParameter("id");
+        String title = getUTF("title");
+        byte status = getByteParameter("status");
+
+        //通知修改
+        return itemManagerService.updateItemUnit(itemUnitId, title, status);
     }
 }

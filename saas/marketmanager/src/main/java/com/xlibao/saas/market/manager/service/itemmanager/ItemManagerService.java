@@ -14,18 +14,30 @@ public interface ItemManagerService {
 
     public JSONObject searchItemUnitPageByName(String searchKey, int pageSize, int pageIndex);
 
-    public JSONObject searchItemTypePageByName(String searchKey, int pageSize, int pageIndex);
-
-    public JSONObject searchItemTypePage(long parentItemTypeId, int pageSize, int pageIndex);
-
-    public JSONObject searchItemTemplatesPage(String searchType, String searchKey, int pageSize, int pageIndex);
-
-    public Map<Long, ItemType> itemTypesToMap(List<ItemType> itemTypes);
-
-    public List<ItemType> getItemTypes(int parentItemTypeId);
+    public JSONObject getItemUnit(long itemUnitId);
 
     public List<ItemUnit> getItemUnits();
 
     public Map<Long, ItemUnit> itemUnitsToMap(List<ItemUnit> itemUnits);
+
+    public JSONObject updateItemUnit(long itemUnitId, String title, byte status);
+
+    public JSONObject searchItemTypePageByName(String searchKey, int pageSize, int pageIndex);
+
+    public JSONObject searchItemTypePage(long parentItemTypeId, int pageSize, int pageIndex);
+
+    public Map<Long, ItemType> itemTypesToMap(List<ItemType> itemTypes);
+
+    public List<ItemType> getItemTypes(long parentItemTypeId);
+
+    public ItemType getItemType(long itemTypeId);
+
+    public List<ItemType> getSelectItemTypes();
+
+    public JSONObject searchItemTemplatesPage(String searchType, String searchKey, int pageSize, int pageIndex);
+
+    public JSONObject getItemTemplate(long itemTemplateId);
+
+    public JSONObject removeItemTemplates(String[] ids);
 
 }
