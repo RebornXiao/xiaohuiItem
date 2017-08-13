@@ -22,9 +22,9 @@ public class ServerConfig {
     private int serverPort = 0;
     private int listenerPort = 0;
 
-    private int readTimeout = 10;
-    private int writeTimeout = 10;
-    private int bothTimeout = 15;
+    private static int readTimeout = 10;
+    private static int writeTimeout = 10;
+    private static int bothTimeout = 15;
 
     public void init(String rootPath) {
         SAXReader reader = new SAXReader();
@@ -61,15 +61,15 @@ public class ServerConfig {
         return listenerPort;
     }
 
-    public int getReadTimeout() {
+    public static int getReadTimeout() {
         return readTimeout;
     }
 
-    public int getWriteTimeout() {
+    public static int getWriteTimeout() {
         return writeTimeout;
     }
 
-    public int getBothTimeout() {
+    public static int getBothTimeout() {
         return bothTimeout;
     }
 }

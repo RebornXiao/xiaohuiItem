@@ -2,8 +2,11 @@ package com.xlibao.saas.market.core.service;
 
 import com.xlibao.io.entry.MessageFactory;
 import com.xlibao.io.entry.MessageInputStream;
+import com.xlibao.io.entry.MessageOutputStream;
 import com.xlibao.io.service.netty.NettySession;
 import com.xlibao.market.protocol.ShopProtocol;
+import com.xlibao.saas.market.core.message.SessionManager;
+import com.xlibao.saas.market.core.service.support.SupportFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,42 +19,36 @@ public class MessageHandlerAdapter {
 
     private static final MessageHandlerAdapter instance = new MessageHandlerAdapter();
 
-    private MessageHandlerAdapter() {}
+    private MessageHandlerAdapter() {
+    }
 
     public static MessageHandlerAdapter getInstance() {
         return instance;
     }
 
     public void hardwareMessageExecute(NettySession session, String content) {
-        String msgType = content.substring(4, 8);
-        logger.info("Message type is " + msgType);
+        String messageType = content.substring(4, 8);
+        logger.info("Message type is " + messageType + "; " + session.netTrack());
+
+        MessageOutputStream message = MessageFactory.createInternalMessage(ShopProtocol.CS_HARDWARE);
+        message.writeUTF(content);
+
+        SessionManager.getInstance().sendLogicSession(message);
     }
 
-    public void platformMessageExecute(NettySession session, MessageInputStream message) {
-        short msgId = message.getMsgId();
+    public void marketMessageExecute(NettySession session, MessageInputStream message) {
+        byte messageType = message.getMsgType();
 
-        switch (msgId) {
-            case MessageFactory.MSG_ID_HEARTBEAT: // 心跳 回复当前服务器时间
-                break;
+        if (messageType == MessageFactory.MSG_TYPE_INTERNAL) { // 硬件消息
+            SupportFactory.getInstance().getApplicationService().hardwareMessageExecute(session, message);
+            return;
         }
-    }
-
-    public void shopMessageExecute(NettySession session, MessageInputStream message) {
-        short msgId = message.getMsgId();
-
-        logger.info("来自硬件的消息，消息ID：" + msgId + "；" + session.netTrack());
-        switch (msgId) {
-            case ShopProtocol.CS_HARDWARE:
-                break;
+        if (messageType == MessageFactory.MSG_TYPE_PLATFORM) { // 心跳消息
+            SupportFactory.getInstance().getApplicationService().platformMessageExecute(session, message);
+            return;
         }
-    }
-
-    public void logicMessageExecute(NettySession session, MessageInputStream message) {
-        short msgId = message.getMsgId();
-
-        switch (msgId) {
-            case ShopProtocol.CS_SECURITY_VERIFICATION:
-                break;
+        if (messageType == MessageFactory.MSG_TYPE_LOGIC) { // 逻辑消息
+            SupportFactory.getInstance().getApplicationService().logicMessageExecute(session, message);
         }
     }
 }
