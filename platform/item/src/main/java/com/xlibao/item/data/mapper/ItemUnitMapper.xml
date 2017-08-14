@@ -13,27 +13,25 @@
 
     <select id="getItemUnit" resultMap="BaseResultMap">
         select * from item_unit where id = #{itemUnitId}
-        <if test="status != -1" > and status = #{status} </if>
     </select>
 
     <select id="getItemUnitList" resultMap="BaseResultMap">
         select * from item_unit where 1=1
-        <if test="title != null" > and title like '%'+#{title}+'%' </if>
+        <if test="title != null" > and title like "%"#{title}"%" </if>
         <if test="status != -1" > and status = #{status} </if>
         order by id desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="getItemUnitListCount" resultType="Integer">
         select COUNT(id) from item_unit where  1=1
-        <if test="title != null" > and title like '%'+#{title}+'%' </if>
+        <if test="title != null" > and title like "%"#{title}"%" </if>
         <if test="status != -1" > and status = #{status} </if>
     </select>
-
 
     <select id="searchItemUnitByName" resultMap="BaseResultMap">
         select * from item_unit
         <!-- 不为空，才以此条件进行搜索 -->
-        <if test="searchKey != null" > where title like '%'+#{searchKey}+'%' </if>
+        <if test="searchKey != null" > where title like "%"#{searchKey}"%" </if>
         <!-- 为0，取全部 -->
         <if test="pageSize != 0" >
            order by id desc limit #{pageStartIndex}, #{pageSize}
@@ -42,6 +40,17 @@
 
     <select id="searchItemUnitCountByName" resultType="Integer">
         select COUNT(id) from item_unit
-        <if test="searchKey != null" > where title like '%'+#{searchKey}+'%' </if>
+        <if test="searchKey != null" > where title like "%"#{searchKey}"%" </if>
     </select>
+
+    <update id="updateItemUnit">
+        update item_unit set title = #{title}, status = #{status}
+        where id = #{itemUnitId}
+    </update>
+
+    <select id="getItemUnitByTitle" resultMap="BaseResultMap">
+        select * from item_unit
+        <if test="title != null" > where title = '#{title}' </if>
+    </select>
+
 </mapper>

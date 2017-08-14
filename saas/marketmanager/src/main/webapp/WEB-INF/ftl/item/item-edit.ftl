@@ -13,9 +13,9 @@
                             <li><a href="#">首页</a></li>
                             <li><a href="#">商品管理</a></li>
                             <li><a href="#">商品模板库</a></li>
-                            <li class="active">添加商品模板</li>
+                            <li class="active"><#if item?exists>编辑<#else>添加</#if>商品模板</li>
                         </ol>
-                        <h4 class="page-title"><b>添加商品模板</b></h4>
+                        <h4 class="page-title"><b><#if item?exists>编辑<#else>添加</#if>商品模板</b></h4>
                     </div>
                 </div>
             </div>
@@ -28,65 +28,102 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">商品名称：</label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control">
+                                        <input type="text" id="itemName" class="form-control" <#if item?exists>
+                                               value="${item.name}" </#if>>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-md-4 control-label" for="example-email">自定义编码：</label>
                                     <div class="col-md-8">
-                                        <input type="text" id="example-email" name="example-email" class="form-control">
+                                        <input type="text" id="defineCode" class="form-control" <#if item?exists>
+                                               value="${item.defineCode}" </#if>>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">标准条形码：</label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control">
+                                        <input type="text" id="barcode" class="form-control" <#if item?exists>
+                                               value="${item.barcode}" </#if>>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label">归属类型：</label>
+                                    <label class="col-md-4 control-label">分类：</label>
                                     <div class="col-md-6">
-                                        <select class="form-control">
-                                            <option>饮料</option>
-                                            <option>2</option>
-                                            <option>3</option>
-                                            <option>4</option>
-                                            <option>5</option>
+                                        <select class="form-control" id="typeSelect">
+                                        <#if (itemTypes?size > 0)>
+                                            <#list itemTypes as iType>
+                                                <option data_id="${iType.id}" <#if item?exists && iType.id == item.typeId>
+                                                        selected </#if>>
+
+                                                <#if iType.parentId == 0>
+                                                    ${iType.title}
+                                                <#else>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;${iType.title}
+                                                </#if>
+                                                </option>
+                                            </#list>
+                                        <#else>
+                                            <option data_id="0">无</option>
+                                        </#if>
                                         </select>
                                     </div>
-                                    <button type="button" class="btn col-md-2 waves-effect waves-light btn-default">
+                                    <button id="addTypeBtn" type="button"
+                                            class="btn col-md-2 waves-effect waves-light btn-default">
                                         添加商品类型
+                                    </button>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">单位：</label>
+                                    <div class="col-md-6">
+                                        <select class="form-control" id="unitSelect">
+                                        <#if (itemUnits?size > 0)>
+                                            <#list itemUnits as unit>
+                                                <option data_id="${unit.id}" <#if item?exists && unit.id == item.unitId>
+                                                        selected </#if>>${unit.title}</option>
+                                            </#list>
+                                        <#else>
+                                            <option data_id="0">无</option>
+                                        </#if>
+                                        </select>
+                                    </div>
+                                    <button id="addUnitBtn" type="button"
+                                            class="btn col-md-2 waves-effect waves-light btn-default">
+                                        添加商品单位
                                     </button>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">成本价：</label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control">
+                                        <input type="text" id="costPrice" class="form-control" <#if item?exists>
+                                               value="${item.costPrice}" </#if>>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">零售价：</label>
                                     <div class="col-md-8">
-                                        <input type="text" class="form-control">
+                                        <input type="text" id="defaultPrice" class="form-control" <#if item?exists>
+                                               value="${item.defaultPrice}" </#if>>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">商品描述：</label>
                                     <div class="col-md-8">
-                                        <textarea class="form-control" rows="5"></textarea>
+                                        <textarea class="form-control" id="itemInfo" rows="5"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">商品主图：</label>
                                     <div class="col-md-4">
-                                        <img src="" width="150px" height="150px"/>
+                                        <img <#if item?exists && item.imageUrl??> src="${item.imageUrl}" </#if>
+                                                                                  width="150px" height="150px"/>
                                         <p class="m-t-10">
                                             <button type="button" class="btn waves-effect waves-light btn-default">
                                                 上传主图
@@ -98,7 +135,8 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">商品banner图：</label>
                                     <div class="col-md-4">
-                                        <img src="" width="300px" height="150px"/>
+                                        <img <#if item?exists && item.bannerUrl??> src="${item.bannerUrl}" </#if>
+                                                                                   width="300px" height="150px"/>
                                         <p class="m-t-10">
                                             <button type="button" class="btn waves-effect waves-light btn-default">
                                                 上传banner图
@@ -110,7 +148,8 @@
                                 <div class="form-group m-t-20">
                                     <div class="col-md-4">
                                     </div>
-                                    <button type="button" class="btn waves-effect waves-light btn-primary col-md-2">确定
+                                    <button id="saveBtn" type="button"
+                                            class="btn waves-effect waves-light btn-primary col-md-2">确定
                                     </button>
                                     <div class="col-md-6">
                                     </div>
@@ -122,6 +161,39 @@
                     </div>
                 </div>
             </div>
-            <!-- end container -->
+
+        <!-- end container -->
         </div>
-        <!-- end content -->
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                $("#itemName").focus();
+
+                //添加类型
+                $("#addTypeBtn").on('click', function () {
+                    location.href = "${base}/market/manager/item/itemTypeEdit.do";
+                });
+
+                //添加单位
+                $("#addUnitBtn").on('click', function () {
+                    location.href = "${base}/market/manager/item/itemUnitEdit.do";
+                });
+
+                //添加商品
+                $("#saveBtn").on('click', function () {
+
+                    //检测所有项
+
+                    <#--$.post("${base}/market/manager/item/itemUnitEditSave.do?id="+itemUnitId+"&title="+title+"&status="+status, function(data) {-->
+                        <#--//重新刷新-->
+                        <#--if(data.code == "0") {-->
+                            <#--swal("提示", "操作成功", "success");-->
+                            <#--location.reload();-->
+                        <#--} else {-->
+                            <#--swal(data.msg);-->
+                        <#--}-->
+                    <#--}, "json");-->
+                });
+            });
+        </script>

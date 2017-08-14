@@ -2,6 +2,7 @@ package com.xlibao.saas.market.manager;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
+import com.xlibao.common.GlobalConstantConfig;
 import com.xlibao.saas.market.manager.config.LogicConfig;
 import org.springframework.ui.ModelMap;
 
@@ -33,5 +34,9 @@ public class BaseController extends BasicWebService {
     public String fail(ModelMap map, String msg, String tab, String tab_child) {
         map.put(LogicConfig.ERROR_NAME, msg);
         return jumpPage(map, LogicConfig.FTL_PAGE, tab, tab_child);
+    }
+
+    protected int getPageSize() {
+        return getIntParameter("pageSize", 12);
     }
 }

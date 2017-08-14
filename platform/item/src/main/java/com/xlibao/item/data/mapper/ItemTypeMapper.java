@@ -16,7 +16,7 @@ public interface ItemTypeMapper {
 
     List<ItemType> relationItemTypes(@Param("parentItemTypeId") long parentItemTypeId, @Param("status") int status);
 
-    ItemType getItemType(@Param("itemTypeId") long itemTypeId, @Param("status") int status);
+    ItemType getItemType(@Param("itemTypeId") long itemTypeId);
 
     @Insert("insert into item_type (title, parent_id, status, sort, top, icon, image) values (#{type.title}, #{type.parentId}, #{type.status}, #{type.sort}, #{type.top}, #{type.icon}, #{type.image})")
     @SelectKey(before=false,keyProperty="type.id",resultType=Long.class,statementType= StatementType.STATEMENT,statement="SELECT LAST_INSERT_ID() AS id")

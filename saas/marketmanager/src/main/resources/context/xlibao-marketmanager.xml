@@ -27,7 +27,7 @@
     <bean id="viewResolverFtl" class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">
         <property name="viewClass" value="com.xlibao.saas.market.manager.BaseFreeMarkerView"/>
         <property name="contentType" value="text/html; charset=utf-8"/>
-        <property name="cache" value="true"/>
+        <property name="cache" value="false"/>
         <property name="requestContextAttribute" value="base" />
         <property name="suffix" value=".ftl"/>
         <property name="order" value="0"/>

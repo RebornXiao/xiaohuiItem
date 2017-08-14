@@ -23,6 +23,14 @@ public class LogicConfig {
     public static final String FTL_INDEX = "index";
 
     //商品相关页面
-    public static final String FTL_ITEMLIST = "item/item-list";
+    public static final String FTL_ITEM_LIST = "item/item-list";
+    public static final String FTL_ITEM_EDIT = "item/item-edit";
+
+    public static final String FTL_ITEM_TYPES = "item/item-type-list";
+    public static final String FTL_ITEM_TYPE_EDIT = "item/item-type-edit";
+    public static final String FTL_ITEM_TYPE_SORT = "item/item-type-sort";
+
+    public static final String FTL_ITEM_UNITS = "item/item-unit-list";
+    public static final String FTL_ITEM_UNIT_EDIT = "item/item-unit-edit";
 
 }

@@ -11,6 +11,8 @@
 
     <title>智能超市后台管理系统</title>
 
+    <link href="${base}/assets/plugins/sweetalert/dist/sweetalert.css" rel="stylesheet" type="text/css">
+
     <link href="${base}/assets/css/bootstrap.min.css" rel="stylesheet" type="text/css">
     <link href="${base}/assets/css/core.css" rel="stylesheet" type="text/css">
     <link href="${base}/assets/css/icons.css" rel="stylesheet" type="text/css">
@@ -25,13 +27,3 @@
     <script src="${base}/assets/js/jquery.min.js"></script>
     <script src="${base}/assets/js/bootstrap.min.js"></script>
 
-    <script>
-        var resizefunc = [];
-    </script>
-
-    <!-- 导航相关的效果js -->
-    <script src="${base}/assets/js/detect.js"></script>
-    <script src="${base}/assets/js/fastclick.js"></script>
-    <script src="${base}/assets/js/jquery.slimscroll.js"></script>
-    <script src="${base}/assets/js/jquery.core.js"></script>
-    <script src="${base}/assets/js/jquery.app.js"></script>

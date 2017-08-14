@@ -52,4 +52,5 @@ public interface ItemService {
     JSONObject searchItemTypePage();
 
     JSONObject searchItemTemplatesPage();
+
 }
