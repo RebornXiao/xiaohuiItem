@@ -31,7 +31,7 @@ public interface ItemTypeMapper {
     Integer itemTypesCount(@Param("parentItemTypeId") long parentItemTypeId);
 
     /** 根据 父分类 ID 获取分页 */
-    List<ItemType> pageItemType(@Param("parentItemTypeId") long parentItemTypeId, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
+    List<ItemType> pageItemType(@Param("parentItemTypeId") long parentItemTypeId, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex, @Param("sort") boolean sort);
 
     /** 根据 商品类型 名称 搜索 返回列表 */
     List<ItemType> searchItemTypePageByName(@Param("searchKey") String searchKey, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);

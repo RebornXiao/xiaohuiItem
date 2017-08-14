@@ -13,6 +13,8 @@ public class LogicConfig {
     public static final String TAB_ITEM_TEMPLATE = "itemplates";
     public static final String TAB_ITEM_TYPE = "itypes";
     public static final String TAB_ITEM_UNIT = "iunits";
+    public static final String TAB_ORDER = "order";
+    public static final String TAB_ORDER_LIST = "orders";
 
     public static final String ERROR_NAME = "error";
 
@@ -32,5 +34,7 @@ public class LogicConfig {
 
     public static final String FTL_ITEM_UNITS = "item/item-unit-list";
     public static final String FTL_ITEM_UNIT_EDIT = "item/item-unit-edit";
+
+    public static final String FTL_ORDER_LIST = "order/order-list";
 
 }

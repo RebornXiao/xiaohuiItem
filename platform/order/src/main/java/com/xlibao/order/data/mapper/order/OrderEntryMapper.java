@@ -42,4 +42,8 @@ public interface OrderEntryMapper {
     int refreshRefundStatus(@Param("orderId") long orderId, @Param("refundStatus") int refundStatus);
 
     int batchResetOverdueOrderStatus(@Param("partnerId") String partnerId, @Param("orderType") int orderType, @Param("matchStatus") int matchStatus, @Param("expectStatus") int expectStatus, @Param("timeout") String timeout);
+
+    List<OrderEntry> searchPageOrders(@Param("marketId") long marketId, @Param("orderState") int orderState, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("searchType") String searchType, @Param("searchKey") String searchKey, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
+
+    int searchPageOrderCount(@Param("marketId") long marketId, @Param("orderState") int orderState, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("searchType") String searchType, @Param("searchKey") String searchKey, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
 }

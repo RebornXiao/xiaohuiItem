@@ -36,7 +36,12 @@
         select * from item_type
         <if test="parentItemTypeId != -1" > where parent_id = #{parentItemTypeId} </if>
         <if test="pageSize != 0" >
-            order by id desc limit #{pageStartIndex}, #{pageSize}
+            <if test="sort == true">
+              order by sort asc limit #{pageStartIndex}, #{pageSize}
+            </if>
+            <if test="sort == false">
+                order by id desc limit #{pageStartIndex}, #{pageSize}
+            </if>
         </if>
     </select>
 

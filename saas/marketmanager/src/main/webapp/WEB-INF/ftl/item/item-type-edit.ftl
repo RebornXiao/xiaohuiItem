@@ -102,6 +102,7 @@
             $(document).ready(function () {
 
                 var itemTypeId = 0;
+                var _typesAlist = $("#typesAlist");
 
                 <#if itemType?exists>
                     itemTypeId = "${itemType.id?c}"
@@ -110,9 +111,30 @@
 
                     //如果是修改一级，则隐藏2级选项
                     <#if itemType.parentId == 0>
-                        $("#typesAlist").hide();
+                        _typesAlist.hide();
                     </#if>
 
+                </#if>
+
+                <#if !(itemType?exists) && !(pItemType?exists) >
+                    //默认选中一级
+                    $("#addBtnA").attr("checked", true);
+                    //隐藏二级
+                    _typesAlist.hide();
+                    //添加点击切换
+                    $("#addBtnA").on('click', function () {
+                        if($(this).is(':checked')) {
+                            //隐藏二级
+                            _typesAlist.hide();
+                        }
+                    });
+                    //添加点击切换
+                    $("#addBtnB").on('click', function () {
+                        if($(this).is(':checked')) {
+                            //隐藏二级
+                            _typesAlist.show();
+                        }
+                    });
                 </#if>
 
                 <#if pItemType?exists>
@@ -133,11 +155,25 @@
 
                     //检测
                     var title = $("#itName").val();
-                    var status = 0;
                     if (title == "") {
-                        swal("请输入商品单位名称!");
+                        swal("请输入分类名称!");
                         return;
                     }
+
+                    //保存
+                    $.post("${base}/market/manager/item/itemTypeEditSave.do", function(data) {
+
+                        <#if !(itemType?exists) >
+                        $("#itName").val("");
+                        </#if>
+
+                        //重新刷新
+                        if(data.code == "0") {
+                            swal("提示", data.msg, "success");
+                        } else {
+                            swal(data.msg);
+                        }
+                    }, "json");
 
                 });
             });

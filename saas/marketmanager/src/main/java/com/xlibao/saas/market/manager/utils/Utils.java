@@ -43,4 +43,10 @@ public class Utils {
             json.put(key, "0");
         }
     }
+
+    public static void append(StringBuilder sb, String key, String value) {
+        if(value != null) {
+            sb.append("&").append(key).append("=").append(value);
+        }
+    }
 }

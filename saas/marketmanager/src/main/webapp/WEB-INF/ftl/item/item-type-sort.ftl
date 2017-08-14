@@ -34,7 +34,7 @@
                                     <option data_id="0">排序所有一级分类</option>
                                 <#if itemTypes?exists && (itemTypes?size > 0)>
                                     <#list itemTypes as type>
-                                        <option data_id="${type.id}" <#if selectId == type.id>
+                                        <option data_id="${type.id?c}" <#if selectId == type.id>
                                                 selected
                                         </#if>>排序 ${type.title} 的子类
                                         </option>
@@ -43,7 +43,7 @@
                                 </select>
                             </div>
                             <div class="col-sm-3">
-                                <button type="button" class="btn waves-effect waves-light btn-primary "><i
+                                <button id="saveBtn" type="button" class="btn waves-effect waves-light btn-primary "><i
                                         class="fa fa-pencil"></i> 保存调整后的排序
                                 </button>
                             </div>
@@ -54,7 +54,7 @@
                             <div class="col-sm-3"></div>
                             <div class="col-sm-6">
                                 <div class="dd" id="item_type_sort">
-                                    <ol class="dd-list">
+                                    <ol id="sortList" class="dd-list">
                                     <#if cItemTypes?exists && (cItemTypes?size > 0)>
                                         <#list cItemTypes as type>
                                             <li class="dd-item" data-id="${type_index}" data_id="${type.id?c}">
@@ -84,6 +84,22 @@
                 $("#itSelect").on("change", function () {
                     var obj = $(this).children('option:selected');
                     location.href = "${base}/market/manager/item/itemTypeSort.do?id=" + obj.attr("data_id");
+                });
+                $("#saveBtn").on("click", function () {
+                    var str = "";
+                    $("#sortList").find('li').each(function () {
+                        str = str + $(this).attr("data_id") + ", ";
+                    });
+
+                    //保存
+                    $.post("${base}/market/manager/item/itemTypeSortSave.do?sortIds="+str, function(data) {
+                        //重新刷新
+                        if(data.code == "0") {
+                            swal("提示", data.msg, "success");
+                        } else {
+                            swal(data.msg);
+                        }
+                    }, "json");
                 });
             });
 

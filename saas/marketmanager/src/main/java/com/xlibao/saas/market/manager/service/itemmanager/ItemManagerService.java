@@ -30,6 +30,8 @@ public interface ItemManagerService {
 
     public List<ItemType> getItemTypes(long parentItemTypeId);
 
+    public List<ItemType> getSortItemTypes(long parentItemTypeId);
+
     public ItemType getItemType(long itemTypeId);
 
     public List<ItemType> getSelectItemTypes();

@@ -118,8 +118,8 @@ public class ItemDataAccessManager {
         return unitMapper.getItemUnitListCount(title, status);
     }
 
-    public Long addItemUnit(String title, byte status) {
-        return unitMapper.add(title, status);
+    public int createItemUnit(ItemUnit itemUnit) {
+        return unitMapper.createItemUnit(itemUnit);
     }
 
     public void updateItemUnit(long id, String title, byte status) {
@@ -150,8 +150,8 @@ public class ItemDataAccessManager {
         return typeMapper.itemTypesCount(parentItemTypeId);
     }
 
-    public List<ItemType> pageItemType(long parentItemTypeId, int pageSize, int pageStartIndex) {
-        return typeMapper.pageItemType(parentItemTypeId, pageSize, pageStartIndex);
+    public List<ItemType> pageItemType(long parentItemTypeId, int pageSize, int pageStartIndex, boolean sort) {
+        return typeMapper.pageItemType(parentItemTypeId, pageSize, pageStartIndex, sort);
     }
 
     public List<ItemType> searchItemTypePageByName(String searchKey, int pageSize, int pageStartIndex) {

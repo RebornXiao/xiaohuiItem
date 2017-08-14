@@ -341,4 +341,13 @@ public class OrderController {
     public JSONObject batchResetOverdueOrderStatus() {
         return orderService.batchResetOverdueOrderStatus();
     }
+
+
+
+    @ResponseBody
+    @RequestMapping(value = "searchPageOrders")
+    public JSONObject searchPageOrders() {
+        return orderService.searchPageOrders();
+    }
+
 }

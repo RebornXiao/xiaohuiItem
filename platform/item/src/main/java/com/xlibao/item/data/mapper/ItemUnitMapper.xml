@@ -49,8 +49,11 @@
     </update>
 
     <select id="getItemUnitByTitle" resultMap="BaseResultMap">
-        select * from item_unit
-        <if test="title != null" > where title = '#{title}' </if>
+        select * from item_unit where title = #{title}
     </select>
+
+    <insert id="createItemUnit" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.metadata.item.ItemUnit">
+        insert into item_unit(title, status) values(#{title}, #{status})
+    </insert>
 
 </mapper>

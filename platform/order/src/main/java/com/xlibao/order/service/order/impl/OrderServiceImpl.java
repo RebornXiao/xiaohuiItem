@@ -1093,4 +1093,29 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         }
         return true;
     }
+
+
+    @Override
+    public JSONObject searchPageOrders() {
+        //店铺ID
+        long marketId = getLongParameter("marketId", 0);
+        int orderState = getIntParameter("orderState", 0);
+        String startTime = getUTF("sTime", null);
+        String endTime = getUTF("eTime", null);
+        String searchType = getUTF("searchType", null);
+        String searchValue = getUTF("searchValue", null);
+
+        int pageSize = getPageSize();
+        int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
+
+        List<OrderEntry> orderEntries = orderDataAccessManager.searchPageOrders(marketId, orderState, startTime, endTime, searchType, searchValue, pageSize, pageStartIndex);
+        int count = orderDataAccessManager.searchPageOrderCount(marketId, orderState, startTime, endTime, searchType, searchValue, pageSize, pageStartIndex);
+
+        JSONObject response = new JSONObject();
+        response.put("data", orderEntries);
+        response.put("count", count);
+        response.put("pageIndex", getIntParameter("pageIndex", 1) - 1);
+        return success(response);
+    }
+
 }

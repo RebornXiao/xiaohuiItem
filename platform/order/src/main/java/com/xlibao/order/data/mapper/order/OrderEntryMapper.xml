@@ -138,4 +138,32 @@
     <update id="batchResetOverdueOrderStatus">
         update order_entry set status = #{expectStatus} where partner_id = #{partnerId} and type = #{orderType} and status = #{matchStatus} and #{timeout} >= create_time
     </update>
+
+    <select id="searchPageOrders" resultMap="BaseResultMap">
+        select * from order_entry where 1=1
+        <if test="marketId != 0" > and shipping_passport_id = #{marketId} </if>
+        <if test="orderState != 0" > and status = #{orderState} </if>
+        <if test="startTime != null" > and create_time >= #{startTime} </if>
+        <if test="endTime != null" > and create_time &lt;= #{endTime} </if>
+        <if test="searchType == 'orderNum'"> and order_sequence_number like "%"#{searchKey}"%" </if>
+        <if test="searchType == 'receName'"> and receipt_nick_name like "%"#{searchKey}"%" </if>
+        <if test="searchType == 'recePhone'"> and receipt_phone like "%"#{searchKey}"%" </if>
+        <if test="searchType == 'courierName'"> and courier_nick_name like "%"#{searchKey}"%" </if>
+        <if test="searchType == 'courierPhone'"> and courier_phone like "%"#{searchKey}"%" </if>
+        order by create_time desc limit #{pageStartIndex}, #{pageSize}
+    </select>
+
+    <select id="searchPageOrderCount" resultType="int">
+        select count(id) from order_entry where 1=1
+        <if test="marketId != 0" > and shipping_passport_id = #{marketId} </if>
+        <if test="orderState != 0" > and status = #{orderState} </if>
+        <if test="startTime != null" > and create_time >= #{startTime} </if>
+        <if test="endTime != null" > and create_time &lt;= #{endTime} </if>
+        <if test="searchType == 'orderNum'"> and order_sequence_number like "%"#{searchKey}"%" </if>
+        <if test="searchType == 'receName'"> and receipt_nick_name like "%"#{searchKey}"%" </if>
+        <if test="searchType == 'recePhone'"> and receipt_phone like "%"#{searchKey}"%" </if>
+        <if test="searchType == 'courierName'"> and courier_nick_name like "%"#{searchKey}"%" </if>
+        <if test="searchType == 'courierPhone'"> and courier_phone like "%"#{searchKey}"%" </if>
+    </select>
+
 </mapper>

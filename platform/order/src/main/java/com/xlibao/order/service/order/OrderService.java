@@ -139,4 +139,6 @@ public interface OrderService {
     JSONObject findInvalidOrderSize();
 
     JSONObject batchResetOverdueOrderStatus();
+
+    JSONObject searchPageOrders();
 }

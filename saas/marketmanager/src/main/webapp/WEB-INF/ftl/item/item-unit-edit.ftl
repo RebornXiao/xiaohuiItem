@@ -50,7 +50,9 @@
                             <button id="saveBtn" type="button"
                                     class="btn waves-effect waves-light btn-primary col-md-2">确定
                             </button>
-                            <div class="col-md-6"></div>
+                            <button id="backBtn" type="button"
+                                    class="btn waves-effect waves-light btn-default col-md-2">返回
+                            </button>
                         </div>
 
                         <br><br><br><br><br>
@@ -73,6 +75,10 @@
 
                 $("#itemUnitTitle").focus();
 
+                $("#backBtn").on('click', function () {
+                    history.back(-1);
+                });
+
                 //保存商品单位
                 $("#saveBtn").on('click', function () {
 
@@ -89,10 +95,15 @@
                     }
 
                     $.post("${base}/market/manager/item/itemUnitEditSave.do?id="+itemUnitId+"&title="+title+"&status="+status, function(data) {
+
+                        <#if !(itemUnit?exists) >
+                            $("#itemUnitStatus").prop('checked', false);
+                            $("#itemUnitTitle").val("");
+                        </#if>
+
                         //重新刷新
                         if(data.code == "0") {
                             swal("提示", "操作成功", "success");
-                            location.reload();
                         } else {
                             swal(data.msg);
                         }
