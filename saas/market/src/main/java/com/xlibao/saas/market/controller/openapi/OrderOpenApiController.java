@@ -94,6 +94,7 @@ public class OrderOpenApiController {
      *     <b>参数：</b>
      *          <b>passportId</b> - long 通行证ID，必填参数。
      *          <b>sequenceNumber</b> - String 订单序列号。
+     *          <b>deliverType</b> - int 配送类型，非必填参数；参看：{@link com.xlibao.common.constant.order.DeliverTypeEnum}
      *          <b>paymentType</b> - String 支付类型，必填参数；参考：{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum}
      *
      *     <b>返回结果：</b>

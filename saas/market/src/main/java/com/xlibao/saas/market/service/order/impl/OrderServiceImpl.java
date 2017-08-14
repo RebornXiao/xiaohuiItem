@@ -69,16 +69,17 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     public JSONObject generateOrder() {
         long passportId = getPassportId();
         long marketId = getLongParameter("marketId");
-        int deviceType = getIntParameter("userSource", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey());
+        int deliverType = getIntParameter("deliverType", DeliverTypeEnum.PICKED_UP.getKey());
+        int deviceType = getIntParameter("deviceType", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey());
         String sequenceNumber = getUTF("sequenceNumber");
         String currentLocation = getUTF("currentLocation", GlobalConstantConfig.INVALID_LOCATION);
         byte collectingFees = getByteParameter("collectingFees", CollectingFeesEnum.UN_COLLECTION.getKey());
         String receiptProvince = getUTF("receiptProvince", "");
         String receiptCity = getUTF("receiptCity", "");
         String receiptDistrict = getUTF("receiptDistrict", "");
-        String receiptAddress = getUTF("receiptAddress");
-        String receiptNickName = getUTF("receiptNickName");
-        String receiptPhone = getUTF("receiptPhone");
+        String receiptAddress = getUTF("receiptAddress", "");
+        String receiptNickName = getUTF("receiptNickName", "");
+        String receiptPhone = getUTF("receiptPhone", "");
         String receiptLocation = getUTF("receiptLocation", GlobalConstantConfig.INVALID_LOCATION);
         // 备注
         String remark = getUTF("remark", "");
@@ -87,6 +88,11 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
         if (!CommonUtils.isMobileNum(receiptPhone)) {
             return PlatformErrorCodeEnum.PHONE_NUMBER_ERROR.response("手机号[" + receiptPhone + "]无效");
+        }
+        if (deliverType == DeliverTypeEnum.DISTRIBUTION.getKey()) {
+            if (CommonUtils.isNullString(receiptAddress) || CommonUtils.isNullString(receiptNickName) || CommonUtils.isNullString(receiptPhone)) {
+                OrderErrorCodeEnum.PERFECT_RECEIPT_ADDRESS.throwException("请填写收货地址、收货人姓名、收货人联系电话等信息");
+            }
         }
         // 用户购买的商品信息
         JSONObject buyItemTemplates = JSONObject.parseObject(itemTemplateSet);
@@ -98,7 +104,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
 
-        OrderEntry orderEntry = fillOrderData(passportId, deviceType, currentLocation, collectingFees, receiptProvince, receiptCity, receiptDistrict, receiptAddress,
+        OrderEntry orderEntry = fillOrderData(passportId, deviceType, deliverType, currentLocation, collectingFees, receiptProvince, receiptCity, receiptDistrict, receiptAddress,
                 String.valueOf(passportId), receiptNickName, receiptPhone, receiptLocation, marketEntry, remark, itemSnapshots);
 
         List<OrderEntry> orders = new ArrayList<>();
@@ -348,7 +354,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         return itemSnapshots;
     }
 
-    private OrderEntry fillOrderData(long passportId, int deviceType, String currentLocation, byte collectingFees, String receiptProvince, String receiptCity, String receiptDistrict, String receiptAddress,
+    private OrderEntry fillOrderData(long passportId, int deviceType, int deliverType, String currentLocation, byte collectingFees, String receiptProvince, String receiptCity, String receiptDistrict, String receiptAddress,
                                      String receiptUserId, String receiptNickName, String receiptPhone, String receiptLocation, MarketEntry marketEntry, String remark, List<OrderItemSnapshot> itemSnapshots) {
         OrderEntry order = new OrderEntry();
 
@@ -356,6 +362,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
         order.setPartnerUserId(String.valueOf(passportId));
         order.setUserSource(deviceType);
+        order.setDeliverType(deliverType);
         order.setPushType(PushTypeEnum.UN_PUSH.getKey());
 
         order.setShippingPassportId(marketEntry.getId());
@@ -377,15 +384,16 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         order.setReceiptLocation(receiptLocation);
 
         order.setStatus(OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey());
-        order.setDeliverType(DeliverTypeEnum.PICKED_UP.getKey());
+        order.setDeliverType(deliverType);
 
         order.setRemark(remark);
 
         order.setCurrentLocation(currentLocation);
         order.setCollectingFees(collectingFees);
 
-        long actualPrice = 0;
-        long totalPrice = 0;
+        long deliverPrice = deliverType == DeliverTypeEnum.PICKED_UP.getKey() ? 0 : marketEntry.getDeliveryCost();
+        long actualPrice = deliverPrice;
+        long totalPrice = deliverPrice;
         for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
             actualPrice += itemSnapshot.getTotalPrice();
             totalPrice += (itemSnapshot.getNormalPrice() * itemSnapshot.totalQuantity());
@@ -395,7 +403,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         order.setTotalPrice(totalPrice);
         order.setDiscountPrice(discountPrice);
         order.setPriceLogger(discountPrice <= 0 ? "无优惠" : "订单优惠(折扣)：" + CommonUtils.formatNumber(discountPrice / 100f, "#.##") + "元");
-        order.setDistributionFee(0L);
+        order.setDistributionFee(deliverPrice);
 
         order.setItemSnapshots(itemSnapshots);
         return order;

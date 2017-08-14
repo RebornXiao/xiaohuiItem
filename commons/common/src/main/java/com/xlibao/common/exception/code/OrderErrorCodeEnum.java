@@ -23,6 +23,8 @@ public enum OrderErrorCodeEnum {
     HAS_DISTRIBUTION_ORDER(20006, "订单已在配送中"),
     /** 20007 -- 订单已送达 */
     HAS_ARRIVE_ORDER(20007, "订单已送达"),
+    /** 20008 -- 请完善收货地址 */
+    PERFECT_RECEIPT_ADDRESS(20008, "请完善收货地址"),
     ;
 
     private int key;
