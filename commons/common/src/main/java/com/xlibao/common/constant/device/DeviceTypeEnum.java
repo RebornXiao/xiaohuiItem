@@ -9,7 +9,7 @@ import java.util.Map;
 public enum DeviceTypeEnum {
 
     /** -1 - 设备类型 -- 未知 */
-    DEVICE_TYPE_UNKNOW(-1, "未知设备"),
+    DEVICE_TYPE_UN_KNOW(-1, "未知设备"),
     /** 1 - 设备类型 -- Android */
     DEVICE_TYPE_ANDROID(1, "Android"),
     /** 2 - 设备类型 -- IOS */
@@ -18,6 +18,10 @@ public enum DeviceTypeEnum {
     DEVICE_TYPE_H5(3, "H5"),
     /** 4 - 设备类型 -- HTML */
     DEVICE_TYPE_HTML(4, "HTML"),
+    /** 5 - 设备类型 -- APPLET */
+    DEVICE_TYPE_APPLET(5, "APPLET"),
+    /** 6 - 设备类型 -- AUTO */
+    DEVICE_TYPE_AUTO(6, "AUTO"),
     ;
 
     private int key;

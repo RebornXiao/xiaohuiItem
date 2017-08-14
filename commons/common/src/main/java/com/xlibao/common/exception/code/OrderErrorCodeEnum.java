@@ -17,6 +17,12 @@ public enum OrderErrorCodeEnum {
     FAIL_PAYMENT_ORDER(20003, "支付订单失败"),
     /** 20004 -- 订单已取消 */
     CANCELED_ORDER(20004, "订单已被取消"),
+    /** 20005 -- 订单未支付 */
+    UN_PAYMENT_ORDER(20005, "订单未支付"),
+    /** 20006 -- 订单已在配送中 */
+    HAS_DISTRIBUTION_ORDER(20006, "订单已在配送中"),
+    /** 20007 -- 订单已送达 */
+    HAS_ARRIVE_ORDER(20007, "订单已送达"),
     ;
 
     private int key;

@@ -23,7 +23,9 @@ public enum PlatformErrorCodeEnum {
     SIGN_ERROR(300, "签名验证失败"),
     /** 400 -- 找不到目标 */
     NOT_FOUND_TARGET(400, "找不到目标"),
-    ;
+    /** 401 -- 您没有权限执行该操作 */
+    NOT_HAVE_PERMISSION(401, "您没有权限执行该操作"),
+            ;
 
     private int key;
     private String value;

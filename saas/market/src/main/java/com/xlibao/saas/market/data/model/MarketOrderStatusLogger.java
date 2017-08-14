@@ -6,6 +6,7 @@ public class MarketOrderStatusLogger {
 
     private Long id;
     private String orderSequenceNumber;
+    private Integer notifyType;
     private Integer localStatus;
     private Integer remoteStatus;
     private Date localCompleteTime;
@@ -25,6 +26,14 @@ public class MarketOrderStatusLogger {
 
     public void setOrderSequenceNumber(String orderSequenceNumber) {
         this.orderSequenceNumber = orderSequenceNumber == null ? null : orderSequenceNumber.trim();
+    }
+
+    public Integer getNotifyType() {
+        return notifyType;
+    }
+
+    public void setNotifyType(Integer notifyType) {
+        this.notifyType = notifyType;
     }
 
     public Integer getLocalStatus() {

@@ -16,15 +16,19 @@ public class OrderDataAccessManager {
     @Autowired
     private MarketOrderStatusLoggerMapper orderStatusLoggerMapper;
 
-    public int createOrderStatusLogger(String orderSequenceNumber, OrderStatusEnum localStatus, OrderStatusEnum remoteStatus, long remoteCompleteTime) {
+    public int createOrderStatusLogger(String orderSequenceNumber, int notifyType, OrderStatusEnum localStatus, int remoteStatus, long remoteCompleteTime) {
         MarketOrderStatusLogger orderStatusLogger = new MarketOrderStatusLogger();
         orderStatusLogger.setOrderSequenceNumber(orderSequenceNumber);
-
+        orderStatusLogger.setNotifyType(notifyType);
         orderStatusLogger.setLocalStatus(localStatus.getKey());
         orderStatusLogger.setLocalCompleteTime(new Date(System.currentTimeMillis()));
-        orderStatusLogger.setRemoteStatus(remoteStatus.getKey());
+        orderStatusLogger.setRemoteStatus(remoteStatus);
         orderStatusLogger.setRemoteCompleteTime(new Date(remoteCompleteTime));
         return orderStatusLoggerMapper.createOrderStatusLogger(orderStatusLogger);
+    }
+
+    public int modifyOrderRemoteStatusLogger(String orderSequenceNumber, int notifyType, OrderStatusEnum localStatus, int remoteStatus, long remoteCompleteTime) {
+        return orderStatusLoggerMapper.modifyOrderRemoteStatusLogger(orderSequenceNumber, notifyType, localStatus.getKey(), remoteStatus, remoteCompleteTime);
     }
 
     public MarketOrderStatusLogger getOrderStatusLogger(String orderSequenceNumber, OrderStatusEnum localStatus) {

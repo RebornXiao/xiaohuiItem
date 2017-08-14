@@ -12,6 +12,7 @@ import com.xlibao.common.constant.payment.TransTypeEnum;
 import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.exception.code.OrderErrorCodeEnum;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
@@ -22,7 +23,7 @@ import com.xlibao.saas.market.data.model.MarketItem;
 import com.xlibao.saas.market.data.model.MarketItemDailyPurchaseLogger;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.item.ItemErrorCodeEnum;
-import com.xlibao.saas.market.service.order.OrderErrorCodeEnum;
+import com.xlibao.saas.market.service.order.MarketOrderErrorCodeEnum;
 import com.xlibao.saas.market.service.order.OrderEventListenerManager;
 import com.xlibao.saas.market.service.order.OrderService;
 import com.xlibao.saas.market.service.order.StatusEnterEnum;
@@ -166,20 +167,28 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarketForPassport(passportId);
         if (!Objects.equals(orderEntry.getShippingPassportId(), marketEntry.getId())) {
             // TODO 推送通知用户订单权限出错
-            // msg：对不起，该订单不能在本店取货
-            return fail();
+            return MarketOrderErrorCodeEnum.NON_MARKET_ORDER.response();
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey()) {
             // TODO 推送通知用户订单未支付
-            return fail();
+            OrderErrorCodeEnum.UN_PAYMENT_ORDER.throwException();
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
             // TODO 推送通知用户订单处于配送中
-            return fail();
+            OrderErrorCodeEnum.HAS_DISTRIBUTION_ORDER.throwException();
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_ARRIVE.getKey()) {
-            // TODO 通知用户该订单已取货
-            return fail();
+            // TODO 通知用户该订单已取货(已签收、已提货)
+            OrderErrorCodeEnum.HAS_ARRIVE_ORDER.throwException();
+        }
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) { // 自提
+            if (passportId != Long.parseLong(orderEntry.getPartnerUserId()) && passportId != Long.parseLong(orderEntry.getReceiptUserId())) {
+                // 通知用户权限出错
+                return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+            }
+        }
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.DISTRIBUTION.getKey()) {
+
         }
         return null;
     }
@@ -193,10 +202,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
         OrderEntry orderEntry = OrderRemoteService.getOrder(orderId);
         if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) {
-            return OrderErrorCodeEnum.ORDER_STATUS_ERROR.response("不能接取该订单，用户设置为自提状态");
+            return MarketOrderErrorCodeEnum.ORDER_STATUS_ERROR.response("不能接取该订单，用户设置为自提状态");
         }
         if (orderEntry.getCourierPassportId() != null && orderEntry.getCourierPassportId() > 0) {
-            return OrderErrorCodeEnum.ORDER_HAS_ACCEPT.response();
+            return MarketOrderErrorCodeEnum.ORDER_HAS_ACCEPT.response();
         }
         return OrderRemoteService.acceptOrder(passportId, orderId);
     }
@@ -233,6 +242,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             data.put("marketName", marketEntry.getName());
             data.put("marketFormatAddress", marketEntry.formatAddress());
             data.put("actualPrice", orderEntry.getActualPrice());
+            data.put("orderStatus", orderEntry.getStatus());
+            data.put("deliverStatus", orderEntry.getDeliverStatus());
 
             fillItemSnapshotMsg(data, orderEntry);
             response.add(data);

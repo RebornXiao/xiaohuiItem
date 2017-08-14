@@ -7,16 +7,20 @@ import com.xlibao.common.exception.XlibaoRuntimeException;
 /**
  * @author chinahuangxc on 2017/8/11.
  */
-public enum OrderErrorCodeEnum {
+public enum MarketOrderErrorCodeEnum {
 
+    /** 3000 - 错误的订单状态 */
     ORDER_STATUS_ERROR(3000, "错误的订单状态"),
+    /** 3001 - 订单已被接取 */
     ORDER_HAS_ACCEPT(3001, "订单已被接取"),
+    /** 3002 - 非本店订单，不能在本店取货 */
+    NON_MARKET_ORDER (3002, "非本店订单，不能在本店取货"),
     ;
 
     private int key;
     private String value;
 
-    OrderErrorCodeEnum(int key, String value) {
+    MarketOrderErrorCodeEnum(int key, String value) {
         this.key = key;
         this.value = value;
     }

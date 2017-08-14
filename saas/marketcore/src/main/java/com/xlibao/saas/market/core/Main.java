@@ -28,6 +28,9 @@ public class Main {
         NettyNetServer.getInstance().start(ServerConfig.getListenerPort(), hexMessageEventListener);
     }
 
+    /**
+     * @throws Exception
+     */
     public static void connectorMarketServer() throws Exception {
         NettyConfig config = initConfig();
         // 商店业务消息监听器

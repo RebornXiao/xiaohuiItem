@@ -72,7 +72,6 @@ public class ShopServiceImpl extends BasicWebService implements ShopService {
         String messageType = hardwareMessage.substring(0, 4);
 
         if (HardwareMessageType.SHIPMENT.equals(messageType)) {
-
             // 出货结果
             MarketRemoteService.notifyShipment("", "");
             return;

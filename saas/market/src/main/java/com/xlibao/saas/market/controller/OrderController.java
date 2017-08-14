@@ -220,6 +220,11 @@ public class OrderController {
         return orderService.orderDetail();
     }
 
+    /**
+     * <pre>
+     *     <b>接单</b>
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "acceptOrder")
     public JSONObject acceptOrder() {
