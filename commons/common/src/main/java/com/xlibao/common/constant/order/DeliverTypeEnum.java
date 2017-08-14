@@ -5,7 +5,9 @@ package com.xlibao.common.constant.order;
  */
 public enum DeliverTypeEnum {
 
+    /** 1 -- 自提 */
     PICKED_UP(1, "自提"),
+    /** 2 -- 配送 */
     DISTRIBUTION(2, "配送"),
     ;
 

@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.Map;
 /**
  * @author chinahuangxc on 2017/8/10.
  */
+@Transactional
 @Component
 public class MarketShopRemoteService extends BasicRemoteService {
 
@@ -32,10 +34,10 @@ public class MarketShopRemoteService extends BasicRemoteService {
         // 记录发送状态
         logger.info("推送出货消息到商店系统，passport id is " + passportId + ", content is " + content);
 
-        dataAccessFactory.getOrderDataAccessManager().createOrderStatusLogger(orderEntry.getOrderSequenceNumber(), OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_PAYMENT,
-                GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), System.currentTimeMillis());
-
         Runnable runnable = () -> {
+            dataAccessFactory.getOrderDataAccessManager().createOrderStatusLogger(orderEntry.getOrderSequenceNumber(), OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_PAYMENT,
+                    GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), System.currentTimeMillis());
+
             Map<String, String> parameters = new HashMap<>();
 
             parameters.put("passportId", String.valueOf(passportId));
@@ -43,9 +45,6 @@ public class MarketShopRemoteService extends BasicRemoteService {
 
             String url = ConfigFactory.getDomainNameConfig().marketShopRemoteURL + "market/shop/message";
             executor(url, parameters);
-
-            dataAccessFactory.getOrderDataAccessManager().modifyOrderRemoteStatusLogger(orderEntry.getOrderSequenceNumber(), OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_PAYMENT,
-                    GlobalAppointmentOptEnum.LOGIC_TRUE.getKey(), System.currentTimeMillis());
         };
         // 执行即时任务
         AsyncScheduledService.submitImmediateRemoteNotifyTask(runnable);

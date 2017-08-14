@@ -188,7 +188,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             }
         }
         if (orderEntry.getDeliverType() == DeliverTypeEnum.DISTRIBUTION.getKey()) {
-
+            if (passportId != orderEntry.getCourierPassportId()) {
+                // 通知用户权限出错
+                return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+            }
         }
         return null;
     }
