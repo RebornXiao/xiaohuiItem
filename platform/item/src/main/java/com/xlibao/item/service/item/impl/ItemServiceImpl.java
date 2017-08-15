@@ -213,18 +213,27 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         if (id != 0) {
             //检查名称是否重复
             ItemUnit unit = itemDataAccessManager.getItemUnitByTitle(title);
-            if (unit != null) {
+            if (unit != null && unit.getId().longValue() != id.longValue()) {
                 return fail(-1, "已存在相同名称的单位");
             }
             //更新
             itemDataAccessManager.updateItemUnit(id, title, status);
             return success("修改成功");
         } else {
+            //检查名称是否重复
+            ItemUnit unit = itemDataAccessManager.getItemUnitByTitle(title);
+            if (unit != null) {
+                return fail(-1, "已存在相同名称的单位");
+            }
             //新增
-            id = itemDataAccessManager.addItemUnit(title, status);
-            JSONObject response = new JSONObject();
-            response.put("id", id);
-            return success(response);
+            ItemUnit itemUnit = new ItemUnit();
+            itemUnit.setTitle(title);
+            itemUnit.setStatus(status);
+            if (itemDataAccessManager.createItemUnit(itemUnit) > 0) {
+                return success("添加成功");
+            } else {
+                return fail("添加失败");
+            }
         }
     }
 
@@ -288,7 +297,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     @Override
     public JSONObject searchItemUnitPageByName() {
         String searchKey = getUTF("searchKey", null);
-        if(!CommonUtils.isNotNullString(searchKey)) {
+        if (!CommonUtils.isNotNullString(searchKey)) {
             searchKey = null;
         }
         int pageSize = getIntParameter("pageSize", 0);//默认所有单位全部返回
@@ -325,8 +334,9 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         long parentItemTypeId = getLongParameter("parentItemTypeId", 0);
         int pageSize = getIntParameter("pageSize", 0);//默认所有类型全部返回
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
+        boolean sort = getIntParameter("sort", 0) == 1 ? true : false;
 
-        List<ItemType> types = itemDataAccessManager.pageItemType(parentItemTypeId, pageSize, pageStartIndex);
+        List<ItemType> types = itemDataAccessManager.pageItemType(parentItemTypeId, pageSize, pageStartIndex, sort);
         int count = itemDataAccessManager.itemTypesCount(parentItemTypeId);
 
         JSONObject response = new JSONObject();
@@ -339,7 +349,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     @Override
     public JSONObject searchItemTemplatesPage() {
         String searchKey = getUTF("searchKey", null);
-        if(!CommonUtils.isNotNullString(searchKey)) {
+        if (!CommonUtils.isNotNullString(searchKey)) {
             searchKey = null;
         }
         String searchType = getUTF("searchType", null);

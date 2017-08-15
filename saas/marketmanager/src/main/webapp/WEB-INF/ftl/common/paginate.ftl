@@ -88,7 +88,7 @@
             swal("页码超出范围!");
             return;
         }
-        location.href = "${action}&pageIndex=" + nowPage;
+        location.href = "${action}&pageSize=${pageItemCount}&pageIndex=" + nowPage;
     }
 </script>
 

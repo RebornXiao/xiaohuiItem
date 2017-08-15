@@ -1,6 +1,7 @@
 package com.xlibao.item.data.mapper;
 
 import com.xlibao.metadata.item.ItemUnit;
+import com.xlibao.metadata.passport.Passport;
 import org.apache.ibatis.annotations.*;
 import org.apache.ibatis.mapping.StatementType;
 
@@ -15,9 +16,7 @@ public interface ItemUnitMapper {
     List<ItemUnit> getItemUnitList(@Param("title") String title, @Param("status") int status, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
     int getItemUnitListCount(@Param("title") String title, @Param("status") int status);
 
-    @Insert("insert into item_unit (title, status) values (#{title}, #{status})")
-    @SelectKey(before=false,keyProperty="unit.id",resultType=Long.class,statementType= StatementType.STATEMENT,statement="SELECT LAST_INSERT_ID() AS id")
-    Long add(@Param("title") String title, @Param("status") byte status);
+    int createItemUnit(ItemUnit itemUnit);
 
     @Update("update item_unit SET title = #{title}, status = #{status} where id = #{id}")
     void update(@Param("id") long id, @Param("title") String title, @Param("status") byte status);

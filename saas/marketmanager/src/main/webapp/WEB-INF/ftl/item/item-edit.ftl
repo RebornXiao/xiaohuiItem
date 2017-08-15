@@ -151,8 +151,9 @@
                                     <button id="saveBtn" type="button"
                                             class="btn waves-effect waves-light btn-primary col-md-2">确定
                                     </button>
-                                    <div class="col-md-6">
-                                    </div>
+                                    <button id="backBtn" type="button"
+                                            class="btn waves-effect waves-light btn-default col-md-2">返回
+                                    </button>
                                 </div>
 
                                 <br><br><br><br><br>
@@ -178,6 +179,10 @@
                 //添加单位
                 $("#addUnitBtn").on('click', function () {
                     location.href = "${base}/market/manager/item/itemUnitEdit.do";
+                });
+
+                $("#backBtn").on('click', function () {
+                    history.back(-1);
                 });
 
                 //添加商品

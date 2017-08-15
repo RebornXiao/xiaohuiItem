@@ -43,6 +43,10 @@ public interface OrderEntryMapper {
 
     int batchResetOverdueOrderStatus(@Param("partnerId") String partnerId, @Param("orderType") int orderType, @Param("matchStatus") int matchStatus, @Param("expectStatus") int expectStatus, @Param("timeout") String timeout);
 
+    List<OrderEntry> searchPageOrders(@Param("marketId") long marketId, @Param("orderState") int orderState, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("searchType") String searchType, @Param("searchKey") String searchKey, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
+
+    int searchPageOrderCount(@Param("marketId") long marketId, @Param("orderState") int orderState, @Param("startTime") String startTime, @Param("endTime") String endTime, @Param("searchType") String searchType, @Param("searchKey") String searchKey, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
+
     int modifyReceivingData(@Param("orderSequenceNumber") String orderSequenceNumber, @Param("currentLocation") String currentLocation, @Param("collectingFees") byte collectingFees, @Param("receiptProvince") String receiptProvince,
                             @Param("receiptCity") String receiptCity, @Param("receiptDistrict") String receiptDistrict, @Param("receiptAddress") String receiptAddress, @Param("receiptNickName") String receiptNickName,
                             @Param("receiptPhone") String receiptPhone, @Param("receiptLocation") String receiptLocation, @Param("remark") String remark);

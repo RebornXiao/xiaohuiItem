@@ -68,7 +68,7 @@
                             <span> 订单管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="order"> style="display: block;" </#if> >
-                            <li <#if tab_child=="all"> class="active" </#if> ><a href="${base}/market/manager/order/orderList.do">订单列表</a></li>
+                            <li <#if tab_child=="orders"> class="active" </#if> ><a href="${base}/market/manager/order/orders.do">订单列表</a></li>
                         </ul>
                     </li>
 

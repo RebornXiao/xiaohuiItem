@@ -196,11 +196,12 @@ public class ItemManagerController extends BaseController {
 
         Long id = getLongParameter("id", 0);
 
-        List<ItemType> types = itemManagerService.getItemTypes(0);//取得所有一级
+        List<ItemType> types = itemManagerService.getSortItemTypes(0);//取得所有一级
 
         //如果有选中其中的一级进行排序子类
         if(id != 0) {
-            map.put("cItemTypes", itemManagerService.getItemTypes(id));
+            //排序
+            map.put("cItemTypes", itemManagerService.getSortItemTypes(id));
         } else {
             map.put("cItemTypes", types);
         }

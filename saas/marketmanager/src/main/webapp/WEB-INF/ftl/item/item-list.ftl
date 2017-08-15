@@ -123,7 +123,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/manager/item/itemList.do?searchType=${searchType}&searchKey=${searchKey}&pageSize=5&pageIndex=" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/manager/item/itemList.do?searchType=${searchType}&searchKey=${searchKey}" />
                 </div>
             </div>
 

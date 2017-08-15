@@ -140,5 +140,7 @@ public interface OrderService {
 
     JSONObject batchResetOverdueOrderStatus();
 
+    JSONObject searchPageOrders();
+
     JSONObject modifyReceivingData();
 }

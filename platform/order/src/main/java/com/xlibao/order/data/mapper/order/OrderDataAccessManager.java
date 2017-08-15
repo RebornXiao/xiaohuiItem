@@ -1,5 +1,6 @@
 package com.xlibao.order.data.mapper.order;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.constant.order.OrderSequenceNumberStatusEnum;
@@ -246,4 +247,12 @@ public class OrderDataAccessManager {
         return statusListenerMapper.getOrderStatusListener(partnerId, eventType);
     }
     // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 订单状态监听(statusListenerMapper) ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
+
+
+    public List<OrderEntry> searchPageOrders(long marketId, int orderState, String startTime, String endTime, String searchType, String searchKey, int pageSize, int pageStartIndex) {
+        return entryMapper.searchPageOrders(marketId, orderState, startTime, endTime, searchType, searchKey, pageSize, pageStartIndex);
+    }
+    public int searchPageOrderCount(long marketId, int orderState, String startTime, String endTime, String searchType, String searchKey, int pageSize, int pageStartIndex) {
+        return entryMapper.searchPageOrderCount(marketId, orderState, startTime, endTime, searchType, searchKey, pageSize, pageStartIndex);
+    }
 }
