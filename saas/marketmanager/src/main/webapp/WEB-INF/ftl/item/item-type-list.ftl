@@ -112,13 +112,14 @@
                 </div>
             </div>
 
+        <#if (itemTypes?size > 0)>
             <div class="row small_page">
                 <div class="col-sm-8">
-                <#include "../common/paginate.ftl">
+                    <#include "../common/paginate.ftl">
                     <@paginate nowPage=pageIndex itemCount=count action="${base}/market/manager/item/itemTypes.do?searchKey=${searchKey}" />
                 </div>
             </div>
-
+        </#if>
             <!-- end container -->
         </div>
 
@@ -153,14 +154,14 @@
                     location.href = "${base}/market/manager/item/itemTypeSort.do";
                 });
 
-                <#if itemType?exists >
-                    $("#pEditBtn").on('click', function () {
-                        location.href = "${base}/market/manager/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
-                    });
-                    $("#pAddChildBtn").on('click', function () {
-                        location.href = "${base}/market/manager/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
-                    });
-                </#if>
+            <#if itemType?exists >
+                $("#pEditBtn").on('click', function () {
+                    location.href = "${base}/market/manager/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
+                });
+                $("#pAddChildBtn").on('click', function () {
+                    location.href = "${base}/market/manager/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
+                });
+            </#if>
 
             <#if (itemTypes?size > 0)>
 

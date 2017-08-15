@@ -9,6 +9,8 @@ import com.xlibao.saas.market.manager.utils.Utils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URLEncoder;
+
 /**
  * @author chinahuangxc on 2017/7/10.
  */
@@ -17,16 +19,20 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderManagerServiceImpl implements OrderManagerService {
 
     @Override
-    public JSONObject searchPageOrders(long marketId, int orderState, String startTime, String endTime, String searchType, String searchKey, int pageSize, int pageStartIndex) {
+    public JSONObject searchPageOrders(long marketId, int orderState, String startTime, String endTime, String searchType, String searchKey, int pageSize, int pageIndex) {
         StringBuilder sb = new StringBuilder();
         sb.append(ConfigFactory.getDomainNameConfig().orderRemoteURL).append("/order/searchPageOrders?")
                 .append("marketId=").append(marketId)
                 .append("&orderState=").append(orderState)
                 .append("&pageSize=").append(pageSize)
-                .append("&pageStartIndex=").append(pageStartIndex);
-
-        Utils.append(sb, "startTime", startTime);
-        Utils.append(sb, "endTime", endTime);
+                .append("&pageIndex=").append(pageIndex);
+        try {
+            //由于日期有空格，用HttpRequest.get时，需要将带空格的字符串，转为 UTF-8
+            Utils.append(sb, "startTime", URLEncoder.encode(startTime, "UTF-8"));
+            Utils.append(sb, "endTime", URLEncoder.encode(endTime, "UTF-8"));
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
         Utils.append(sb, "searchType", searchType);
         Utils.append(sb, "searchKey", searchKey);
 

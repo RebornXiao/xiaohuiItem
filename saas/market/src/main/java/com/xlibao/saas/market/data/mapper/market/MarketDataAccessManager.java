@@ -41,4 +41,12 @@ public class MarketDataAccessManager {
     public MarketAccessLogger getLastAccessLogger(long passportId) {
         return accessLoggerMapper.getLastAccessLogger(passportId);
     }
+
+    public List<MarketEntry> searchMarkets(MarketEntry searchModel, int pageSize, int pageStartIndex) {
+        return entryMapper.searchMarkets(searchModel, pageSize, pageStartIndex);
+    }
+
+    public int searchMarketsCount(MarketEntry searchModel) {
+        return entryMapper.searchMarketsCount(searchModel);
+    }
 }

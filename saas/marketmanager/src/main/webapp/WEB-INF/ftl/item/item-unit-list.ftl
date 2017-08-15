@@ -100,13 +100,14 @@
                 </div>
             </div>
 
+        <#if (itemUnits?size > 0)>
             <div class="row small_page">
                 <div class="col-sm-8">
-                <#include "../common/paginate.ftl">
+                    <#include "../common/paginate.ftl">
                     <@paginate nowPage=pageIndex itemCount=count action="${base}/market/manager/item/itemUnits.do?searchKey=${searchKey}" />
                 </div>
             </div>
-
+        </#if>
             <!-- end container -->
         </div>
 

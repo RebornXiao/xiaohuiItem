@@ -2,7 +2,6 @@
 <!-- Start right Content here -->
 <!-- ============================================================== -->
 
-<script type="text/javascript" src="${base}/assets/plugins/jedate/jedate.min.js"></script>
 
 <div class="content-page">
     <!-- Start content -->
@@ -57,7 +56,7 @@
                     <div class="form-group m-l-15">
                         <label>日期：</label>
                         <div class="input-group">
-                            <input id="startTime" type="text" class="form-control">
+                            <input id="startTime" type="text" class="form-control" readonly>
                             <span class="input-group-addon bg-default"
                                   onClick="jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD hh:mm:ss'})"><i
                                     class="fa fa-calendar"></i></span>
@@ -66,7 +65,7 @@
                         <label> 至 </label>
 
                         <div class="input-group">
-                            <input id="endTime" type="text" class="form-control">
+                            <input id="endTime" type="text" class="form-control" readonly>
                             <span class="input-group-addon bg-default"
                                   onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD hh:mm:ss'})"><i
                                     class="fa fa-calendar"></i></span>
@@ -109,6 +108,7 @@
                     <table class="table table-striped table-bordered">
                         <thead class="table_head">
                         <tr>
+                            <th>ID</th>
                             <th>订单号</th>
                             <th>店铺信息</th>
                             <th>收货信息</th>
@@ -124,29 +124,37 @@
                         <#if (orders?size > 0)>
                             <#list orders as order>
                             <tr>
-                                <th>${order.orderSequenceNumber}</th>
-                                <th>店铺名：${order.shippingNickName}<br>电话：${order.shippingPhone}</th>
-                                <th>下单用户：${order.receiptNickName}<br>电话：${order.receiptPhone}</th>
-                                <th><#if order.deliverType == 1><span class="label label-success">自提</span><#else>
+                                <td>${order.id?c}</td>
+                                <td>${order.orderSequenceNumber}</td>
+                                <td>店铺名：${order.shippingNickName}<br>电话：${order.shippingPhone}</td>
+                                <td>下单用户：${order.receiptNickName}<br>电话：${order.receiptPhone}</td>
+                                <td><#if order.deliverType == 1><span class="label label-success">自提</span><#else>
                                     <#if order.status < 16>
                                         <span class="label label-success">未有快递员接单</span>
                                     <#else>
                                         配送员：${order.courierNickName}<br>电话：${order.courierPhone}
                                     </#if>
-                                </#if></th>
-                                <th>
-                                    订单总费用：${order.courierNickName}<br>优惠的费用：${order.discountPrice}<br>配送费用：${order.distributionFee}<br>实收费用：${order.actualPrice}
-                                </th>
-                                <th><span class="label label-success">已拉单</span></th>
-                                <th>
-                                    下单时间：${order.createTime?string("yyyy-MM-dd HH:mm:ss")}<br>支付时间：${order.paymentTime?string("yyyy-MM-dd HH:mm:ss")}<br><#if order.status == 256>
-                                    订单完成时间：${order.confirmTime?string("yyyy-MM-dd HH:mm:ss")}</#if></th>
-                                <th>
+                                </#if></td>
+                                <td>
+                                    订单总费用：${order.courierNickName}<br>
+                                    <#if (order.discountPrice > 0) >
+                                        优惠的费用：${order.discountPrice}<br>
+                                    </#if>
+                                    <#if order.deliverType != 1>
+                                        配送费用：${order.distributionFee}<br>
+                                    </#if>
+                                    实收费用：${order.actualPrice}
+                                </td>
+                                <td><span class="label label-success">${order.stateName}</span></td>
+                                <td>
+                                    下单时间：${order.createTime}<br>支付时间：${order.paymentTime}<br><#if order.status == 256>
+                                    订单完成时间：${order.confirmTime}</#if></td>
+                                <td>
                                     <button id="editBtn" type="button"
                                             class="btn waves-effect waves-light btn-warning btn-sm"
                                             data_id="${order.id?c}">查看订单详情
                                     </button>
-                                </th>
+                                </td>
                             </tr>
                             </#list>
                         <#else>
@@ -162,16 +170,19 @@
                 </div>
             </div>
 
+        <#if (orders?size > 0)>
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/manager/order/orders.do?searchType=${searchType}&searchKey=${searchKey}" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/manager/order/orders.do?searchType=${searchType}&searchKey=${searchKey}&marketId=${marketId}&orderState=${orderState}&sTime=${sTime}&eTime=${eTime}" />
                 </div>
             </div>
+        </#if>
             <!-- end container -->
         </div>
 
 
+        <script type="text/javascript" src="${base}/assets/plugins/jedate/jedate.min.js"></script>
         <script type="text/javascript">
 
             $(document).ready(function () {
@@ -187,6 +198,11 @@
                 var _searchMenu = $("#searchMenu");
                 var _searchKeyTxt = $("#searchKeyTxt");
                 var _orderListTable = $("#orderListTable");
+                var _startTime = $("#startTime");
+                var _endTime = $("#endTime");
+
+                _startTime.val(startTimeValue);
+                _endTime.val(endTimeValue);
 
                 //根据搜索类型，设置选中项
                 if (searchTypeValue == "uName") {
@@ -209,20 +225,46 @@
                 $("#searchType li a").on('click', function () {
                     var sName = $(this).attr("search_name");
                     var txt = "按" + sName + "搜索";
-                    searchTypeValue = $(this).attr("search_type")
+                    searchTypeValue = $(this).attr("search_type");
                     _searchMenu.html(txt + "<span class=\"caret\"></span>");
                     _searchMenu.attr("search_name", sName)
                     _searchKeyTxt.attr("placeholder", txt);
                 });
 
+                //店铺选择
+                $("#marketSelect").on("change", function () {
+                    var obj = $(this).children('option:selected');
+                    marketId = obj.attr("data_id");
+                });
+
+                //订单状态选择
+                $("#stateSelect").on("change", function () {
+                    var obj = $(this).children('option:selected');
+                    orderState = obj.attr("data_id");
+                });
+
                 $("#searchBtn").on('click', function () {
-                    //搜索
+                    //搜索文本
                     var sValue = _searchKeyTxt.val();
                     if (containSpecial.test(sValue)) {
                         swal("包括了特殊符号，无法搜索!");
                         return;
                     }
-                    location.href = "${base}/market/manager/item/orders.do?searchType=" + searchTypeValue + "&searchKey=" + sValue;
+
+                    var sType = searchTypeValue;
+                    if(sValue == "") {
+                        sType = "";
+                    }
+
+                    var sTime = _startTime.val();
+                    var eTime = _endTime.val();
+
+                    location.href = "${base}/market/manager/order/orders.do?searchType="
+                            +sType+"&searchKey="
+                            +sValue+"&marketId="
+                            +marketId+"&orderState="
+                            +orderState+"&sTime="
+                            +sTime+"&eTime="+eTime;
                 });
 
             });

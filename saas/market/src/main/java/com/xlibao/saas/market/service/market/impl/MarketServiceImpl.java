@@ -102,6 +102,42 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         return success(response);
     }
 
+
+    public JSONObject searchMarkets() {
+
+        String province = getUTF("province", null);
+        String city = getUTF("city", null);
+        String district = getUTF("district", null);
+        String street = getUTF("street", null);
+        long streetId = getIntParameter("streetId", -1);
+
+        int type = getIntParameter("type", -1);
+        int status = getIntParameter("status", -1);
+        int deliveryMode = getIntParameter("deliveryMode", -1);
+
+        MarketEntry searchModel = new MarketEntry();
+        searchModel.setProvince(province);
+        searchModel.setCity(city);
+        searchModel.setDistrict(district);
+        searchModel.setStreet(street);
+        searchModel.setStreetId(streetId);
+        searchModel.setType(type);
+        searchModel.setStatus(status);
+        searchModel.setDeliveryMode(deliveryMode);
+
+        int pageSize = getPageSize();//必须分页
+        int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
+
+        List<MarketEntry> marketEntries = dataAccessFactory.getMarketDataAccessManager().searchMarkets(searchModel, pageSize, pageStartIndex);
+        int count = dataAccessFactory.getMarketDataAccessManager().searchMarketsCount(searchModel);
+
+        JSONObject response = new JSONObject();
+        response.put("data", marketEntries);
+        response.put("count", count);
+        response.put("pageIndex", getIntParameter("pageIndex", 1) - 1);
+        return success(response);
+    }
+
     private <T> JSONArray locationMessage(List<T> t) {
         return t.stream().map(JSONObject::toJSONString).collect(Collectors.toCollection(JSONArray::new));
     }

@@ -1122,13 +1122,13 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         String startTime = getUTF("sTime", null);
         String endTime = getUTF("eTime", null);
         String searchType = getUTF("searchType", null);
-        String searchValue = getUTF("searchValue", null);
+        String searchKey = getUTF("searchKey", null);
 
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
 
-        List<OrderEntry> orderEntries = orderDataAccessManager.searchPageOrders(marketId, orderState, startTime, endTime, searchType, searchValue, pageSize, pageStartIndex);
-        int count = orderDataAccessManager.searchPageOrderCount(marketId, orderState, startTime, endTime, searchType, searchValue, pageSize, pageStartIndex);
+        List<OrderEntry> orderEntries = orderDataAccessManager.searchPageOrders(marketId, orderState, startTime, endTime, searchType, searchKey, pageSize, pageStartIndex);
+        int count = orderDataAccessManager.searchPageOrderCount(marketId, orderState, startTime, endTime, searchType, searchKey, pageSize, pageStartIndex);
 
         JSONObject response = new JSONObject();
         response.put("data", orderEntries);

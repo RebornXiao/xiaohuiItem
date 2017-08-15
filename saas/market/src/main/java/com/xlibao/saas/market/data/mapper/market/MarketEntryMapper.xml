@@ -39,4 +39,38 @@
     <select id="getMarketForPassport" resultMap="BaseResultMap">
         select * from market_entry where passport_id = #{passportId}
     </select>
+
+
+
+
+    <select id="searchMarkets" resultMap="BaseResultMap">
+        select * from market_entry where 1=1
+        <if test="searchModel.province != null">
+            and province = #{searchModel.province}
+        </if>
+        <if test="searchModel.city != null">
+            and city = #{searchModel.city}
+        </if>
+        <if test="searchModel.district != null">
+            and district = #{searchModel.district}
+        </if>
+        <if test="searchModel.street != null">
+            and street = #{searchModel.street}
+        </if>
+        <if test="searchModel.streetId != -1">
+            and streetId = #{searchModel.streetId}
+        </if>
+        <if test="searchModel.type != -1">
+            and type = #{searchModel.type}
+        </if>
+        <if test="searchModel.status != -1">
+            and status = #{searchModel.status}
+        </if>
+        <if test="searchModel.deliveryMode != -1">
+            and deliveryMode = #{searchModel.deliveryMode}
+        </if>
+    </select>
+    <select id="searchMarketsCount" resultType="Integer">
+        select * from market_entry where street_id = #{streetId} and status = 1
+    </select>
 </mapper>

@@ -68,12 +68,15 @@
 
             $(document).ready(function () {
 
-                var itemUnitId = 0;
-                <#if itemUnit?exists>
-                    itemUnitId = "${itemUnit.id?c}"
-                </#if>
+                var _itemUnitTitle = $("#itemUnitTitle");
+                var _itemUnitStatus = $("#itemUnitStatus");
 
-                $("#itemUnitTitle").focus();
+                var itemUnitId = 0;
+            <#if itemUnit?exists>
+                itemUnitId = "${itemUnit.id?c}";
+            </#if>
+
+                moveEnd(_itemUnitTitle.get(0));
 
                 $("#backBtn").on('click', function () {
                     history.back(-1);
@@ -83,26 +86,27 @@
                 $("#saveBtn").on('click', function () {
 
                     //检测
-                    var title = $("#itemUnitTitle").val();
+                    var title = _itemUnitTitle.val();
                     var status = 0;
                     if (title == "") {
                         swal("请输入商品单位名称!");
                         return;
                     }
 
-                    if($("#itemUnitStatus").is(':checked')) {
+                    if (_itemUnitStatus.is(':checked')) {
                         status = 1;
                     }
 
-                    $.post("${base}/market/manager/item/itemUnitEditSave.do?id="+itemUnitId+"&title="+title+"&status="+status, function(data) {
+                    $.post("${base}/market/manager/item/itemUnitEditSave.do?id=" + itemUnitId + "&title=" + title + "&status=" + status, function (data) {
 
-                        <#if !(itemUnit?exists) >
-                            $("#itemUnitStatus").prop('checked', false);
-                            $("#itemUnitTitle").val("");
-                        </#if>
+                        //添加完成，清空，允许重新再添加
+                    <#if !(itemUnit?exists) >
+                        _itemUnitStatus.prop('checked', false);
+                        _itemUnitTitle.val("");
+                    </#if>
 
                         //重新刷新
-                        if(data.code == "0") {
+                        if (data.code == "0") {
                             swal("提示", "操作成功", "success");
                         } else {
                             swal(data.msg);

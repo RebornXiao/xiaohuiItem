@@ -25,7 +25,7 @@ public class OrderControllerAop extends BasicWebService {
             "execution(* com.xlibao.order.controller.OrderPaymentController.*(..))")
     public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
         try {
-            PassportRemoteService.signatureSecurity(getHttpServletRequest());
+            //PassportRemoteService.signatureSecurity(getHttpServletRequest());
             return pjp.proceed();
         } catch (XlibaoIllegalArgumentException ex) {
             logger.error("订单系统拦截器发生异常，错误信息：" + ex.getMessage());

@@ -9,12 +9,17 @@ public class LogicConfig {
     public static final String TAB_CHILD_NAME = "tab_child";
 
     public static final String TAB_INDEX = "index";
+
     public static final String TAB_ITEM = "item";
     public static final String TAB_ITEM_TEMPLATE = "itemplates";
     public static final String TAB_ITEM_TYPE = "itypes";
     public static final String TAB_ITEM_UNIT = "iunits";
+
     public static final String TAB_ORDER = "order";
     public static final String TAB_ORDER_LIST = "orders";
+
+    public static final String TAB_MARKET = "market";
+    public static final String TAB_MARKET_LIST = "markets";
 
     public static final String ERROR_NAME = "error";
 
@@ -36,5 +41,7 @@ public class LogicConfig {
     public static final String FTL_ITEM_UNIT_EDIT = "item/item-unit-edit";
 
     public static final String FTL_ORDER_LIST = "order/order-list";
+
+    public static final String FTL_MARKET_LIST = "market/market-list";
 
 }

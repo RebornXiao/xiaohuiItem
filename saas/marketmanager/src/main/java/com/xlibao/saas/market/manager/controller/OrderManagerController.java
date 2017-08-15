@@ -1,10 +1,13 @@
 package com.xlibao.saas.market.manager.controller;
 
 import com.alibaba.druid.support.logging.Log;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.constant.order.OrderStatusEnum;
 import com.xlibao.saas.market.manager.BaseController;
 import com.xlibao.saas.market.manager.config.LogicConfig;
 import com.xlibao.saas.market.manager.service.ordermanager.OrderManagerService;
+import com.xlibao.saas.market.manager.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -32,21 +35,31 @@ public class OrderManagerController extends BaseController {
         String searchKey = getUTF("searchKey", "");
 
         int pageSize = getPageSize();
-        int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
+        int pageIndex = getIntParameter("pageIndex", 1);
 
-        JSONObject orderJson = orderManagerService.searchPageOrders(marketId, orderState, startTime, endTime, searchType, searchKey, pageSize, pageStartIndex);
+        JSONObject orderJson = orderManagerService.searchPageOrders(marketId, orderState, startTime, endTime, searchType, searchKey, pageSize, pageIndex);
 
         if (orderJson.getIntValue("code") != 0) {
             return remoteFail(map, orderJson, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_UNIT);
         }
 
         JSONObject response = orderJson.getJSONObject("response");
+        JSONArray array = response.getJSONArray("data");
+        for (int i = 0; i < array.size(); i++) {
+            JSONObject jsonObject = array.getJSONObject(i);
+            //重置日期
+            Utils.changeData(jsonObject, "createTime");
+            Utils.changeData(jsonObject, "paymentTime");
+            Utils.changeData(jsonObject, "confirmTime");
+
+            jsonObject.put("stateName", OrderStatusEnum.getOrderStatusEnum(jsonObject.getInteger("status")).getValue());
+        }
 
         map.put("marketId", marketId);
         map.put("orderState", orderState);
         map.put("searchType", searchType);
         map.put("searchKey", searchKey);
-        map.put("pageIndex", pageStartIndex);
+        map.put("pageIndex", pageIndex);
         map.put("sTime",startTime);
         map.put("eTime",endTime);
         map.put("orders", response.getJSONArray("data"));

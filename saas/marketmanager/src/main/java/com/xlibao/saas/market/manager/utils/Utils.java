@@ -35,9 +35,10 @@ public class Utils {
      */
     public static void changeData(JSONObject json, String key) {
         Object obj = json.remove(key);
-        if (obj != null) {
-            SimpleDateFormat sdf= new SimpleDateFormat("yyyy-dd-MM HH:mm:ss");
-            String date = sdf.format(new Date(Long.parseLong(obj.toString())));
+        String str = obj != null ? obj.toString() : null;
+        if (obj != null && str.length() > 0) {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss");
+            String date = sdf.format(new Date(Long.parseLong(str)));
             json.put(key, date);
         } else {
             json.put(key, "0");
@@ -45,7 +46,7 @@ public class Utils {
     }
 
     public static void append(StringBuilder sb, String key, String value) {
-        if(value != null) {
+        if (value != null) {
             sb.append("&").append(key).append("=").append(value);
         }
     }

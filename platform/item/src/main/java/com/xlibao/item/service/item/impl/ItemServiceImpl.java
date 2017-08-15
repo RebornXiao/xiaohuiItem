@@ -323,7 +323,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         int count = itemDataAccessManager.searchItemTypeCountByName(searchKey);
 
         JSONObject response = new JSONObject();
-        response.put("data", JSONObject.parseArray(JSONObject.toJSONString(types)));
+        response.put("data", types);
         response.put("count", count);
         response.put("pageIndex", getIntParameter("pageIndex", 1) - 1);
         return success(response);

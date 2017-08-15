@@ -84,14 +84,13 @@
                     </li>
 
                     <li class="has_sub">
-                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="store"> active </#if>"><i class="fa fa-sitemap"></i>
+                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="market"> active </#if>"><i class="fa fa-sitemap"></i>
                             <span> 店铺管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="store"> style="display: block;" </#if> >
-                            <li><a href="${base}/market/manager/item/storeAdd.do">新增店铺</a></li>
-                            <li><a href="${base}/market/manager/item/storeList.do">店铺列表</a></li>
-                            <li><a href="${base}/market/manager/item/storelist.do">店铺格子</a></li>
+                            <li <#if tab_child=="markets"> class="active" </#if> ><a href="${base}/market/manager/market/markets.do">店铺列表</a></li>
                             <li><a href="${base}/market/manager/item/storelist.do">店铺商品</a></li>
+                            <li><a href="${base}/market/manager/item/streetlist.do">街道信息</a></li>
                         </ul>
                     </li>
 

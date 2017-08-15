@@ -14,4 +14,9 @@ public interface MarketEntryMapper {
     List<MarketEntry> getMarkets(@Param("streetId") long streetId);
 
     MarketEntry getMarketForPassport(@Param("passportId") long passportId);
+
+    List<MarketEntry> searchMarkets(@Param("searchModel")MarketEntry searchModel, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
+
+    int searchMarketsCount(@Param("searchModel")MarketEntry searchModel);
+
 }

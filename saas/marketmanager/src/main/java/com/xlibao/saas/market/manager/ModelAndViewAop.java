@@ -23,8 +23,8 @@ public class ModelAndViewAop extends BaseController {
     @Around(value = "execution(* com.xlibao.saas.market.manager.controller.*.*(..))")
     public Object around(ProceedingJoinPoint point) throws Throwable {
         Object[] args = point.getArgs();
+        getHttpServletResponse().setHeader("content-type", "text/html");
         try {
-            getHttpServletResponse().setHeader("content-type", "text/html");
             return point.proceed(args);
         } catch (XlibaoIllegalArgumentException ex) {
             ex.printStackTrace();
