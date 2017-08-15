@@ -51,6 +51,28 @@ public class OrderRemoteService extends BasicRemoteService {
         return response.getJSONArray("orderArray");
     }
 
+    public static JSONObject modifyReceivingData(String orderSequenceNumber, String currentLocation, byte collectingFees, String receiptProvince, String receiptCity, String receiptDistrict, String receiptAddress,
+                                                 String receiptNickName, String receiptPhone, String receiptLocation, String remark) {
+        Map<String, String> parameters = initialParameter();
+
+        parameters.put("orderSequenceNumber", orderSequenceNumber);
+        parameters.put("currentLocation", currentLocation);
+        parameters.put("collectingFees", String.valueOf(collectingFees));
+        parameters.put("receiptProvince", receiptProvince);
+        parameters.put("receiptCity", receiptCity);
+        parameters.put("receiptDistrict", receiptDistrict);
+        parameters.put("receiptAddress", receiptAddress);
+        parameters.put("receiptNickName", receiptNickName);
+        parameters.put("receiptPhone", receiptPhone);
+        parameters.put("receiptLocation", receiptLocation);
+        parameters.put("remark", remark);
+
+        JSONObject response = postOrderMsg("order/modifyReceivingData", parameters);
+        logger.info("修改配送数据：" + response);
+
+        return response;
+    }
+
     public static JSONObject distributionOrder(long orderId, long courierPassportId, byte self) {
         Map<String, String> parameters = initialParameter();
 

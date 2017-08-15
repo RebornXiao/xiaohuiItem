@@ -86,10 +86,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         // 商品集合
         String itemTemplateSet = getUTF("itemTemplateSet");
 
-        if (!CommonUtils.isMobileNum(receiptPhone)) {
-            return PlatformErrorCodeEnum.PHONE_NUMBER_ERROR.response("手机号[" + receiptPhone + "]无效");
-        }
         if (deliverType == DeliverTypeEnum.DISTRIBUTION.getKey()) {
+            if (!CommonUtils.isMobileNum(receiptPhone)) {
+                return PlatformErrorCodeEnum.PHONE_NUMBER_ERROR.response("手机号[" + receiptPhone + "]无效");
+            }
             if (CommonUtils.isNullString(receiptAddress) || CommonUtils.isNullString(receiptNickName) || CommonUtils.isNullString(receiptPhone)) {
                 OrderErrorCodeEnum.PERFECT_RECEIPT_ADDRESS.throwException("请填写收货地址、收货人姓名、收货人联系电话等信息");
             }
@@ -115,7 +115,28 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         orderEntry = JSONObject.toJavaObject(orderEntries.getJSONObject(0), OrderEntry.class);
         // 下单成功后 进行商品库存锁定
         orderEventListenerManager.notifyCreatedOrder(orderEntry);
-        return success("订单创建成功");
+
+        JSONObject response = new JSONObject();
+        response.put("orderSequenceNumber", orderEntry.getOrderSequenceNumber());
+        return success("订单创建成功", response);
+    }
+
+    @Override
+    public JSONObject modifyReceivingData() {
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+        String currentLocation = getUTF("currentLocation", GlobalConstantConfig.INVALID_LOCATION);
+        byte collectingFees = getByteParameter("collectingFees", CollectingFeesEnum.UN_COLLECTION.getKey());
+        String receiptProvince = getUTF("receiptProvince", "");
+        String receiptCity = getUTF("receiptCity", "");
+        String receiptDistrict = getUTF("receiptDistrict", "");
+        String receiptAddress = getUTF("receiptAddress");
+        String receiptNickName = getUTF("receiptNickName");
+        String receiptPhone = getUTF("receiptPhone");
+        String receiptLocation = getUTF("receiptLocation", GlobalConstantConfig.INVALID_LOCATION);
+        // 备注
+        String remark = getUTF("remark", "");
+
+        return OrderRemoteService.modifyReceivingData(orderSequenceNumber, currentLocation, collectingFees, receiptProvince, receiptCity, receiptDistrict, receiptAddress, receiptNickName, receiptPhone, receiptLocation, remark);
     }
 
     @Override
@@ -334,6 +355,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         String itemTemplateSet = processItemTemplateSet(buyItemTemplates);
 
         List<MarketItem> items = dataAccessFactory.getItemDataAccessManager().getItemForItemTemplates(marketId, itemTemplateSet);
+
 
         String itemSet = processItemSet(items);
         List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers = dataAccessFactory.getItemDataAccessManager().passportDailyBuyLoggers(passportId, itemSet);

@@ -14,10 +14,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 /**
  * @author chinahuangxc on 2017/2/2.
  */
-
-/**
- * @author chinahuangxc on 2017/2/2.
- */
 @Controller
 @RequestMapping(value = "/paymentController")
 public class PaymentController extends BasicWebService {

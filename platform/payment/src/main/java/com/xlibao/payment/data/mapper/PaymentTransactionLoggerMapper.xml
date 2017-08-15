@@ -43,10 +43,10 @@
 
     <insert  id="createPaymentTransactionLogger" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.payment.data.model.PaymentTransactionLogger">
         insert into payment_transaction_logger(passport_id, trans_sequence_number, payment_type, trans_type, partner_id, app_id, partner_user_id, partner_trade_number, channel_id, trans_unit_amount,
-            trans_number, trans_total_amount, trans_title, remark, use_conpon, discount_amount, notify_front_url, notify_url, extend_parameter,
+            trans_number, trans_total_amount, trans_title, remark, use_coupon, discount_amount, notify_front_url, notify_url, extend_parameter,
             account_number, account_name, account_type, currency_type, bank_name, bank_branch_code, bank_simple_name)
         values(#{passportId}, #{transSequenceNumber}, #{paymentType}, #{transType}, #{partnerId}, #{appId}, #{partnerUserId}, #{partnerTradeNumber}, #{channelId}, #{transUnitAmount},
-            #{transNumber}, #{transTotalAmount}, #{transTitle}, #{remark}, #{useConpon}, #{discountAmount}, #{notifyFrontUrl}, #{notifyUrl}, #{extendParameter},
+            #{transNumber}, #{transTotalAmount}, #{transTitle}, #{remark}, #{useCoupon}, #{discountAmount}, #{notifyFrontUrl}, #{notifyUrl}, #{extendParameter},
             #{accountNumber}, #{accountName}, #{accountType}, #{currencyType}, #{bankName}, #{bankBranchCode}, #{bankSimpleName})
     </insert>
 

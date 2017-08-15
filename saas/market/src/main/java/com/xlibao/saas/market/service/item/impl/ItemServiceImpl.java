@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
-import com.xlibao.common.constant.item.ItemStatusEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.lbs.baidu.AddressComponent;
 import com.xlibao.common.lbs.baidu.BaiduWebAPI;

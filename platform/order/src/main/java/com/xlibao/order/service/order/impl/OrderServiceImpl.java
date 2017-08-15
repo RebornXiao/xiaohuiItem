@@ -132,7 +132,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         signParameters.put("useCoupon", getUTF("useCoupon", ""));
         signParameters.put("discountAmount", getUTF("discountAmount", "0"));
         signParameters.put("extendParameter", getUTF("extendParameter", ""));
-        signParameters.put("notifyUrl", ConfigFactory.getDomainNameConfig().orderRemoteURL + "order/payment/callbackPaymentOrder");
+        signParameters.put("notifyUrl", ConfigFactory.getDomainNameConfig().orderRemoteURL + "order/openapi/callbackPaymentOrder");
 
         return SharePaymentRemoteService.paymentOrder(signParameters, ConfigFactory.getOrderConfig().getPartnerId(), ConfigFactory.getOrderConfig().getPaymentAppId(), ConfigFactory.getOrderConfig().getPaymentAppkey(),
                 ConfigFactory.getDomainNameConfig().paymentRemoteURL, paymentType);
@@ -858,6 +858,25 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         JSONObject response = new JSONObject();
         response.put("size", size);
         return success(response);
+    }
+
+    @Override
+    public JSONObject modifyReceivingData() {
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+        String currentLocation = getUTF("currentLocation", GlobalConstantConfig.INVALID_LOCATION);
+        byte collectingFees = getByteParameter("collectingFees", CollectingFeesEnum.UN_COLLECTION.getKey());
+        String receiptProvince = getUTF("receiptProvince", "");
+        String receiptCity = getUTF("receiptCity", "");
+        String receiptDistrict = getUTF("receiptDistrict", "");
+        String receiptAddress = getUTF("receiptAddress");
+        String receiptNickName = getUTF("receiptNickName");
+        String receiptPhone = getUTF("receiptPhone");
+        String receiptLocation = getUTF("receiptLocation", GlobalConstantConfig.INVALID_LOCATION);
+        // 备注
+        String remark = getUTF("remark", "");
+
+        int result = orderDataAccessManager.modifyReceivingData(orderSequenceNumber, currentLocation, collectingFees, receiptProvince, receiptCity, receiptDistrict, receiptAddress, receiptNickName, receiptPhone, receiptLocation, remark);
+        return result <= 0 ? fail("更新收货地址失败，订单编号：" + orderSequenceNumber) : success("更新收货数据成功");
     }
 
     private OrderEntry getOrder(String orderSequenceNumber) {

@@ -109,6 +109,33 @@ public class OrderController {
 
     /**
      * <pre>
+     *     <b>修改收货数据</b>
+     *
+     *     <b>请求地址：</b>http://domainName/order/modifyReceivingData
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>orderSequenceNumber</b> - String 订单序号
+     *          <b>currentLocation</b> - String 当前位置信息，非必填参数；尽量提供，方便后期跟踪；格式为：latitude,longitude。
+     *          <b>collectingFees</b> - byte 代收费用，非必填参数；默认为{@linkplain com.xlibao.common.constant.order.CollectingFeesEnum#UN_COLLECTION} 不代收。
+     *          <b>receiptProvince</b> - String 收货省份，必填参数。
+     *          <b>receiptCity</b> - String 收货城市，必填参数。
+     *          <b>receiptDistrict</b> - String 收货区域，必填参数
+     *          <b>receiptAddress</b> - String 具体收货地址，必填参数。
+     *          <b>receiptNickName</b> - String 收货人昵称，必填参数。
+     *          <b>receiptPhone</b> - String 收货人联系号码，必填参数。
+     *          <b>receiptLocation</b> - String 收货地址经纬度，非必填参数；请尽量提供，方便距离跟踪；格式为：latitude,longitude。
+     *          <b>remark</b> - String 描述内容(备注)。
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "modifyReceivingData")
+    public JSONObject modifyReceivingData() {
+        return orderService.modifyReceivingData();
+    }
+
+    /**
+     * <pre>
      *     <b>获取订单详情</b>
      *
      *     <b>请求地址：</b>http://domainName.com/order/getOrder

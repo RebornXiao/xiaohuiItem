@@ -29,10 +29,4 @@ public class OrderPaymentController {
     public JSONObject unifiedPayment() {
         return orderService.unifiedPayment();
     }
-
-    @ResponseBody
-    @RequestMapping(value = "callbackPaymentOrder")
-    public JSONObject callbackPaymentOrder() {
-        return orderService.callbackPaymentOrder();
-    }
 }

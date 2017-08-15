@@ -67,6 +67,10 @@ public class OrderDataAccessManager {
         return result;
     }
 
+    public int modifyReceivingData(String orderSequenceNumber, String currentLocation, byte collectingFees, String receiptProvince, String receiptCity, String receiptDistrict, String receiptAddress, String receiptNickName, String receiptPhone, String receiptLocation, String remark) {
+        return entryMapper.modifyReceivingData(orderSequenceNumber, currentLocation, collectingFees, receiptProvince, receiptCity, receiptDistrict, receiptAddress, receiptNickName, receiptPhone, receiptLocation, remark);
+    }
+
     public OrderEntry getOrder(long orderId) {
         return entryMapper.getOrderEntry(orderId);
     }

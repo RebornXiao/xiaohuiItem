@@ -34,7 +34,7 @@ public class PaymentRemoteService extends BasicRemoteService {
         signParameters.put("randomParameter", randomParameter);
         signParameters.put("extendParameter", extendParameter);
 
-        JSONObject response = postOrderMsg("order/payment/unifiedOrder", signParameters);
+        JSONObject response = postOrderMsg("order/payment/unifiedPayment", signParameters);
 
         logger.info("请求支付订单结果：" + response);
         return response;

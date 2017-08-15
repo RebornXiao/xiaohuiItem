@@ -11,6 +11,8 @@ public interface OrderService {
 
     JSONObject generateOrder();
 
+    JSONObject modifyReceivingData();
+
     JSONObject paymentOrder();
 
     JSONObject showOrders();
