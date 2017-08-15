@@ -1,5 +1,6 @@
 package com.xlibao.saas.market.service.support.remote;
 
+import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.constant.order.OrderStatusEnum;
 import com.xlibao.common.support.BasicRemoteService;
@@ -39,11 +40,15 @@ public class MarketShopRemoteService extends BasicRemoteService {
                     GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), System.currentTimeMillis());
 
             Map<String, String> parameters = new HashMap<>();
-
+            // PassportRemoteService.signatureParameters();
+            parameters.put("partnerId", ConfigFactory.getXMarketConfig().getPartnerId());
+            parameters.put("appId", ConfigFactory.getXMarketConfig().getMarketShopAppId());
             parameters.put("passportId", String.valueOf(passportId));
-            parameters.put("content", HardwareMessageType.HARDWARE_MSG_START + content + HardwareMessageType.HARDWARE_MSG_END);
+            parameters.put("messageContent", HardwareMessageType.HARDWARE_MSG_START + content + HardwareMessageType.HARDWARE_MSG_END);
 
-            String url = ConfigFactory.getDomainNameConfig().marketShopRemoteURL + "market/shop/message";
+            CommonUtils.fillSignature(parameters, ConfigFactory.getXMarketConfig().getMarketShopAppkey());
+
+            String url = ConfigFactory.getDomainNameConfig().marketShopRemoteURL + "market/shop/message/sendHardwarePush.do";
             executor(url, parameters);
         };
         // 执行即时任务

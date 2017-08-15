@@ -8,12 +8,14 @@ import java.util.Map;
  */
 public enum OrderStatusEnum {
 
+    /** 0、全部 */
+    ORDER_STATUS_ALL(0, "全部"),
     /** 1、默认--下单 */
     ORDER_STATUS_DEFAULT(1, "待支付"),
     /** 2、取消 */
-    ORDER_STATUS_CANCEL(2, "取消"),
+    ORDER_STATUS_CANCEL(2, "已取消"),
     /** 4、失效 */
-    ORDER_STATUS_INVALID(4, "失效"),
+    ORDER_STATUS_INVALID(4, "已失效"),
     /** 8、已支付 */
     ORDER_STATUS_PAYMENT(8, "已支付"),
     /** 16、已接单 */
@@ -32,6 +34,8 @@ public enum OrderStatusEnum {
     ORDER_STATUS_BATCH(1024, "分批配送"),
     /** 2048、退款 */
     ORDER_STATUS_REFUND(2048, "退款"),
+    /** 2301、已退货 */
+    ORDER_STATUS_CONFIRM_REFUND(2304, "已退货"),
     ;
 
     private int key;

@@ -114,12 +114,12 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
             if (itemLocation.getStock() < quantity) { // 库存不足时 将库存清空
                 decrementStock = itemLocation.getStock();
             }
-            int result = dataAccessFactory.getItemDataAccessManager().updateItemLocationStock(itemLocation.getId(), itemLocation.getStock());
+            int result = dataAccessFactory.getItemDataAccessManager().updateItemLocationStock(itemLocation.getId(), decrementStock);
             if (result > 0) { // 数据库执行成功后减少未出货数量
                 quantity -= decrementStock;
             }
             // 商品位置 数量(16进制，4位 不足时前面补0)
-            msgBuilder.append(itemLocation).append(CommonUtils.toHexString(decrementStock, 4, "0"));
+            msgBuilder.append(itemLocation.getLocationCode()).append(CommonUtils.toHexString(decrementStock, 4, "0"));
             if (quantity <= 0) {
                 break;
             }

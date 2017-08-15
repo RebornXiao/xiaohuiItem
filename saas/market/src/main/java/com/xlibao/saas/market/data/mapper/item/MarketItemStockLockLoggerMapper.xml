@@ -22,6 +22,6 @@
     </select>
 
     <update id="modifyStockLockStatus">
-        update market_item_stock_lock_logger set status = #{status} where id = #{id}
+        update market_item_stock_lock_logger set lock_status = #{status} where id = #{id}
     </update>
 </mapper>

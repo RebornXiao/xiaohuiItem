@@ -49,4 +49,10 @@ public class MarketController {
     public JSONObject filterMarket() {
         return marketService.filterMarket();
     }
+
+    @ResponseBody
+    @RequestMapping(value = "initShelvesDatas")
+    public JSONObject initShelvesDatas() {
+        return marketService.initShelvesDatas();
+    }
 }

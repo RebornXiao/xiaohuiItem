@@ -27,6 +27,11 @@ public class XMarketConfig {
     @Value("${itemAppkey}")
     private String itemAppkey;
 
+    @Value("${marketShopAppId}")
+    private String marketShopAppId;
+    @Value("${marketShopAppkey}")
+    private String marketShopAppkey;
+
     public String getPartnerId() {
         return partnerId;
     }
@@ -53,5 +58,13 @@ public class XMarketConfig {
 
     public String getItemAppkey() {
         return itemAppkey;
+    }
+
+    public String getMarketShopAppId() {
+        return marketShopAppId;
+    }
+
+    public String getMarketShopAppkey() {
+        return marketShopAppkey;
     }
 }

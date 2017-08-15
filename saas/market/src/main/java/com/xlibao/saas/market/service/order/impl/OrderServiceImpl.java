@@ -243,13 +243,13 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     private String orderStatusSet(int roleType, int statusEnter) {
         if (roleType == OrderRoleTypeEnum.CONSUMER.getKey()) { // 消费者
             if (statusEnter == StatusEnterEnum.ALL.getKey()) { // 用户 全部
-                return String.valueOf(0);
+                return String.valueOf(OrderStatusEnum.ORDER_STATUS_ALL.getKey());
             }
             if (statusEnter == StatusEnterEnum.WAIT_PAYMENT.getKey()) { // 用户 待支付
                 return String.valueOf(OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey());
             }
             if (statusEnter == StatusEnterEnum.WAIT_RECEIPT.getKey()) { // 用户 待收货
-                return String.valueOf(OrderStatusEnum.ORDER_STATUS_ARRIVE.getKey());
+                return String.valueOf(OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey());
             }
             if (statusEnter == StatusEnterEnum.REFUND.getKey()) { // 用户 退款中
                 return String.valueOf(OrderStatusEnum.ORDER_STATUS_REFUND.getKey());
@@ -267,18 +267,57 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         for (OrderEntry orderEntry : orderEntries) {
             JSONObject data = new JSONObject();
 
+            data.put("sequenceNumber", orderEntry.getSequenceNumber());
+            data.put("orderId", orderEntry.getId());
+            data.put("orderSequenceNumber", orderEntry.getOrderSequenceNumber());
+
+            int deliverType = orderEntry.getDeliverType();
+
             MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
             data.put("marketId", marketEntry.getId());
             data.put("marketName", marketEntry.getName());
             data.put("marketFormatAddress", marketEntry.formatAddress());
             data.put("actualPrice", orderEntry.getActualPrice());
+
             data.put("orderStatus", orderEntry.getStatus());
-            data.put("deliverStatus", orderEntry.getDeliverStatus());
+            data.put("orderStatusTitle", orderStatusTitle(deliverType, orderEntry.getStatus()));
+
+            data.put("deliverType", deliverType);
+            data.put("deliverTitle", deliverType == DeliverTypeEnum.PICKED_UP.getKey() ? "到店自提" : "小惠配送");
 
             fillItemSnapshotMsg(data, orderEntry);
             response.add(data);
         }
         return response;
+    }
+
+    private String orderStatusTitle(int deliverType, int orderStatus) {
+        OrderStatusEnum orderStatusEnum = OrderStatusEnum.getOrderStatusEnum(orderStatus);
+        if (deliverType == DeliverTypeEnum.PICKED_UP.getKey()) {
+            switch (orderStatusEnum) {
+                case ORDER_STATUS_PAYMENT:
+                    return "待出货";
+                case ORDER_STATUS_DELIVER:
+                    return "出货中";
+                case ORDER_STATUS_DISTRIBUTION:
+                    return "待取货";
+                case ORDER_STATUS_ARRIVE:
+                    return "已取货";
+            }
+        } else if (deliverType == DeliverTypeEnum.DISTRIBUTION.getKey()) {
+            switch (orderStatusEnum) {
+                case ORDER_STATUS_PAYMENT:
+                    return "待接单";
+                case ORDER_STATUS_ACCEPT:
+                    return "已接单";
+                case ORDER_STATUS_DELIVER:
+                case ORDER_STATUS_DISTRIBUTION:
+                    return "配送中";
+                case ORDER_STATUS_ARRIVE:
+                    return "已签收";
+            }
+        }
+        return orderStatusEnum.getValue();
     }
 
     private JSONObject fillOrderDetailMsg(OrderEntry orderEntry, int roleType, long passportId) {
@@ -313,9 +352,9 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         orderMsg.put("discountPrice", orderEntry.getDiscountPrice());
 
         orderMsg.put("addressTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货地址：" : "收货地址：");
-        orderMsg.put("address", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? orderEntry.formatReceiptAddress() : orderEntry.formatShippingAddress());
+        orderMsg.put("address", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? orderEntry.formatShippingAddress() : orderEntry.formatReceiptAddress());
         orderMsg.put("targetTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货点：" : "收货人：");
-        orderMsg.put("targetName", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "小惠便利店" + orderEntry.getReceiptNickName() : orderEntry.getShippingNickName());
+        orderMsg.put("targetName", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "小惠便利店" + orderEntry.getShippingNickName() : orderEntry.getReceiptNickName());
 
         fillItemSnapshotMsg(orderMsg, orderEntry);
 
@@ -338,10 +377,11 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             item.put("itemSnapshotId", itemSnapshot.getId());
             item.put("itemId", itemSnapshot.getItemId());
             item.put("itemTemplateId", itemSnapshot.getItemTemplateId());
-            item.put("itemName", itemSnapshot.getItemName());
+            item.put("name", itemSnapshot.getItemName());
             item.put("image", itemTemplate == null ? "" : itemTemplate.getImageUrl());
             item.put("price", itemSnapshot.getNormalPrice());
             item.put("quantity", itemSnapshot.totalQuantity());
+            item.put("totalPrice", itemSnapshot.getTotalPrice());
 
             items.add(item);
 

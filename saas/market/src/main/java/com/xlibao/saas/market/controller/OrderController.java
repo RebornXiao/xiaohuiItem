@@ -183,14 +183,19 @@ public class OrderController {
      *                  <b>marketId</b> - long 店铺ID
      *                  <b>marketName</b> - String 店铺名
      *                  <b>marketFormatAddress</b> - String 店铺地址(格式化后)
+     *                  <b>orderStatus</b> - int 订单状态，参考：{@link com.xlibao.common.constant.order.OrderStatusEnum}
+     *                  <b>orderStatusTitle</b> - String 订单状态标题
+     *                  <b>deliverType</b> - int 配送类型，参考：{@link com.xlibao.common.constant.order.DeliverTypeEnum}
+     *                  <b>deliverTitle</b> - String 配送标题
      *                  <b>items</b> - JSONArray 商品信息，每个元素为JSONObject结构
      *                      <b>itemSnapshotId</b> - long 商品快照ID
      *                      <b>itemId</b> - long 商品ID
      *                      <b>itemTemplateId</b> - long 商品模版ID
      *                      <b>itemName</b> - String 商品名
      *                      <b>image</b> - String 商品图片
-     *                      <b>price</b> - long 商品单价，单位：分
+     *                      <b>price</b> - long 商品单价(原价)，单位：分
      *                      <b>quantity</b> - int 商品数量
+     *                      <b>totalPrice</b> - long 商品总价(已计算了优惠)
      *                  <b>totalItemQuantity</b> - int 商品数量
      *                  <b>actualPrice</b> - long 实收价格，单位：分
      * </pre>

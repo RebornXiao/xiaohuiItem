@@ -612,13 +612,13 @@ public class OrderEntry {
      * 格式化发货地址
      */
     public String formatShippingAddress() {
-        return getShippingProvince() + getShippingCity() + getShippingDistrict() + shippingAddress;
+        return getShippingProvince() + getShippingCity() + getShippingDistrict() + getShippingAddress();
     }
 
     /**
      * 格式化收货地址
      */
     public String formatReceiptAddress() {
-        return getReceiptProvince() + getReceiptCity() + getReceiptDistrict() + receiptAddress;
+        return getReceiptProvince() + getReceiptCity() + getReceiptDistrict() + getReceiptAddress();
     }
 }

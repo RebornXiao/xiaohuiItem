@@ -62,7 +62,7 @@ public class MarketMessageEventListenerImpl implements MessageEventListener {
 
     @Override
     public void notifySessionIdle(NettySession session, int idleType, int idleTimes) {
-        if (idleType == NettyConfig.TIME_OUT_BOTH) {
+        if (idleType == NettyConfig.TIME_OUT_BOTH && idleTimes >= 20) {
             try {
                 session.close();
             } catch (Exception e) {

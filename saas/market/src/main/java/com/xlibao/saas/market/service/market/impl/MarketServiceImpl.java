@@ -102,9 +102,14 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         return success(response);
     }
 
+    @Override
+    public JSONObject initShelvesDatas() {
+        long passportId = getLongParameter("passportId");
+        return null;
+    }
 
+    @Override
     public JSONObject searchMarkets() {
-
         String province = getUTF("province", null);
         String city = getUTF("city", null);
         String district = getUTF("district", null);

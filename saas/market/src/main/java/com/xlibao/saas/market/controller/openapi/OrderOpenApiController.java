@@ -23,6 +23,12 @@ public class OrderOpenApiController {
         return orderService.showOrders();
     }
 
+    @ResponseBody
+    @RequestMapping(value = "orderDetail")
+    public JSONObject orderDetail() {
+        return orderService.orderDetail();
+    }
+
     /**
      * <pre>
      *     <b>预下单</b>
