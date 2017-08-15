@@ -533,7 +533,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return itemSet.toString();
     }
 
-    public String showDiscount(MarketItem item, ItemUnit itemUnit) {
+    private String showDiscount(MarketItem item, ItemUnit itemUnit) {
         if (item.getDiscountType() == DiscountTypeEnum.NORMAL.getKey() || item.getDiscountPrice() >= item.getSellPrice()) {
             return "暂无优惠";
         }
