@@ -15,7 +15,7 @@
         <module>marketmanager</module>
         <module>marketshop</module>
         <module>marketcore</module>
-        <module>messageprotocol</module>
+        <module>marketmodel</module>
     </modules>
 
     <dependencies>
@@ -28,12 +28,6 @@
         <dependency>
             <groupId>xlibao</groupId>
             <artifactId>datamodel</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>xlibao</groupId>
-            <artifactId>datamanager</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

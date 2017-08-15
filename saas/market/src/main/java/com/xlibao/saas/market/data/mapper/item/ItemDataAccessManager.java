@@ -1,7 +1,7 @@
 package com.xlibao.saas.market.data.mapper.item;
 
 import com.xlibao.common.CommonUtils;
-import com.xlibao.saas.market.data.model.*;
+import com.xlibao.market.data.model.*;
 import com.xlibao.saas.market.service.item.ItemLockTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

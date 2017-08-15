@@ -7,7 +7,7 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.datacache.location.LocationDataCacheService;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketAccessLogger;
-import com.xlibao.saas.market.data.model.MarketEntry;
+import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.saas.market.service.market.ChoiceMarketTypeEnum;
 import com.xlibao.saas.market.service.market.MarketErrorCodeEnum;
 import com.xlibao.saas.market.service.market.MarketFindTypeEnum;

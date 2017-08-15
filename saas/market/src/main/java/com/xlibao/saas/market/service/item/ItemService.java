@@ -2,8 +2,8 @@ package com.xlibao.saas.market.service.item;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.metadata.order.OrderItemSnapshot;
-import com.xlibao.saas.market.data.model.MarketItem;
-import com.xlibao.saas.market.data.model.MarketItemDailyPurchaseLogger;
+import com.xlibao.market.data.model.MarketItem;
+import com.xlibao.market.data.model.MarketItemDailyPurchaseLogger;
 
 import java.util.List;
 import java.util.Map;

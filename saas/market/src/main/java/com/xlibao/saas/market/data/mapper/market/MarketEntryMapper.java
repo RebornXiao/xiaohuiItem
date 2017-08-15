@@ -1,6 +1,6 @@
 package com.xlibao.saas.market.data.mapper.market;
 
-import com.xlibao.saas.market.data.model.MarketEntry;
+import com.xlibao.market.data.model.MarketEntry;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;

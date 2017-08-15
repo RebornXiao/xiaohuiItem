@@ -4,7 +4,7 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.common.lbs.SimpleLocationUtils;
 import com.xlibao.common.thread.AsyncScheduledService;
 import com.xlibao.saas.market.data.DataAccessFactory;
-import com.xlibao.saas.market.data.model.MarketEntry;
+import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

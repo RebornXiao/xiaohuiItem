@@ -3,7 +3,7 @@ package com.xlibao.saas.market.service.item;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.thread.AsyncScheduledService;
 import com.xlibao.saas.market.data.DataAccessFactory;
-import com.xlibao.saas.market.data.model.MarketSpecialButton;
+import com.xlibao.market.data.model.MarketSpecialButton;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

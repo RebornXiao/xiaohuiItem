@@ -6,7 +6,7 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.constant.order.OrderStatusEnum;
 import com.xlibao.saas.market.data.DataAccessFactory;
-import com.xlibao.saas.market.data.model.MarketEntry;
+import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.saas.market.service.message.MessageService;
 import com.xlibao.saas.market.service.order.OrderNotifyTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;

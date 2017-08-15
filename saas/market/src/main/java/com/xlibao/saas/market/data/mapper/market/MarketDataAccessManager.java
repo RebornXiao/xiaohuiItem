@@ -1,7 +1,7 @@
 package com.xlibao.saas.market.data.mapper.market;
 
 import com.xlibao.saas.market.data.model.MarketAccessLogger;
-import com.xlibao.saas.market.data.model.MarketEntry;
+import com.xlibao.market.data.model.MarketEntry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

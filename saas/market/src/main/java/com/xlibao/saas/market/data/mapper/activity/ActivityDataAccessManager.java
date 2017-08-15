@@ -1,7 +1,7 @@
 package com.xlibao.saas.market.data.mapper.activity;
 
-import com.xlibao.saas.market.data.model.MarketBanner;
-import com.xlibao.saas.market.data.model.MarketRecommendItem;
+import com.xlibao.market.data.model.MarketBanner;
+import com.xlibao.market.data.model.MarketRecommendItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.xlibao.saas.market.data.model;
+package com.xlibao.market.data.model;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.CommonUtils;

@@ -1,6 +1,6 @@
 package com.xlibao.saas.market.data.mapper.item;
 
-import com.xlibao.saas.market.data.model.MarketSpecialButton;
+import com.xlibao.market.data.model.MarketSpecialButton;
 
 import java.util.List;
 

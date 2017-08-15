@@ -1,4 +1,4 @@
-package com.xlibao.saas.market.data.model;
+package com.xlibao.market.data.model;
 
 import java.util.Date;
 

@@ -1,8 +1,5 @@
 package com.xlibao.saas.market.manager.config;
 
-import com.xlibao.datacache.DataCacheApplicationContextLoaderNotify;
-import com.xlibao.datacache.item.ItemDataCacheService;
-import com.xlibao.datacache.location.LocationDataCacheService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;

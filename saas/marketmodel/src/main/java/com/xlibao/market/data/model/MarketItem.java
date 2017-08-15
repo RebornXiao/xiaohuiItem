@@ -1,8 +1,4 @@
-package com.xlibao.saas.market.data.model;
-
-import com.xlibao.common.CommonUtils;
-import com.xlibao.metadata.item.ItemUnit;
-import com.xlibao.saas.market.service.item.DiscountTypeEnum;
+package com.xlibao.market.data.model;
 
 import java.util.Date;
 
@@ -318,19 +314,5 @@ public class MarketItem {
 
     public long maxPrice() {
         return getMarketPrice() < getSellPrice() ? getSellPrice() : getMarketPrice();
-    }
-
-    public String showDiscount(ItemUnit itemUnit) {
-        if (discountType == 0 || discountPrice >= sellPrice) {
-            return "暂无优惠";
-        }
-        long maxPrice = sellPrice;
-        if (marketPrice > maxPrice) {
-            maxPrice = marketPrice;
-        }
-        float discount = (discountPrice) / (maxPrice * 1.0f);
-        DiscountTypeEnum discountTypeEnum = DiscountTypeEnum.getDiscountTypeEnum(discountType);
-        String limit = (restrictionQuantity == -1 ? "无限购" : "每天限购" + restrictionQuantity + itemUnit.getTitle());
-        return (discountTypeEnum == null ? "" : discountTypeEnum.getValue()) + CommonUtils.formatNumber(discount * 10, "0.00") + "折" + "(" + limit + ")";
     }
 }

@@ -19,7 +19,7 @@
 
         <dependency>
             <groupId>xlibao</groupId>
-            <artifactId>messageprotocol</artifactId>
+            <artifactId>marketmodel</artifactId>
             <version>1.0-SNAPSHOT</version>
         </dependency>
     </dependencies>

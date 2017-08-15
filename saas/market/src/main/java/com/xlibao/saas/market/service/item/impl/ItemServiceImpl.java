@@ -15,7 +15,8 @@ import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import com.xlibao.saas.market.data.DataAccessFactory;
-import com.xlibao.saas.market.data.model.*;
+import com.xlibao.market.data.model.*;
+import com.xlibao.saas.market.data.model.MarketAccessLogger;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.activity.RecommendItemTypeEnum;
 import com.xlibao.saas.market.service.item.*;
@@ -477,7 +478,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
 
             JSONObject dailyData = new JSONObject();
-            dailyData.put("showDiscount", item.showDiscount(itemUnit));
+            dailyData.put("showDiscount", showDiscount(item, itemUnit));
             dailyData.put("showHasBuy", "您已购买" + (roleDailyBuyLogger == null ? 0 : roleDailyBuyLogger.getHasBuyCount()) + itemUnit.getTitle());
             dailyData.put("hasBuy", roleDailyBuyLogger == null ? 0 : roleDailyBuyLogger.getHasBuyCount());
             dailyData.put("beyondControl", item.getBeyondControl());
@@ -530,5 +531,19 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         itemSet.deleteCharAt(itemSet.length() - 1);
 
         return itemSet.toString();
+    }
+
+    public String showDiscount(MarketItem item, ItemUnit itemUnit) {
+        if (item.getDiscountType() == DiscountTypeEnum.NORMAL.getKey() || item.getDiscountPrice() >= item.getSellPrice()) {
+            return "暂无优惠";
+        }
+        long maxPrice = item.getSellPrice();
+        if (item.getMarketPrice() > maxPrice) {
+            maxPrice = item.getMarketPrice();
+        }
+        float discount = (item.getDiscountPrice()) / (maxPrice * 1.0f);
+        DiscountTypeEnum discountTypeEnum = DiscountTypeEnum.getDiscountTypeEnum(item.getDiscountType());
+        String limit = (item.getRestrictionQuantity() == -1 ? "无限购" : "每天限购" + item.getRestrictionQuantity() + itemUnit.getTitle());
+        return (discountTypeEnum == null ? "" : discountTypeEnum.getValue()) + CommonUtils.formatNumber(discount * 10, "0.00") + "折" + "(" + limit + ")";
     }
 }
