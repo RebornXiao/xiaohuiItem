@@ -7,7 +7,7 @@ import com.xlibao.common.exception.XlibaoRuntimeException;
 /**
  * @author chinahuangxc on 2017/7/20.
  */
-public enum ItemErrorCodeEnum {
+public enum MarketItemErrorCodeEnum {
 
     /** 2000 -- 错误的商品分类 */
     ITEM_TYPE_ERROR(2000, "错误的商品分类"),
@@ -32,7 +32,7 @@ public enum ItemErrorCodeEnum {
     private int key;
     private String value;
 
-    ItemErrorCodeEnum(int key, String value) {
+    MarketItemErrorCodeEnum(int key, String value) {
         this.key = key;
         this.value = value;
     }

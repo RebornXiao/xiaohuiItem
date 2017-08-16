@@ -126,7 +126,7 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
         }
         if (quantity > 0) {
             logger.error("【" + orderSequenceNumber + "】严重问题，商品库存不足，商品ID：" + itemId + "(" + itemTemplate.getName() + ")，需要扣除数量：" + quantity);
-            ItemErrorCodeEnum.ITEM_STOCK_NOT_ENOUGH.throwException();
+            MarketItemErrorCodeEnum.ITEM_STOCK_NOT_ENOUGH.throwException();
         }
         return msgBuilder.toString();
     }

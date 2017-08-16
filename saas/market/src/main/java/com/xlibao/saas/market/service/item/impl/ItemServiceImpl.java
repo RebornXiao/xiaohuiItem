@@ -82,7 +82,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         long itemTypeId = getLongParameter("itemTypeId");
         ItemType itemType = ItemDataCacheService.getItemType(itemTypeId);
         if (itemType == null) {
-            return ItemErrorCodeEnum.ITEM_TYPE_ERROR.response();
+            return MarketItemErrorCodeEnum.ITEM_TYPE_ERROR.response();
         }
         List<ItemType> itemTypes = ItemDataCacheService.relationItemTypes(itemTypeId);
         JSONArray response = fillItemTypeMsg(itemTypes, true);
@@ -232,23 +232,23 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
             if (item.getStatus() != ItemStatusEnum.NORMAL.getKey()) {
                 logger.error("用户购买【" + itemTemplate.getName() + "】，目前处于下架状态(状态值：" + item.getStatus() + ")，暂不通过！");
-                throw new XlibaoRuntimeException(ItemErrorCodeEnum.ITEM_STATUS_ERROR_OFF_LINE.getKey(), "抱歉，您购买的【" + itemTemplate.getName() + "】已下架！");
+                throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.ITEM_STATUS_ERROR_OFF_LINE.getKey(), "抱歉，您购买的【" + itemTemplate.getName() + "】已下架！");
             }
             if (item.getRestrictionQuantity() == RestrictionQuantityEnum.UN_SELL.getKey()) {
                 logger.error("用户购买【" + itemTemplate.getName() + "】，目前处于不出售状态，暂不通过！");
-                throw new XlibaoRuntimeException(ItemErrorCodeEnum.ITEM_UN_SELL.getKey(), "抱歉，您购买的【" + itemTemplate.getName() + "】已下架！");
+                throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.ITEM_UN_SELL.getKey(), "抱歉，您购买的【" + itemTemplate.getName() + "】已下架！");
             }
             // 本次购买的数量
             int buyCount = buyItems.getIntValue(String.valueOf(item.getId()));
             if (buyCount < item.getMinimumSellCount()) {
-                throw new XlibaoRuntimeException(ItemErrorCodeEnum.LESS_THAN_MINIMUM_SELL.getKey(), itemTemplate.getName() + "最低购买数量：" + item.getMinimumSellCount() + itemUnit.getTitle());
+                throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.LESS_THAN_MINIMUM_SELL.getKey(), itemTemplate.getName() + "最低购买数量：" + item.getMinimumSellCount() + itemUnit.getTitle());
             }
             if (item.getMaximumSellCount() != RestrictionQuantityEnum.UN_LIMIT.getKey() && buyCount > item.getMaximumSellCount()) {
-                throw new XlibaoRuntimeException(ItemErrorCodeEnum.GREATER_THAN_MAXIMUM_SELL.getKey(), itemTemplate.getName() + "最多购买数量：" + item.getMaximumSellCount() + itemUnit.getTitle());
+                throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.GREATER_THAN_MAXIMUM_SELL.getKey(), itemTemplate.getName() + "最多购买数量：" + item.getMaximumSellCount() + itemUnit.getTitle());
             }
             if (item.getRestrictionQuantity() == RestrictionQuantityEnum.UN_LIMIT.getKey()) { // 不限购
                 if (buyCount > item.getShowStock()) { // 超出库存
-                    throw new XlibaoRuntimeException(ItemErrorCodeEnum.ITEM_STOCK_NOT_ENOUGH.getKey(), "您购买的【" + itemTemplate.getName() + "】库存不足，本次最多可购买：" + item.getShowStock() + itemUnit.getTitle());
+                    throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.ITEM_STOCK_NOT_ENOUGH.getKey(), "您购买的【" + itemTemplate.getName() + "】库存不足，本次最多可购买：" + item.getShowStock() + itemUnit.getTitle());
                 }
                 continue;
             }
@@ -257,7 +257,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             int hasBuyCount = itemDailyPurchaseLogger == null ? 0 : itemDailyPurchaseLogger.getHasBuyCount();
             if ((buyCount + hasBuyCount) > item.getRestrictionQuantity()) { // 超过限购量
                 if (item.getBeyondControl() == BeyondControllTypeEnum.CAN_NOT_BEYOND.getKey()) {
-                    throw new XlibaoRuntimeException(ItemErrorCodeEnum.BUY_BEYOND_CONTROL.getKey(), "您购买的【" + itemTemplate.getName() + "】超出限购数量" +
+                    throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.BUY_BEYOND_CONTROL.getKey(), "您购买的【" + itemTemplate.getName() + "】超出限购数量" +
                             "（限购" + item.getRestrictionQuantity() + itemUnit.getTitle() + "，已购买" + hasBuyCount + itemUnit.getTitle() + "，本次购买" + buyCount + itemUnit.getTitle() + "）");
                 }
             }

@@ -9,6 +9,9 @@ import org.apache.commons.lang.StringEscapeUtils;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
 
+/**
+ * @author chinahuangxc on 2017/8/17
+ */
 public class BaiduWebAPI {
 
     // 主要用于获取本次的AppKey 通过取模形式获取

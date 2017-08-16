@@ -3,6 +3,11 @@ package com.xlibao.common.exception.code;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 
 /**
+ * <pre>
+ *     <b>订单错误码枚举类</b>
+ *     <b>注意：</b>设定范围为 -- 20000至29999
+ * </pre>
+ *
  * @author chinahuangxc on 2017/7/31.
  */
 public enum OrderErrorCodeEnum {

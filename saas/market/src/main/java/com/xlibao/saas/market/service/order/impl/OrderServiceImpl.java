@@ -22,7 +22,7 @@ import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketItem;
 import com.xlibao.market.data.model.MarketItemDailyPurchaseLogger;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
-import com.xlibao.saas.market.service.item.ItemErrorCodeEnum;
+import com.xlibao.saas.market.service.item.MarketItemErrorCodeEnum;
 import com.xlibao.saas.market.service.order.MarketOrderErrorCodeEnum;
 import com.xlibao.saas.market.service.order.OrderEventListenerManager;
 import com.xlibao.saas.market.service.order.OrderService;
@@ -98,7 +98,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         JSONObject buyItemTemplates = JSONObject.parseObject(itemTemplateSet);
         if (buyItemTemplates.isEmpty()) {
             logger.error("下单时无法获取到购买的商品信息，passport id: " + passportId + "，sequenceNumber: " + sequenceNumber + " itemTemplateSet: " + itemTemplateSet);
-            return ItemErrorCodeEnum.INVALID_ITEMS.response("下单失败，请选择有效的商品");
+            return MarketItemErrorCodeEnum.INVALID_ITEMS.response("下单失败，请选择有效的商品");
         }
         List<OrderItemSnapshot> itemSnapshots = generateItemSnapshots(passportId, marketId, buyItemTemplates);
 
@@ -408,7 +408,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             int buyCount = buyItemTemplates.getIntValue(String.valueOf(item.getItemTemplateId()));
             if (buyCount <= 0) {
                 ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(item.getItemTemplateId());
-                throw new XlibaoRuntimeException(ItemErrorCodeEnum.BUY_QUANTITY_ERROR.getKey(), "商品" + (itemTemplate == null ? "" : "[" + itemTemplate.getName() + "]") + "的购买数量必须大于0");
+                throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.BUY_QUANTITY_ERROR.getKey(), "商品" + (itemTemplate == null ? "" : "[" + itemTemplate.getName() + "]") + "的购买数量必须大于0");
             }
             MarketItemDailyPurchaseLogger itemDailyPurchaseLogger = itemDailyPurchaseLoggerMap.get(item.getItemTemplateId());
             itemSnapshots.add(fillOrderItemSnapshot(passportId, item, itemDailyPurchaseLogger, buyCount));
