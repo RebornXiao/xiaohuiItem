@@ -78,7 +78,7 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
 
         // TODO 需要考虑分包
-        StringBuilder message = new StringBuilder().append(HardwareMessageType.SHIPMENT).append(orderEntry.getOrderSequenceNumber());
+        StringBuilder message = new StringBuilder().append(HardwareMessageType.SHIPMENT).append(orderEntry.getOrderSequenceNumber()).append(CommonUtils.toHexString(1, 4, "0"));
         if (!CommonUtils.isEmpty(itemStockLockLoggers)) { // 原来存在锁定的记录 进行解锁同时新增挂起数量
             for (MarketItemStockLockLogger itemStockLockLogger : itemStockLockLoggers) {
                 // 对商品进行库存挂起操作
@@ -89,7 +89,7 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
                 message.append(msg);
             }
             // 发送消息给硬件做出货操作
-            marketShopRemoteService.sendMessage(marketEntry.getPassportId(), orderEntry, message.toString());
+            marketShopRemoteService.shipmentMessage(marketEntry.getPassportId(), orderEntry.getOrderSequenceNumber() + CommonUtils.SPLIT_UNDER_LINE + CommonUtils.toHexString(1, 4, "0"), message.toString());
             return;
         }
         // 如果本来没有锁定的记录 那么则只需要进行挂起
@@ -100,7 +100,7 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
             message.append(msg);
         }
         // 发送消息给硬件做出货操作
-        marketShopRemoteService.sendMessage(marketEntry.getPassportId(), orderEntry, message.toString());
+        marketShopRemoteService.shipmentMessage(marketEntry.getPassportId(), orderEntry.getOrderSequenceNumber() + CommonUtils.SPLIT_UNDER_LINE + CommonUtils.toHexString(1, 4, "0"), message.toString());
     }
 
     private String decrementItemLocationStock(String orderSequenceNumber, long itemId, long itemTemplateId, int quantity) {

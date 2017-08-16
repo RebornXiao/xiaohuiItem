@@ -10,9 +10,9 @@ public enum TransStatusEnum {
     /** 2 -- 交易创建 */
     TRADE_CREATED(2, "交易创建"),
     /** 4 -- 支付成功 -- 客户端 */
-    TRADE_SUCCESSED_CLIENT(4, "支付成功 -- 客户端"),
+    TRADE_SUCCESS_CLIENT(4, "支付成功 -- 客户端"),
     /** 8 -- 支付成功 -- 服务器 */
-    TRADE_SUCCESSED_SERVER(8, "支付成功 -- 服务器"),
+    TRADE_SUCCESS_SERVER(8, "支付成功 -- 服务器"),
     /** 12 -- 交易成功 */
     TRADE_FINISHED(12, "交易成功"),
     /** 16 -- 交易关闭 */

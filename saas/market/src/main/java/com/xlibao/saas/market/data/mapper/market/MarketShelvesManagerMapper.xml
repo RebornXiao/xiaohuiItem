@@ -12,4 +12,9 @@
         <result column="modify_passport_id" property="modifyPassportId" jdbcType="BIGINT"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
+
+    <insert id="createShelves">
+        insert into market_shelves_manager(market_id, group_code, unit_code, floor_code, clip_code, last_modify_time, modify_passport_id, create_time)
+        values(#{marketId}, #{groupCode}, #{unitCode}, #{floorCode}, #{clipCode}, #{lastModifyTime}, #{modifyPassportId}, #{createTime})
+    </insert>
 </mapper>

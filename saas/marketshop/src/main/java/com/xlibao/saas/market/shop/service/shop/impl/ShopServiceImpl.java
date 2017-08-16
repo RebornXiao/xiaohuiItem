@@ -65,20 +65,19 @@ public class ShopServiceImpl extends BasicWebService implements ShopService {
 
     @Override
     public void hardwareMessage(MessageInputStream message, NettySession session) {
+        String messageType = message.readUTF();
         String hardwareMessage = message.readUTF();
 
-        logger.info("【硬件】消息内容：" + hardwareMessage + "；" + session.netTrack());
-
-        String messageType = hardwareMessage.substring(0, 4);
+        logger.info("【硬件】消息内容：message type is \"" + messageType + "\"， message content is \"" + hardwareMessage + "\"；" + session.netTrack());
 
         if (HardwareMessageType.SHIPMENT.equals(messageType)) {
             // 出货结果
-            MarketRemoteService.notifyShipment("", "");
+            MarketRemoteService.notifyShipment(hardwareMessage.substring(0, 8), hardwareMessage.substring(8, 12));
             return;
         }
         if (HardwareMessageType.SHELVES.equals(messageType)) {
             // 货架信息
-            MarketRemoteService.notifyShelvesData((Long) session.getAttribute("passportId"), Integer.parseInt(messageType, 16), "");
+            MarketRemoteService.notifyShelvesData((Long) session.getAttribute("passportId"), hardwareMessage);
             return;
         }
         if (HardwareMessageType.ORDER.equals(messageType)) {

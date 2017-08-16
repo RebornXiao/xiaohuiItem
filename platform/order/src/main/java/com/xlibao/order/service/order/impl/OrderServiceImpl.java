@@ -163,7 +163,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             logger.error("非本商户订单[" + partnerTradeNumber + "]，错误的支付回调，我方商户号：" + ConfigFactory.getOrderConfig().getPartnerId() + "；回调商户号：" + partnerId);
             return success("非法请求");
         }
-        if ((transStatus & TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey()) != TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey()) {
+        if ((transStatus & TransStatusEnum.TRADE_SUCCESS_SERVER.getKey()) != TransStatusEnum.TRADE_SUCCESS_SERVER.getKey()) {
             return success("success");
         }
         OrderEntry orderEntry = getOrder(partnerTradeNumber);

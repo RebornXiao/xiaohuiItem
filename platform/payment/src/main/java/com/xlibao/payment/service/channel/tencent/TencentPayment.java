@@ -205,7 +205,7 @@ public class TencentPayment extends BasicWebService {
                 return;
             }
             // 如果有做过处理，不执行业务程序
-            if ((transactionLogger.getTransStatus() & TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey()) == TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey()) { // 已处于支付成功状态(仅针对服务器状态)
+            if ((transactionLogger.getTransStatus() & TransStatusEnum.TRADE_SUCCESS_SERVER.getKey()) == TransStatusEnum.TRADE_SUCCESS_SERVER.getKey()) { // 已处于支付成功状态(仅针对服务器状态)
                 responseWeixinResult("SUCCESS", "S_FINISHED");
                 return;
             }
@@ -225,7 +225,7 @@ public class TencentPayment extends BasicWebService {
             // 填充微信回调的数据
             fillWeixinNotifyTransData(parameters, transactionLogger);
             // 通知监听系统
-            transactionEventListenerManager.notifyFinishPayment(transactionLogger, TransStatusEnum.TRADE_SUCCESSED_SERVER, transactionLogger.getTransType() != TransTypeEnum.RECHARGE.getKey());
+            transactionEventListenerManager.notifyFinishPayment(transactionLogger, TransStatusEnum.TRADE_SUCCESS_SERVER, transactionLogger.getTransType() != TransTypeEnum.RECHARGE.getKey());
 
             // 通知额度偏移，这里主要是做一个流水记录
             currencyEventListenerManager.notifyOffsetCurrencyAmount(transactionLogger.getPassportId(), transactionLogger.getChannelId(), CurrencyTypeEnum.BALANCE.getKey(), 0, -Math.abs(transactionLogger.getTransTotalAmount()),
@@ -304,7 +304,7 @@ public class TencentPayment extends BasicWebService {
                 "subscribe:" + isSubscribe;
 
         // 修改对象的状态
-        transactionLogger.setTransStatus(transactionLogger.getTransStatus() | TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey());
+        transactionLogger.setTransStatus(transactionLogger.getTransStatus() | TransStatusEnum.TRADE_SUCCESS_SERVER.getKey());
         transactionLogger.setPaymentType(PaymentTypeEnum.WEIXIN_NATIVE.getKey());
         transactionLogger.setChannelUserId(openId);
         transactionLogger.setChannelUserName(openId);

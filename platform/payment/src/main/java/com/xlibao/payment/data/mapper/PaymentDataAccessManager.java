@@ -57,7 +57,7 @@ public class PaymentDataAccessManager {
     }
 
     public List<PaymentTransactionLogger> getRechargeTransactionLoggers(long passportId, String currencyType, int pageStartIndex, int pageSize) {
-        return transactionLoggerMapper.getRechargeTransactionLoggers(passportId, TransTypeEnum.RECHARGE.getKey(), currencyType, TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey(), pageStartIndex, pageSize);
+        return transactionLoggerMapper.getRechargeTransactionLoggers(passportId, TransTypeEnum.RECHARGE.getKey(), currencyType, TransStatusEnum.TRADE_SUCCESS_SERVER.getKey(), pageStartIndex, pageSize);
     }
 
     public int createTransactionProperties(String transSequenceNumber, int type, String key, String value) {

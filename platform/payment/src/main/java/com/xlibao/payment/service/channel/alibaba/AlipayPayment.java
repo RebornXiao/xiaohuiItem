@@ -143,15 +143,15 @@ public class AlipayPayment extends BasicWebService {
                             print(response, "success");
                             return;
                         }
-                        if ((transactionLogger.getTransStatus() & TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey()) == TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey()) {
+                        if ((transactionLogger.getTransStatus() & TransStatusEnum.TRADE_SUCCESS_SERVER.getKey()) == TransStatusEnum.TRADE_SUCCESS_SERVER.getKey()) {
                             print(response, "success");
                             return;
                         }
-                        fillAliNotiryTransData(transactionLogger, TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey(), CommonUtils.nullToEmpty(buyerId), CommonUtils.nullToEmpty(buyerEmail), CommonUtils.nullToEmpty(tradeNo), body);
+                        fillAliNotiryTransData(transactionLogger, TransStatusEnum.TRADE_SUCCESS_SERVER.getKey(), CommonUtils.nullToEmpty(buyerId), CommonUtils.nullToEmpty(buyerEmail), CommonUtils.nullToEmpty(tradeNo), body);
                         transactionLogger.setTransCreateTime(new Date(CommonUtils.dateFormatToLong(gmtCreate)));
                         transactionLogger.setPaymentTime(new Date(CommonUtils.dateFormatToLong(gmtPayment)));
 
-                        transactionEventListenerManager.notifyFinishPayment(transactionLogger, TransStatusEnum.TRADE_SUCCESSED_SERVER, true);
+                        transactionEventListenerManager.notifyFinishPayment(transactionLogger, TransStatusEnum.TRADE_SUCCESS_SERVER, true);
                         // 通知额度偏移，这里主要是做一个流水记录
                         currencyEventListenerManager.notifyOffsetCurrencyAmount(transactionLogger.getPassportId(), transactionLogger.getChannelId(), CurrencyTypeEnum.BALANCE.getKey(), 0,
                                 -Math.abs(transactionLogger.getTransTotalAmount()), 0, transactionLogger.getPaymentType(), transactionLogger.getTransTitle(), transactionLogger.getTransType(), transactionLogger.getTransSequenceNumber());

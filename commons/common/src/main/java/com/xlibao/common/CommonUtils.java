@@ -987,13 +987,15 @@ public class CommonUtils {
     }
 
     public static String toHexString(int n, int length, String prefixMark) {
-        String hexString = Integer.toHexString(n);
+        return numberToString(Integer.toHexString(n), length, prefixMark);
+    }
 
-        int c = length - hexString.length();
+    public static String numberToString(String number, int length, String prefixMark) {
+        int c = length - number.length();
         for (int i = 0; i < c; i++) {
-            hexString = prefixMark + hexString;
+            number = prefixMark + number;
         }
-        return hexString;
+        return number;
     }
 
     public static void main(String[] args) {

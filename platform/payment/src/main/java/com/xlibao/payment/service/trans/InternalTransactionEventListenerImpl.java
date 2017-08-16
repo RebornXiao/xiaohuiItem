@@ -66,7 +66,7 @@ public class InternalTransactionEventListenerImpl implements TransactionEventLis
     }
 
     private long rechargeBalance(Passport passport, PaymentTransactionLogger transactionLogger, TransStatusEnum transStatusEnum) {
-        if (transStatusEnum != TransStatusEnum.TRADE_SUCCESSED_SERVER) {
+        if (transStatusEnum != TransStatusEnum.TRADE_SUCCESS_SERVER) {
             return 0;
         }
         PaymentRechargePresent rechargePresent = paymentDataAccessManager.getRechargePresent(transactionLogger.getTransTotalAmount());

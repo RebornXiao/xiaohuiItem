@@ -28,16 +28,15 @@ public class MarketRemoteService extends BasicRemoteService {
         return response;
     }
 
-    public static JSONObject notifyShelvesData(long passportId, int dataType, String content) {
+    public static JSONObject notifyShelvesData(long passportId, String content) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("passportId", String.valueOf(passportId));
-        parameters.put("dataType", String.valueOf(dataType));
         parameters.put("content", content);
 
         String url = ConfigFactory.getDomainNameConfig().marketRemoteURL + "market/message/callback/notifyShelvesData.do";
         JSONObject response = executor(url, parameters);
 
-        logger.info(passportId + "[" + dataType + "]通知商店货架信息结果：" + response);
+        logger.info(passportId + " -- 通知商店货架信息结果：" + response);
         return response;
     }
 }

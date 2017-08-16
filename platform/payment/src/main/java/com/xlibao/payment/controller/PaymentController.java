@@ -368,7 +368,7 @@ public class PaymentController extends BasicWebService {
      *     <b>返回结果：</b>
      *          <b>datas</b> - JSONArray 提现记录数据集合，单个元素为JSONObject结构
      *              <b>id</b> - long 交易记录ID
-     *              <b>transStatus</b> - int 交易状态，0(默认值) -- 审核中；具体参考：{@link com.xlibao.common.constant.payment.TransStatusEnum}，其中{@link com.xlibao.common.constant.payment.TransStatusEnum#TRADE_SUCCESSED_SERVER}表示交易完成
+     *              <b>transStatus</b> - int 交易状态，0(默认值) -- 审核中；具体参考：{@link com.xlibao.common.constant.payment.TransStatusEnum}，其中{@link com.xlibao.common.constant.payment.TransStatusEnum#TRADE_SUCCESS_SERVER}表示交易完成
      *              <b>bankName</b> - String 银行名字
      *              <b>bankSimpleName</b> - String 银行简称
      *              <b>transAmount</b> - long 交易额度，单位：分

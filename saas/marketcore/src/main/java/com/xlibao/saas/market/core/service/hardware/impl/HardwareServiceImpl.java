@@ -26,7 +26,7 @@ public class HardwareServiceImpl implements HardwareService {
 
         logger.info("【接收到来自硬件的消息】Message type is " + messageType + "; content " + content + "; " + session.netTrack());
         // 正式消息内容(过滤了消息起始符、消息类型、消息结束符)
-        content = content.substring(8, content.length() - 4);
+        content = content.substring(8);
         if (HardwareMessageType.WARN.equals(messageType)) { // 心跳或其他警告消息
             return;
         }

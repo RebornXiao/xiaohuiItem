@@ -1,7 +1,8 @@
 package com.xlibao.saas.market.data.mapper.market;
 
-import com.xlibao.saas.market.data.model.MarketAccessLogger;
 import com.xlibao.market.data.model.MarketEntry;
+import com.xlibao.market.data.model.MarketShelvesManager;
+import com.xlibao.saas.market.data.model.MarketAccessLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -21,6 +22,8 @@ public class MarketDataAccessManager {
     private MarketCabinetMapper cabinetMapper;
     @Autowired
     private MarketAccessLoggerMapper accessLoggerMapper;
+    @Autowired
+    private MarketShelvesManagerMapper shelvesManagerMapper;
 
     public List<MarketEntry> loaderMarkets() {
         return entryMapper.loaderMarkets();
@@ -48,5 +51,9 @@ public class MarketDataAccessManager {
 
     public int searchMarketsCount(MarketEntry searchModel) {
         return entryMapper.searchMarketsCount(searchModel);
+    }
+
+    public int createShelves(MarketShelvesManager shelvesManager) {
+        return shelvesManagerMapper.createShelves(shelvesManager);
     }
 }

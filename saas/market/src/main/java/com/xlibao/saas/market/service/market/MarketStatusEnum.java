@@ -9,6 +9,7 @@ public enum MarketStatusEnum {
     NORMAL(1, "正常"),
     CLOSE(2, "关闭"),
     MAINTAIN(3, "维护中"),
+    INITIALIZATION(4, "初始化"),
     ;
 
     private int key;

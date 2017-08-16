@@ -48,7 +48,7 @@ public class BalancePayment {
     private void decreaseCurrencyAmount(long passportId, String prePaymentId) {
         long tid = Long.parseLong(prePaymentId.substring(8));
         PaymentTransactionLogger transactionLogger = paymentDataAccessManager.getTransactionLoggerById(tid);
-        if ((transactionLogger.getTransStatus() & TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey()) == TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey()) {
+        if ((transactionLogger.getTransStatus() & TransStatusEnum.TRADE_SUCCESS_SERVER.getKey()) == TransStatusEnum.TRADE_SUCCESS_SERVER.getKey()) {
             throw new XlibaoRuntimeException("交易已为支付状态，请不要重复支付！");
         }
         long transTotalAmount = transactionLogger.getTransTotalAmount();
@@ -68,14 +68,14 @@ public class BalancePayment {
         }
         // 修改对象的状态
         transactionLogger.setPassportId(passportId);
-        transactionLogger.setTransStatus(transactionLogger.getTransStatus() | TransStatusEnum.TRADE_SUCCESSED_SERVER.getKey());
+        transactionLogger.setTransStatus(transactionLogger.getTransStatus() | TransStatusEnum.TRADE_SUCCESS_SERVER.getKey());
         transactionLogger.setChannelUserId(String.valueOf(passportId));
         transactionLogger.setChannelUserName(passport.getDefaultName());
         transactionLogger.setChannelTradeNumber(transactionLogger.getTransSequenceNumber());
         transactionLogger.setTransCreateTime(transactionLogger.getCreateTime());
         transactionLogger.setPaymentTime(new Date());
         transactionLogger.setChannelRemark("");
-        transactionEventListenerManager.notifyFinishPayment(transactionLogger, TransStatusEnum.TRADE_SUCCESSED_SERVER, true);
+        transactionEventListenerManager.notifyFinishPayment(transactionLogger, TransStatusEnum.TRADE_SUCCESS_SERVER, true);
 
         currencyEventManager.notifyOffsetCurrencyAmount(transactionLogger.getPassportId(), transactionLogger.getChannelId(), currencyTypeEnum.getKey(), currencyAccount.getCurrentAmount(), offsetAmount,
                 (currencyAccount.getCurrentAmount() + offsetAmount), transactionLogger.getPaymentType(), transactionLogger.getTransTitle(), transactionLogger.getTransType(), transactionLogger.getTransSequenceNumber());

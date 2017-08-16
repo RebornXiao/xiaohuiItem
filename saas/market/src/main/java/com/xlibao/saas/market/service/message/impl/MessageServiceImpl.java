@@ -5,8 +5,9 @@ import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.constant.order.OrderStatusEnum;
-import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.market.data.model.MarketEntry;
+import com.xlibao.saas.market.data.DataAccessFactory;
+import com.xlibao.saas.market.service.market.ShelvesService;
 import com.xlibao.saas.market.service.message.MessageService;
 import com.xlibao.saas.market.service.order.OrderNotifyTypeEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,8 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
 
     @Autowired
     private DataAccessFactory dataAccessFactory;
+    @Autowired
+    private ShelvesService shelvesService;
 
     @Override
     public JSONObject notifyShipment() {
@@ -36,9 +39,11 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
     @Override
     public JSONObject notifyShelvesData() {
         long passportId = getLongParameter("passportId");
-        String shelvesData = getUTF("shelvesData");
+        String content = getUTF("content");
 
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarketForPassport(passportId);
+
+        shelvesService.builderShelvesData(marketEntry, content);
         return success();
     }
 }
