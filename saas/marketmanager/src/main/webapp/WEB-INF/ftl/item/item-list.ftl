@@ -123,7 +123,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/manager/item/itemList.do?searchType=${searchType}&searchKey=${searchKey}" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/item/itemList.do?searchType=${searchType}&searchKey=${searchKey}" />
                 </div>
             </div>
 
@@ -179,12 +179,12 @@
                         swal("包括了特殊符号，无法搜索!");
                         return;
                     }
-                    location.href = "${base}/market/manager/item/itemList.do?searchType=" + searchTypeValue + "&searchKey=" + sValue;
+                    location.href = "${base}/item/itemList.do?searchType=" + searchTypeValue + "&searchKey=" + sValue;
                 });
 
                 //添加新品
                 $("#addBtn").on('click', function () {
-                    location.href = "${base}/market/manager/item/itemEdit.do";
+                    location.href = "${base}/item/itemEdit.do";
                 });
 
             <#if (itemlist?size > 0)>
@@ -192,7 +192,7 @@
                 //单项编辑
                 _itemListTable.find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/manager/item/itemEdit.do?id=" + $(this).attr("data_id");
+                        location.href = "${base}/item/itemEdit.do?id=" + $(this).attr("data_id");
                     });
                 });
 

@@ -3,7 +3,7 @@
 <!-- ============================================================== -->
 
 <!-- Plugins css -->
-<link href="${base}/assets/plugins/nestable/jquery.nestable.css" rel="stylesheet">
+<link href="${res}/assets/plugins/nestable/jquery.nestable.css" rel="stylesheet">
 
 <div class="content-page">
     <!-- Start content -->
@@ -75,15 +75,15 @@
         </div>
 
         <!-- 拖动排序js -->
-        <script src="${base}/assets/plugins/nestable/jquery.nestable.js"></script>
-        <script src="${base}/assets/pages/nestable.js"></script>
+        <script src="${res}/assets/plugins/nestable/jquery.nestable.js"></script>
+        <script src="${res}/assets/pages/nestable.js"></script>
 
         <script type="text/javascript">
 
             $(document).ready(function () {
                 $("#itSelect").on("change", function () {
                     var obj = $(this).children('option:selected');
-                    location.href = "${base}/market/manager/item/itemTypeSort.do?id=" + obj.attr("data_id");
+                    location.href = "${base}/item/itemTypeSort.do?id=" + obj.attr("data_id");
                 });
                 $("#saveBtn").on("click", function () {
                     var str = "";
@@ -92,7 +92,7 @@
                     });
 
                     //保存
-                    $.post("${base}/market/manager/item/itemTypeSortSave.do?sortIds="+str, function(data) {
+                    $.post("${base}/item/itemTypeSortSave.do?sortIds="+str, function(data) {
                         //重新刷新
                         if(data.code == "0") {
                             swal("提示", data.msg, "success");

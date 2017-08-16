@@ -14,7 +14,7 @@
         <!-- LOGO -->
         <div class="topbar-left">
             <div class="text-center">
-                <a href="${base}/market/manager/passport/index.do" class="logo"><i class="fa fa-windows"></i> <span>智能超市后台管理系统</span> </a>
+                <a href="${base}/passport/index.do" class="logo"><i class="fa fa-windows"></i> <span>智能超市后台管理系统</span> </a>
             </div>
         </div>
 
@@ -58,7 +58,7 @@
                 <ul>
 
                     <li>
-                        <a href="${base}/market/manager/passport/index.do" class="waves-effect waves-primary <#if tab=="index"> active </#if> "><i
+                        <a href="${base}/passport/index.do" class="waves-effect waves-primary <#if tab=="index"> active </#if> "><i
                                 class="fa fa-home"></i><span> 首  页 </span></a>
                     </li>
 
@@ -68,7 +68,7 @@
                             <span> 订单管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="order"> style="display: block;" </#if> >
-                            <li <#if tab_child=="orders"> class="active" </#if> ><a href="${base}/market/manager/order/orders.do">订单列表</a></li>
+                            <li <#if tab_child=="orders"> class="active" </#if> ><a href="${base}/order/orders.do">订单列表</a></li>
                         </ul>
                     </li>
 
@@ -77,9 +77,9 @@
                                 class="fa fa-cubes"></i><span> 商品管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="item"> style="display: block;" </#if> >
-                            <li <#if tab_child=="itemplates"> class="active" </#if> ><a href="${base}/market/manager/item/itemList.do">商品模板库</a></li>
-                            <li <#if tab_child=="itypes"> class="active" </#if> ><a href="${base}/market/manager/item/itemTypes.do">商品分类</a></li>
-                            <li <#if tab_child=="iunits"> class="active" </#if> ><a href="${base}/market/manager/item/itemUnits.do">商品单位</a></li>
+                            <li <#if tab_child=="itemplates"> class="active" </#if> ><a href="${base}/item/itemList.do">商品模板库</a></li>
+                            <li <#if tab_child=="itypes"> class="active" </#if> ><a href="${base}/item/itemTypes.do">商品分类</a></li>
+                            <li <#if tab_child=="iunits"> class="active" </#if> ><a href="${base}/item/itemUnits.do">商品单位</a></li>
                         </ul>
                     </li>
 
@@ -88,9 +88,9 @@
                             <span> 店铺管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="store"> style="display: block;" </#if> >
-                            <li <#if tab_child=="markets"> class="active" </#if> ><a href="${base}/market/manager/market/markets.do">店铺列表</a></li>
-                            <li><a href="${base}/market/manager/item/storelist.do">店铺商品</a></li>
-                            <li><a href="${base}/market/manager/item/streetlist.do">街道信息</a></li>
+                            <li <#if tab_child=="markets"> class="active" </#if> ><a href="${base}/market/markets.do">店铺列表</a></li>
+                            <li><a href="${base}/item/storelist.do">店铺商品</a></li>
+                            <li><a href="${base}/item/streetlist.do">街道信息</a></li>
                         </ul>
                     </li>
 
@@ -99,7 +99,7 @@
                                 class="fa fa-users"></i><span> 用户管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="user"> style="display: block;" </#if> >
-                            <li><a href="${base}/market/manager/passport/userlist.do">用户列表</a></li>
+                            <li><a href="${base}/passport/userlist.do">用户列表</a></li>
                             <li><a href="form-advanced.html">活跃用户</a></li>
                             <li><a href="form-validation.html">沉默用户</a></li>
                         </ul>

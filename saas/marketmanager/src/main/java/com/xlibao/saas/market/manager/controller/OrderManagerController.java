@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author chinahuangxc on 2017/7/10.
  */
 @Controller
-@RequestMapping(value = "/market/manager/order")
+@RequestMapping(value = "/marketmanager/order")
 public class OrderManagerController extends BaseController {
 
     @Autowired
@@ -27,8 +27,8 @@ public class OrderManagerController extends BaseController {
     public String searchPageOrders(ModelMap map) {
 
         //店铺ID
-        long marketId = getLongParameter("marketId", 0);
-        int orderState = getIntParameter("orderState", 0);
+        long marketId = getLongParameter("marketId", -1);
+        int orderState = getIntParameter("orderState", -1);
         String startTime = getUTF("sTime", "");
         String endTime = getUTF("eTime", "");
         String searchType = getUTF("searchType", "");

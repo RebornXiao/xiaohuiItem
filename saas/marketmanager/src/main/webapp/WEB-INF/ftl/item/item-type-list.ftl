@@ -116,7 +116,7 @@
             <div class="row small_page">
                 <div class="col-sm-8">
                     <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/manager/item/itemTypes.do?searchKey=${searchKey}" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/item/itemTypes.do?searchKey=${searchKey}" />
                 </div>
             </div>
         </#if>
@@ -141,25 +141,25 @@
                         swal("包括了特殊符号，无法搜索!");
                         return;
                     }
-                    location.href = "${base}/market/manager/item/itemTypes.do?searchKey=" + sValue;
+                    location.href = "${base}/item/itemTypes.do?searchKey=" + sValue;
                 });
 
                 //添加分类
                 $("#addBtn").on('click', function () {
-                    location.href = "${base}/market/manager/item/itemTypeEdit.do";
+                    location.href = "${base}/item/itemTypeEdit.do";
                 });
 
                 //添加分类
                 $("#sortBtn").on('click', function () {
-                    location.href = "${base}/market/manager/item/itemTypeSort.do";
+                    location.href = "${base}/item/itemTypeSort.do";
                 });
 
             <#if itemType?exists >
                 $("#pEditBtn").on('click', function () {
-                    location.href = "${base}/market/manager/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
+                    location.href = "${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
                 });
                 $("#pAddChildBtn").on('click', function () {
-                    location.href = "${base}/market/manager/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
+                    location.href = "${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
                 });
             </#if>
 
@@ -168,21 +168,21 @@
                 //单项编辑
                 $("#itemTypeTable").find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/manager/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
+                        location.href = "${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
                     });
                 });
 
                 //单项添加子类
                 $("#itemTypeTable").find('button[id=addChildBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/manager/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
+                        location.href = "${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
                     });
                 });
 
                 //单项查看子类
                 $("#itemTypeTable").find('button[id=seeChildBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/manager/item/itemTypes.do?id=" + $(this).attr("data_id");
+                        location.href = "${base}/item/itemTypes.do?id=" + $(this).attr("data_id");
                     });
                 });
 

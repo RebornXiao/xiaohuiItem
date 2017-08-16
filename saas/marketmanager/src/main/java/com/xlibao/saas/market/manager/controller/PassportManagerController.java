@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  * @author chinahuangxc on 2017/7/10.
  */
 @Controller
-@RequestMapping(value = "/market/manager/passport")
+@RequestMapping(value = "/marketmanager/passport")
 public class PassportManagerController extends BaseController {
 
     @RequestMapping("/login")

@@ -161,7 +161,7 @@
                     }
 
                     //保存
-                    $.post("${base}/market/manager/item/itemTypeEditSave.do", function(data) {
+                    $.post("${base}/item/itemTypeEditSave.do", function(data) {
 
                         <#if !(itemType?exists) >
                         $("#itName").val("");

@@ -10,6 +10,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,19 +29,21 @@ public class ModelAndViewAop extends BaseController {
             return point.proceed(args);
         } catch (XlibaoIllegalArgumentException ex) {
             ex.printStackTrace();
-            return createView(ex.getMessage());
+            fali(ex.getMessage());
+            return LogicConfig.FTL_ERROR;
         } catch (XlibaoRuntimeException ex) {
             ex.printStackTrace();
-            return createView(ex.getMessage());
+            fali(ex.getMessage());
+            return LogicConfig.FTL_ERROR;
         } catch (Throwable cause) {
             cause.printStackTrace();
-            return createView("系统错误，请稍后重试！");
+            fali("系统错误，请稍后重试！");
+            return LogicConfig.FTL_ERROR;
         }
     }
 
-    ModelAndView createView(String error) {
-        Map map = new HashMap<>();
-        map.put("error", error);
-        return new ModelAndView(LogicConfig.FTL_ERROR, map);
+    void fali(String error) {
+        HttpServletRequest request = getHttpServletRequest();
+        request.setAttribute("error", error);
     }
 }

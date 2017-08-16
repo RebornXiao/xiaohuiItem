@@ -1,6 +1,7 @@
 package com.xlibao.saas.market.manager.utils;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 
 import java.text.SimpleDateFormat;
@@ -45,8 +46,18 @@ public class Utils {
         }
     }
 
-    public static void append(StringBuilder sb, String key, String value) {
-        if (value != null) {
+    public static void appendStr(StringBuilder sb, String key, String value) {
+        if (value != null && value.length() > 0) {
+            sb.append("&").append(key).append("=").append(value);
+        }
+    }
+    public static void appendInt(StringBuilder sb, String key, int value) {
+        if (value != -1) {
+            sb.append("&").append(key).append("=").append(value);
+        }
+    }
+    public static void appendLong(StringBuilder sb, String key, long value) {
+        if (value != -1) {
             sb.append("&").append(key).append("=").append(value);
         }
     }

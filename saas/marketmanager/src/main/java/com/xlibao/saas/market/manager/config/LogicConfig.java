@@ -43,5 +43,8 @@ public class LogicConfig {
     public static final String FTL_ORDER_LIST = "order/order-list";
 
     public static final String FTL_MARKET_LIST = "market/market-list";
+    public static final String FTL_MARKET_EDIT = "market/market-edit";
+    public static final String FTL_MARKET_ITEM_EDIT = "market/market-item-edit";
+    public static final String FTL_MARKET_ITEM_LIST = "market/market-item-list";
 
 }

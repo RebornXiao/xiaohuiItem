@@ -369,8 +369,6 @@ public class OrderController {
         return orderService.batchResetOverdueOrderStatus();
     }
 
-
-
     @ResponseBody
     @RequestMapping(value = "searchPageOrders")
     public JSONObject searchPageOrders() {

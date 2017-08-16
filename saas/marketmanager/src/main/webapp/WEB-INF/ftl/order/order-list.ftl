@@ -127,7 +127,7 @@
                                 <td>${order.id?c}</td>
                                 <td>${order.orderSequenceNumber}</td>
                                 <td>店铺名：${order.shippingNickName}<br>电话：${order.shippingPhone}</td>
-                                <td>下单用户：${order.receiptNickName}<br>电话：${order.receiptPhone}</td>
+                                <td>用户：${order.receiptNickName}<br>电话：${order.receiptPhone}<br><#if order.deliverType != 1>地址：</#if></td>
                                 <td><#if order.deliverType == 1><span class="label label-success">自提</span><#else>
                                     <#if order.status < 16>
                                         <span class="label label-success">未有快递员接单</span>
@@ -174,7 +174,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/manager/order/orders.do?searchType=${searchType}&searchKey=${searchKey}&marketId=${marketId}&orderState=${orderState}&sTime=${sTime}&eTime=${eTime}" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/order/orders.do?searchType=${searchType}&searchKey=${searchKey}&marketId=${marketId}&orderState=${orderState}&sTime=${sTime}&eTime=${eTime}" />
                 </div>
             </div>
         </#if>
@@ -182,7 +182,7 @@
         </div>
 
 
-        <script type="text/javascript" src="${base}/assets/plugins/jedate/jedate.min.js"></script>
+        <script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
         <script type="text/javascript">
 
             $(document).ready(function () {
@@ -259,7 +259,7 @@
                     var sTime = _startTime.val();
                     var eTime = _endTime.val();
 
-                    location.href = "${base}/market/manager/order/orders.do?searchType="
+                    location.href = "${base}/order/orders.do?searchType="
                             +sType+"&searchKey="
                             +sValue+"&marketId="
                             +marketId+"&orderState="

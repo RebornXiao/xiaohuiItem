@@ -1117,8 +1117,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     @Override
     public JSONObject searchPageOrders() {
         //店铺ID
-        long marketId = getLongParameter("marketId", 0);
-        int orderState = getIntParameter("orderState", 0);
+        long marketId = getLongParameter("marketId", -1);
+        int orderState = getIntParameter("orderState", -1);
         String startTime = getUTF("sTime", null);
         String endTime = getUTF("eTime", null);
         String searchType = getUTF("searchType", null);

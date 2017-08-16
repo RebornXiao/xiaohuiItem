@@ -135,7 +135,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                     <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/manager/market/markets.do" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/markets.do" />
                 </div>
             </div>
         </#if>

@@ -1,6 +1,12 @@
 <!-- ============================================================== -->
 <!-- Start right Content here -->
 <!-- ============================================================== -->
+
+<link href="${res}/assets/plugins/bootstrap-select2/select2.min.css" rel="stylesheet" type="text/css">
+
+<script src="${res}/assets/plugins/bootstrap-select2/select2.min.js"></script>
+<script src="${res}/assets/plugins/bootstrap-select2/zh-CN.js"></script>
+
 <div class="content-page">
     <!-- Start content -->
     <div class="content">
@@ -169,28 +175,32 @@
         <script type="text/javascript">
             $(document).ready(function () {
 
+                $("#typeSelect").select2();
+
                 $("#itemName").focus();
 
                 //添加类型
                 $("#addTypeBtn").on('click', function () {
-                    location.href = "${base}/market/manager/item/itemTypeEdit.do";
+                    location.href = "${base}/marketmanager/item/itemTypeEdit.do";
                 });
 
                 //添加单位
                 $("#addUnitBtn").on('click', function () {
-                    location.href = "${base}/market/manager/item/itemUnitEdit.do";
+                    location.href = "${base}/marketmanager/item/itemUnitEdit.do";
                 });
 
                 $("#backBtn").on('click', function () {
                     history.back(-1);
                 });
 
+                $("#typeSelect").select2();
+
                 //添加商品
                 $("#saveBtn").on('click', function () {
 
                     //检测所有项
 
-                    <#--$.post("${base}/market/manager/item/itemUnitEditSave.do?id="+itemUnitId+"&title="+title+"&status="+status, function(data) {-->
+                    <#--$.post("${base}/item/itemUnitEditSave.do?id="+itemUnitId+"&title="+title+"&status="+status, function(data) {-->
                         <#--//重新刷新-->
                         <#--if(data.code == "0") {-->
                             <#--swal("提示", "操作成功", "success");-->

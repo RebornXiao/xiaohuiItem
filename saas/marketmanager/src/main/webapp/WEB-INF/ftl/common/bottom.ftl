@@ -18,15 +18,15 @@
 
 
 <!-- 导航相关的效果js -->
-<script src="${base}/assets/js/detect.js"></script>
-<script src="${base}/assets/js/fastclick.js"></script>
-<script src="${base}/assets/js/jquery.slimscroll.js"></script>
-<script src="${base}/assets/js/jquery.core.js"></script>
-<script src="${base}/assets/js/jquery.app.js"></script>
+<script src="${res}/assets/js/detect.js"></script>
+<script src="${res}/assets/js/fastclick.js"></script>
+<script src="${res}/assets/js/jquery.slimscroll.js"></script>
+<script src="${res}/assets/js/jquery.core.js"></script>
+<script src="${res}/assets/js/jquery.app.js"></script>
 
 <!-- Sweet-Alert  -->
-<script src="${base}/assets/plugins/sweetalert/dist/sweetalert.min.js"></script>
-<script src="${base}/assets/pages/jquery.sweet-alert.init.js"></script>
+<script src="${res}/assets/plugins/sweetalert/dist/sweetalert.min.js"></script>
+<script src="${res}/assets/pages/jquery.sweet-alert.init.js"></script>
 
 </body>
 

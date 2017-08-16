@@ -97,7 +97,7 @@
                         status = 1;
                     }
 
-                    $.post("${base}/market/manager/item/itemUnitEditSave.do?id=" + itemUnitId + "&title=" + title + "&status=" + status, function (data) {
+                    $.post("${base}/item/itemUnitEditSave.do?id=" + itemUnitId + "&title=" + title + "&status=" + status, function (data) {
 
                         //添加完成，清空，允许重新再添加
                     <#if !(itemUnit?exists) >

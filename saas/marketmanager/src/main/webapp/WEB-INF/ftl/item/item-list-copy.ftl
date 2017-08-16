@@ -182,12 +182,12 @@
                         swal("请输入商品" + _searchMenu.attr("search_name") + "进行搜索!");
                         return;
                     }
-                    location.href = "${base}/market/manager/item/itemList.do?searchType=" + searchTypeValue + "&searchKey=" + sValue;
+                    location.href = "${base}/marketmanager/item/itemList.do?searchType=" + searchTypeValue + "&searchKey=" + sValue;
                 });
 
                 //添加新品
                 $("#addBtn").on('click', function () {
-                    location.href = "${base}/market/manager/item/itemEdit.do";
+                    location.href = "${base}/marketmanager/item/itemEdit.do";
                 });
 
             <#if (itemlist?size > 0)>
@@ -219,7 +219,7 @@
                 //单项编辑
                 _itemListTable.find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/manager/item/itemEdit.do?id=" + $(this).attr("data_id");
+                        location.href = "${base}/marketmanager/item/itemEdit.do?id=" + $(this).attr("data_id");
                     });
                 });
 

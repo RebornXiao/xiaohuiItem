@@ -24,7 +24,7 @@ import java.util.Map;
  * @author chinahuangxc on 2017/7/10.
  */
 @Controller
-@RequestMapping(value = "/market/manager/item")
+@RequestMapping(value = "/marketmanager/item")
 public class ItemManagerController extends BaseController {
 
     @Autowired

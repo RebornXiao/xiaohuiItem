@@ -21,20 +21,25 @@ public class OrderManagerServiceImpl implements OrderManagerService {
     @Override
     public JSONObject searchPageOrders(long marketId, int orderState, String startTime, String endTime, String searchType, String searchKey, int pageSize, int pageIndex) {
         StringBuilder sb = new StringBuilder();
-        sb.append(ConfigFactory.getDomainNameConfig().orderRemoteURL).append("/order/searchPageOrders?")
-                .append("marketId=").append(marketId)
-                .append("&orderState=").append(orderState)
-                .append("&pageSize=").append(pageSize)
-                .append("&pageIndex=").append(pageIndex);
+        sb.append(ConfigFactory.getDomainNameConfig().orderRemoteURL).append("/order/searchPageOrders?");
         try {
             //由于日期有空格，用HttpRequest.get时，需要将带空格的字符串，转为 UTF-8
-            Utils.append(sb, "startTime", URLEncoder.encode(startTime, "UTF-8"));
-            Utils.append(sb, "endTime", URLEncoder.encode(endTime, "UTF-8"));
+            Utils.appendStr(sb, "startTime", URLEncoder.encode(startTime, "UTF-8"));
+            Utils.appendStr(sb, "endTime", URLEncoder.encode(endTime, "UTF-8"));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        Utils.append(sb, "searchType", searchType);
-        Utils.append(sb, "searchKey", searchKey);
+
+        Utils.appendLong(sb, "marketId", marketId);
+        Utils.appendInt(sb, "orderState", orderState);
+        Utils.appendInt(sb, "pageSize", pageSize);
+        Utils.appendInt(sb, "pageIndex", pageIndex);
+
+        Utils.appendStr(sb, "searchType", searchType);
+        Utils.appendStr(sb, "searchKey", searchKey);
+
+        Utils.appendInt(sb, "pageSize", pageSize);
+        Utils.appendInt(sb, "pageIndex", pageIndex);
 
         String json = HttpRequest.get(sb.toString());
         return JSONObject.parseObject(json);

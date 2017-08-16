@@ -2,6 +2,14 @@
 <!-- Start right Content here -->
 <!-- ============================================================== -->
 
+<link href="${res}/assets/plugins/bootstrap-select2/select2.min.css" rel="stylesheet" type="text/css">
+
+<script src="${res}/assets/plugins/address/area.js"></script>
+<script src="${res}/assets/plugins/address/location.js"></script>
+
+<script src="${res}/assets/plugins/bootstrap-select2/select2.min.js"></script>
+<script src="${res}/assets/plugins/bootstrap-select2/zh-CN.js"></script>
+
 
 <div class="content-page">
     <!-- Start content -->
@@ -22,60 +30,64 @@
             </div>
 
             <div class="card-box">
-                <h4 class="header-title m-t-0"><b>搜索订单</b></h4>
-                <form class="form-inline" role="form">
-
-                    <div class="form-group m-l-15">
-                        <label for="exampleInputName2">地区选择：</label>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">省</option>
-                        </select>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">市</option>
-                        </select>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">区</option>
-                        </select>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">镇</option>
-                        </select>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">街道</option>
-                        </select>
+                <div class="row">
+                    <div class="col-sm-2">
+                        <button id="addBtn" type="button"
+                                class="btn waves-effect waves-light btn-primary">添加店铺</button>
                     </div>
+                    <div class="col-sm-10">
+                        <h4 class="header-title m-t-0"><b>搜索店铺</b></h4>
+                        <form class="form-inline" role="form">
 
-                    <div class="form-group m-l-15">
-                        <label for="exampleInputName2">店铺类型：</label>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">自动化</option>
-                        </select>
-                    </div>
+                            <div class="form-group">
+                                <label for="exampleInputName2">地区选择：</label>
+                                <select id="loc_province" style="width:120px;"></select>
+                                <select id="loc_city" style="width:120px; margin-left: 10px"></select>
+                                <select id="loc_town" style="width:120px;margin-left: 10px"></select>
+                            </div>
 
-                    <div class="form-group m-l-15">
-                        <label for="exampleInputName2">店铺状态：</label>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">正常</option>
-                        </select>
-                    </div>
+                        <#--<div class="form-group m-l-15">-->
+                        <#--<label for="exampleInputName2">店铺类型：</label>-->
+                        <#--<select class="form-control" id="itSelect" style="width:150px">-->
+                        <#--<option data_id="1">自营</option>-->
+                        <#--<option data_id="2">加盟</option>-->
+                        <#--</select>-->
+                        <#--</div>-->
 
-                    <div class="form-group m-l-15">
-                        <label for="exampleInputName2">店铺配送方式：</label>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">仅自提</option>
-                        </select>
-                    </div>
+                            <div class="form-group m-l-15">
+                                <label for="exampleInputName2">店铺状态：</label>
+                                <select class="form-control" id="itSelect" style="width:150px">
+                                    <option data_id="1">正常</option>
+                                    <option data_id="3">维护</option>
+                                    <option data_id="2">关店</option>
+                                    <option data_id="0">无效</option>
+                                </select>
+                            </div>
 
-                    <div class="input-group m-l-15">
-                        <input type="text" id="searchKeyTxt"
-                               class="form-control" placeholder="输入店铺名称搜索">
+                            <div class="form-group m-l-15">
+                                <label for="exampleInputName2">店铺配送方式：</label>
+                                <select class="form-control" id="itSelect" style="width:150px">
+                                    <option data_id="1">仅自提</option>
+                                    <option data_id="2">仅送货</option>
+                                    <option data_id="3">可自提也可送货</option>
+                                    <option data_id="4">AI(智能)</option>
+                                    <option data_id="5">可自提也可AI配送</option>
+                                </select>
+                            </div>
+
+                            <div class="input-group m-l-15">
+                                <input type="text" id="searchKeyTxt"
+                                       class="form-control" placeholder="输入店铺名称搜索">
                             <span class="input-group-btn">
                                     <button id="searchBtn" type="button"
                                             class="btn waves-effect waves-light btn-primary"><i
                                             class="fa fa-search"></i></button>
                             </span>
-                    </div>
+                            </div>
 
-                </form>
+                        </form>
+                    </div>
+                </div>
             </div>
 
 
@@ -100,30 +112,106 @@
                         </thead>
                         <tbody id="marketListTable">
 
-        <#if (markets?size > 0)>
-            <#list markets as market>
-                        <tr>
-                            <td>序号</td>
-                            <td>序号</td>
-                            <td>序号</td>
-                            <td>序号</td>
-                            <td>序号</td>
-                            <td>序号</td>
-                            <td>序号</td>
-                            <td>序号</td>
-                            <td>序号</td>
-                            <td>序号</td>
-                            <td>序号</td>
-                        </tr>
+                        <#if (markets?size > 0) >
+                            <#list markets as market>
+                            <tr>
+                                <td>${market.id?c}</td>
+                                <td>${market.name}</td>
+                                <td>自营</td>
+                                <td>
+                                    <#if market.status == 0>
+                                        <span class="label label-default">无效</span>
+                                    </#if>
+                                    <#if market.status == 1>
+                                        <span class="label label-success">正常</span>
+                                    </#if>
+                                    <#if market.status == 2>
+                                        <span class="label label-default">关店</span>
+                                    </#if>
+                                    <#if market.status == 3>
+                                        <span class="label label-danger">维护</span>
+                                    </#if>
+                                </td>
+                                <td>
+                                    <#if market.province??>
+                                    ${market.province}&nbsp;
+                                    </#if>
+                                    <#if market.city??>
+                                    ${market.city}&nbsp;
+                                    </#if>
+                                    <#if market.district??>
+                                    ${market.district}&nbsp;
+                                    </#if>
+                                    <#if market.street??>
+                                    ${market.street}&nbsp;
+                                    </#if>
+                                    <#if market.streetName?? >
+                                    ${market.streetName}&nbsp;
+                                    </#if>
+                                    <#if market.streetNumber?? >
+                                    ${market.streetNumber}&nbsp;
+                                    </#if>
+                                </td>
+                                <td><#if market.address??>
+                                ${market.address}&nbsp;&nbsp;
+                                </#if></td>
+                                <td>
+                                    <#if market.deliveryMode == 1>
+                                        仅自提
+                                    </#if>
+                                    <#if market.deliveryMode == 2>
+                                        仅送货
+                                    </#if>
+                                    <#if market.deliveryMode == 3>
+                                        可自提也可送货
+                                    </#if>
+                                    <#if market.deliveryMode == 4>
+                                        AI(智能)
+                                    </#if>
+                                    <#if market.deliveryMode == 5>
+                                        可自提也可AI配送
+                                    </#if>
+                                </td>
+                                <td>
+                                    <#if market.coveringDistance == -1>
+                                        无限制(全国)
+                                    </#if>
+                                    <#if market.coveringDistance == 0>
+                                        不对外
+                                    </#if>
+                                    <#if (market.coveringDistance > 0)>
+                                    ${market.coveringDistance?c}米
+                                    </#if>
+                                </td>
+                                <td>
+                                    <#if (market.deliveryCost > 0)>
+                                        <#assign dCost = market.deliveryCost/100 >
+                                    ${dCost}元
+                                    </#if>
+                                </td>
+                                <td><#if (market.deliveryCost > 0)>
+                                    ${market.createTime}
+                                </#if></td>
+                                <td>
+                                    <button id="editBtn" type="button"
+                                            class="btn waves-effect waves-light btn-warning btn-sm"
+                                            data_id="${market.id?c}">编辑
+                                    </button>
+                                    <button id="seeBtn" type="button"
+                                            class="btn waves-effect waves-light btn-pink btn-sm"
+                                            data_id="${market.id?c}">查看商品
+                                    </button>
+                                </td>
+                            </tr>
 
-            </#list>
-        <#else>
-        <tr>
-            <td colSpan="11" height="200px">
-                <p class="text-center">暂无任何数据</p>
-            </td>
-        </tr>
-        </#if>
+                            </#list>
+                        <#else>
+                        <tr>
+                            <td colSpan="11" height="200px">
+                                <p class="text-center">暂无任何数据</p>
+                            </td>
+                        </tr>
+                        </#if>
                         </tbody>
                     </table>
 
@@ -135,9 +223,45 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                     <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/manager/market/markets.do" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/markets.do" />
                 </div>
             </div>
         </#if>
             <!-- end container -->
         </div>
+
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+
+                var _marketListTable = $("#marketListTable");
+
+                //province , city , town
+
+                showLocation();
+
+                //添加
+                $("#addBtn").on('click', function () {
+                    location.href = "${base}/merketEdit.do";
+                });
+
+                <#if (markets?size > 0)>
+
+                    //单项编辑
+                    _marketListTable.find('button[id=editBtn]').each(function () {
+                        $(this).on('click', function () {
+                            location.href = "${base}/market/merketEdit.do?id=" + $(this).attr("data_id");
+                        });
+                    });
+
+                    //单项查看商品
+                    _marketListTable.find('button[id=seeBtn]').each(function () {
+                        $(this).on('click', function () {
+                            location.href = "${base}/market/merketItemList.do?id=" + $(this).attr("data_id");
+                        });
+                    });
+
+                </#if>
+            });
+        </script>

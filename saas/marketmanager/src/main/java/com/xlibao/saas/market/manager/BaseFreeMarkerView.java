@@ -10,7 +10,8 @@ import java.util.Map;
  */
 public class BaseFreeMarkerView extends FreeMarkerView {
 
-    private static final String CONTEXT_PATH = "base";
+    private static final String REQUEST_PATH = "base";
+    private static final String RES_PATH = "res";
 
     @Override
     protected void exposeHelpers(Map<String, Object> model,
@@ -30,8 +31,9 @@ public class BaseFreeMarkerView extends FreeMarkerView {
             model.put("userId", "0");
         }
 
+        model.put(RES_PATH, request.getContextPath());
         //设置base
-        model.put(CONTEXT_PATH, request.getContextPath());
+        model.put(REQUEST_PATH, request.getContextPath() + "/marketmanager");
         super.exposeHelpers(model, request);
     }
 }
