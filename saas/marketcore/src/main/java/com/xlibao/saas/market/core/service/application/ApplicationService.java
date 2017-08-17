@@ -8,6 +8,8 @@ import com.xlibao.io.service.netty.NettySession;
  */
 public interface ApplicationService {
 
+    void scanPickUp(String orderSequenceNumber);
+
     void logicMessageExecute(NettySession session, MessageInputStream message);
 
     void platformMessageExecute(NettySession session, MessageInputStream message);

@@ -18,6 +18,12 @@ public class LocationController {
     private LocationService locationService;
 
     @ResponseBody
+    @RequestMapping("loaderLocations")
+    public JSONObject loaderLocations() {
+        return locationService.loaderLocations();
+    }
+
+    @ResponseBody
     @RequestMapping("loaderProvinces")
     public JSONObject loaderProvinces() {
         return locationService.loaderProvinces();

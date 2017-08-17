@@ -7,6 +7,8 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface LocationService {
 
+    JSONObject loaderLocations();
+
     JSONObject loaderProvinces();
 
     JSONObject loaderCitys();

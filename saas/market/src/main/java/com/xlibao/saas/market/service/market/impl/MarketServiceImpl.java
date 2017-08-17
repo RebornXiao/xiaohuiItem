@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.datacache.location.LocationDataCacheService;
+import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketAccessLogger;
 import com.xlibao.market.data.model.MarketEntry;
@@ -12,6 +13,7 @@ import com.xlibao.saas.market.service.market.ChoiceMarketTypeEnum;
 import com.xlibao.saas.market.service.market.MarketErrorCodeEnum;
 import com.xlibao.saas.market.service.market.MarketFindTypeEnum;
 import com.xlibao.saas.market.service.market.MarketService;
+import com.xlibao.saas.market.service.support.remote.MarketShopRemoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +34,8 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
 
     @Autowired
     private DataAccessFactory dataAccessFactory;
+    @Autowired
+    private MarketShopRemoteService marketShopRemoteService;
 
     @Override
     public JSONObject findMarket() {
@@ -105,7 +109,10 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
     @Override
     public JSONObject initShelvesDatas() {
         long passportId = getLongParameter("passportId");
-        return null;
+
+        String content = HardwareMessageType.SHELVES + "CC";
+        marketShopRemoteService.shelvesMessage(passportId, content);
+        return success();
     }
 
     @Override

@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.io.entry.MessageInputStream;
 import com.xlibao.io.service.netty.NettySession;
+import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.market.protocol.ShopProtocol;
 import com.xlibao.saas.market.core.message.SessionManager;
 import com.xlibao.saas.market.core.message.client.HeartbeatCallable;
@@ -17,6 +18,15 @@ import org.slf4j.LoggerFactory;
 public class ApplicationServiceImpl implements ApplicationService {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationServiceImpl.class);
+
+    @Override
+    public void scanPickUp(String orderSequenceNumber) {
+        String content = HardwareMessageType.HARDWARE_MSG_START + HardwareMessageType.PICK_UP + orderSequenceNumber + HardwareMessageType.HARDWARE_MSG_END;
+
+        logger.info("【硬件消息】发送取货消息，消息内容：" + content);
+        // 发送消息到硬件处理
+        SessionManager.getInstance().sendHardwareMessage(content);
+    }
 
     @Override
     public void logicMessageExecute(NettySession session, MessageInputStream message) {
