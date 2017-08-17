@@ -39,4 +39,9 @@ public interface ItemTypeMapper {
     /** 根据 商品类型 名称 搜索 返回数量 */
     Integer searchItemTypeCountByName(@Param("searchKey") String searchKey);
 
+    //返回排序值最大的
+    ItemType getItemTypeSortMaxId();
+
+    void updateItemTypeSort(@Param("id") long id, @Param("sort") int sort);
+
 }

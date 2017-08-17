@@ -32,6 +32,8 @@ public interface ItemManagerService {
 
     public List<ItemType> getSortItemTypes(long parentItemTypeId);
 
+    public JSONObject itemTypeSortEditSave(String ids);
+
     public ItemType getItemType(long itemTypeId);
 
     public List<ItemType> getSelectItemTypes();

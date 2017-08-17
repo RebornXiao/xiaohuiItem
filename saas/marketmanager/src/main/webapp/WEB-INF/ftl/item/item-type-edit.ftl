@@ -141,7 +141,7 @@
                     $("#sBtn").hide();
                 </#if>
 
-                $("#itName").focus();
+                moveEnd($("#itName").get(0));
 
                 $("#backBtn").on('click', function () {
                     history.back(-1);

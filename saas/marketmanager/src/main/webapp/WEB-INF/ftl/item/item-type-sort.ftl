@@ -30,7 +30,7 @@
                         <div class="row">
                             <div class="col-sm-3"></div>
                             <div class="col-sm-3">
-                                <select class="form-control" id="itSelect">
+                                <select class="form-control" id="sortlist">
                                     <option data_id="0">排序所有一级分类</option>
                                 <#if itemTypes?exists && (itemTypes?size > 0)>
                                     <#list itemTypes as type>
@@ -54,11 +54,11 @@
                             <div class="col-sm-3"></div>
                             <div class="col-sm-6">
                                 <div class="dd" id="item_type_sort">
-                                    <ol id="sortList" class="dd-list">
+                                    <ol class="dd-list">
                                     <#if cItemTypes?exists && (cItemTypes?size > 0)>
                                         <#list cItemTypes as type>
-                                            <li class="dd-item" data-id="${type_index}" data_id="${type.id?c}">
-                                                <div class="dd-handle">${type.title}</div>
+                                            <li class="dd-item" data_sort="${type.sort}" data_id="${type.id?c}">
+                                                <div class="dd-handle">${type.title}   ${type.sort}   </div>
                                             </li>
                                         </#list>
                                     </#if>
@@ -76,30 +76,62 @@
 
         <!-- 拖动排序js -->
         <script src="${res}/assets/plugins/nestable/jquery.nestable.js"></script>
-        <script src="${res}/assets/pages/nestable.js"></script>
 
         <script type="text/javascript">
 
             $(document).ready(function () {
-                $("#itSelect").on("change", function () {
+
+                $("#item_type_sort").nestable();
+
+                $("#sortlist").on("change", function () {
                     var obj = $(this).children('option:selected');
                     location.href = "${base}/item/itemTypeSort.do?id=" + obj.attr("data_id");
                 });
+
                 $("#saveBtn").on("click", function () {
-                    var str = "";
-                    $("#sortList").find('li').each(function () {
-                        str = str + $(this).attr("data_id") + ", ";
+
+                    var dIndex = 0;
+                    var ids = "";
+
+                    $("#item_type_sort").find('li').each(function () {
+                        var v = $(this).attr("data_sort");
+                        if (dIndex != v) {
+                            ids = ids + $(this).attr("data_id") + "," + dIndex + ",";
+                        }
+                        dIndex = dIndex + 1;
                     });
 
+                    if(ids == "") {
+                        swal("没有任何改变");
+                        return;
+                    }
+
                     //保存
-                    $.post("${base}/item/itemTypeSortSave.do?sortIds="+str, function(data) {
-                        //重新刷新
-                        if(data.code == "0") {
-                            swal("提示", data.msg, "success");
+                    $.post("${base}/item/itemTypeSortEditSave.do", {ids:ids}, function(data) {
+
+                        if(data.code == 0) {
+                            //成功
+                            swal({
+                                title: "保存成功",
+                                text: "商品分类排序已变更",
+                                type: "success",
+                                confirmButtonText: "确定"
+                            }, function (ok) {
+                                location.reload(true);
+                            });
                         } else {
-                            swal(data.msg);
+                            //失败
+                            swal({
+                                title: "保存失败",
+                                text: "未知原因，商品分类排序保存失败",
+                                type: "error",
+                                confirmButtonText: "确定"
+                            }, function (ok) {
+                                location.reload(true);
+                            });
                         }
                     }, "json");
+
                 });
             });
 

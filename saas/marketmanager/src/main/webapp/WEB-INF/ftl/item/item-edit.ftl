@@ -177,7 +177,7 @@
 
                 $("#typeSelect").select2();
 
-                $("#itemName").focus();
+                moveEnd($("#itemName").get(0));
 
                 //添加类型
                 $("#addTypeBtn").on('click', function () {

@@ -100,6 +100,13 @@ public class ItemManagerServiceImpl implements ItemManagerService {
         return getSortItemTypes(parentItemTypeId, true);
     }
 
+    public JSONObject itemTypeSortEditSave(String ids) {
+        Map map = new HashMap();
+        map.put("ids", ids);
+        String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/updateItemTypesSort", map);
+        return JSONObject.parseObject(json);
+    }
+
     private List<ItemType> getSortItemTypes(long parentItemTypeId, boolean sort) {
         String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemTypePage?parentItemTypeId=" + parentItemTypeId+(sort?"&sort=1":""));
         JSONObject response = JSONObject.parseObject(json);

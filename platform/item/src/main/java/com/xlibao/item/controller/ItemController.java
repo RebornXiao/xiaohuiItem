@@ -167,4 +167,10 @@ public class ItemController {
     public JSONObject searchItemTemplatesPage() {
         return itemService.searchItemTemplatesPage();
     }
+
+    @ResponseBody
+    @RequestMapping(value = "/updateItemTypesSort", method = RequestMethod.POST)
+    public JSONObject updateItemTypesSort() {
+        return itemService.updateItemTypesSort();
+    }
 }

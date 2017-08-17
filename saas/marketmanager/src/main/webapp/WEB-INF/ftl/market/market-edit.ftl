@@ -4,8 +4,7 @@
 
 <link href="${res}/assets/plugins/bootstrap-select2/select2.min.css" rel="stylesheet" type="text/css">
 
-<script src="${res}/assets/plugins/address/area.js"></script>
-<script src="${res}/assets/plugins/address/location.js"></script>
+<script src="${res}/assets/plugins/address/address.js"></script>
 
 <script src="${res}/assets/plugins/bootstrap-select2/select2.min.js"></script>
 <script src="${res}/assets/plugins/bootstrap-select2/zh-CN.js"></script>
@@ -42,24 +41,17 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label" for="example-email">地区：</label>
+                                    <label class="col-md-4 control-label" for="example-email">所在地区：</label>
                                     <div class="col-md-8">
                                         <select id="loc_province" style="width:120px;"></select>
                                         <select id="loc_city" style="width:120px; margin-left: 10px"></select>
-                                        <select id="loc_town" style="width:120px;margin-left: 10px"></select>
+                                        <select id="loc_district" style="width:120px;margin-left: 10px"></select>
+                                        <select id="loc_street" style="width:120px;margin-left: 10px"></select>
                                     </div>
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label">街道牌号：</label>
-                                    <div class="col-md-8">
-                                        <input type="text" id="mStreetNumber" class="form-control" <#if market?exists>
-                                               value="${market.streetNumber}" </#if>>
-                                    </div>
-                                </div>
-
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">具体地址：</label>
+                                    <label class="col-md-4 control-label">门牌号：</label>
                                     <div class="col-md-8">
                                         <input type="text" id="mAddress" class="form-control" <#if market?exists>
                                                value="${market.address}" </#if>>
@@ -133,6 +125,8 @@
 
                 showLocation();
 
+                moveEnd($("#mName").get(0));
+
                 $("#backBtn").on('click', function () {
                     history.back(-1);
                 });
@@ -140,7 +134,7 @@
                 //添加商品
                 $("#saveBtn").on('click', function () {
 
-                    //检测所有项
+                //检测所有项
 
                 <#--$.post("${base}/item/itemUnitEditSave.do?id="+itemUnitId+"&title="+title+"&status="+status, function(data) {-->
                 <#--//重新刷新-->

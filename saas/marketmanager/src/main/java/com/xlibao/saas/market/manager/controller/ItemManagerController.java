@@ -211,6 +211,11 @@ public class ItemManagerController extends BaseController {
         return jumpPage(map, LogicConfig.FTL_ITEM_TYPE_SORT, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
     }
 
+    @ResponseBody
+    @RequestMapping(value = "/itemTypeSortEditSave", method = RequestMethod.POST)
+    public JSONObject itemTypeSortEditSave() {
+        return itemManagerService.itemTypeSortEditSave(getUTF("ids"));
+    }
 
     @RequestMapping("/itemUnits")
     public String getItemUnit(ModelMap map) {

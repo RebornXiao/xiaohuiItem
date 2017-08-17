@@ -170,4 +170,12 @@ public class ItemDataAccessManager {
         return templateMapper.searchItemTemplateCount(searchType, searchKey);
     }
 
+    public ItemType getItemTypeSortMaxId() {
+        return typeMapper.getItemTypeSortMaxId();
+    }
+
+    //更新某个itemType的sort值
+    public void updateItemTypeSort(long id, int sort) {
+        typeMapper.updateItemTypeSort(id, sort);
+    }
 }
