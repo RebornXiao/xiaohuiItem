@@ -53,4 +53,5 @@ public interface ItemService {
 
     JSONObject searchItemTemplatesPage();
 
+    JSONObject updateItemTypesSort();
 }

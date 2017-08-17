@@ -32,19 +32,19 @@
         //}).on('change', this.updateOutput);
 
         // output initial serialised data
-        this.updateOutput($('#item_type_sort').data('output', $('#item_type_sort_output')));
+        //this.updateOutput($('#item_type_sort').data('output', $('#item_type_sort_output')));
         //this.updateOutput($('#nestable_list_2').data('output', $('#nestable_list_2_output')));
 
-        $('#nestable_list_menu').on('click', function (e) {
-            var target = $(e.target),
-                action = target.data('action');
-            if (action === 'expand-all') {
-                $('.dd').nestable('expandAll');
-            }
-            if (action === 'collapse-all') {
-                $('.dd').nestable('collapseAll');
-            }
-        });
+        // $('#nestable_list_menu').on('click', function (e) {
+        //     var target = $(e.target),
+        //         action = target.data('action');
+        //     if (action === 'expand-all') {
+        //         $('.dd').nestable('expandAll');
+        //     }
+        //     if (action === 'collapse-all') {
+        //         $('.dd').nestable('collapseAll');
+        //     }
+        // });
 
         //$('#nestable_list_3').nestable();
     },

@@ -89,4 +89,5 @@ public class MarketManagerController extends BaseController {
         }
         return jumpPage(map, LogicConfig.FTL_MARKET_EDIT, LogicConfig.TAB_MARKET, LogicConfig.FTL_MARKET_LIST);
     }
+
 }

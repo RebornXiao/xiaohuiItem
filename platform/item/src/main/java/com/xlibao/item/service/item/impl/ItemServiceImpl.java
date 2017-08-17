@@ -366,4 +366,19 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return success(response);
     }
 
+    @Override
+    public JSONObject updateItemTypesSort() {
+
+        //修改的ID们
+        String ids = getUTF("ids");
+        String[] id_list = ids.split(",");
+        for (int i = 0; i < id_list.length; i+=2) {
+            long id = Long.parseLong(id_list[i]);
+            int sort = Integer.parseInt(id_list[i+1]);
+            //更新
+            itemDataAccessManager.updateItemTypeSort(id, sort);
+        }
+
+        return success("操作成功");
+    }
 }

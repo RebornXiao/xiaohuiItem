@@ -341,6 +341,13 @@ function showDelTi(callback) {
     }, callback);
 }
 
+function showMsg(msg, callback) {
+    swal({
+        text: msg,
+        type: "basic",
+    }, callback);
+}
+
 
 function moveEnd(obj){
     obj.focus();

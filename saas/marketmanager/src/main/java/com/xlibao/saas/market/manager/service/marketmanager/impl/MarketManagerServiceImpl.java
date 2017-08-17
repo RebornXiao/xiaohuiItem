@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.http.HttpRequest;
 import com.xlibao.market.data.model.MarketEntry;
+import com.xlibao.metadata.passport.PassportProvince;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.service.marketmanager.MarketManagerService;
 import com.xlibao.saas.market.manager.utils.Utils;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -36,6 +38,7 @@ public class MarketManagerServiceImpl implements MarketManagerService {
         Utils.appendInt(sb, "pageSize", pageSize);
         Utils.appendInt(sb, "pageIndex", pageIndex);
 
+
         String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/searchMarkets.do?" + sb.toString(), map);
         JSONObject response = JSONObject.parseObject(json);
         return response;
@@ -48,4 +51,9 @@ public class MarketManagerServiceImpl implements MarketManagerService {
         return response;
     }
 
+    public JSONObject getStreets(long districtId) {
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().passportRemoteURL + "/passport/location/loaderStreets.do?districtId=" + districtId);
+        JSONObject response = JSONObject.parseObject(json);
+        return response;
+    }
 }
