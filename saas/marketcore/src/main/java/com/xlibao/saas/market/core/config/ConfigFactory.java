@@ -1,0 +1,45 @@
+package com.xlibao.saas.market.core.config;
+
+import com.xlibao.io.service.netty.NettyConfig;
+import com.xlibao.saas.market.core.message.MessageService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
+
+import javax.annotation.PostConstruct;
+
+/**
+ * @author chinahuangxc on 2017/8/19.
+ */
+@Configuration
+@Lazy(false)
+public class ConfigFactory {
+
+    @Autowired
+    private ServerConfig serverConfig;
+
+    @Autowired
+    private MessageService messageService;
+
+    private static ServerConfig server;
+
+    @PostConstruct
+    public void initialization() {
+        server = serverConfig;
+
+        messageService.connectorMarketServer();
+        messageService.startListener();
+    }
+
+    public static NettyConfig newNettyConfig() {
+        NettyConfig config = new NettyConfig();
+        config.setReadTimeout(server.getReadTimeout());
+        config.setWriteTimeout(server.getWriteTimeout());
+        config.setBothTimeout(server.getBothTimeout());
+        return config;
+    }
+
+    public static ServerConfig getServer() {
+        return server;
+    }
+}

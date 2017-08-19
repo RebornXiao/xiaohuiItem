@@ -48,6 +48,10 @@ public class PassportDataManager {
         return passportMapper.modifyPassportPassword(id, password);
     }
 
+    public int modifyNickname(long id, String nickname) {
+        return passportMapper.modifyNickname(id, nickname);
+    }
+
     public int modifyAccessToken(long id, String accessToken) {
         return passportMapper.modifyAccessToken(id, accessToken);
     }

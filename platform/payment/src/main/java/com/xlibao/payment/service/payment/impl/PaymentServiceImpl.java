@@ -824,8 +824,12 @@ public class PaymentServiceImpl extends BasicWebService implements PaymentServic
             case WEIXIN_NATIVE: {
                 return tencentPayment.weixinNativePaymentParameters(parameters.get("transSequenceNumber"), Long.parseLong(parameters.get("transTotalAmount")), function, parameters.get("partnerName"), parameters.get("extendParameter"), GlobalConstantConfig.LOCAL_IP_ADDRESS);
             }
-            case WEIXIN_JS:
+            case WEIXIN_JS: {
                 return tencentPayment.weixinJSPaymentParameters(transactionLogger.getPartnerUserId(), parameters.get("transSequenceNumber"), Long.parseLong(parameters.get("transTotalAmount")), function, parameters.get("partnerName"), parameters.get("extendParameter"), GlobalConstantConfig.LOCAL_IP_ADDRESS);
+            }
+            case WEIXIN_APPLET: {
+                return tencentPayment.weixinAppletPaymentParameters(transactionLogger.getPartnerUserId(), parameters.get("transSequenceNumber"), Long.parseLong(parameters.get("transTotalAmount")), function, parameters.get("partnerName"), parameters.get("extendParameter"), GlobalConstantConfig.LOCAL_IP_ADDRESS);
+            }
             case BALANCE: {
                 return balancePayment.prePayment(transactionLogger);
             }

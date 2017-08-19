@@ -288,6 +288,16 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         return passport;
     }
 
+    @Override
+    public JSONObject modifyNickname() {
+        changeAccessToken();
+        long passportId = getLongParameter("passportId");
+        String nickname = getUTF("nickname");
+
+        int result = passportDataManager.modifyNickname(passportId, nickname);
+        return result <= 0 ? fail() : success();
+    }
+
     private JSONObject fillLoginMessage(Passport passport, String roleValue) {
         PassportProperties properties = passportDataManager.getPassportProperties(passport.getId(), PropertiesTypeEnum.PERSONAL.getKey(), PersonalKeyEnum.HEAD_IMAGE.getKey());
 

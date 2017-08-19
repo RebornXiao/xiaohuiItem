@@ -28,6 +28,11 @@ public class PartnerParameters {
     @Value("${weixin_mp_app_secret}")
     private String weixinMpAppSecret;
 
+    @Value("${weixin_applet_app_id}")
+    private String weixinAppletAppId;
+    @Value("${weixin_applet_app_secret}")
+    private String weixinAppletAppSecret;
+
     public String getAliyunAccessKeyId() {
         return aliyunAccessKeyId;
     }
@@ -58,5 +63,13 @@ public class PartnerParameters {
 
     public String getWeixinMpAppSecret() {
         return weixinMpAppSecret;
+    }
+
+    public String getWeixinAppletAppId() {
+        return weixinAppletAppId;
+    }
+
+    public String getWeixinAppletAppSecret() {
+        return weixinAppletAppSecret;
     }
 }

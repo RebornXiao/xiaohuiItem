@@ -21,9 +21,23 @@ public class TencentServiceImpl extends BasicWebService implements TencentServic
     private final static Logger logger = LoggerFactory.getLogger(TencentServiceImpl.class);
 
     @Override
+    public JSONObject weixinJSAuthorization() {
+        String code = getUTF("code");
+
+        String url = "https://api.weixin.qq.com/sns/jscode2session?appid=" + ConfigFactory.getPartner().getWeixinAppletAppId() + "&secret=" + ConfigFactory.getPartner().getWeixinAppletAppSecret() + "&code=" + code + "&grant_type=authorization_code";
+
+        return getOpenID(url);
+    }
+
+    @Override
     public JSONObject weixinAuthorization() {
         String code = getUTF("code");
         String url = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=" + ConfigFactory.getPartner().getWeixinMpAppId() + "&secret=" + ConfigFactory.getPartner().getWeixinMpAppSecret() + "&code=" + code + "&grant_type=authorization_code";
+
+        return getOpenID(url);
+    }
+
+    private JSONObject getOpenID(String url) {
         logger.info("微信授权登录请求链接：" + url);
         String result = HttpUtils.get(url);
 

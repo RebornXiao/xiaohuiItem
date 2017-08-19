@@ -1,6 +1,7 @@
 package com.xlibao.saas.market.shop.config;
 
 import com.xlibao.common.support.PassportRemoteService;
+import com.xlibao.saas.market.shop.service.message.MessageApplicationContextNotify;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -22,11 +23,16 @@ public class ConfigFactory {
     private static SocketServiceConfig socketService;
     private static DomainNameConfig domainName;
 
+    @Autowired
+    private MessageApplicationContextNotify messageApplicationContextNotify;
+
     @PostConstruct
     public void initialization() {
         socketService = socketServiceConfig;
         domainName = domainNameConfig;
+
         PassportRemoteService.setPassportRemoteServiceURL(domainName.passportRemoteURL);
+        messageApplicationContextNotify.init();
     }
 
     public static SocketServiceConfig getSocketServiceConfig() {

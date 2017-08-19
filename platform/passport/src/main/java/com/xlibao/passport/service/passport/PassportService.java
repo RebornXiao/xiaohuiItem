@@ -25,4 +25,6 @@ public interface PassportService {
     JSONObject changeAccessToken();
 
     Passport getPassport(long passportId);
+
+    JSONObject modifyNickname();
 }

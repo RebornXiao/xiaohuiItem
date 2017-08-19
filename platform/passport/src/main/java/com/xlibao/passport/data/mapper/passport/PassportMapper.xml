@@ -35,4 +35,8 @@
     <update id="modifyAccessToken">
         update passport set access_token = #{accessToken} where id = #{id}
     </update>
+
+    <update id="modifyNickname">
+        update passport set show_name = #{nickname} where id = #{id}
+    </update>
 </mapper>

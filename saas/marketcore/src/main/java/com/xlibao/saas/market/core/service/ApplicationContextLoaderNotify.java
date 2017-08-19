@@ -1,7 +1,9 @@
-package com.xlibao.saas.market.shop.service;
+package com.xlibao.saas.market.core.service;
 
+import com.xlibao.saas.market.core.message.MessageApplicationContextNotify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -11,6 +13,9 @@ import org.springframework.stereotype.Component;
 public class ApplicationContextLoaderNotify {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationContextLoaderNotify.class);
+
+    @Autowired
+    private MessageApplicationContextNotify messageApplicationContextNotify;
 
     /**
      * <pre>
@@ -25,6 +30,7 @@ public class ApplicationContextLoaderNotify {
      * </pre>
      */
     public void applicationContextLoaderNotify() {
-        logger.info("启动应用容器数据加载");
+        logger.info("【商店处理中心】启动应用容器数据加载");
+        messageApplicationContextNotify.loaderNotify();
     }
 }

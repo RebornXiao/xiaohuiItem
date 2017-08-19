@@ -15,13 +15,19 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author chinahuangxc on 2017/8/12.
  */
+@Component
 public class MarketMessageEventListenerImpl implements MessageEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(MarketMessageEventListenerImpl.class);
+
+    @Autowired
+    private MessageHandlerAdapter messageHandlerAdapter;
 
     @Override
     public ByteToMessageDecoder newDecoder() {
@@ -49,7 +55,7 @@ public class MarketMessageEventListenerImpl implements MessageEventListener {
     @Override
     public void notifyMessageReceived(NettySession session, MessageInputStream message) throws Exception {
         // 由消息处理适配器处理消息
-        MessageHandlerAdapter.getInstance().marketMessageExecute(session, message);
+        messageHandlerAdapter.marketMessageExecute(session, message);
     }
 
     @Override

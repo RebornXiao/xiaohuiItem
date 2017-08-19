@@ -123,6 +123,12 @@ public class PassportController extends BasicWebService {
         return passportService.modifyPassword();
     }
 
+    @ResponseBody
+    @RequestMapping(value = "modifyNickname")
+    public JSONObject modifyNickname() {
+        return passportService.modifyNickname();
+    }
+
     /**
      * <pre>
      *     <b>忘记密码</b>

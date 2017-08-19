@@ -12,13 +12,21 @@ import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToMessageEncoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 /**
  * @author chinahuangxc on 2017/8/12.
  */
+@Component
 public class HexMessageEventListenerImpl implements MessageEventListener {
 
     private static final Logger logger = LoggerFactory.getLogger(HexMessageEventListenerImpl.class);
+
+    @Autowired
+    private SessionManager sessionManager;
+    @Autowired
+    private MessageHandlerAdapter messageHandlerAdapter;
 
     @Override
     public ByteToMessageDecoder newDecoder() {
@@ -34,9 +42,9 @@ public class HexMessageEventListenerImpl implements MessageEventListener {
     public void notifyChannelActive(NettySession session) throws Exception {
         logger.info("作为服务端(与硬件交互) 建立一个Socket监听通道 " + session.netTrack());
 
-        SessionManager.getInstance().setHardwareSession(session);
+        sessionManager.setHardwareSession(session);
         // 建立连接后的消息补发操作
-        MessageHandlerAdapter.getInstance().afterHardwareChannelActive(session);
+        messageHandlerAdapter.afterHardwareChannelActive(session);
     }
 
     @Override
@@ -48,7 +56,7 @@ public class HexMessageEventListenerImpl implements MessageEventListener {
         String parameters = new String(bytes);
 
         // 通知消息处理适配器
-        MessageHandlerAdapter.getInstance().hardwareMessageExecute(session, parameters);
+        messageHandlerAdapter.hardwareMessageExecute(session, parameters);
     }
 
     @Override

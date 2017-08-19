@@ -11,13 +11,21 @@ import com.xlibao.saas.market.core.message.client.HeartbeatCallable;
 import com.xlibao.saas.market.core.service.application.ApplicationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 /**
  * @author chinahuangxc on 2017/8/13.
  */
+@Service("applicationService")
 public class ApplicationServiceImpl implements ApplicationService {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationServiceImpl.class);
+
+    @Autowired
+    private SessionManager sessionManager;
+    @Autowired
+    private HeartbeatCallable heartbeatCallable;
 
     @Override
     public void scanPickUp(String orderSequenceNumber) {
@@ -25,7 +33,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         logger.info("【硬件消息】发送取货消息，消息内容：" + content);
         // 发送消息到硬件处理
-        SessionManager.getInstance().sendHardwareMessage(content);
+        sessionManager.sendHardwareMessage(content);
     }
 
     @Override
@@ -46,8 +54,13 @@ public class ApplicationServiceImpl implements ApplicationService {
     public void toHardwareMessageExecute(NettySession session, MessageInputStream message) {
         String content = message.readUTF();
         logger.info("【硬件消息】发送给硬件的消息，消息内容：" + content + "；" + session.netTrack());
+        // 接收到消息时使用
+        // insert into market_core_message_logger(keyword, origin_ip, launch_time, launth_status, target_mark, need_callback)
+        // values(#{keyword}, #{originIp}, #{launchTime}, #{launthStatus}, #{targetMark}, #{needCallback})
         // 发送消息到硬件处理
-        SessionManager.getInstance().sendHardwareMessage(content);
+        sessionManager.sendHardwareMessage(content);
+        // 发送给硬件时使用
+        // update market_core_message_logger set target_ip = #{targetIp}, send_out_time = #{sendOutTime} where keyword = #{keyword} and target_mark = #{targetMark}
     }
 
     private void securityVerification(NettySession session, MessageInputStream message) {
@@ -63,9 +76,9 @@ public class ApplicationServiceImpl implements ApplicationService {
 
         JSONObject parameters = JSONObject.parseObject(msg);
         session.setAttribute("passportId", parameters.getJSONObject("response").getLongValue("passportId"));
-        SessionManager.getInstance().setMarketSession(session);
+        sessionManager.setMarketSession(session);
 
         // 启动心跳线程
-        new HeartbeatCallable().start();
+        heartbeatCallable.start();
     }
 }

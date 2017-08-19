@@ -20,6 +20,8 @@ public enum PaymentTypeEnum {
     WEIXIN_NATIVE(30000, "WEIXIN_NATIVE", "微信"),
     /** WEIXIN_JS - 微信公众号 */
     WEIXIN_JS(31000, "WEIXIN_JS", "微信公众号"),
+    /** WEIXIN_APPLET - 微信小程序 */
+    WEIXIN_APPLET(32000, "WEIXIN_APPLET", "微信小程序"),
     /** DRAW_CASH - 提现 */
     DRAW_CASH(40000, "DRAW_CASH", "提现"),
     ;

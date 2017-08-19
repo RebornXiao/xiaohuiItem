@@ -67,7 +67,7 @@ public class HttpUtils {
             Response response = useHttps ? httpsClient.newCall(request).execute() : client.newCall(request).execute();
 
             String ret = response.body().string();
-            logger.info("Get耗时：" + (System.currentTimeMillis() - start) + "ms URL ------> " + url + " response ------> " + ret);
+            logger.debug("Get耗时：" + (System.currentTimeMillis() - start) + "ms URL ------> " + url + " response ------> " + ret);
             return ret;
         } catch (Exception e) {
             logger.warn("错误请求 url:" + url + ",params:" + (params == null ? "" : params.toJSONString()) + " 异常:" + e.getMessage(), e);
@@ -127,7 +127,7 @@ public class HttpUtils {
             Request request = new Request.Builder().url(url).post(body).build();
             Response response = client.newCall(request).execute();
             String ret = response.body().string();
-            logger.info("Post 耗时" + (System.currentTimeMillis() - start) + "ms URL ------> " + url + ", params------>" + params + ", response ------> " + ret);
+            logger.debug("Post 耗时" + (System.currentTimeMillis() - start) + "ms URL ------> " + url + ", params------>" + params + ", response ------> " + ret);
             return ret;
         } catch (Exception e) {
             logger.warn("错误请求 URL: " + url + ", params: " + params.toJSONString(), e);

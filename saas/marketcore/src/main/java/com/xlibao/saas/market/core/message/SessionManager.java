@@ -2,10 +2,12 @@ package com.xlibao.saas.market.core.message;
 
 import com.xlibao.io.entry.MessageOutputStream;
 import com.xlibao.io.service.netty.NettySession;
+import org.springframework.stereotype.Component;
 
 /**
  * @author chinahuangxc on 2017/8/12.
  */
+@Component
 public class SessionManager {
 
     // 硬件的消息会话，建立通道后可直接使用；由硬件的心跳机制来保持链接的有效性
@@ -13,14 +15,8 @@ public class SessionManager {
     // 商店业务消息会话，必须是通过验证后才能使用；由本进程的心跳机制来保持链接的有效性
     private NettySession marketSession;
 
-    private static final SessionManager instance = new SessionManager();
-
-    private SessionManager() {
-    }
-
-    public static SessionManager getInstance() {
-        return instance;
-    }
+    private String username;
+    private String password;
 
     public void setHardwareSession(NettySession session) {
         hardwareSession = session;

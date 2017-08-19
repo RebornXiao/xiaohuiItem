@@ -7,5 +7,7 @@ import com.alibaba.fastjson.JSONObject;
  */
 public interface TencentService {
 
+    JSONObject weixinJSAuthorization();
+
     JSONObject weixinAuthorization();
 }
