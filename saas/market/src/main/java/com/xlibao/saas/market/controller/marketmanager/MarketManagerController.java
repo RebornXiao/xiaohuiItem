@@ -27,6 +27,6 @@ public class MarketManagerController {
     @ResponseBody
     @RequestMapping(value = "getMarket")
     public JSONObject getMarket() {
-        return marketService.findMarket();
+        return marketService.getMarket();
     }
 }

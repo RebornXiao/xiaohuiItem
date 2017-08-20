@@ -8,4 +8,7 @@ import java.util.List;
 public interface PassportStreetMapper {
 
     List<PassportStreet> loaderStreets(@Param("districtId") long districtId);
+
+    PassportStreet getStreet(@Param("streetId") long streetId);
+
 }

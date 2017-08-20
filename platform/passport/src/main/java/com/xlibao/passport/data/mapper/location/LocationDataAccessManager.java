@@ -1,5 +1,6 @@
 package com.xlibao.passport.data.mapper.location;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xlibao.metadata.passport.PassportArea;
 import com.xlibao.metadata.passport.PassportCity;
 import com.xlibao.metadata.passport.PassportProvince;
@@ -38,5 +39,21 @@ public class LocationDataAccessManager {
 
     public List<PassportStreet> loaderStreets(long districtId) {
         return streetMapper.loaderStreets(districtId);
+    }
+
+    public PassportStreet getStreet(long streetId) {
+        return streetMapper.getStreet(streetId);
+    }
+
+    public PassportProvince searchProvinceByName(String name) {
+        return provinceMapper.searchProvinceByName(name);
+    }
+
+    public PassportCity searchCityByName(String name) {
+        return cityMapper.searchCityByName(name);
+    }
+
+    public PassportArea searchAreaByName(String name) {
+        return areaMapper.searchAreaByName(name);
     }
 }

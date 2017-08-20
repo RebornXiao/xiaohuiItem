@@ -13,4 +13,13 @@
             where area_id = #{districtId}
         </if>
     </select>
+
+    <select id="getStreet" resultMap="BaseResultMap">
+        select * from passport_street
+        <if test="id != 0">
+            where id = #{streetId}
+        </if>
+    </select>
+
+
 </mapper>

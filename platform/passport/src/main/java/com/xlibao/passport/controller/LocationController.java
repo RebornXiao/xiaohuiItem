@@ -1,6 +1,9 @@
 package com.xlibao.passport.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.metadata.passport.PassportArea;
+import com.xlibao.metadata.passport.PassportCity;
+import com.xlibao.metadata.passport.PassportProvince;
 import com.xlibao.passport.service.location.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,5 +48,30 @@ public class LocationController {
     @RequestMapping("loaderStreets")
     public JSONObject loaderStreets() {
         return locationService.loaderStreets();
+    }
+
+    @ResponseBody
+    @RequestMapping("getStreet")
+    public JSONObject getStreet() {
+        return locationService.getStreet();
+    }
+
+
+    @ResponseBody
+    @RequestMapping("searchProvinceByName")
+    public JSONObject searchProvinceByName() {
+        return locationService.searchProvinceByName();
+    }
+
+    @ResponseBody
+    @RequestMapping("searchCityByName")
+    public JSONObject searchCityByName() {
+        return locationService.searchCityByName();
+    }
+
+    @ResponseBody
+    @RequestMapping("searchAreaByName")
+    public JSONObject searchAreaByName() {
+        return locationService.searchAreaByName();
     }
 }
