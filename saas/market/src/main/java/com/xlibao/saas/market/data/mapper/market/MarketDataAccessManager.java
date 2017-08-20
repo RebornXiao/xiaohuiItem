@@ -56,4 +56,8 @@ public class MarketDataAccessManager {
     public int createShelves(MarketShelvesManager shelvesManager) {
         return shelvesManagerMapper.createShelves(shelvesManager);
     }
+
+    public List<MarketShelvesManager> getShelvesDatas(long marketId) {
+        return shelvesManagerMapper.getShelvesDatas(marketId);
+    }
 }

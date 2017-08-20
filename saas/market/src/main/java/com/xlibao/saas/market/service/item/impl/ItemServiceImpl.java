@@ -6,6 +6,7 @@ import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.exception.code.ItemErrorCodeEnum;
 import com.xlibao.common.lbs.baidu.AddressComponent;
 import com.xlibao.common.lbs.baidu.BaiduWebAPI;
 import com.xlibao.common.exception.PlatformErrorCodeEnum;
@@ -21,15 +22,14 @@ import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.activity.RecommendItemTypeEnum;
 import com.xlibao.saas.market.service.item.*;
 import com.xlibao.saas.market.service.market.MarketErrorCodeEnum;
+import com.xlibao.saas.market.service.market.MarketStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -264,6 +264,126 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         }
     }
 
+    @Override
+    public JSONObject prepareAction() {
+        long passportId = getLongParameter("passportId");
+        long marketId = getLongParameter("marketId");
+        String actionDatas = getUTF("actionDatas"); // 结构：[{"location":"01010101","itemTemplateId":"100000","quantity":"9"}, {"location":"01010102","itemTemplateId":"100000","quantity":"10"}, {"location":"01010103","itemTemplateId":"100001","quantity":"11"}]
+        String hopeExecutorDate = getUTF("hopeExecutorDate", CommonUtils.dateFormat(CommonUtils.getTodayEarlyMorningMillisecond()));
+
+        JSONArray actionArray = JSONObject.parseArray(actionDatas);
+
+        beforePrepareAction(marketId, actionArray); // 执行前的检查 检查本次的数量与原位置上是否存在未完成的任务
+
+        for (int i = 0; i < actionArray.size(); i++) {
+            JSONObject data = actionArray.getJSONObject(i);
+
+            createPrepareAction(passportId, marketId, hopeExecutorDate, data);
+        }
+        return success();
+    }
+
+    @Override
+    public JSONObject offShelves() {
+        // 主要用于记录操作日志
+        long passportId = getLongParameter("passportId");
+        long marketId = getLongParameter("marketId");
+        String location = getUTF("location");
+        String barcode = getUTF("barcode");
+        int offShelvesQuantity = getIntParameter("offShelvesQuantity");
+
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
+        if (marketEntry.getStatus() != MarketStatusEnum.MAINTAIN.getKey()) {
+            logger.error("[下架] " + passportId + "没有先将商店[" + marketEntry.getName() + "]进行维护操作便执行了下架操作，系统已拦截该请求！");
+            return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("商店[" + marketEntry.getName() + "]必须处于维护中才能执行该操作");
+        }
+
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplateForBarcode(barcode);
+        if (itemTemplate == null) {
+            ItemErrorCodeEnum.BARCODE_NOT_EXIST.throwException("不存在条码为[" + barcode + "]的商品");
+        }
+
+        MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplate.getId());
+        if (item == null) {
+            return MarketItemErrorCodeEnum.NOT_FOUND_ITEM.response("商店不存在条码为[" + barcode + "]的商品");
+        }
+
+        MarketItemLocation itemLocation = dataAccessFactory.getItemDataAccessManager().getItemLocation(item.getId(), location);
+        if (itemLocation == null) {
+            return MarketItemErrorCodeEnum.ITEM_LOCATION_ERROR.response("位置[" + location + "]上不存在条码为[" + barcode + "]的商品");
+        }
+
+        if (itemLocation.getStock() < offShelvesQuantity) {
+            return MarketItemErrorCodeEnum.ITEM_LOCATION_QUANTITY_ERROR.response("[0001]下架数量有误；商品剩余数量：" + itemLocation.getStock() + "；本次下架数量：" + offShelvesQuantity);
+        }
+        if (item.getStock() < offShelvesQuantity) {
+            return MarketItemErrorCodeEnum.ITEM_LOCATION_QUANTITY_ERROR.response("[0002]下架数量有误；商品剩余数量：" + item.getStock() + "；本次下架数量：" + offShelvesQuantity);
+        }
+        int status = ItemStatusEnum.NORMAL.getKey();
+        if (item.getStock() <= offShelvesQuantity) {
+            status = ItemStatusEnum.OFF_SALE.getKey();
+        }
+        logger.info("[下架] " + passportId + "正在对商品(条码为：" + barcode + ")进行下架操作；商店ID：" + marketId + "，商品ID：" + item.getId() + "所在位置：" + location + "，下架数量：" + offShelvesQuantity + "；下架后商品状态为：" + status);
+        int result = dataAccessFactory.getItemDataAccessManager().offShelves(item.getId(), offShelvesQuantity, status); // 减少库存 当库存为0时 设置为下架
+        if (result <= 0) {
+            PlatformErrorCodeEnum.DB_ERROR.throwException("[0001]更新商品库存失败");
+        }
+        // 需减少位置上的数量
+        result = dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation.getId(), offShelvesQuantity);
+        if (result <= 0) {
+            PlatformErrorCodeEnum.DB_ERROR.throwException("[0002]更新商品库存失败");
+        }
+        return success();
+    }
+
+    @Override
+    public JSONObject onShelves() {
+        // 主要用于记录操作日志
+        long passportId = getLongParameter("passportId");
+        long marketId = getLongParameter("marketId");
+        String location = getUTF("location");
+        String barcode = getUTF("barcode");
+        int onShelvesQuantity = getIntParameter("onShelvesQuantity");
+
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
+        if (marketEntry.getStatus() != MarketStatusEnum.MAINTAIN.getKey()) {
+            logger.error("[上架] " + passportId + "没有先将商店[" + marketEntry.getName() + "]进行维护操作便执行了上架操作，系统已拦截该请求！");
+            return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("商店[" + marketEntry.getName() + "]必须处于维护中才能执行该操作");
+        }
+
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplateForBarcode(barcode);
+        if (itemTemplate == null) {
+            ItemErrorCodeEnum.BARCODE_NOT_EXIST.throwException("不存在条码为[" + barcode + "]的商品");
+        }
+
+        MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplate.getId());
+        if (item == null) {
+            // 商店未存在该模版的商品 先添加
+            item = MarketItem.newInstance(marketId, itemTemplate);
+            dataAccessFactory.getItemDataAccessManager().createItem(item);
+        }
+        logger.info("[上架] " + passportId + "正在对商品(条码为：" + barcode + ")进行上架操作；商店ID：" + marketId + "，商品ID：" + item.getId() + "，所在位置：" + location + "，上架数量：" + onShelvesQuantity);
+        // 存在该模版的商品时 更新库存和状态即可
+        dataAccessFactory.getItemDataAccessManager().offShelves(item.getId(), -onShelvesQuantity, ItemStatusEnum.NORMAL.getKey());
+
+        MarketItemLocation itemLocation = dataAccessFactory.getItemDataAccessManager().getItemLocationForMarket(marketId, location);
+        if (itemLocation != null) {
+            if (itemLocation.getStock() > 0) {
+                if (!Objects.equals(itemLocation.getItemId(), item.getId())) {
+                    itemTemplate = ItemDataCacheService.getItemTemplate(item.getItemTemplateId());
+                    throw MarketItemErrorCodeEnum.ITEM_LOCATION_ERROR.throwException("位置[" + location + "]上存在条码为[" + itemTemplate.getBarcode() + "]的商品[" + itemTemplate.getName() + "]");
+                }
+                // 需增加位置上的数量
+                dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation.getId(), -onShelvesQuantity);
+                return success();
+            }
+            dataAccessFactory.getItemDataAccessManager().removeItemLocation(itemLocation.getId());
+        }
+        itemLocation = MarketItemLocation.newInstance(marketId, item.getId(), location, onShelvesQuantity);
+        dataAccessFactory.getItemDataAccessManager().createItemLocation(itemLocation);
+        return success();
+    }
+
     private long matchMarketId(long passportId, long marketId) {
         if (marketId == 0) { // 若没有指定商店 那么寻找上次访问的商店
             MarketAccessLogger accessLogger = dataAccessFactory.getMarketDataAccessManager().getLastAccessLogger(passportId);
@@ -272,6 +392,54 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             }
         }
         return marketId;
+    }
+
+    private void beforePrepareAction(long marketId, JSONArray actionArray) {
+        StringBuilder locationSet = new StringBuilder();
+        for (int i = 0; i < actionArray.size(); i++) {
+            JSONObject data = actionArray.getJSONObject(i);
+
+            long itemTemplateId = getLongParameter("itemTemplateId");
+            ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemTemplateId);
+            int quantity = data.getIntValue("quantity");
+            if (quantity <= 0) {
+                throw MarketItemErrorCodeEnum.PREPARE_QUANTITY_ERROR.throwException("[" + itemTemplate.getName() + "]预上架数量必须大于0");
+            }
+            locationSet.append("'").append(data.getString("location")).append("'").append(CommonUtils.SPLIT_COMMA);
+        }
+        locationSet.deleteCharAt(locationSet.length() - 1);
+
+        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionsForLocationSet(marketId, locationSet.toString(), PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        if (!CommonUtils.isEmpty(prepareActions)) { // 指定的位置 存在未执行的任务
+            StringBuilder errorMsg = new StringBuilder().append("以下位置上存在未完成的任务：");
+            for (MarketPrepareAction prepareAction : prepareActions) {
+                ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareAction.getHopeItemTemplateId());
+                ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
+                errorMsg.append("\r\n\t");
+                errorMsg.append("位置 -- ").append(prepareAction).append("期望存放").append(prepareAction.getHopeItemQuantity()).append(itemUnit.getTitle()).append("【").append(itemTemplate.getName()).append("】");
+            }
+            throw MarketItemErrorCodeEnum.PREPARE_ACTION_LOCATION_ERROR.throwException(errorMsg.toString());
+        }
+    }
+
+    private void createPrepareAction(long passportId, long marketId, String hopeExecutorDate, JSONObject prepareActionData) {
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareActionData.getLongValue("itemTemplateId"));
+
+        MarketPrepareAction prepareAction = new MarketPrepareAction();
+        prepareAction.setMarketId(marketId);
+        prepareAction.setActionPassportId(passportId);
+        prepareAction.setItemLocation(prepareActionData.getString("location"));
+        prepareAction.setHopeItemTemplateId(itemTemplate.getId());
+        prepareAction.setHopeItemBarcode(itemTemplate.getBarcode());
+        prepareAction.setHopeItemQuantity(prepareActionData.getIntValue("quantity"));
+        prepareAction.setHopeExecutorDate(new Date(CommonUtils.dateFormatToLong(hopeExecutorDate)));
+        prepareAction.setStatus(PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        prepareAction.setCreateTime(new Date());
+
+        int result = dataAccessFactory.getItemDataAccessManager().createPrepareAction(prepareAction);
+        if (result <= 0) {
+            throw new XlibaoRuntimeException("无法建立预操作记录，请稍后重试");
+        }
     }
 
     private JSONArray specialButtonMsg() {

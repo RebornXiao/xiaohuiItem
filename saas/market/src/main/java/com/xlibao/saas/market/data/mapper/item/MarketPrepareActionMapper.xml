@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xlibao.saas.market.data.mapper.item.MarketPrepareActionMapper">
+    <resultMap id="BaseResultMap" type="com.xlibao.market.data.model.MarketPrepareAction">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="market_id" property="marketId" jdbcType="BIGINT"/>
+        <result column="action_passport_id" property="actionPassportId" jdbcType="BIGINT"/>
+        <result column="item_location" property="itemLocation" jdbcType="VARCHAR"/>
+        <result column="hope_item_template_id" property="hopeItemTemplateId" jdbcType="BIGINT"/>
+        <result column="hope_item_barcode" property="hopeItemBarcode" jdbcType="VARCHAR"/>
+        <result column="hope_item_quantity" property="hopeItemQuantity" jdbcType="INTEGER"/>
+        <result column="hope_executor_date" property="hopeExecutorDate" jdbcType="TIMESTAMP"/>
+        <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+        <result column="complete_time" property="completeTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+    
+    <insert id="createPrepareAction">
+        insert into market_prepare_action(market_id, action_passport_id, item_location, hope_item_template_id, hope_item_barcode, hope_item_quantity, hope_executor_date, status, create_time)
+        values(#{marketId}, #{actionPassportId}, #{itemLocation}, #{hopeItemTemplateId}, #{hopeItemBarcode}, #{hopeItemQuantity}, #{hopeExecutorDate}, #{status}, #{createTime})
+    </insert>
+
+    <select id="getPrepareAction" resultMap="BaseResultMap">
+        select * from market_prepare_action where market_id #{marketId} and item_location = #{itemLocation} and status = #{status}
+    </select>
+
+    <select id="getPrepareActionsForLocationSet" resultMap="BaseResultMap">
+        select * from market_prepare_action where market_id #{marketId} and item_location in ${locationSet} and status = #{status}
+    </select>
+
+    <select id="getUnCompletePrepareActions" resultMap="BaseResultMap">
+        select * from market_prepare_action where market_id #{marketId} and status = #{status} order by item_location asc limit #{pageStartIndex}, #{pageSize}
+    </select>
+
+    <update id="modifyPrepareActionStatus">
+        update market_prepare_action set status = #{status}, complete_time = #{time} where market_id #{marketId} and item_location = #{itemLocation} and status = #{matchStatus}
+    </update>
+</mapper>

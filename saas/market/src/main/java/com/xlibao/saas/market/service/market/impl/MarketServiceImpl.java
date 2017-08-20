@@ -5,10 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.datacache.location.LocationDataCacheService;
+import com.xlibao.market.data.model.MarketEntry;
+import com.xlibao.market.data.model.MarketShelvesManager;
 import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketAccessLogger;
-import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.saas.market.service.market.ChoiceMarketTypeEnum;
 import com.xlibao.saas.market.service.market.MarketErrorCodeEnum;
 import com.xlibao.saas.market.service.market.MarketFindTypeEnum;
@@ -20,7 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -157,6 +161,30 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         }
         JSONObject response = new JSONObject();
         response.put("market", marketEntry);
+        return success(response);
+    }
+
+    @Override
+    public JSONObject loaderShelvesDatas() {
+        long marketId = getLongParameter("marketId");
+
+        List<MarketShelvesManager> shelvesManagers = dataAccessFactory.getMarketDataAccessManager().getShelvesDatas(marketId);
+
+
+        Map<String, List<String>> groupDatas = new HashMap<>();
+
+        for (MarketShelvesManager shelvesManager : shelvesManagers) {
+            List<String> groups = groupDatas.get(shelvesManager.getGroupCode());
+            if (groups == null) {
+                groups = new ArrayList<>();
+                groupDatas.put(shelvesManager.getGroupCode(), groups);
+            }
+            if (!groups.contains(shelvesManager.getUnitCode())) {
+                groups.add(shelvesManager.getUnitCode());
+                // TODO
+            }
+        }
+        JSONArray response = new JSONArray();
         return success(response);
     }
 

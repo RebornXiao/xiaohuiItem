@@ -26,6 +26,16 @@ public class ItemDataAccessManager {
     private MarketShoppingCartMapper shoppingCartMapper;
     @Autowired
     private MarketSpecialButtonMapper specialButtonMapper;
+    @Autowired
+    private MarketPrepareActionMapper prepareActionMapper;
+
+    public int createItem(MarketItem item) {
+        return itemMapper.createItem(item);
+    }
+
+    public MarketItem getItem(long marketId, long itemTemplateId) {
+        return itemMapper.getItem(marketId, itemTemplateId);
+    }
 
     public List<MarketItem> specialProducts(long marketId, long appointType, long timeout, int sortType, int sortValue, int pageStartIndex, int pageSize) {
         return itemMapper.specialProducts(marketId, appointType, timeout, sortType, sortValue, pageStartIndex, pageSize);
@@ -63,12 +73,32 @@ public class ItemDataAccessManager {
         return itemMapper.decrementItemStock(itemId, quantity);
     }
 
+    public int offShelves(long itemId, int quantity, int status) {
+        return itemMapper.offShelves(itemId, quantity, status);
+    }
+
+    public int createItemLocation(MarketItemLocation itemLocation) {
+        return itemLocationMapper.createItemLocation(itemLocation);
+    }
+
+    public MarketItemLocation getItemLocation(long itemId, String location) {
+        return itemLocationMapper.getItemLocation(itemId, location);
+    }
+
+    public MarketItemLocation getItemLocationForMarket(long marketId, String location) {
+        return itemLocationMapper.getItemLocationForMarket(marketId, location);
+    }
+
     public List<MarketItemLocation> getItemLocations(long itemId) {
         return itemLocationMapper.getItemLocations(itemId);
     }
 
-    public int updateItemLocationStock(long locationId, int decrementStock) {
-        return itemLocationMapper.updateItemLocationStock(locationId, decrementStock);
+    public int offsetItemLocationStock(long locationId, int decrementStock) {
+        return itemLocationMapper.offsetItemLocationStock(locationId, decrementStock);
+    }
+
+    public int removeItemLocation(long id) {
+        return itemLocationMapper.removeItemLocation(id);
     }
 
     public List<MarketSpecialButton> getButtons() {
@@ -89,5 +119,25 @@ public class ItemDataAccessManager {
 
     public int modifyStockLockStatus(long id, int status) {
         return itemStockLockLoggerMapper.modifyStockLockStatus(id, status);
+    }
+
+    public int createPrepareAction(MarketPrepareAction prepareAction) {
+        return prepareActionMapper.createPrepareAction(prepareAction);
+    }
+
+    public MarketPrepareAction getPrepareAction(long marketId, String itemLocation, int status) {
+        return prepareActionMapper.getPrepareAction(marketId, itemLocation, status);
+    }
+
+    public List<MarketPrepareAction> getPrepareActionsForLocationSet(long marketId, String locationSet, int status) {
+        return prepareActionMapper.getPrepareActionsForLocationSet(marketId, locationSet, status);
+    }
+
+    public List<MarketPrepareAction> getUnCompletePrepareActions(long marketId, int status, int pageStartIndex, int pageSize) {
+        return prepareActionMapper.getUnCompletePrepareActions(marketId, status, pageStartIndex, pageSize);
+    }
+
+    public int modifyPrepareActionStatus(long marketId, String itemLocation, int matchStatus, int status, String time) {
+        return prepareActionMapper.modifyPrepareActionStatus(marketId, itemLocation, matchStatus, status, time);
     }
 }

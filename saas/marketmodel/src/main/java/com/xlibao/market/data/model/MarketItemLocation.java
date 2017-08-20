@@ -5,11 +5,22 @@ import java.util.Date;
 public class MarketItemLocation {
 
     private Long id;
+    private Long marketId;
     private Long itemId;
     private String locationCode;
     private Integer stock;
-    private Date lastModifyTime;
-    private Date createTime;
+    private Date createTime = new Date();
+    private Date lastModifyTime = new Date();
+
+    public static MarketItemLocation newInstance(long marketId, long itemId, String location, int stock) {
+        MarketItemLocation itemLocation = new MarketItemLocation();
+        itemLocation.setMarketId(marketId);
+        itemLocation.setItemId(itemId);
+        itemLocation.setLocationCode(location);
+        itemLocation.setStock(stock);
+
+        return itemLocation;
+    }
 
     public Long getId() {
         return id;
@@ -17,6 +28,14 @@ public class MarketItemLocation {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getMarketId() {
+        return marketId;
+    }
+
+    public void setMarketId(Long marketId) {
+        this.marketId = marketId;
     }
 
     public Long getItemId() {

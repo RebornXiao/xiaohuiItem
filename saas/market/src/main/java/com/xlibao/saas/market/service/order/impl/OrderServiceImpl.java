@@ -14,13 +14,13 @@ import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.exception.code.OrderErrorCodeEnum;
 import com.xlibao.datacache.item.ItemDataCacheService;
+import com.xlibao.market.data.model.MarketEntry;
+import com.xlibao.market.data.model.MarketItem;
+import com.xlibao.market.data.model.MarketItemDailyPurchaseLogger;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import com.xlibao.saas.market.data.DataAccessFactory;
-import com.xlibao.market.data.model.MarketEntry;
-import com.xlibao.market.data.model.MarketItem;
-import com.xlibao.market.data.model.MarketItemDailyPurchaseLogger;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.item.MarketItemErrorCodeEnum;
 import com.xlibao.saas.market.service.order.MarketOrderErrorCodeEnum;
@@ -238,6 +238,20 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             return MarketOrderErrorCodeEnum.ORDER_HAS_ACCEPT.response();
         }
         return OrderRemoteService.acceptOrder(passportId, orderId);
+    }
+
+    @Override
+    public JSONObject refundOrder() {
+        long passportId = getPassportId();
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+        if (orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) {
+            // 自提类型订单 必须处于支付状态才能进行退款
+            return MarketOrderErrorCodeEnum.CANNOT_REFUND.response("该订单已不能执行退款操作");
+        }
+        // TODO 执行退款业务
+        return null;
     }
 
     private String orderStatusSet(int roleType, int statusEnter) {

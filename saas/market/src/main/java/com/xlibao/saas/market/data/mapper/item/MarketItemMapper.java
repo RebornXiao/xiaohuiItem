@@ -7,6 +7,10 @@ import java.util.List;
 
 public interface MarketItemMapper {
 
+    int createItem(MarketItem item);
+
+    MarketItem getItem(@Param("marketId") long marketId, @Param("itemTemplateId") long itemTemplateId);
+
     List<MarketItem> specialProducts(@Param("marketId") long marketId, @Param("appointType") long appointType, @Param("timeout") long timeout, @Param("sortType") int sortType, @Param("sortValue") int sortValue,
                                      @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 
@@ -26,4 +30,6 @@ public interface MarketItemMapper {
     int incrementPending(@Param("itemId") long itemId, @Param("quantity") int quantity);
 
     int decrementItemStock(@Param("itemId") long itemId, @Param("quantity") int quantity);
+
+    int offShelves(@Param("itemId") long itemId, @Param("quantity") int quantity, @Param("status") int status);
 }

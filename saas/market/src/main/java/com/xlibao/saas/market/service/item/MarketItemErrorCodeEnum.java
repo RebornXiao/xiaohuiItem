@@ -27,6 +27,16 @@ public enum MarketItemErrorCodeEnum {
     GREATER_THAN_MAXIMUM_SELL(2007, "大于最多购买数量"),
     /** 2008 -- 购买数量有误 */
     BUY_QUANTITY_ERROR(2008, "购买数量有误"),
+    /** 2009 -- 预操作商品数量错误 */
+    PREPARE_QUANTITY_ERROR(2009, "预操作商品数量错误"),
+    /** 2010 -- 预操作商品时，位置信息有误 */
+    PREPARE_ACTION_LOCATION_ERROR(2010, "预操作商品时，位置信息有误"),
+    /** 2011 -- 找不到商品 */
+    NOT_FOUND_ITEM(2011, "找不到商品"),
+    /** 2012 -- 错误的位置信息 */
+    ITEM_LOCATION_ERROR(2012, "错误的商品位置信息"),
+    /** 2013 -- 位置上的商品数量有误 */
+    ITEM_LOCATION_QUANTITY_ERROR(2013, "位置上的商品数量有误"),
     ;
 
     private int key;
@@ -53,11 +63,11 @@ public enum MarketItemErrorCodeEnum {
         return response(getValue());
     }
 
-    public void throwException() {
-        throwException(getValue());
+    public XlibaoRuntimeException throwException() {
+        return throwException(getValue());
     }
 
-    public void throwException(String message) {
-        throw new XlibaoRuntimeException(getKey(), message);
+    public XlibaoRuntimeException throwException(String message) {
+        return new XlibaoRuntimeException(getKey(), message);
     }
 }

@@ -12,6 +12,8 @@ public enum MarketErrorCodeEnum {
     CAN_NOT_FIND_MARKET(1000, "您所在区域暂时未找到合适的商店"),
     /** 1001 -- 错误的商店信息 */
     ERROR_MARKET_INFORMATION(1001, "错误的商店信息"),
+    /** 1002 -- 不处于维护中 */
+    DON_NOT_MAINTAIN(1002, "不处于维护中"),
     ;
 
     private int key;

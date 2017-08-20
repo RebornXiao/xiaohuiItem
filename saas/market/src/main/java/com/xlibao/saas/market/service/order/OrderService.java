@@ -22,4 +22,6 @@ public interface OrderService {
     JSONObject pickUpItems();
 
     JSONObject acceptOrder();
+
+    JSONObject refundOrder();
 }

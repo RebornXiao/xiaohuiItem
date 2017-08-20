@@ -1,45 +1,55 @@
 package com.xlibao.market.data.model;
 
+import com.xlibao.metadata.item.ItemTemplate;
+
 import java.util.Date;
 
 public class MarketItem {
 
     private Long id;
     private Long itemTemplateId;
-    private String defineName;
-    private String defineImage;
-    private Integer defaultSort;
+    private String defineName = "";
+    private String defineImage = "";
+    private Integer defaultSort = 0;
     private Long ownerId;
-    private Integer productBatches;
-    private String batchesCode;
-    private Integer stock;
-    private Integer lockStock;
-    private Integer pendingQuantity;
-    private Integer warningQuantity;
-    private Integer keepQuantity;
-    private Integer oversoldQuantity;
-    private Integer maximumSellCount;
-    private Integer minimumSellCount;
-    private Integer allocationQuantity;
-    private Integer purchaseQuantity;
-    private Byte status;
+    private Integer productBatches = 0;
+    private String batchesCode = "";
+    private Integer stock = 0;
+    private Integer lockStock = 0;
+    private Integer pendingQuantity = 0;
+    private Integer warningQuantity = 0;
+    private Integer keepQuantity = 0;
+    private Integer oversoldQuantity = 0;
+    private Integer maximumSellCount = 200;
+    private Integer minimumSellCount = 1;
+    private Integer allocationQuantity = 0;
+    private Integer purchaseQuantity = 0;
+    private Byte status = 1;
     private Long costPrice;
     private Long sellPrice;
     private Long marketPrice;
     private Long discountPrice;
-    private Byte discountType;
-    private Integer restrictionQuantity;
-    private Byte beyondControl;
-    private Byte deliveryDelay;
-    private Integer initialSales;
-    private Integer actualSales;
-    private Long totalStorage;
+    private Byte discountType = 0;
+    private Integer restrictionQuantity = -1;
+    private Byte beyondControl = 0;
+    private Byte deliveryDelay = 0;
+    private Integer initialSales = 0;
+    private Integer actualSales = 0;
+    private Long totalStorage = 0L;
+    private Long totalOutStorage = 0L;
+    private String description = "";
+    private Date createTime = new Date();
 
-    private Long totalOutStorage;
-
-    private String description;
-
-    private Date createTime;
+    public static MarketItem newInstance(long ownerId, ItemTemplate itemTemplate) {
+        MarketItem item = new MarketItem();
+        item.setOwnerId(ownerId);
+        item.setItemTemplateId(itemTemplate.getId());
+        item.setCostPrice(itemTemplate.getCostPrice());
+        item.setSellPrice(itemTemplate.getDefaultPrice());
+        item.setMarketPrice(itemTemplate.getDefaultPrice());
+        item.setDiscountPrice(itemTemplate.getDefaultPrice());
+        return item;
+    }
 
     public Long getId() {
         return id;

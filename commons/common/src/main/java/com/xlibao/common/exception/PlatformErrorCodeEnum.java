@@ -8,6 +8,8 @@ import com.xlibao.common.BasicWebService;
  */
 public enum PlatformErrorCodeEnum {
 
+    /** 98 -- 数据库执行失败 */
+    DB_ERROR(98, "数据库执行失败"),
     /** 99 -- 服务器无响应 */
     REMOTE_TIMEOUT(99, "远程服务器无响应"),
     /** 100 -- 没有更多数据 */
@@ -25,7 +27,7 @@ public enum PlatformErrorCodeEnum {
     NOT_FOUND_TARGET(400, "找不到目标"),
     /** 401 -- 您没有权限执行该操作 */
     NOT_HAVE_PERMISSION(401, "您没有权限执行该操作"),
-            ;
+    ;
 
     private int key;
     private String value;

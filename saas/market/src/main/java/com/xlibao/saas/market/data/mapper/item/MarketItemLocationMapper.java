@@ -7,7 +7,15 @@ import java.util.List;
 
 public interface MarketItemLocationMapper {
 
+    int createItemLocation(MarketItemLocation itemLocation);
+
+    MarketItemLocation getItemLocation(@Param("itemId") long itemId, @Param("location") String location);
+
+    MarketItemLocation getItemLocationForMarket(@Param("marketId") long marketId, @Param("location") String location);
+
     List<MarketItemLocation> getItemLocations(@Param("itemId") long itemId);
 
-    int updateItemLocationStock(@Param("locationId") long locationId, @Param("decrementStock") int decrementStock);
+    int offsetItemLocationStock(@Param("locationId") long locationId, @Param("decrementStock") int decrementStock);
+
+    int removeItemLocation(@Param("locationId") long locationId);
 }

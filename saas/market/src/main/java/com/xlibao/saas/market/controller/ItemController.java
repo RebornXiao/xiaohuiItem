@@ -19,7 +19,6 @@ public class ItemController {
 
     /**
      * <pre>
-     *
      * </pre>
      */
     @ResponseBody
@@ -54,7 +53,7 @@ public class ItemController {
 
     /**
      * <pre>
-     *     <b>商品分组</b>
+     *     <b>商品分组</b> -- 归类每个店的商品集合
      *
      *     <b>访问地址：</b>http://domainName/item/splitItems
      *     <b>访问方式：</b>GET/POST；推荐使用POST
@@ -73,5 +72,23 @@ public class ItemController {
     @RequestMapping(value = "splitItems")
     public JSONObject splitItems() {
         return itemService.splitItems();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "prepareAction")
+    public JSONObject prepareAction() {
+        return itemService.prepareAction();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "offShelves")
+    public JSONObject offShelves() {
+        return itemService.offShelves();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "onShelves")
+    public JSONObject onShelves() {
+        return itemService.onShelves();
     }
 }

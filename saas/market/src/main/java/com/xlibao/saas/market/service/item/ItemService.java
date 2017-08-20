@@ -30,4 +30,10 @@ public interface ItemService {
     OrderItemSnapshot fillOrderItemSnapshot(MarketItem item, MarketItemDailyPurchaseLogger itemDailyPurchaseLogger, int buyCount);
 
     void buyQualifications(List<MarketItem> items, List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers, JSONObject buyItems);
+
+    JSONObject prepareAction();
+
+    JSONObject offShelves();
+
+    JSONObject onShelves();
 }

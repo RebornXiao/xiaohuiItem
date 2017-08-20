@@ -18,5 +18,6 @@ public interface MarketService {
     JSONObject searchMarkets();
 
     JSONObject getMarket();
-    
+
+    JSONObject loaderShelvesDatas();
 }

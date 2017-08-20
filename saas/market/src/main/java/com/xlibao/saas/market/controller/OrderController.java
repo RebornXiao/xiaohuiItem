@@ -263,4 +263,15 @@ public class OrderController {
     public JSONObject acceptOrder() {
         return orderService.acceptOrder();
     }
+
+    /**
+     * <pre>
+     *     <b>退款</b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "refundOrder")
+    public JSONObject refundOrder() {
+        return orderService.refundOrder();
+    }
 }

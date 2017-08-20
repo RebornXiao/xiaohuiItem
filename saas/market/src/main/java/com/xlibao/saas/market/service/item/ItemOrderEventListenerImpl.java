@@ -114,7 +114,7 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
             if (itemLocation.getStock() < quantity) { // 库存不足时 将库存清空
                 decrementStock = itemLocation.getStock();
             }
-            int result = dataAccessFactory.getItemDataAccessManager().updateItemLocationStock(itemLocation.getId(), decrementStock);
+            int result = dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation.getId(), decrementStock);
             if (result > 0) { // 数据库执行成功后减少未出货数量
                 quantity -= decrementStock;
             }

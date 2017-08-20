@@ -50,5 +50,9 @@ public class MarketOpenApiController {
         return marketService.filterMarket();
     }
 
-
+    @ResponseBody
+    @RequestMapping(value = "loaderShelvesDatas")
+    public JSONObject loaderShelvesDatas() {
+        return marketService.loaderShelvesDatas();
+    }
 }

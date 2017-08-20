@@ -15,6 +15,8 @@ public enum MarketOrderErrorCodeEnum {
     ORDER_HAS_ACCEPT(3001, "订单已被接取"),
     /** 3002 - 非本店订单，不能在本店取货 */
     NON_MARKET_ORDER (3002, "非本店订单，不能在本店取货"),
+    /** 3003 - 已不能退款 */
+    CANNOT_REFUND(3003, "已不能退款"),
     ;
 
     private int key;
