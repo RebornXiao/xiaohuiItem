@@ -32,11 +32,11 @@ public enum ItemErrorCodeEnum {
         return value;
     }
 
-    public void throwException() {
-        throwException(getValue());
+    public XlibaoRuntimeException throwException() {
+        throw throwException(getValue());
     }
 
-    public void throwException(String message) {
-        throw new XlibaoRuntimeException(getKey(), message);
+    public XlibaoRuntimeException throwException(String message) {
+        return new XlibaoRuntimeException(getKey(), message);
     }
 }

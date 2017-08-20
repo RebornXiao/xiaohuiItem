@@ -37,6 +37,10 @@ public enum MarketItemErrorCodeEnum {
     ITEM_LOCATION_ERROR(2012, "错误的商品位置信息"),
     /** 2013 -- 位置上的商品数量有误 */
     ITEM_LOCATION_QUANTITY_ERROR(2013, "位置上的商品数量有误"),
+    /** 2014 -- 没有存在预操作的行为 */
+    NOT_FOUND_PREPARE_ACTION(2014, "没有存在预操作的行为"),
+    /** 2015 -- 与预操作行为不一致 */
+    ERROR_PREPARE_ACTION(2015, "与预操作行为不一致"),
     ;
 
     private int key;

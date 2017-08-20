@@ -300,7 +300,12 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
         ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplateForBarcode(barcode);
         if (itemTemplate == null) {
-            ItemErrorCodeEnum.BARCODE_NOT_EXIST.throwException("不存在条码为[" + barcode + "]的商品");
+            throw ItemErrorCodeEnum.BARCODE_NOT_EXIST.throwException("不存在条码为[" + barcode + "]的商品");
+        }
+
+        MarketPrepareAction prepareAction = dataAccessFactory.getItemDataAccessManager().getPrepareAction(marketId, location, PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        if (prepareAction == null) {
+            return MarketItemErrorCodeEnum.NOT_FOUND_PREPARE_ACTION.response("位置" + location + "不存在预操作行为");
         }
 
         MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplate.getId());
@@ -353,7 +358,17 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
         ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplateForBarcode(barcode);
         if (itemTemplate == null) {
-            ItemErrorCodeEnum.BARCODE_NOT_EXIST.throwException("不存在条码为[" + barcode + "]的商品");
+            throw ItemErrorCodeEnum.BARCODE_NOT_EXIST.throwException("不存在条码为[" + barcode + "]的商品");
+        }
+
+        MarketPrepareAction prepareAction = dataAccessFactory.getItemDataAccessManager().getPrepareAction(marketId, location, PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        if (prepareAction == null) {
+            return MarketItemErrorCodeEnum.NOT_FOUND_PREPARE_ACTION.response("位置" + location + "不存在预操作行为");
+        }
+        if (!barcode.equals(prepareAction.getHopeItemBarcode())) {
+            ItemTemplate it = ItemDataCacheService.getItemTemplateForBarcode(prepareAction.getHopeItemBarcode());
+            return MarketItemErrorCodeEnum.ERROR_PREPARE_ACTION.response("操作被拒绝；预操作行为期望该位置存放商品(条码：" + prepareAction.getHopeItemBarcode() + "，名称：[" + it.getName() + "])的商品，" +
+                    "与您提供的商品(条码：" + barcode + "，名称：[" + itemTemplate.getName() + "])不一致");
         }
 
         MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplate.getId());
@@ -375,12 +390,17 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
                 }
                 // 需增加位置上的数量
                 dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation.getId(), -onShelvesQuantity);
+                // 完成了预操作行为
+                dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(marketId, location, PrepareActionStatusEnum.UN_EXECUTOR.getKey(), PrepareActionStatusEnum.COMPLETE.getKey(), CommonUtils.nowFormat());
                 return success();
             }
             dataAccessFactory.getItemDataAccessManager().removeItemLocation(itemLocation.getId());
         }
         itemLocation = MarketItemLocation.newInstance(marketId, item.getId(), location, onShelvesQuantity);
+        // 新建位置信息
         dataAccessFactory.getItemDataAccessManager().createItemLocation(itemLocation);
+        // 完成了预操作行为
+        dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(marketId, location, PrepareActionStatusEnum.UN_EXECUTOR.getKey(), PrepareActionStatusEnum.COMPLETE.getKey(), CommonUtils.nowFormat());
         return success();
     }
 
