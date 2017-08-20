@@ -13,4 +13,9 @@
             where province_id = #{provinceId}
         </if>
     </select>
+
+    <select id="searchCityByName" resultMap="BaseResultMap">
+        select * from passport_city where name = #{name}
+    </select>
+
 </mapper>

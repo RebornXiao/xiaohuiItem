@@ -9,4 +9,8 @@
     <select id="loaderProvinces" resultMap="BaseResultMap">
         select * from passport_province
     </select>
+
+    <select id="searchProvinceByName" resultMap="BaseResultMap">
+        select * from passport_province where name = #{name}
+    </select>
 </mapper>

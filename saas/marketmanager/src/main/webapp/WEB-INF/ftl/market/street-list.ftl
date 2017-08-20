@@ -3,6 +3,13 @@
 <!-- ============================================================== -->
 
 
+<link href="${res}/assets/plugins/bootstrap-select2/select2.min.css" rel="stylesheet" type="text/css">
+
+<script src="${res}/assets/plugins/address/address.js"></script>
+
+<script src="${res}/assets/plugins/bootstrap-select2/select2.min.js"></script>
+<script src="${res}/assets/plugins/bootstrap-select2/zh-CN.js"></script>
+
 <div class="content-page">
     <!-- Start content -->
     <div class="content">
@@ -14,34 +21,25 @@
                         <ol class="breadcrumb pull-right">
                             <li><a href="#">首页</a></li>
                             <li><a href="#">店铺管理</a></li>
-                            <li class="active"><a href="#">店铺列表</a></li>
+                            <li class="active"><a href="#">街道列表</a></li>
                         </ol>
-                        <h4 class="page-title"><b>店铺列表</b></h4>
+                        <h4 class="page-title"><b>街道列表</b></h4>
                     </div>
                 </div>
             </div>
 
             <div class="card-box">
-                <h4 class="header-title m-t-0"><b>搜索订单</b></h4>
                 <form class="form-inline" role="form">
+
+                    <button id="addBtn" type="button"
+                            class="btn waves-effect waves-light btn-primary">添加店铺
+                    </button>
 
                     <div class="form-group m-l-15">
                         <label for="exampleInputName2">地区选择：</label>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">省</option>
-                        </select>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">市</option>
-                        </select>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">区</option>
-                        </select>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">镇</option>
-                        </select>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">街道</option>
-                        </select>
+                        <select id="loc_province" style="width:120px;"></select>
+                        <select id="loc_city" style="width:120px; margin-left: 10px"></select>
+                        <select id="loc_district" style="width:120px;margin-left: 10px"></select>
                     </div>
 
                     <div class="form-group m-l-15">
@@ -57,24 +55,6 @@
                             <option data_id="0">正常</option>
                         </select>
                     </div>
-
-                    <div class="form-group m-l-15">
-                        <label for="exampleInputName2">店铺配送方式：</label>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">仅自提</option>
-                        </select>
-                    </div>
-
-                    <div class="input-group m-l-15">
-                        <input type="text" id="searchKeyTxt"
-                               class="form-control" placeholder="输入店铺名称搜索">
-                            <span class="input-group-btn">
-                                    <button id="searchBtn" type="button"
-                                            class="btn waves-effect waves-light btn-primary"><i
-                                            class="fa fa-search"></i></button>
-                            </span>
-                    </div>
-
                 </form>
             </div>
 
@@ -86,34 +66,23 @@
                         <thead class="table_head">
                         <tr>
                             <th>ID</th>
-                            <th>商店名字</th>
-                            <th>商店类型</th>
-                            <th>当前状态</th>
-                            <th>所在地区</th>
-                            <th>具体地址</th>
-                            <th>配送方式</th>
-                            <th>配送距离</th>
-                            <th>配送费</th>
-                            <th>建店时间</th>
+                            <th>街道名称</th>
                             <th>操作</th>
                         </tr>
                         </thead>
-                        <tbody id="marketListTable">
+                        <tbody id="streetListTable">
 
-                        <#if (markets?size > 0)>
-                            <#list markets as market>
+                        <#if (streets?size > 0)>
+                            <#list streets as street>
                             <tr>
-                                <td>序号</td>
-                                <td>序号</td>
-                                <td>序号</td>
-                                <td>序号</td>
-                                <td>序号</td>
-                                <td>序号</td>
-                                <td>序号</td>
-                                <td>序号</td>
-                                <td>序号</td>
-                                <td>序号</td>
-                                <td>序号</td>
+                                <td>${street.id?c}</td>
+                                <td>${street.name}</td>
+                                <td>
+                                    <button id="editBtn" type="button"
+                                            class="btn waves-effect waves-light btn-warning btn-sm"
+                                            data_id="${street.id?c}">编辑
+                                    </button>
+                                </td>
                             </tr>
 
                             </#list>
@@ -131,13 +100,38 @@
                 </div>
             </div>
 
-        <#if (markets?size > 0)>
-            <div class="row small_page">
-                <div class="col-sm-12">
-                    <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/markets.do" />
-                </div>
-            </div>
-        </#if>
             <!-- end container -->
         </div>
+
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+
+                showLocation(${provinceId?c}, ${cityId?c}, ${areaId?c}, 0, null, function () {
+                    //直接跳转
+                    var provinceId = $('#loc_province').val();
+                    var cityId = $('#loc_city').val();
+                    var areaId = $('#loc_district').val();
+
+                    location.href = "${base}/market/streets.do?provinceId=" + provinceId + "&cityId=" + cityId + "&areaId=" + areaId;
+                });
+
+                $("#addBtn").on('click', function () {
+                    location.href = "${base}/market/streetEdit.do";
+                });
+
+            <#if (streets?size > 0)>
+
+                //单项编辑
+                $("#streetListTable").find('button[id=editBtn]').each(function () {
+                    $(this).on('click', function () {
+                        location.href = "${base}/market/streetEdit.do?id=" + $(this).attr("data_id");
+                    });
+                });
+
+            </#if>
+            });
+
+
+        </script>

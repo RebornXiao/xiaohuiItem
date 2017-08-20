@@ -4,8 +4,7 @@
 
 <link href="${res}/assets/plugins/bootstrap-select2/select2.min.css" rel="stylesheet" type="text/css">
 
-<script src="${res}/assets/plugins/address/area.js"></script>
-<script src="${res}/assets/plugins/address/location.js"></script>
+<script src="${res}/assets/plugins/address/address.js"></script>
 
 <script src="${res}/assets/plugins/bootstrap-select2/select2.min.js"></script>
 <script src="${res}/assets/plugins/bootstrap-select2/zh-CN.js"></script>
@@ -31,28 +30,19 @@
 
             <div class="card-box">
                 <div class="row">
-                    <div class="col-sm-2">
-                        <button id="addBtn" type="button"
-                                class="btn waves-effect waves-light btn-primary">添加店铺</button>
-                    </div>
-                    <div class="col-sm-10">
-                        <h4 class="header-title m-t-0"><b>搜索店铺</b></h4>
+                    <div class="col-sm-12">
                         <form class="form-inline" role="form">
+
+                            <button id="addBtn" type="button"
+                                    class="btn waves-effect waves-light btn-primary">添加店铺</button>
 
                             <div class="form-group">
                                 <label for="exampleInputName2">地区选择：</label>
                                 <select id="loc_province" style="width:120px;"></select>
                                 <select id="loc_city" style="width:120px; margin-left: 10px"></select>
-                                <select id="loc_town" style="width:120px;margin-left: 10px"></select>
+                                <select id="loc_district" style="width:120px;margin-left: 10px"></select>
+                                <select id="loc_street" style="width:120px;margin-left: 10px"></select>
                             </div>
-
-                        <#--<div class="form-group m-l-15">-->
-                        <#--<label for="exampleInputName2">店铺类型：</label>-->
-                        <#--<select class="form-control" id="itSelect" style="width:150px">-->
-                        <#--<option data_id="1">自营</option>-->
-                        <#--<option data_id="2">加盟</option>-->
-                        <#--</select>-->
-                        <#--</div>-->
 
                             <div class="form-group m-l-15">
                                 <label for="exampleInputName2">店铺状态：</label>
@@ -78,18 +68,17 @@
                             <div class="input-group m-l-15">
                                 <input type="text" id="searchKeyTxt"
                                        class="form-control" placeholder="输入店铺名称搜索">
-                            <span class="input-group-btn">
-                                    <button id="searchBtn" type="button"
-                                            class="btn waves-effect waves-light btn-primary"><i
-                                            class="fa fa-search"></i></button>
-                            </span>
+                                <span class="input-group-btn">
+                                        <button id="searchBtn" type="button"
+                                                class="btn waves-effect waves-light btn-primary"><i
+                                                class="fa fa-search"></i></button>
+                                </span>
                             </div>
 
                         </form>
                     </div>
                 </div>
             </div>
-
 
             <div class="row">
                 <div class="col-sm-12">
@@ -237,31 +226,40 @@
 
                 var _marketListTable = $("#marketListTable");
 
-                //province , city , town
+                <#if streets?? >
+                    <#assign streets_assign = streets >
+                <#else>
+                    <#assign streets_assign = "null" >
+                </#if>
 
-                showLocation();
+                showLocation(${provinceId}, ${cityId}, ${districtId}, ${streetId}, ${streets_assign}, function (id, func) {
+                    alert("id="+id);
+                    $.get("${base}/market/getStreets.do?districtId=" + id, function (data) {
+                        func(id, data);
+                    }, "json");
+                });
 
                 //添加
                 $("#addBtn").on('click', function () {
-                    location.href = "${base}/merketEdit.do";
+                    location.href = "${base}/market/merketEdit.do";
                 });
 
-                <#if (markets?size > 0)>
+            <#if (markets?size > 0)>
 
-                    //单项编辑
-                    _marketListTable.find('button[id=editBtn]').each(function () {
-                        $(this).on('click', function () {
-                            location.href = "${base}/market/merketEdit.do?id=" + $(this).attr("data_id");
-                        });
+                //单项编辑
+                _marketListTable.find('button[id=editBtn]').each(function () {
+                    $(this).on('click', function () {
+                        location.href = "${base}/market/merketEdit.do?id=" + $(this).attr("data_id");
                     });
+                });
 
-                    //单项查看商品
-                    _marketListTable.find('button[id=seeBtn]').each(function () {
-                        $(this).on('click', function () {
-                            location.href = "${base}/market/merketItemList.do?id=" + $(this).attr("data_id");
-                        });
+                //单项查看商品
+                _marketListTable.find('button[id=seeBtn]').each(function () {
+                    $(this).on('click', function () {
+                        location.href = "${base}/market/merketItemList.do?id=" + $(this).attr("data_id");
                     });
+                });
 
-                </#if>
+            </#if>
             });
         </script>

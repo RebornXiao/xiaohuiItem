@@ -155,12 +155,12 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
     }
 
     public JSONObject getMarket() {
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(getLongParameter("id", 0));
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataAccessManager().getMarket(getLongParameter("id", 0));
         if (marketEntry == null) {
-            return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response();
+            return fail("没有该店铺数据");
         }
         JSONObject response = new JSONObject();
-        response.put("market", marketEntry);
+        response.put("data", marketEntry);
         return success(response);
     }
 

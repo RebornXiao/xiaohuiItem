@@ -138,4 +138,49 @@ public class LocationServiceImpl extends BasicWebService implements LocationServ
         JSONArray response = streets.stream().map(street -> JSONObject.parseObject(JSONObject.toJSONString(street))).collect(Collectors.toCollection(JSONArray::new));
         return success(response);
     }
+
+    @Override
+    public JSONObject getStreet() {
+        long streetId = getLongParameter("streetId", 0);
+        PassportStreet street = locationDataAccessManager.getStreet(streetId);
+
+        JSONObject json = new JSONObject();
+        json.put("data", street);
+
+        return success(json);
+    }
+
+
+    @Override
+    public JSONObject searchProvinceByName() {
+        String name = getUTF("name");
+        PassportProvince province = locationDataAccessManager.searchProvinceByName(name);
+
+        JSONObject json = new JSONObject();
+        json.put("data", province);
+
+        return success(json);
+    }
+
+    @Override
+    public JSONObject searchCityByName() {
+        String name = getUTF("name");
+        PassportCity city = locationDataAccessManager.searchCityByName(name);
+
+        JSONObject json = new JSONObject();
+        json.put("data", city);
+
+        return success(json);
+    }
+
+    @Override
+    public JSONObject searchAreaByName() {
+        String name = getUTF("name");
+        PassportArea area = locationDataAccessManager.searchAreaByName(name);
+
+        JSONObject json = new JSONObject();
+        json.put("data", area);
+
+        return success(json);
+    }
 }

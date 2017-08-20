@@ -89,8 +89,8 @@
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="store"> style="display: block;" </#if> >
                             <li <#if tab_child=="markets"> class="active" </#if> ><a href="${base}/market/markets.do">店铺列表</a></li>
-                            <li><a href="${base}/item/storelist.do">店铺商品</a></li>
-                            <li><a href="${base}/item/streetlist.do">街道信息</a></li>
+                            <li <#if tab_child=="mitems"> class="active" </#if> ><a href="${base}/market/mitems.do">店铺商品</a></li>
+                            <li <#if tab_child=="streets"> class="active" </#if> ><a href="${base}/market/streets.do">街道信息</a></li>
                         </ul>
                     </li>
 

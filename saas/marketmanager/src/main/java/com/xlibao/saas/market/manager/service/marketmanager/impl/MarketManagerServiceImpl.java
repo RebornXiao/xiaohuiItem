@@ -50,10 +50,4 @@ public class MarketManagerServiceImpl implements MarketManagerService {
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
-
-    public JSONObject getStreets(long districtId) {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().passportRemoteURL + "/passport/location/loaderStreets.do?districtId=" + districtId);
-        JSONObject response = JSONObject.parseObject(json);
-        return response;
-    }
 }

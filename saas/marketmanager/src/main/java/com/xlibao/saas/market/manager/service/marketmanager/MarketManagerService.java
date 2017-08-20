@@ -12,6 +12,4 @@ public interface MarketManagerService {
 
     public JSONObject getMarket(long id);
 
-    public JSONObject getStreets(long districtId);
-
 }
