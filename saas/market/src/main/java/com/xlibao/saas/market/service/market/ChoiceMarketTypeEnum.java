@@ -5,10 +5,15 @@ package com.xlibao.saas.market.service.market;
  */
 public enum ChoiceMarketTypeEnum {
 
+    /** 1 -- 省 */
     PROVINCE(1, "省"),
+    /** 2 -- 市 */
     CITY(2, "市"),
+    /** 3 -- 区 */
     DISTRICT(3, "区"),
+    /** 4 -- 街道 */
     STREET(4, "街道"),
+    /** 5 -- 店铺 */
     MARKET(5, "店铺"),
     ;
 

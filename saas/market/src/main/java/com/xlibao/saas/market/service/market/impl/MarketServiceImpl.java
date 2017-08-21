@@ -167,6 +167,8 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
     @Override
     public JSONObject loaderShelvesDatas() {
         long marketId = getLongParameter("marketId");
+        String mark = getUTF("mark");
+
 
         List<MarketShelvesManager> shelvesManagers = dataAccessFactory.getMarketDataAccessManager().getShelvesDatas(marketId);
 
