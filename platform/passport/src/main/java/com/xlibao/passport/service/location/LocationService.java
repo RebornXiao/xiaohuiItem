@@ -27,4 +27,8 @@ public interface LocationService {
     JSONObject searchCityByName();
 
     JSONObject searchAreaByName();
+
+    JSONObject searchStreetByName();
+
+    JSONObject streetEditSave();
 }

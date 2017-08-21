@@ -158,6 +158,15 @@ public class MarketManagerController extends BaseController {
     }
 
     @ResponseBody
+    @RequestMapping("/streetEditSave")
+    public JSONObject streetEditSave() {
+        String title = getUTF("title");
+        long areaId = getLongParameter("areaId");
+        long id = getLongParameter("id", 0);
+        return passportManagerService.streetEditSave(id, areaId, title);
+    }
+
+    @ResponseBody
     @RequestMapping("/getStreets")
     public JSONObject getStreets() {
         JSONObject json = passportManagerService.getStreets(getLongParameter("districtId"));

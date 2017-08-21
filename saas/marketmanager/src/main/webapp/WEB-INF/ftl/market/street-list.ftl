@@ -32,7 +32,7 @@
                 <form class="form-inline" role="form">
 
                     <button id="addBtn" type="button"
-                            class="btn waves-effect waves-light btn-primary">添加店铺
+                         class="btn waves-effect waves-light btn-primary">添加街道
                     </button>
 
                     <div class="form-group m-l-15">
@@ -114,7 +114,7 @@
                     var cityId = $('#loc_city').val();
                     var areaId = $('#loc_district').val();
 
-                    location.href = "${base}/market/streets.do?provinceId=" + provinceId + "&cityId=" + cityId + "&areaId=" + areaId;
+                    //location.href = "${base}/market/streets.do?provinceId=" + provinceId + "&cityId=" + cityId + "&areaId=" + areaId;
                 });
 
                 $("#addBtn").on('click', function () {

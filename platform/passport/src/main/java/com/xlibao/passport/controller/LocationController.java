@@ -74,4 +74,18 @@ public class LocationController {
     public JSONObject searchAreaByName() {
         return locationService.searchAreaByName();
     }
+
+    @ResponseBody
+    @RequestMapping("searchStreetByName")
+    public JSONObject searchStreetByName() {
+        return locationService.searchStreetByName();
+    }
+
+    @ResponseBody
+    @RequestMapping("streetEditSave")
+    public JSONObject streetEditSave() {
+        return locationService.streetEditSave();
+    }
+
+
 }
