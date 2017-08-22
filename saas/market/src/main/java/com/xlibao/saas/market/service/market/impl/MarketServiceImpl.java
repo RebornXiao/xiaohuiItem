@@ -164,6 +164,16 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         return success(response);
     }
 
+    public JSONObject getAllMarkets() {
+        List<MarketEntry> marketEntryList = dataAccessFactory.getMarketDataAccessManager().getAllMarkets();
+        if(marketEntryList == null) {
+            return fail("没有店铺数据");
+        }
+        JSONObject response = new JSONObject();
+        response.put("datas", marketEntryList);
+        return success(response);
+    }
+
     private <T> JSONArray locationMessage(List<T> t) {
         return t.stream().map(JSONObject::toJSONString).collect(Collectors.toCollection(JSONArray::new));
     }

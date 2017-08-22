@@ -1,5 +1,6 @@
 package com.xlibao.saas.market.manager.service.passportmanager.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.http.HttpRequest;
@@ -38,19 +39,21 @@ public class PassportManagerServiceImpl extends BasicWebService implements Passp
     }
 
     public JSONObject getStreetsToMap(long districtId) {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().passportRemoteURL + "/passport/location/loaderStreets.do?districtId=" + districtId);
-        JSONObject response = JSONObject.parseObject(json);
-        JSONObject json_objs = new JSONObject();
-        json_objs.put("code", response.getIntValue("code"));
-        json_objs.put("msg", response.getString("msg"));
-
-        Map map = new HashMap<>();
-        map.put(10000L, "可爱");
-        map.put(20000L, "天在");
-
-        json_objs.put("datas", map);
-
-        return json_objs;
+        JSONObject response = getStreets(districtId);
+        if(response.getIntValue("code") == 0) {
+            JSONObject result = new JSONObject();
+            result.put("code", response.getIntValue("code"));
+            result.put("msg", response.getString("msg"));
+            JSONArray array = response.getJSONObject("response").getJSONArray("datas");
+            Map map = new HashMap();
+            for (int i = 0; i < array.size(); i++) {
+                JSONObject json = array.getJSONObject(i);
+                map.put(json.getInteger("id"), json.getString("name"));
+            }
+            result.put("response", map);
+            return result;
+        }
+        return response;
     }
 
     public JSONObject getStreetJson(long streetId) {

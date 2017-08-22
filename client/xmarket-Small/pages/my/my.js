@@ -1,18 +1,28 @@
+const icons = require('../../icons')
 
 var app = getApp()
+var _this = null
 Page({
   data: {
-    userInfo: {}
+    userInfo: {},
+    status:{islogin : true},
+    icons : icons()
   },
   onLoad: function () {
     console.log('onLoad')
-    var that = this
-    //调用应用实例的方法获取全局数据
+    var _this = this
+    
+
     app.getUserInfo(function(userInfo){
       //更新数据
-      that.setData({
+      _this.setData({
         userInfo:userInfo
       })
-    })
+    });
+
+
+  },
+  onGo: function(e){
+    wx.navigateTo({url: e.target.dataset.url})
   }
 })

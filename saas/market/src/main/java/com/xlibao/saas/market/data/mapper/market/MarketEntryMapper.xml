@@ -42,7 +42,6 @@
 
 
 
-
     <select id="searchMarkets" resultMap="BaseResultMap">
         select * from market_entry where 1=1
         <if test="searchModel.province != null">
@@ -96,5 +95,9 @@
         <if test="searchModel.deliveryMode != -1">
             and delivery_mode = #{searchModel.deliveryMode}
         </if>
+    </select>
+
+    <select id="getAllMarkets" resultMap="BaseResultMap">
+        select * from market_entry
     </select>
 </mapper>

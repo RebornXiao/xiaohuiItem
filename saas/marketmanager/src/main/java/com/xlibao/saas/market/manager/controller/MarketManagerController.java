@@ -38,6 +38,7 @@ public class MarketManagerController extends BaseController {
     @Autowired
     private PassportManagerService passportManagerService;
 
+    //商店 列表 页面
     @RequestMapping("/markets")
     public String markets(ModelMap map) {
 
@@ -105,6 +106,7 @@ public class MarketManagerController extends BaseController {
         return jumpPage(map, LogicConfig.FTL_MARKET_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_LIST);
     }
 
+    //商店 编辑 页面
     @RequestMapping("/merketEdit")
     public String merketEdit(ModelMap map) {
         long id = getLongParameter("id", 0);
@@ -147,9 +149,10 @@ public class MarketManagerController extends BaseController {
                     PassportStreet street = JSONObject.parseObject(streetJson.getJSONObject("response").getString("data"), PassportStreet.class);
                     //拿所有数据
                     JSONObject streetsJson = passportManagerService.getStreets(street.getAreaId());
-                    if (streetsJson.getInteger("code") == 0) {
-                        map.put("streets", streetsJson.getJSONObject("response").getJSONArray("datas"));
-                        map.put("streetId", entry.getStreetId());
+                    if (streetsJson.getIntValue("code") == 0) {
+                        JSONArray array = streetsJson.getJSONObject("response").getJSONArray("datas");
+                        map.put("streets", array);
+                        map.put("streetId", street.getId());
                     }
                 }
             }
@@ -157,15 +160,7 @@ public class MarketManagerController extends BaseController {
         return jumpPage(map, LogicConfig.FTL_MARKET_EDIT, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_LIST);
     }
 
-    @ResponseBody
-    @RequestMapping("/streetEditSave")
-    public JSONObject streetEditSave() {
-        String title = getUTF("title");
-        long areaId = getLongParameter("areaId");
-        long id = getLongParameter("id", 0);
-        return passportManagerService.streetEditSave(id, areaId, title);
-    }
-
+    //提供给页面，拿到 街道列表 JSONObject 信息
     @ResponseBody
     @RequestMapping("/getStreets")
     public JSONObject getStreets() {
@@ -189,6 +184,7 @@ public class MarketManagerController extends BaseController {
         }
     }
 
+    //街道页面
     @RequestMapping("/streets")
     public String streets(ModelMap map) {
 
@@ -211,6 +207,7 @@ public class MarketManagerController extends BaseController {
         return jumpPage(map, LogicConfig.FTL_MARKET_STREET_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_STREET_LIST);
     }
 
+    //街道编辑页面
     @RequestMapping("/streetEdit")
     public String streetEdit(ModelMap map) {
         //如果没有选区域，则默认为0
@@ -232,5 +229,60 @@ public class MarketManagerController extends BaseController {
         }
 
         return jumpPage(map, LogicConfig.FTL_MARKET_STREET_EDIT, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_STREET_LIST);
+    }
+
+    //街道编辑保存
+    @ResponseBody
+    @RequestMapping("/streetEditSave")
+    public JSONObject streetEditSave() {
+        String title = getUTF("title");
+        long areaId = getLongParameter("areaId");
+        long id = getLongParameter("id", 0);
+        return passportManagerService.streetEditSave(id, areaId, title);
+    }
+
+    //商店 商品列表
+    @RequestMapping("/marketItems")
+    public String marketItems(ModelMap map) {
+        long marketId = getLongParameter("id", 0);
+
+        //拿到所有店铺
+        JSONObject response = marketManagerService.getAllMarkets();
+        if (response.getIntValue("code") == 0) {
+            map.put("markets", response.getJSONObject("response").getJSONArray("datas"));
+        }
+
+        map.put("marketId", marketId);
+
+        return jumpPage(map, LogicConfig.FTL_MARKET_ITEM_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ITEM_LIST);
+    }
+
+    //拿商店的一些 走道，层 等数据
+    @ResponseBody
+    @RequestMapping("/getShelvesMarks")
+    public JSONObject getShelvesMarks() {
+        long marketId = getLongParameter("marketId");
+        String groupCode = getUTF("groupCode", "");
+        String unitCode = getUTF("unitCode", "");
+        int shelvesType = getIntParameter("shelvesType", 0);
+
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/getShelvesMarks.do?marketId=" + marketId + "&groupCode=" + groupCode + "&unitCode=" + unitCode + "&shelvesType=" + shelvesType);
+        return JSONObject.parseObject(json);
+    }
+
+    //拿商店的一些 走道，层 等数据
+    @ResponseBody
+    @RequestMapping("/loaderClipDatas")
+    public JSONObject loaderClipDatas() {
+
+        long marketId = getLongParameter("marketId");
+        String groupCode = getUTF("groupCode");
+        String unitCode = getUTF("unitCode");
+        String floorCode = getUTF("floorCode");
+        int pageSize = getPageSize();
+        int pageStartIndex = getPageStartIndex(pageSize);
+
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/loaderClipDatas.do?marketId=" + marketId + "&groupCode=" + groupCode + "&unitCode=" + unitCode + "&floorCode=" + floorCode + "&pageSize=" + 1000 + "&pageStartIndex=" + pageStartIndex);
+        return JSONObject.parseObject(json);
     }
 }

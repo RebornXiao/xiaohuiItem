@@ -53,6 +53,10 @@ public class MarketDataAccessManager {
         return entryMapper.searchMarketsCount(searchModel);
     }
 
+    public List<MarketEntry> getAllMarkets() {
+        return entryMapper.getAllMarkets();
+    }
+
     public int createShelves(MarketShelvesManager shelvesManager) {
         return shelvesManagerMapper.createShelves(shelvesManager);
     }

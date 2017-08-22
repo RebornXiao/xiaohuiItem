@@ -8,6 +8,9 @@ import com.xlibao.market.data.model.MarketEntry;
  */
 public interface MarketManagerService {
 
+    //返回所有店铺
+    public JSONObject getAllMarkets();
+
     public JSONObject searchMarkets(MarketEntry entry, int pageSize, int pageIndex);
 
     public JSONObject getMarket(long id);

@@ -3,67 +3,27 @@
 /** 导航 **/
 .navbar{
   background: #fff;
-  color: #000;
+  color: #717171;
   border-bottom:1px solid #d8d8d8;
+  height: 40px;
 }
+.navbar .item{
+  width: 90px;
+
+}
+
 .navbar .left{
-  width: 95px;
-}
-
-.navbar .right{
-  width: 120px;
+  width: 50%;
+  margin-left: 10px;
+  text-align: left;
 }
 
 
-/**  商品  **/
-.row-item{
-  margin:0px 8px 0px 8px;
-  padding: 8px 0px 8px 0px ;
-  height: 80px;
-    border-bottom: 1px solid #f8f8f8;
-    display: flex;
-  position: relative;
-  background: #FFF;
-}
-.row-item checkbox{
-  position: relative;
-  top: calc(100% / 2 - 12px);
-}
-.row-item .item-img{
-  height: 100%;
-  width: 80px;
-  display: inline-block;
-  position: relative;
-  margin-right: 5px;
+.item .checkbox{
+  margin:18px 0 0 10px;
 }
 
-.row-item .item-bd{
-  display: inline-block;
-  position: relative;
-  margin-top: 0px;
-  width: calc(100% - 85px);
-}
-.item-bd .title{
-  font-size: 16px;
-  display: block;
-  color:#000;
-}
-.item-bd .desc{
-  font-size: 14px;
-  display: block;
-  color:#898989;
+.cartnav .item.center{
+  width:calc(100% - 85px - 140px);
 }
 
-.item-bd .other{
-  font-size: 14px;
-  display: block;
-}
-.item-bd .money{
-  color: red;
-  font-size: 15px;
-}
-.item-bd .oldMoney{
-  font-size: 12px;
-  color: #000;
-  text-decoration:line-through
-}

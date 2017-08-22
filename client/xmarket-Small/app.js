@@ -1,5 +1,4 @@
-const openIdUrl = require('./config').openIdUrl
-const duration = 2000
+const config = require('./config');
 
 var CACHE = {
   cart : "CACHE_BUYCAR",
@@ -9,22 +8,27 @@ var CACHE = {
 //app.js
 App({
   onLaunch: function() {
-    //调用API从本地缓存中获取数据
-    var logs = wx.getStorageSync('logs') || []
-    logs.unshift(Date.now())
-    wx.setStorageSync('logs', logs)
-  },
-  onShow: function () {
-    console.log('App Show')
-  },
-  onHide: function () {
-    console.log('App Hide')
-  },
-  globalData: {
-    hasLogin: false,
-    openid: null
+    var _this = this
+    console.log("APP.js.....")
+
+
+    wx.login({
+      success: function(res) {
+        console.log(res);
+        
+      }
+    });
+
+
+
+    wx.getSystemInfo({
+      success: function(res) {
+        _this.getSystemInfo = res;
+      }
+    })
   },
 
+  getSystemInfo : {},
   getUserInfo: function(cb) {
     var that = this
     if (this.globalData.userInfo) {
@@ -45,14 +49,26 @@ App({
     userInfo: null
   },
   /** 全局请求 **/
-  ajax: function(self,option){
-    self.setData({loading: true})
+  ajax: function(_this,option){
+    _this.setData({loading: true})
+    if(option.data.passportId != null && this.User.get().info.passportId != null){
+      option.data.passportId = this.User.get().info.passportId;
+    }
+
+    var url = "";
+    if(option.islogin){
+      url = this.User.islogin ? config.host[option.host] : config.hostOpenApi[option.host] + option.url;
+    }else{
+      url = config.host[option.host] + option.url;
+    }
+    console.log(url);
+
     wx.request({
-      url: option.url,
+      url: url,
       data: option.data,
       success: function(result) {
         option.success(result);
-        self.setData({
+        _this.setData({
           loading: false
         })
       },
@@ -63,7 +79,7 @@ App({
         //   content: errMsg
         // })
         console.log('request fail', errMsg)
-        self.setData({loading: false})
+        _this.setData({loading: false})
       }
     })
   },
@@ -78,11 +94,11 @@ App({
     getMarket : function(){
       var market = wx.getStorageSync(CACHE.user).market || false;
       if(!market){
-        wx.showToast({
-          title: '请选择店铺',
-          icon: 'success',
-          duration: 2000
-        })
+        // wx.showToast({
+        //   title: '请选择店铺',
+        //   icon: 'success',
+        //   duration: 2000
+        // })
         return false;
       }
       return market;
@@ -97,10 +113,13 @@ App({
       wx.setStorage({
         key : CACHE.user,
         data : data,
-        success : function(){},
-        fail : function(){}
+        success : function(){
+        },
+        fail : function(){
+        }
       });
-    }
+    },
+    islogin : false
 
   },
 
@@ -121,53 +140,57 @@ App({
       }
     },
     ADD : function(data, id){
-      var Cart = this.getCart();
+      var Cart = this.getCart(), item = data.goodData || data.cartData;
       if(!Cart) return false;
 
-      data.goodData[id].check = true;
-
-      if(data.goodData) data.goodData[id].num += 1;
-      if(data.cartData && data.cartData[id]) data.cartData[id].num += 1;
+      item = item[id];
+      item.check = true;
+      item.num += 1;
 
       data.cartTotal.totalNum += 1;
-      data.cartTotal.totalMoney += data.goodData[id].sellPrice;
+      data.cartTotal.totalMoney += item.sellPrice;
 
       Cart.cartTotal = data.cartTotal;
-      this.saveCart(Cart, data.goodData[id]);
+      this.saveCart(Cart, item);
 
+      if(data.goodData) data.goodData[id] = item;
+      if(data.cartData) data.cartData[id] = item;
       if(data.checkTotal){
         data.checkTotal = this.getCheckTotal(Cart);
       }
       return data;
     },
     MINUS : function(data, id){
-      if(data.goodData[id].num == 0) return data;
+      var item = data.goodData || data.cartData;
+      item = item[id];
+      if(item.num == 0) return data;
 
       var Cart = this.getCart();
       if(!Cart) return false;
 
-      if(data.goodData) data.goodData[id].num -= 1;
-      if(data.cartData && data.cartData[id]){
-        data.cartData[id].num -= 1;
-        if(data.cartData[id].num == 0){
-          //  清除购物车数据
+      item.num -= 1;
+
+      if(item.num == 0){
+        //  清除购物车数据
+        if(data.cartData && data.cartData[id]){
           delete data.cartData[id];
-          data.checkTotal.speciesNum -= 1;
         }
+        data.checkTotal.speciesNum -= 1;
+      }else{
+        if(data.cartData) data.cartData[id] = item;
       }
-
-
+      if(data.goodData) data.goodData[id] = item;
         
       data.cartTotal.totalNum -= 1;
-      data.cartTotal.totalMoney -= data.goodData[id].sellPrice;
+      data.cartTotal.totalMoney -= item.sellPrice;
 
       Cart.cartTotal = data.cartTotal;
-      this.saveCart(Cart, data.goodData[id]);
-
+      this.saveCart(Cart, item);
       
       if(data.checkTotal){
         data.checkTotal = this.getCheckTotal(Cart);
       }
+
       return data;
     },
     CHECK : function(data, id){
@@ -249,6 +272,7 @@ App({
       }
       return {
           goodData: data,
+          cartData: data,
           checkTotal : checkTotal
       };
     },

@@ -1,29 +1,205 @@
 
-	<scroll-view scroll-y="true" class="index" style="height: calc(100% - 40px)">
-		<view class="row">
-			<view class="cell">
-				<label>陈先生  136****2258</label>
-				<text>广东广州市天河区天河北路16号</text>
-			</view>
-			<view class="cus-hr"></view>
-			<view class="cell-flex">
-				<view class="item">
-					<label class="checkbox">
-						<checkbox data-check="{{status.checkAll}}" checked="{{status.checkAll ? 'checked':''}}" catchtap="onCartCheckAll"></checkbox>默认地址
-					</label>
-				</view>
-				<view class="item">
-					<label>
-						<icon class="iconfont icon-bianjishuru-xianxing"></icon>编辑
-					</label>
-					<label>
-						<icon class="iconfont icon-cuowuguanbiquxiao"></icon>删除
-					</label>
-				</view>
+<scroll-view scroll-y="true" style="height: calc(100% - 40px);">
+	<radio-group class="radio-group" bindchange="radioChange">
+	<view class="list justify">
+		<view class="item">
+			<view><text>广东 广州市 天河区 天河北路 16号</text></view>
+		</view>
+		<view class="item">
+			<view class="text-shallow">
+				<text>陈先生</text>
+				<text style="padding-left: 50px;">136****2258</text>
 			</view>
 		</view>
+		<view class="item" style="background: #FAFAFA;margin-left:0px">
+			<view>
+				<label class="radio" style="margin:20px 0 0 12px;">
+					<radio style="transform:scale(.85);" value="1" checked="checked"  data-type="CHECK" color="#8F1A30"/>
+					默认地址
+				</label>
+			</view>
+			<view class="buts">
+				<text class="border-r" bindtap="onGo" data-url="addressEdit">编辑</text>
+				<text class="">删除</text>
+			</view>
+		</view>
+	</view>
 
 
-	</scroll-view>
+	<view class="list justify">
+		<view class="item">
+			<view><text>广东 广州市 天河区 天河北路 16号</text></view>
+		</view>
+		<view class="item">
+			<view class="text-shallow">
+				<text>陈先生</text>
+				<text style="padding-left: 50px;">136****2258</text>
+			</view>
+		</view>
+		<view class="item" style="background: #FAFAFA;margin-left:0px">
+			<view>
+				<label class="radio" style="margin:20px 0 0 12px;">
+					<radio style="transform:scale(.85);" value="1"  data-type="CHECK" color="#8F1A30"/>
+					默认地址
+				</label>
+			</view>
+			<view class="buts">
+				<text class="border-r">编辑</text>
+				<text class="">删除</text>
+			</view>
+		</view>
+	</view>
 
-<view class="butAdd" >添加地址</view>	
+
+	<view class="list justify">
+		<view class="item">
+			<view><text>广东 广州市 天河区 天河北路 16号</text></view>
+		</view>
+		<view class="item">
+			<view class="text-shallow">
+				<text>陈先生</text>
+				<text style="padding-left: 50px;">136****2258</text>
+			</view>
+		</view>
+		<view class="item" style="background: #FAFAFA;margin-left:0px">
+			<view>
+				<label class="radio" style="margin:20px 0 0 12px;">
+					<radio style="transform:scale(.85);" value="1"  data-type="CHECK" color="#8F1A30"/>
+					默认地址
+				</label>
+			</view>
+			<view class="buts">
+				<text class="border-r">编辑</text>
+				<text class="">删除</text>
+			</view>
+		</view>
+	</view>
+
+	<view class="list justify">
+		<view class="item">
+			<view><text>广东 广州市 天河区 天河北路 16号</text></view>
+		</view>
+		<view class="item">
+			<view class="text-shallow">
+				<text>陈先生</text>
+				<text style="padding-left: 50px;">136****2258</text>
+			</view>
+		</view>
+		<view class="item" style="background: #FAFAFA;margin-left:0px">
+			<view>
+				<label class="radio" style="margin:20px 0 0 12px;">
+					<radio style="transform:scale(.85);" value="1"  data-type="CHECK" color="#8F1A30"/>
+					默认地址
+				</label>
+			</view>
+			<view class="buts">
+				<text class="border-r">编辑</text>
+				<text class="">删除</text>
+			</view>
+		</view>
+	</view>
+
+	<view class="list justify">
+		<view class="item">
+			<view><text>广东 广州市 天河区 天河北路 16号</text></view>
+		</view>
+		<view class="item">
+			<view class="text-shallow">
+				<text>陈先生</text>
+				<text style="padding-left: 50px;">136****2258</text>
+			</view>
+		</view>
+		<view class="item" style="background: #FAFAFA;margin-left:0px">
+			<view>
+				<label class="radio" style="margin:20px 0 0 12px;">
+					<radio style="transform:scale(.85);" value="1"  data-type="CHECK" color="#8F1A30"/>
+					默认地址
+				</label>
+			</view>
+			<view class="buts">
+				<text class="border-r">编辑</text>
+				<text class="">删除</text>
+			</view>
+		</view>
+	</view>
+
+	<view class="list justify">
+		<view class="item">
+			<view><text>广东 广州市 天河区 天河北路 16号</text></view>
+		</view>
+		<view class="item">
+			<view class="text-shallow">
+				<text>陈先生</text>
+				<text style="padding-left: 50px;">136****2258</text>
+			</view>
+		</view>
+		<view class="item" style="background: #FAFAFA;margin-left:0px">
+			<view>
+				<label class="radio" style="margin:20px 0 0 12px;">
+					<radio style="transform:scale(.85);" value="1"  data-type="CHECK" color="#8F1A30"/>
+					默认地址
+				</label>
+			</view>
+			<view class="buts">
+				<text class="border-r">编辑</text>
+				<text class="">删除</text>
+			</view>
+		</view>
+	</view>
+
+	<view class="list justify">
+		<view class="item">
+			<view><text>广东 广州市 天河区 天河北路 16号</text></view>
+		</view>
+		<view class="item">
+			<view class="text-shallow">
+				<text>陈先生</text>
+				<text style="padding-left: 50px;">136****2258</text>
+			</view>
+		</view>
+		<view class="item" style="background: #FAFAFA;margin-left:0px">
+			<view>
+				<label class="radio" style="margin:20px 0 0 12px;">
+					<radio style="transform:scale(.85);" value="1"  data-type="CHECK" color="#8F1A30"/>
+					默认地址
+				</label>
+			</view>
+			<view class="buts">
+				<text class="border-r">编辑</text>
+				<text class="">删除</text>
+			</view>
+		</view>
+	</view>
+
+	<view class="list justify">
+		<view class="item">
+			<view><text>广东 广州市 天河区 天河北路 16号</text></view>
+		</view>
+		<view class="item">
+			<view class="text-shallow">
+				<text>陈先生</text>
+				<text style="padding-left: 50px;">136****2258</text>
+			</view>
+		</view>
+		<view class="item" style="background: #FAFAFA;margin-left:0px">
+			<view>
+				<label class="radio" style="margin:20px 0 0 12px;">
+					<radio style="transform:scale(.85);" value="1"  data-type="CHECK" color="#8F1A30"/>
+					默认地址
+				</label>
+			</view>
+			<view class="buts">
+				<text class="border-r">编辑</text>
+				<text class="">删除</text>
+			</view>
+		</view>
+	</view>
+
+
+	</radio-group>
+</scroll-view>
+
+<view class="butAdd" ><text>+</text>添加地址</view>	
+
+
+
