@@ -14,6 +14,7 @@ import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemUnit;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.service.item.PrepareActionStatusEnum;
+import com.xlibao.saas.market.service.market.MarketErrorCodeEnum;
 import com.xlibao.saas.market.service.market.MarketStatusEnum;
 import com.xlibao.saas.market.service.market.ShelvesService;
 import com.xlibao.saas.market.service.market.ShelvesTypeEnum;
@@ -77,12 +78,22 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex(pageSize);
 
-        List<MarketItemLocation> itemLocations = dataAccessFactory.getItemDataAccessManager().matchItemLocationForMarket(marketId, groupCode + unitCode + floorCode, pageStartIndex, pageSize);
+        List<MarketShelvesManager> shelvesManagers = dataAccessFactory.getMarketDataAccessManager().getClipDatas(marketId, groupCode, unitCode, floorCode, pageStartIndex, pageSize);
+        if (CommonUtils.isEmpty(shelvesManagers)) {
+            return MarketErrorCodeEnum.SHELVES_LOCATION_ERROR.response("货架信息有误，从检查是否未重置货架信息或提供的信息错误");
+        }
         StringBuilder locationSet = new StringBuilder();
-        for (MarketItemLocation itemLocation : itemLocations) {
-            locationSet.append(itemLocation.getLocationCode()).append(CommonUtils.SPLIT_COMMA);
+        for (MarketShelvesManager shelvesManager : shelvesManagers) {
+            locationSet.append("'").append(groupCode).append(unitCode).append(floorCode).append(shelvesManager.getClipCode()).append("'").append(CommonUtils.SPLIT_COMMA);
         }
         locationSet.deleteCharAt(locationSet.length() - 1);
+
+        List<MarketItemLocation> itemLocations = dataAccessFactory.getItemDataAccessManager().matchItemLocationForMarket(marketId, groupCode + unitCode + floorCode, pageStartIndex, pageSize);
+        Map<String, MarketItemLocation> itemLocationMap = new HashMap<>();
+        for (MarketItemLocation itemLocation : itemLocations) {
+            itemLocationMap.put(itemLocation.getLocationCode(), itemLocation);
+        }
+
         List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionsForLocationSet(marketId, locationSet.toString(), PrepareActionStatusEnum.UN_EXECUTOR.getKey());
         Map<String, MarketPrepareAction> prepareActionMap = new HashMap<>();
         if (!CommonUtils.isEmpty(prepareActions)) {
@@ -92,18 +103,21 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         }
 
         JSONArray response = new JSONArray();
-        for (MarketItemLocation itemLocation : itemLocations) {
-            ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemLocation.getItemTemplateId());
-            ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
+        for (MarketShelvesManager shelvesManager : shelvesManagers) {
+            String locationCode = groupCode + unitCode + floorCode + shelvesManager.getClipCode();
+            MarketItemLocation itemLocation = itemLocationMap.get(locationCode);
+
+            ItemTemplate itemTemplate = itemLocation == null ? null : ItemDataCacheService.getItemTemplate(itemLocation.getItemTemplateId());
+            ItemUnit itemUnit = itemTemplate == null ? null : ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
 
             JSONObject data = new JSONObject();
-            data.put("locationCode", itemLocation.getLocationCode());
-            data.put("barcode", itemTemplate.getBarcode());
-            data.put("name", itemTemplate.getName());
-            data.put("unitName", itemUnit.getTitle());
-            data.put("stock", itemLocation.getStock());
+            data.put("locationCode", locationCode);
+            data.put("barcode", itemTemplate == null ? "未存放商品" : itemTemplate.getBarcode());
+            data.put("name", itemTemplate == null ? "未存放商品" : itemTemplate.getName());
+            data.put("unitName", itemUnit == null ? "未知单位" : itemUnit.getTitle());
+            data.put("stock", itemLocation == null ? 0 : itemLocation.getStock());
 
-            MarketPrepareAction prepareAction = prepareActionMap.get(itemLocation.getLocationCode());
+            MarketPrepareAction prepareAction = prepareActionMap.get(locationCode);
             data.put("taskId", prepareAction == null ? 0 : prepareAction.getId());
 
             response.add(data);

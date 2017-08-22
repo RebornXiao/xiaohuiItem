@@ -26,7 +26,7 @@
     </select>
 
     <select id="matchItemLocationForMarket" resultMap="BaseResultMap">
-        select * from market_item_location where market_id = #{marketId} and location_code like concat('''', #{matchLocation}, '%''') order by location_code asc limit #{pageStartIndex}, #{pageSize}
+        select * from market_item_location where market_id = #{marketId} and location_code like concat(#{matchLocation}, '%') order by location_code asc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="getItemLocations" resultMap="BaseResultMap">

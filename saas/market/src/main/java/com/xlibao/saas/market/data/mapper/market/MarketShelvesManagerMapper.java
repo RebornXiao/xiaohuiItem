@@ -13,6 +13,6 @@ public interface MarketShelvesManagerMapper {
 
     List<String> getShelvesMarks(@Param("marketId") long marketId, @Param("groupCode") String groupCode, @Param("unitCode") String unitCode, @Param("shelvesType") int shelvesType);
 
-    List<MarketShelvesManager> getClipDatas(long marketId, @Param("groupCode") String groupCode, @Param("unitCode") String unitCode, @Param("floorCode") String floorCode,
+    List<MarketShelvesManager> getClipDatas(@Param("marketId") long marketId, @Param("groupCode") String groupCode, @Param("unitCode") String unitCode, @Param("floorCode") String floorCode,
                                             @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 }
