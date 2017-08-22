@@ -53,6 +53,23 @@ public class MarketOpenApiController {
         return marketService.filterMarket();
     }
 
+    /**
+     * <pre>
+     *     <b>获取组(走道)、货架(单元)、层(楼层)的值</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/open/getShelvesMarks.do
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>marketId</b> - 商店ID，必填参数。
+     *          <b>groupCode</b> - 组编码，当 <b>shelvesType</b>为{@link com.xlibao.saas.market.service.market.ShelvesTypeEnum#GROUP}或{@link com.xlibao.saas.market.service.market.ShelvesTypeEnum#UNIT}时必填
+     *          <b>unitCode</b> - 单元编码，当 <b>shelvesType</b>为{@link com.xlibao.saas.market.service.market.ShelvesTypeEnum#UNIT}时必填
+     *          <b>shelvesType</b> - 获取的货架类型，具体参考：{@link com.xlibao.saas.market.service.market.ShelvesTypeEnum}
+     *
+     *     <b>返回：</b>
+     *          <b>datas</b> - JSONArray 编码组，每个元素为String，即对应请求
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "getShelvesMarks")
     public JSONObject getShelvesMarks() {
