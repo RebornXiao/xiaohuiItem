@@ -13,4 +13,8 @@ public interface ShelvesService {
     JSONObject getShelvesMarks();
 
     JSONObject loaderClipDatas();
+
+    JSONObject scanShelvesTask();
+
+    JSONObject prepareAction();
 }

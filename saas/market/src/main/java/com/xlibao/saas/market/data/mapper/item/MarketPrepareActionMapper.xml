@@ -32,6 +32,10 @@
         select * from market_prepare_action where market_id = #{marketId} and status = #{status} order by item_location asc limit #{pageStartIndex}, #{pageSize}
     </select>
 
+    <select id="getPrepareActionForBarcode" resultMap="BaseResultMap">
+        select * from market_prepare_action where market_id = #{marketId} and status = #{status} and hope_item_barcode = #{barcode}
+    </select>
+
     <update id="modifyPrepareActionStatus">
         update market_prepare_action set status = #{status}, complete_time = #{time} where market_id = #{marketId} and item_location = #{itemLocation} and status = #{matchStatus}
     </update>

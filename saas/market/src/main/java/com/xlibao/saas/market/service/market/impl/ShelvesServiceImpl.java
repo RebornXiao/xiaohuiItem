@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
+import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketItemLocation;
@@ -13,6 +14,7 @@ import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemUnit;
 import com.xlibao.saas.market.data.DataAccessFactory;
+import com.xlibao.saas.market.service.item.MarketItemErrorCodeEnum;
 import com.xlibao.saas.market.service.item.PrepareActionStatusEnum;
 import com.xlibao.saas.market.service.market.MarketErrorCodeEnum;
 import com.xlibao.saas.market.service.market.MarketStatusEnum;
@@ -65,7 +67,6 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         int shelvesType = getIntParameter("shelvesType", ShelvesTypeEnum.MARKET.getKey());
 
         List<String> marks = dataAccessFactory.getMarketDataAccessManager().getShelvesMarks(marketId, groupCode, unitCode, shelvesType);
-
         return success(marks);
     }
 
@@ -113,6 +114,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             JSONObject data = new JSONObject();
             data.put("locationCode", locationCode);
             data.put("barcode", itemTemplate == null ? "未存放商品" : itemTemplate.getBarcode());
+            data.put("itemTemplateId", itemTemplate == null ? 0 : itemTemplate.getId());
             data.put("name", itemTemplate == null ? "未存放商品" : itemTemplate.getName());
             data.put("unitName", itemUnit == null ? "未知单位" : itemUnit.getTitle());
             data.put("stock", itemLocation == null ? 0 : itemLocation.getStock());
@@ -123,6 +125,83 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             response.add(data);
         }
         return success(response);
+    }
+
+    @Override
+    public JSONObject scanShelvesTask() {
+        long marketId = getLongParameter("marketId");
+        String barcode = getUTF("barcode");
+
+        List<MarketPrepareAction>  prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionForBarcode(marketId, barcode, PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+
+        return null;
+    }
+
+    @Override
+    public JSONObject prepareAction() {
+        long passportId = getLongParameter("passportId");
+        long marketId = getLongParameter("marketId");
+        String actionDatas = getUTF("actionDatas"); // 结构：[{"location":"01010101","itemTemplateId":"100000","quantity":"9"}, {"location":"01010102","itemTemplateId":"100000","quantity":"10"}, {"location":"01010103","itemTemplateId":"100001","quantity":"11"}]
+        String hopeExecutorDate = getUTF("hopeExecutorDate", CommonUtils.dateFormat(CommonUtils.getTodayEarlyMorningMillisecond()));
+
+        JSONArray actionArray = JSONObject.parseArray(actionDatas);
+
+        beforePrepareAction(marketId, actionArray); // 执行前的检查 检查本次的数量与原位置上是否存在未完成的任务
+
+        for (int i = 0; i < actionArray.size(); i++) {
+            JSONObject data = actionArray.getJSONObject(i);
+
+            createPrepareAction(passportId, marketId, hopeExecutorDate, data);
+        }
+        return success();
+    }
+
+    private void beforePrepareAction(long marketId, JSONArray actionArray) {
+        StringBuilder locationSet = new StringBuilder();
+        for (int i = 0; i < actionArray.size(); i++) {
+            JSONObject data = actionArray.getJSONObject(i);
+
+            long itemTemplateId = getLongParameter("itemTemplateId");
+            ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemTemplateId);
+            int quantity = data.getIntValue("quantity");
+            if (quantity <= 0) {
+                throw MarketItemErrorCodeEnum.PREPARE_QUANTITY_ERROR.throwException("[" + itemTemplate.getName() + "]预上架数量必须大于0");
+            }
+            locationSet.append("'").append(data.getString("location")).append("'").append(CommonUtils.SPLIT_COMMA);
+        }
+        locationSet.deleteCharAt(locationSet.length() - 1);
+
+        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionsForLocationSet(marketId, locationSet.toString(), PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        if (!CommonUtils.isEmpty(prepareActions)) { // 指定的位置 存在未执行的任务
+            StringBuilder errorMsg = new StringBuilder().append("以下位置上存在未完成的任务：");
+            for (MarketPrepareAction prepareAction : prepareActions) {
+                ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareAction.getHopeItemTemplateId());
+                ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
+                errorMsg.append("\r\n\t");
+                errorMsg.append("位置 -- ").append(prepareAction).append("期望存放").append(prepareAction.getHopeItemQuantity()).append(itemUnit.getTitle()).append("【").append(itemTemplate.getName()).append("】");
+            }
+            throw MarketItemErrorCodeEnum.PREPARE_ACTION_LOCATION_ERROR.throwException(errorMsg.toString());
+        }
+    }
+
+    private void createPrepareAction(long passportId, long marketId, String hopeExecutorDate, JSONObject prepareActionData) {
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareActionData.getLongValue("itemTemplateId"));
+
+        MarketPrepareAction prepareAction = new MarketPrepareAction();
+        prepareAction.setMarketId(marketId);
+        prepareAction.setActionPassportId(passportId);
+        prepareAction.setItemLocation(prepareActionData.getString("location"));
+        prepareAction.setHopeItemTemplateId(itemTemplate.getId());
+        prepareAction.setHopeItemBarcode(itemTemplate.getBarcode());
+        prepareAction.setHopeItemQuantity(prepareActionData.getIntValue("quantity"));
+        prepareAction.setHopeExecutorDate(new Date(CommonUtils.dateFormatToLong(hopeExecutorDate)));
+        prepareAction.setStatus(PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        prepareAction.setCreateTime(new Date());
+
+        int result = dataAccessFactory.getItemDataAccessManager().createPrepareAction(prepareAction);
+        if (result <= 0) {
+            throw new XlibaoRuntimeException("无法建立预操作记录，请稍后重试");
+        }
     }
 
     private void groupAdapter(MarketEntry marketEntry, String content) {

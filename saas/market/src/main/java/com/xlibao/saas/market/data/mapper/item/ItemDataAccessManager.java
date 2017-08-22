@@ -137,6 +137,10 @@ public class ItemDataAccessManager {
         return prepareActionMapper.getPrepareActionsForLocationSet(marketId, locationSet, status);
     }
 
+    public List<MarketPrepareAction> getPrepareActionForBarcode(long marketId, String barcode, int status) {
+        return prepareActionMapper.getPrepareActionForBarcode(marketId, barcode, status);
+    }
+
     public List<MarketPrepareAction> getUnCompletePrepareActions(long marketId, int status, int pageStartIndex, int pageSize) {
         return prepareActionMapper.getUnCompletePrepareActions(marketId, status, pageStartIndex, pageSize);
     }

@@ -15,5 +15,7 @@ public interface MarketPrepareActionMapper {
 
     List<MarketPrepareAction> getUnCompletePrepareActions(@Param("marketId") long marketId, @Param("status") int status, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 
+    List<MarketPrepareAction> getPrepareActionForBarcode(long marketId, String barcode, int status);
+
     int modifyPrepareActionStatus(@Param("marketId") long marketId, @Param("itemLocation") String itemLocation, @Param("matchStatus") int matchStatus, @Param("status") int status, @Param("time") String time);
 }

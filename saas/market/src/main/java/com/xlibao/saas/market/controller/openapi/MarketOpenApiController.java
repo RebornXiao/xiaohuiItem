@@ -106,4 +106,21 @@ public class MarketOpenApiController {
     public JSONObject loaderClipDatas() {
         return shelvesService.loaderClipDatas();
     }
+
+    @ResponseBody
+    @RequestMapping(value = "prepareAction")
+    public JSONObject prepareAction() {
+        return shelvesService.prepareAction();
+    }
+
+    /**
+     * <pre>
+     *     <b>扫描商品获取上架任务</b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "scanShelvesTask")
+    public JSONObject scanShelvesTask() {
+        return shelvesService.scanShelvesTask();
+    }
 }

@@ -75,12 +75,6 @@ public class ItemController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "prepareAction")
-    public JSONObject prepareAction() {
-        return itemService.prepareAction();
-    }
-
-    @ResponseBody
     @RequestMapping(value = "offShelves")
     public JSONObject offShelves() {
         return itemService.offShelves();
