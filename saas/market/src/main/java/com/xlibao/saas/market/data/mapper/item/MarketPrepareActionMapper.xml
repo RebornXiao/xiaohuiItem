@@ -20,6 +20,10 @@
         values(#{marketId}, #{actionPassportId}, #{itemLocation}, #{hopeItemTemplateId}, #{hopeItemBarcode}, #{hopeItemQuantity}, #{hopeExecutorDate}, #{status}, #{createTime})
     </insert>
 
+    <select id="getPrepareActionForId" resultMap="BaseResultMap">
+        select * from market_prepare_action where id = #{taskId}
+    </select>
+
     <select id="getPrepareAction" resultMap="BaseResultMap">
         select * from market_prepare_action where market_id = #{marketId} and item_location = #{itemLocation} and status = #{status}
     </select>
@@ -33,7 +37,7 @@
     </select>
 
     <select id="getPrepareActionForBarcode" resultMap="BaseResultMap">
-        select * from market_prepare_action where market_id = #{marketId} and status = #{status} and hope_item_barcode = #{barcode}
+        select * from market_prepare_action where market_id = #{marketId} and status = #{status} and hope_item_barcode = #{barcode} order by hope_item_quantity asc
     </select>
 
     <update id="modifyPrepareActionStatus">

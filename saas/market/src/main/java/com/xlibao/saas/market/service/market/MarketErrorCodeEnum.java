@@ -16,6 +16,8 @@ public enum MarketErrorCodeEnum {
     DON_NOT_MAINTAIN(1002, "不处于维护中"),
     /** 1100 -- 货架信息有误 */
     SHELVES_LOCATION_ERROR(1100, "货架信息有误"),
+    /** 1101 -- 货架位置上的任务有误 */
+    SHELVES_LOCATION_TASK_ERROR(1101, "货架位置上的任务有误"),
     ;
 
     private int key;

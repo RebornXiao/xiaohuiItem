@@ -5,8 +5,11 @@ package com.xlibao.saas.market.service.item;
  */
 public enum PrepareActionStatusEnum {
 
+    /** 0 -- 失效 */
     INVALID(0, "失效"),
+    /** 1 -- 未执行 */
     UN_EXECUTOR(1, "未执行"),
+    /** 2 -- 完成 */
     COMPLETE(2, "完成"),
     ;
 

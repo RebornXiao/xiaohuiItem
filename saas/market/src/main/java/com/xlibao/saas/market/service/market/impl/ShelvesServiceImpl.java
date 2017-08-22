@@ -115,9 +115,9 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             data.put("locationCode", locationCode);
             data.put("barcode", itemTemplate == null ? "未存放商品" : itemTemplate.getBarcode());
             data.put("itemTemplateId", itemTemplate == null ? 0 : itemTemplate.getId());
-            data.put("name", itemTemplate == null ? "未存放商品" : itemTemplate.getName());
+            data.put("itemName", itemTemplate == null ? "未存放商品" : itemTemplate.getName());
             data.put("unitName", itemUnit == null ? "未知单位" : itemUnit.getTitle());
-            data.put("stock", itemLocation == null ? 0 : itemLocation.getStock());
+            data.put("itemQuantity", itemLocation == null ? 0 : itemLocation.getStock());
 
             MarketPrepareAction prepareAction = prepareActionMap.get(locationCode);
             data.put("taskId", prepareAction == null ? 0 : prepareAction.getId());
@@ -132,9 +132,26 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         long marketId = getLongParameter("marketId");
         String barcode = getUTF("barcode");
 
-        List<MarketPrepareAction>  prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionForBarcode(marketId, barcode, PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionForBarcode(marketId, barcode, PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        if (CommonUtils.isEmpty(prepareActions)) {
+            return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response();
+        }
+        JSONArray response = new JSONArray();
+        for (MarketPrepareAction prepareAction : prepareActions) {
+            ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareAction.getHopeItemTemplateId());
+            ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
 
-        return null;
+            JSONObject data = new JSONObject();
+
+            data.put("taskId", prepareAction.getId());
+            data.put("itemName", itemTemplate.getName());
+            data.put("locationCode", prepareAction.getItemLocation());
+            data.put("itemQuantity", prepareAction.getHopeItemQuantity());
+            data.put("unitName", itemUnit.getTitle());
+
+            response.add(data);
+        }
+        return success(response);
     }
 
     @Override
@@ -154,6 +171,31 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             createPrepareAction(passportId, marketId, hopeExecutorDate, data);
         }
         return success();
+    }
+
+    @Override
+    public JSONObject checkPrepareActionTask() {
+        long taskId = getLongParameter("taskId");
+        MarketPrepareAction prepareAction = dataAccessFactory.getItemDataAccessManager().getPrepareAction(taskId);
+
+        if (prepareAction == null) {
+            return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response("没有找到指定的任务，任务ID：" + taskId);
+        }
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareAction.getHopeItemTemplateId());
+        ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
+
+        JSONObject response = new JSONObject();
+        response.put("taskId", prepareAction.getId());
+        response.put("locationCode", prepareAction.getItemLocation());
+        response.put("itemTemplateId", prepareAction.getHopeItemTemplateId());
+        response.put("itemName", itemTemplate.getName());
+        response.put("unitName", itemUnit.getTitle());
+        response.put("itemQuantity", prepareAction.getHopeItemQuantity());
+        response.put("barcode", prepareAction.getHopeItemBarcode());
+        response.put("status", prepareAction.getStatus());
+        response.put("hopeExecutorDate", CommonUtils.defineDateFormat(prepareAction.getHopeExecutorDate().getTime(), CommonUtils.Y_M_D));
+
+        return success(response);
     }
 
     private void beforePrepareAction(long marketId, JSONArray actionArray) {

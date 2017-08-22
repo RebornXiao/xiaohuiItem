@@ -129,6 +129,10 @@ public class ItemDataAccessManager {
         return prepareActionMapper.createPrepareAction(prepareAction);
     }
 
+    public MarketPrepareAction getPrepareAction(long taskId) {
+        return prepareActionMapper.getPrepareActionForId(taskId);
+    }
+
     public MarketPrepareAction getPrepareAction(long marketId, String itemLocation, int status) {
         return prepareActionMapper.getPrepareAction(marketId, itemLocation, status);
     }

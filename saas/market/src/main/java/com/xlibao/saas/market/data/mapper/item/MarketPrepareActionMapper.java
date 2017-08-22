@@ -18,4 +18,6 @@ public interface MarketPrepareActionMapper {
     List<MarketPrepareAction> getPrepareActionForBarcode(long marketId, String barcode, int status);
 
     int modifyPrepareActionStatus(@Param("marketId") long marketId, @Param("itemLocation") String itemLocation, @Param("matchStatus") int matchStatus, @Param("status") int status, @Param("time") String time);
+
+    MarketPrepareAction getPrepareActionForId(@Param("taskId") long taskId);
 }
