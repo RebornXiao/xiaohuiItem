@@ -12,7 +12,6 @@
 <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=lbVUzs9wHA7D61mfQjvrr7CxV97fbML7"></script>
 
 
-
 <div class="content-page">
     <!-- Start content -->
     <div class="content">
@@ -51,7 +50,8 @@
                                         <select id="loc_city" style="width:120px; margin-left: 10px"></select>
                                         <select id="loc_district" style="width:120px;margin-left: 10px"></select>
                                         <select id="loc_street" style="width:120px;margin-left: 10px"></select>
-                                        <button id="addStreeBtn" type="button" class="btn waves-effect waves-light btn-primary">
+                                        <button id="addStreeBtn" type="button"
+                                                class="btn waves-effect waves-light btn-primary">
                                             添加街道
                                         </button>
                                     </div>
@@ -74,16 +74,20 @@
                                     <div class="col-md-4">
 
                                         <!-- Button trigger modal -->
-                                        <button type="button" class="btn waves-effect waves-light btn-primary" data-toggle="modal" data-target="#myModal">
+                                        <button type="button" class="btn waves-effect waves-light btn-primary"
+                                                data-toggle="modal" data-target="#myModal">
                                             设置经纬度
                                         </button>
 
                                         <!-- Modal -->
-                                        <div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                                        <div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1"
+                                             role="dialog" aria-labelledby="myModalLabel">
                                             <div class="modal-dialog modal-lg" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                        <button type="button" class="close" data-dismiss="modal"
+                                                                aria-label="Close"><span
+                                                                aria-hidden="true">&times;</span></button>
                                                         <h4 class="modal-title" id="myModalLabel">点击地图选择经纬度</h4>
                                                     </div>
                                                     <div class="modal-body">
@@ -92,8 +96,12 @@
                                                     <div class="modal-footer">
                                                         <div class="col-sm-8"><p id="baiduTxt"></p></div>
                                                         <div class="col-sm-4">
-                                                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
-                                                        <button id="locationBtn" type="button" class="btn btn-primary" data-dismiss="modal">确定</button>
+                                                            <button type="button" class="btn btn-default"
+                                                                    data-dismiss="modal">取消
+                                                            </button>
+                                                            <button id="locationBtn" type="button"
+                                                                    class="btn btn-primary" data-dismiss="modal">确定
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -166,7 +174,7 @@
                 map.centerAndZoom("广州", 12);
 
                 function setBaiduPoint(lng, lat) {
-                    if(old_marker != null) {
+                    if (old_marker != null) {
                         map.removeOverlay(old_marker);
                     }
                     map_lng = lng;
@@ -179,12 +187,12 @@
                 }
 
                 //单击获取点击的经纬度
-                map.addEventListener("click",function(e){
+                map.addEventListener("click", function (e) {
                     setBaiduPoint(e.point.lng, e.point.lat);
                     var pt = e.point;
-                    geoc.getLocation(pt, function(rs){
+                    geoc.getLocation(pt, function (rs) {
                         var addComp = rs.addressComponents;
-                        $("#baiduTxt").text(addComp.province + " " + addComp.city + " " + addComp.district + " " + addComp.street + " " + addComp.streetNumber + " 经纬度：("+e.point.lng+", "+e.point.lat+")");
+                        $("#baiduTxt").text(addComp.province + " " + addComp.city + " " + addComp.district + " " + addComp.street + " " + addComp.streetNumber + " 经纬度：(" + e.point.lng + ", " + e.point.lat + ")");
                     });
                 });
 
@@ -196,17 +204,25 @@
                     location.href = "${base}/market/streetEdit.do";
                 });
 
+                var _streets = null;
+            <#if streets?exists && (streets?size > 0) >
+                _streets = {}
+                <#list streets as street>
+                    _streets[${street.id}] = "${street.name}";
+                </#list>
+            </#if>
+
+
                 showLocation(
                         <#if provinceId?exists >${provinceId?c}<#else>0</#if>,
-                        <#if cityId?exists >${cityId?c}<#else>0</#if>,
-                        <#if areaId?exists >${areaId?c}<#else>0</#if>,
-                        <#if streetId?exists >${streetId?c}<#else>0</#if>,
-                        <#if streets?exists >${streets}<#else>null</#if>, function (id, func)
-                {
-                    $.get("${base}/market/getStreets.do?districtId=" + id, function (data) {
-                        func(id, data);
-                    }, "json");
-                });
+                        <#if cityId?exists >${cityId?c}<#else>0</#if> ,
+                        <#if areaId?exists >${areaId?c}<#else>0</#if> ,
+                        <#if streetId?exists >${streetId?c}<#else>0</#if> ,
+                        _streets, function (id, func) {
+                            $.get("${base}/market/getStreets.do?districtId=" + id, function (data) {
+                                func(id, data);
+                            }, "json");
+                        });
 
                 moveEnd($("#mName").get(0));
 

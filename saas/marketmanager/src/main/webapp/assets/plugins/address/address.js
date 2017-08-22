@@ -3673,7 +3673,7 @@ function showLocation(province_id, city_id, district_id, street_id, street_list,
 
     var title = ['省份', '地级市', '区、县、镇', '街道'];
     $.each(title, function (k, v) {
-        title[k] = '<option data_id="0">' + v + '</option>';
+        title[k] = '<option value=\"k\">' + v + '</option>';
     });
 
     if (street_list != null && street_list != "" && district_id != 0) {
@@ -3742,18 +3742,20 @@ function showLocation(province_id, city_id, district_id, street_id, street_list,
                 _loc_street.change();
             }
         } else {
+            if (!$.isNumeric(_loc_district.val())) {
+                return;
+            }
             if (loc.post_func != null) {
-                loc.post_func();
+                loc.post_func(_loc_district.val());
             }
         }
     });
 
-    if (_loc_street) {
-        _loc_street.change(function () {
-            $('input[name=location_id]').val($(this).val());
-        });
-    }
-
+    //if (_loc_street) {
+        //_loc_street.change(function () {
+        //    $('input[name=location_id]').val($(this).val());
+        //});
+    //}
 
     if (province_id && province_id != 0) {
         loc.setData(_loc_province, loc.provinces, province_id);
