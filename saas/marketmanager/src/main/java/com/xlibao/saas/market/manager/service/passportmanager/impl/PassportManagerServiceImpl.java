@@ -87,11 +87,25 @@ public class PassportManagerServiceImpl extends BasicWebService implements Passp
         return null;
     }
 
+    public PassportStreet searchStreetByName(long districtId, String name) {
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().passportRemoteURL + "/passport/location/searchStreetByName.do?name=" + name + "&districtId=" + districtId);
+        JSONObject response = JSONObject.parseObject(json);
+        if(response.getInteger("code") == 0) {
+            return JSONObject.parseObject(response.getJSONObject("response").getString("data"), PassportStreet.class);
+        }
+        return null;
+    }
+
     public PassportStreet getStreet(long streetId) {
         JSONObject json = getStreetJson(streetId);
         if(json.getInteger("code") == 0) {
             return JSONObject.parseObject(json.getJSONObject("response").getString("data"), PassportStreet.class);
         }
         return null;
+    }
+
+    public JSONObject streetEditSave(long id, long areaId, String name) {
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().passportRemoteURL + "/passport/location/streetEditSave.do?id=" + id + "&areaId=" + areaId + "&name=" + name);
+        return JSONObject.parseObject(json);
     }
 }

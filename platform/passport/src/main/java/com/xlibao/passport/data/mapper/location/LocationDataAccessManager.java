@@ -5,6 +5,7 @@ import com.xlibao.metadata.passport.PassportArea;
 import com.xlibao.metadata.passport.PassportCity;
 import com.xlibao.metadata.passport.PassportProvince;
 import com.xlibao.metadata.passport.PassportStreet;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -55,5 +56,17 @@ public class LocationDataAccessManager {
 
     public PassportArea searchAreaByName(String name) {
         return areaMapper.searchAreaByName(name);
+    }
+
+    public PassportStreet searchStreetByName(long areaId, String name) {
+        return streetMapper.searchStreetByName(areaId, name);
+    }
+
+    public void updateStreet(long streetId, String name) {
+        streetMapper.updateStreet(streetId, name);
+    }
+
+    public int createStreet(PassportStreet street) {
+        return streetMapper.createStreet(street);
     }
 }

@@ -21,6 +21,10 @@ public interface PassportManagerService {
 
     public PassportStreet getStreet(long streetId);
 
+    public PassportStreet searchStreetByName(long districtId, String name);
+
+    public JSONObject streetEditSave(long id, long areaId, String name);
+
     public boolean passportLogin(String userName, String passWord);
 
     public JSONObject getStreets(long districtId);

@@ -150,16 +150,12 @@ public class LocationServiceImpl extends BasicWebService implements LocationServ
         return success(json);
     }
 
-
     @Override
     public JSONObject searchProvinceByName() {
         String name = getUTF("name");
         PassportProvince province = locationDataAccessManager.searchProvinceByName(name);
 
-        JSONObject json = new JSONObject();
-        json.put("data", province);
-
-        return success(json);
+        return result(province != null ? province : "没有该省份");
     }
 
     @Override
@@ -167,10 +163,7 @@ public class LocationServiceImpl extends BasicWebService implements LocationServ
         String name = getUTF("name");
         PassportCity city = locationDataAccessManager.searchCityByName(name);
 
-        JSONObject json = new JSONObject();
-        json.put("data", city);
-
-        return success(json);
+        return result(city != null ? city : "没有该城市");
     }
 
     @Override
@@ -178,9 +171,50 @@ public class LocationServiceImpl extends BasicWebService implements LocationServ
         String name = getUTF("name");
         PassportArea area = locationDataAccessManager.searchAreaByName(name);
 
-        JSONObject json = new JSONObject();
-        json.put("data", area);
+        return result(area != null ? area : "没有该区域");
+    }
 
-        return success(json);
+    public JSONObject searchStreetByName() {
+        long areaId = getLongParameter("areaId");
+        String name = getUTF("name");
+        PassportStreet street = locationDataAccessManager.searchStreetByName(areaId, name);
+        return result(street != null ? street : "没有该街道");
+    }
+
+    public JSONObject streetEditSave() {
+        long id = getLongParameter("id", 0);
+        long areaId = getLongParameter("areaId");
+        String name = getUTF("name");
+
+        //检查是否重复，同一区域下，不允许出现相同名称的街道
+        PassportStreet street = locationDataAccessManager.searchStreetByName(areaId, name);
+        if(street != null) {
+            return fail(-1, "已存在相同名称的街道");
+        }
+
+        if(id == 0) {
+            //新增
+            PassportStreet ps = new PassportStreet();
+            ps.setAreaId(areaId);
+            ps.setName(name);
+            if(locationDataAccessManager.createStreet(ps) > 0) {
+                return success("添加成功");
+            }
+            return fail(-1, "添加失败");
+        } else {
+            //修改
+            locationDataAccessManager.updateStreet(id, name);
+            return success("修改成功");
+        }
+    }
+
+    private JSONObject result(Object obj) {
+        if (obj instanceof String) {
+            return fail((String) obj);
+        } else {
+            JSONObject json = new JSONObject();
+            json.put("data", obj);
+            return success(json);
+        }
     }
 }

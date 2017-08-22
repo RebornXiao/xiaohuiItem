@@ -98,7 +98,9 @@
                         return;
                     }
 
-                    $.post("${base}/market/streetEdit.do?id=" + _streetId + "&title=" + title, function (data) {
+                    var areaId = $("#loc_district").val();
+
+                    $.post("${base}/market/streetEditSave.do?id=" + _streetId + "&title=" + title + "&areaId=" + areaId, function (data) {
                         //重新刷新
                         if (data.code == "0") {
                             swal("提示", "操作成功", "success");
