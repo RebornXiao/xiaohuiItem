@@ -1,7 +1,6 @@
 package com.xlibao.common;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import org.apache.commons.beanutils.BeanUtils;
@@ -45,7 +44,7 @@ public class BasicWebService {
         return success(message, new JSONObject());
     }
 
-    public static JSONObject success(JSONArray msg) {
+    public static JSONObject success(Object msg) {
         JSONObject response = new JSONObject();
         response.put("datas", msg);
         return success(response);

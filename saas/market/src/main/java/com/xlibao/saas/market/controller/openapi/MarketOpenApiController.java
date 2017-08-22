@@ -2,6 +2,7 @@ package com.xlibao.saas.market.controller.openapi;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.saas.market.service.market.MarketService;
+import com.xlibao.saas.market.service.market.ShelvesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,8 @@ public class MarketOpenApiController {
 
     @Autowired
     private MarketService marketService;
+    @Autowired
+    private ShelvesService shelvesService;
 
     /***
      * <pre>
@@ -51,8 +54,14 @@ public class MarketOpenApiController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "loaderShelvesDatas")
-    public JSONObject loaderShelvesDatas() {
-        return marketService.loaderShelvesDatas();
+    @RequestMapping(value = "getShelvesMarks")
+    public JSONObject getShelvesMarks() {
+        return shelvesService.getShelvesMarks();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "loaderClipDatas")
+    public JSONObject loaderClipDatas() {
+        return shelvesService.loaderClipDatas();
     }
 }

@@ -164,32 +164,6 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         return success(response);
     }
 
-    @Override
-    public JSONObject loaderShelvesDatas() {
-        long marketId = getLongParameter("marketId");
-        String mark = getUTF("mark");
-
-
-        List<MarketShelvesManager> shelvesManagers = dataAccessFactory.getMarketDataAccessManager().getShelvesDatas(marketId);
-
-
-        Map<String, List<String>> groupDatas = new HashMap<>();
-
-        for (MarketShelvesManager shelvesManager : shelvesManagers) {
-            List<String> groups = groupDatas.get(shelvesManager.getGroupCode());
-            if (groups == null) {
-                groups = new ArrayList<>();
-                groupDatas.put(shelvesManager.getGroupCode(), groups);
-            }
-            if (!groups.contains(shelvesManager.getUnitCode())) {
-                groups.add(shelvesManager.getUnitCode());
-                // TODO
-            }
-        }
-        JSONArray response = new JSONArray();
-        return success(response);
-    }
-
     private <T> JSONArray locationMessage(List<T> t) {
         return t.stream().map(JSONObject::toJSONString).collect(Collectors.toCollection(JSONArray::new));
     }

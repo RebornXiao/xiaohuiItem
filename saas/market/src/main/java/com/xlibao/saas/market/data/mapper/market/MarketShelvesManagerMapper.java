@@ -10,4 +10,9 @@ public interface MarketShelvesManagerMapper {
     int createShelves(MarketShelvesManager marketShelvesManager);
 
     List<MarketShelvesManager> getShelvesDatas(@Param("marketId") long marketId);
+
+    List<String> getShelvesMarks(@Param("marketId") long marketId, @Param("groupCode") String groupCode, @Param("unitCode") String unitCode, @Param("shelvesType") int shelvesType);
+
+    List<MarketShelvesManager> getClipDatas(long marketId, @Param("groupCode") String groupCode, @Param("unitCode") String unitCode, @Param("floorCode") String floorCode,
+                                            @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 }

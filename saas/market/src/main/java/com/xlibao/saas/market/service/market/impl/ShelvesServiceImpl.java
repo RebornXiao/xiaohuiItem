@@ -1,5 +1,6 @@
 package com.xlibao.saas.market.service.market.impl;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.market.data.model.MarketEntry;
@@ -8,12 +9,14 @@ import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.service.market.MarketStatusEnum;
 import com.xlibao.saas.market.service.market.ShelvesService;
+import com.xlibao.saas.market.service.market.ShelvesTypeEnum;
 import com.xlibao.saas.market.service.support.remote.MarketShopRemoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author chinahuangxc on 2017/8/16.
@@ -42,6 +45,31 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             }
             unitAdapter(marketEntry, dataType, data);
         }
+    }
+
+    @Override
+    public JSONObject getShelvesMarks() {
+        long marketId = getLongParameter("marketId");
+        String groupCode = getUTF("groupCode", "");
+        String unitCode = getUTF("unitCode", "");
+        int shelvesType = getIntParameter("shelvesType", ShelvesTypeEnum.MARKET.getKey());
+
+        List<String> marks = dataAccessFactory.getMarketDataAccessManager().getShelvesMarks(marketId, groupCode, unitCode, shelvesType);
+
+        return success(marks);
+    }
+
+    @Override
+    public JSONObject loaderClipDatas() {
+        long marketId = getLongParameter("marketId");
+        String groupCode = getUTF("groupCode");
+        String unitCode = getUTF("unitCode");
+        String floorCode = getUTF("floorCode");
+        int pageSize = getPageSize();
+        int pageStartIndex = getPageStartIndex(pageSize);
+
+        List<MarketShelvesManager> shelvesManagers = dataAccessFactory.getMarketDataAccessManager().getClipDatas(marketId, groupCode, unitCode, floorCode, pageStartIndex, pageSize);
+        return null;
     }
 
     private void groupAdapter(MarketEntry marketEntry, String content) {

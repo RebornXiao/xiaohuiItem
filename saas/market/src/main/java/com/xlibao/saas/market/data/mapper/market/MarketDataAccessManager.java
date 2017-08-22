@@ -60,4 +60,12 @@ public class MarketDataAccessManager {
     public List<MarketShelvesManager> getShelvesDatas(long marketId) {
         return shelvesManagerMapper.getShelvesDatas(marketId);
     }
+
+    public List<String> getShelvesMarks(long marketId, String groupCode, String unitCode, int shelvesType) {
+        return shelvesManagerMapper.getShelvesMarks(marketId, groupCode, unitCode, shelvesType);
+    }
+
+    public List<MarketShelvesManager> getClipDatas(long marketId, String groupCode, String unitCode, String floorCode, int pageStartIndex, int pageSize) {
+        return shelvesManagerMapper.getClipDatas(marketId, groupCode, unitCode, floorCode, pageStartIndex, pageSize);
+    }
 }

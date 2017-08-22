@@ -1,5 +1,6 @@
 package com.xlibao.saas.market.service.market;
 
+import com.alibaba.fastjson.JSONObject;
 import com.xlibao.market.data.model.MarketEntry;
 
 /**
@@ -8,4 +9,8 @@ import com.xlibao.market.data.model.MarketEntry;
 public interface ShelvesService {
 
     void builderShelvesData(MarketEntry marketEntry, String content);
+
+    JSONObject getShelvesMarks();
+
+    JSONObject loaderClipDatas();
 }
