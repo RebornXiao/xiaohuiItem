@@ -1,17 +1,18 @@
+const icons = require('../../icons')
 
 var app = getApp()
-var self = null
+var _this = null
 
 var winAjax = {
-    goodData : function(){
+    cartData : function(){
       var cart = app.Cart.getCart(), data = {};
       for(var key in cart){
         if(key == 'cartTotal') continue;
         data[key] = cart[key];
       }
       
-      self.setData({
-          goodData: data,
+      _this.setData({
+          cartData: data,
           cartTotal : cart.cartTotal
       })
     }
@@ -21,7 +22,7 @@ var winAjax = {
 
 Page({
   data: {
-    goodData : [],
+    cartData : [],
     cartTotal :{
       totalNum : 0,
       totalMoney : 0.0
@@ -30,28 +31,30 @@ Page({
       totalNum : 0,
       totalMoney : 0.0
     },
-    status : {checkAll : false}
+    status : {checkAll : false},
+    icons : icons()
   },
   onLoad: function () {
     // 初始化信息
-    self = this
+    _this = this
 
     // 加载购物车数据
-    this.ajax.goodData();
+    this.ajax.cartData();
     // 加载选中商品total
-    self.setData({checkTotal : app.Cart.getCheckTotal()});
+    _this.setData({checkTotal : app.Cart.getCheckTotal()});
 
     
   },
   onCartCheckAll : function(e){
-    self.setData(app.Cart.CHECKALL(e.target.dataset.check));
+    _this.setData(app.Cart.CHECKALL(this.data, e.target.dataset.check));
   },
   onCart : function(e){
     var data = {};
-    data.goodData = this.data.goodData;
+    data.status = this.data.status;
+    data.cartData = this.data.cartData;
     data.cartTotal = this.data.cartTotal;
     data.checkTotal = this.data.checkTotal;
-    self.setData(app.Cart[e.target.dataset.type](data, e.target.dataset.id))
+    _this.setData(app.Cart[e.target.dataset.type](data, e.target.dataset.id));
   },
   ajax : winAjax
 })

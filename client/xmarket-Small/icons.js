@@ -8,21 +8,21 @@ var icons = {
   size : "@3x",
   format : ".png",
   account:{
-    "w" : "",
-    "h" : "",
+    "w" : "9.5px",
+    "h" : "14px",
     "u" : "accountIcon"
   },
   B_location:{
-    "w" : "",
-    "h" : "",
+    "w" : "9.5px",
+    "h" : "14px",
     "u" : "B-location"
   },
   O_location:{
-    "w" : "",
-    "h" : "",
+    "w" : "9.5px",
+    "h" : "14px",
     "u" : "O-location"
   },
-  W_locationIcon:{
+  W_location:{
     "w" : "9px",
     "h" : "13px",
     "u" : "W-locationIcon"
@@ -33,13 +33,13 @@ var icons = {
     "u" : "CarIcon"
   },
   check:{
-    "w" : "",
-    "h" : "",
+    "w" : "13px",
+    "h" : "9px",
     "u" : "checkIcon"
   },
   close:{
-    "w" : "",
-    "h" : "",
+    "w" : "15px",
+    "h" : "15px",
     "u" : "closeIcon"
   },
   focus:{
@@ -62,24 +62,24 @@ var icons = {
     "h" : "16px",
     "u" : "navigateiconicon"
   },
-  OrderIcon:{
-    "w" : "",
-    "h" : "",
+  order:{
+    "w" : "33px",
+    "h" : "40px",
     "u" : "OrderIcon"
   },
   payment:{
-    "w" : "",
-    "h" : "",
+    "w" : "33px",
+    "h" : "40px",
     "u" : "paymentIcon"
   },
   receipt:{
-    "w" : "",
-    "h" : "",
+    "w" : "49px",
+    "h" : "40px",
     "u" : "ReceiptIcon"
   },
   refunds:{
-    "w" : "",
-    "h" : "",
+    "w" : "33px",
+    "h" : "40px",
     "u" : "RefundsIcon"
   },
   search:{
@@ -93,18 +93,18 @@ var icons = {
     "u" : "SelectedIcon"
   },
   success:{
-    "w" : "",
-    "h" : "",
+    "w" : "93px",
+    "h" : "93px",
     "u" : "successIcon"
   },
   search:{
-    "w" : "",
-    "h" : "",
+    "w" : "13px",
+    "h" : "13px",
     "u" : "SearchIcon"
   },
   trash:{
-    "w" : "",
-    "h" : "",
+    "w" : "10px",
+    "h" : "12px",
     "u" : "trashIcon"
   }
 }

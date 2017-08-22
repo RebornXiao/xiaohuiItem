@@ -1,99 +1,59 @@
 /**pay.wxss**/
 
+page{
+  background: #EFEFF4;
+}
+
 /** 导航 **/
 .navbar{
-  background: #fff;
-  color: #000;
-  border-bottom:1px solid #d8d8d8;
+  background: #F4F4F4!important;
 }
-.navbar .left{
-  width: 80%;
-  text-align: left;
-  padding-left: 8px;
+.navbar .item {
+  padding-left: 15px;
+  color: #717171;
 }
-
-.navbar .right{
-  width: 20%;
-}
-
-
-/**  商品  **/
-.row-item{
-  margin:0px 8px 0px 8px;
-  padding: 8px 0px 8px 0px ;
-  height: 80px;
-  border-bottom: 1px solid #f8f8f8;
-  display: flex;
-  position: relative;
-  background: #FFF;
-}
-.row-item checkbox{
-  position: relative;
-  top: calc(100% / 2 - 12px);
-}
-.row-item .item-img{
-  height: 100%;
-  width: 80px;
-  display: inline-block;
-  position: relative;
-  margin-right: 5px;
-}
-
-.row-item .item-bd{
-  display: inline-block;
-  position: relative;
-  margin-top: 0px;
-  width: calc(100% - 85px);
-}
-.item-bd .title{
-  font-size: 16px;
-  display: block;
-  color:#000;
-}
-.item-bd .desc{
-  font-size: 14px;
-  display: block;
-  color:#898989;
-}
-
-.item-bd .other{
-  font-size: 14px;
-  display: block;
-}
-.item-bd .money{
-  color: red;
-  font-size: 15px;
-}
-.item-bd .oldMoney{
-  font-size: 12px;
-  color: #000;
-  text-decoration:line-through
-}
-
+ 
 /** 支付面板 **/
-.payPanel{
-
-}
-.payPanel .tab{
-  border-top: 1px solid #d8d8d8;
+.tab{
+  margin-top: 10px;
+  background: #fff;
+  border-top: 1px solid #E5E5E5;
   border-bottom: 1px solid #f1f1f1;
-  display:flex;
 }
 
-.tab .item{
-  position: relative;
-  text-align: center;
-  padding:15px;
+
+
+.justify {
+  background: #fff;
 }
-.tab .active{
-  color: #ff3300;
+.justify .item{
+  display:-webkit-box;
+  -webkit-box-pack:justify;
+  margin-left:15px;
+  padding-right:15px;
+  width:auto;
 }
+
+.justify .item::before {
+  left:5rpx;
+  right:0;
+  border-top:1rpx solid #E5E5E5;
+}
+
+.justify .item-before::before {
+  left:-50rpx;
+}
+
+
+ 
+
 
 
 .payPanel .navigator-text{
   font-size:15px;
   padding: 10px;
   position: relative;
+
 }
 
 .payPanel .navigator-text .store{
@@ -140,6 +100,10 @@
   width: 60%;
 }
 
+
+.navigator-arrow::after{
+  right:2px;
+}
 
 
 
