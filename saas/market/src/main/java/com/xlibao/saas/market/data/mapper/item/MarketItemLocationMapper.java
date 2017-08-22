@@ -13,6 +13,8 @@ public interface MarketItemLocationMapper {
 
     MarketItemLocation getItemLocationForMarket(@Param("marketId") long marketId, @Param("location") String location);
 
+    List<MarketItemLocation> matchItemLocationForMarket(@Param("marketId") long marketId, @Param("matchLocation") String matchLocation, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
+
     List<MarketItemLocation> getItemLocations(@Param("itemId") long itemId);
 
     int offsetItemLocationStock(@Param("locationId") long locationId, @Param("decrementStock") int decrementStock);

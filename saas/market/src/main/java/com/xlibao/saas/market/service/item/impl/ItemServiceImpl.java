@@ -396,7 +396,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             }
             dataAccessFactory.getItemDataAccessManager().removeItemLocation(itemLocation.getId());
         }
-        itemLocation = MarketItemLocation.newInstance(marketId, item.getId(), location, onShelvesQuantity);
+        itemLocation = MarketItemLocation.newInstance(marketId, item.getId(), item.getItemTemplateId(), location, onShelvesQuantity);
         // 新建位置信息
         dataAccessFactory.getItemDataAccessManager().createItemLocation(itemLocation);
         // 完成了预操作行为

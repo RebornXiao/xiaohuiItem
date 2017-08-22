@@ -5,6 +5,7 @@
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="market_id" property="marketId" jdbcType="BIGINT"/>
         <result column="item_id" property="itemId" jdbcType="BIGINT"/>
+        <result column="item_template_id" property="itemTemplateId" jdbcType="BIGINT"/>
         <result column="location_code" property="locationCode" jdbcType="VARCHAR"/>
         <result column="stock" property="stock" jdbcType="INTEGER"/>
         <result column="last_modify_time" property="lastModifyTime" jdbcType="TIMESTAMP"/>
@@ -12,8 +13,8 @@
     </resultMap>
 
     <insert id="createItemLocation" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.market.data.model.MarketItemLocation">
-        insert into market_item_location(market_id, item_id, location_code, stock, last_modify_time, create_time)
-        values(#{marketId}, #{itemId}, #{locationCode}, #{stock}, #{lastModifyTime}, #{createTime})
+        insert into market_item_location(market_id, item_id, item_template_id, location_code, stock, last_modify_time, create_time)
+        values(#{marketId}, #{itemId}, #{itemTemplateId}, #{locationCode}, #{stock}, #{lastModifyTime}, #{createTime})
     </insert>
 
     <select id="getItemLocation" resultMap="BaseResultMap">
@@ -22,6 +23,10 @@
 
     <select id="getItemLocationForMarket" resultMap="BaseResultMap">
         select * from market_item_location where market_id = #{marketId} and location_code = #{location}
+    </select>
+
+    <select id="matchItemLocationForMarket" resultMap="BaseResultMap">
+        select * from market_item_location where market_id = #{marketId} and location_code like concat('''', #{matchLocation}, '%''') order by location_code asc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="getItemLocations" resultMap="BaseResultMap">

@@ -7,15 +7,17 @@ public class MarketItemLocation {
     private Long id;
     private Long marketId;
     private Long itemId;
+    private Long itemTemplateId;
     private String locationCode;
     private Integer stock;
     private Date createTime = new Date();
     private Date lastModifyTime = new Date();
 
-    public static MarketItemLocation newInstance(long marketId, long itemId, String location, int stock) {
+    public static MarketItemLocation newInstance(long marketId, long itemId, long itemTemplateId, String location, int stock) {
         MarketItemLocation itemLocation = new MarketItemLocation();
         itemLocation.setMarketId(marketId);
         itemLocation.setItemId(itemId);
+        itemLocation.setItemTemplateId(itemTemplateId);
         itemLocation.setLocationCode(location);
         itemLocation.setStock(stock);
 
@@ -44,6 +46,14 @@ public class MarketItemLocation {
 
     public void setItemId(Long itemId) {
         this.itemId = itemId;
+    }
+
+    public Long getItemTemplateId() {
+        return itemTemplateId;
+    }
+
+    public void setItemTemplateId(Long itemTemplateId) {
+        this.itemTemplateId = itemTemplateId;
     }
 
     public String getLocationCode() {

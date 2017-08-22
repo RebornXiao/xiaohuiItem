@@ -89,6 +89,10 @@ public class ItemDataAccessManager {
         return itemLocationMapper.getItemLocationForMarket(marketId, location);
     }
 
+    public List<MarketItemLocation> matchItemLocationForMarket(long marketId, String matchLocation, int pageStartIndex, int pageSize) {
+        return itemLocationMapper.matchItemLocationForMarket(marketId, matchLocation, pageStartIndex, pageSize);
+    }
+
     public List<MarketItemLocation> getItemLocations(long itemId) {
         return itemLocationMapper.getItemLocations(itemId);
     }
