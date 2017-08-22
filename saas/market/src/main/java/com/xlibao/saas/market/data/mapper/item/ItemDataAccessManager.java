@@ -3,6 +3,7 @@ package com.xlibao.saas.market.data.mapper.item;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.market.data.model.*;
 import com.xlibao.saas.market.service.item.ItemLockTypeEnum;
+import com.xlibao.saas.market.service.item.PrepareActionStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -145,8 +146,8 @@ public class ItemDataAccessManager {
         return prepareActionMapper.getPrepareActionForBarcode(marketId, barcode, status);
     }
 
-    public List<MarketPrepareAction> getUnCompletePrepareActions(long marketId, int status, int pageStartIndex, int pageSize) {
-        return prepareActionMapper.getUnCompletePrepareActions(marketId, status, pageStartIndex, pageSize);
+    public List<MarketPrepareAction> getUnCompletePrepareActions(long marketId, int pageStartIndex, int pageSize) {
+        return prepareActionMapper.getPrepareActions(marketId, PrepareActionStatusEnum.UN_EXECUTOR.getKey(), pageStartIndex, pageSize);
     }
 
     public int modifyPrepareActionStatus(long marketId, String itemLocation, int matchStatus, int status, String time) {

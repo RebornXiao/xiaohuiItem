@@ -19,4 +19,6 @@ public interface ShelvesService {
     JSONObject prepareAction();
 
     JSONObject checkPrepareActionTask();
+
+    JSONObject unExecutorTask();
 }

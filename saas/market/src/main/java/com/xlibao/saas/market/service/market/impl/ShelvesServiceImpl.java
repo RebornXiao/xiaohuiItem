@@ -25,10 +25,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URLEncoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @author chinahuangxc on 2017/8/16.
@@ -181,6 +183,25 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         if (prepareAction == null) {
             return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response("没有找到指定的任务，任务ID：" + taskId);
         }
+        return success(fillPrepareActionMsg(prepareAction));
+    }
+
+    @Override
+    public JSONObject unExecutorTask() {
+        long marketId = getLongParameter("marketId");
+        int pageSize = getPageSize();
+        int pageStartIndex = getPageStartIndex(pageSize);
+
+        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getUnCompletePrepareActions(marketId, pageStartIndex, pageSize);
+
+        if (CommonUtils.isEmpty(prepareActions)) {
+            return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response("没有存在未执行的任务");
+        }
+        JSONArray response = prepareActions.stream().map(this::fillPrepareActionMsg).collect(Collectors.toCollection(JSONArray::new));
+        return success(response);
+    }
+
+    private JSONObject fillPrepareActionMsg(MarketPrepareAction prepareAction) {
         ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareAction.getHopeItemTemplateId());
         ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
 
@@ -195,7 +216,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         response.put("status", prepareAction.getStatus());
         response.put("hopeExecutorDate", CommonUtils.defineDateFormat(prepareAction.getHopeExecutorDate().getTime(), CommonUtils.Y_M_D));
 
-        return success(response);
+        return response;
     }
 
     private void beforePrepareAction(long marketId, JSONArray actionArray) {
@@ -203,7 +224,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         for (int i = 0; i < actionArray.size(); i++) {
             JSONObject data = actionArray.getJSONObject(i);
 
-            long itemTemplateId = getLongParameter("itemTemplateId");
+            long itemTemplateId = data.getLongValue("itemTemplateId");
             ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemTemplateId);
             int quantity = data.getIntValue("quantity");
             if (quantity <= 0) {
@@ -220,7 +241,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
                 ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareAction.getHopeItemTemplateId());
                 ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
                 errorMsg.append("\r\n\t");
-                errorMsg.append("位置 -- ").append(prepareAction).append("期望存放").append(prepareAction.getHopeItemQuantity()).append(itemUnit.getTitle()).append("【").append(itemTemplate.getName()).append("】");
+                errorMsg.append("位置 -- [").append(prepareAction.getItemLocation()).append("]期望存放").append(prepareAction.getHopeItemQuantity()).append(itemUnit.getTitle()).append("【").append(itemTemplate.getName()).append("】");
             }
             throw MarketItemErrorCodeEnum.PREPARE_ACTION_LOCATION_ERROR.throwException(errorMsg.toString());
         }
@@ -296,5 +317,9 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         shelvesManager.setModifyPassportId(passportId);
         shelvesManager.setLastModifyTime(new Date());
         dataAccessFactory.getMarketDataAccessManager().createShelves(shelvesManager);
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.out.println(URLEncoder.encode("[{\"location\":\"01010101\",\"itemTemplateId\":\"100000\",\"quantity\":\"9\"}, {\"location\":\"01010102\",\"itemTemplateId\":\"100000\",\"quantity\":\"10\"}, {\"location\":\"01010103\",\"itemTemplateId\":\"100001\",\"quantity\":\"11\"}]", "UTF-8"));
     }
 }
