@@ -138,6 +138,25 @@ public class MarketOpenApiController {
 
     /**
      * <pre>
+     *     <b>取消任务</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/open/checkPrepareActionTask.do
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>taskId</b> - long 任务ID，必填参数；该参数必定大于0
+     *
+     *     <b>返回：</b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "cancelPrepareActionTask")
+    public JSONObject cancelPrepareActionTask() {
+        return shelvesService.cancelPrepareActionTask();
+    }
+
+    /**
+     * <pre>
      *     <b>新增预操作行为</b>
      *
      *     <b>访问地址：</b>http://domainName/market/open/prepareAction.do

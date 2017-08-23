@@ -14,4 +14,6 @@ public interface PassportMapper {
     int modifyAccessToken(@Param("id") long id, @Param("accessToken") String accessToken);
 
     int modifyNickname(@Param("id") long id, @Param("nickname") String nickname);
+
+    int perfectPassportInformation(@Param("id") long id, @Param("nickName") String nickName, @Param("headImageUrl") String headImageUrl, @Param("sex") byte sex, @Param("status") int status);
 }

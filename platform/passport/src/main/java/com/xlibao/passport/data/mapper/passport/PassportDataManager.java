@@ -52,6 +52,10 @@ public class PassportDataManager {
         return passportMapper.modifyNickname(id, nickname);
     }
 
+    public int perfectPassportInformation(long passportId, String nickName, String headImageUrl, byte sex, int status) {
+        return passportMapper.perfectPassportInformation(passportId, nickName, headImageUrl, sex, status);
+    }
+
     public int modifyAccessToken(long id, String accessToken) {
         return passportMapper.modifyAccessToken(id, accessToken);
     }
@@ -75,6 +79,10 @@ public class PassportDataManager {
 
     public PassportProperties getPassportProperties(long passportId, int type, String k) {
         return passportPropertiesMapper.getPassportProperties(passportId, type, k);
+    }
+
+    public List<PassportProperties> getPassportProperties(long passportId, int type) {
+        return passportPropertiesMapper.getPassportPropertiesForType(passportId, type);
     }
 
     public int createAddress(PassportAddress address) {

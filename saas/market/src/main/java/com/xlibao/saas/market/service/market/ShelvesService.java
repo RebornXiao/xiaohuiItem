@@ -21,4 +21,6 @@ public interface ShelvesService {
     JSONObject checkPrepareActionTask();
 
     JSONObject unExecutorTask();
+
+    JSONObject cancelPrepareActionTask();
 }

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author chinahuangxc on 2017/2/7.
  */
 @Controller
-@RequestMapping(value = "/sms")
+@RequestMapping(value = "/passport/sms")
 public class SmsController extends BasicWebService {
 
     @Autowired

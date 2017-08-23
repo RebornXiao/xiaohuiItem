@@ -12,7 +12,8 @@ import com.xlibao.common.exception.XlibaoRuntimeException;
  */
 public enum PassportErrorCodeEnum {
 
-
+    /** 10000 -- 没有找到通行证记录 */
+    NOT_FOUND_PASSPORT(10000, "没有找到通行证记录"),
     ;
 
     private int key;
@@ -31,11 +32,11 @@ public enum PassportErrorCodeEnum {
         return value;
     }
 
-    public void throwException() {
-        throwException(getValue());
+    public XlibaoRuntimeException throwException() {
+        return throwException(getValue());
     }
 
-    public void throwException(String message) {
-        throw new XlibaoRuntimeException(getKey(), message);
+    public XlibaoRuntimeException throwException(String message) {
+        return new XlibaoRuntimeException(getKey(), message);
     }
 }

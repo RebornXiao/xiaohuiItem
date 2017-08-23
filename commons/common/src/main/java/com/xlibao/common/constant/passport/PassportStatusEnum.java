@@ -12,7 +12,9 @@ public enum PassportStatusEnum {
     /** 2 -- 禁登 */
     FORBID_LOGIN(2, "禁登"),
     /** 3 -- 黑名单 */
-    BACKLIST(3, "黑名单"),
+    BACK_LIST(3, "黑名单"),
+    /** 4 -- 未完善资料 */
+    UN_PERFECT_INFORMATION(4, "未完善资料"),
     ;
 
     private int key;

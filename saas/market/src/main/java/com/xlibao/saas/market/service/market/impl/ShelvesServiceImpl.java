@@ -218,6 +218,19 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         return success(response);
     }
 
+    @Override
+    public JSONObject cancelPrepareActionTask() {
+        long taskId = getLongParameter("taskId");
+
+        MarketPrepareAction prepareAction = dataAccessFactory.getItemDataAccessManager().getPrepareAction(taskId);
+        if (prepareAction == null) {
+            return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response("找不到任务，任务ID：" + taskId);
+        }
+        int result = dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(prepareAction.getMarketId(), prepareAction.getItemLocation(), PrepareActionStatusEnum.UN_EXECUTOR.getKey(),
+                PrepareActionStatusEnum.INVALID.getKey(), CommonUtils.nowFormat());
+        return result <= 0 ? fail() : success();
+    }
+
     private JSONObject fillPrepareActionMsg(MarketPrepareAction prepareAction) {
         ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareAction.getHopeItemTemplateId());
         ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
@@ -238,6 +251,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
 
     private void beforePrepareAction(long marketId, JSONArray actionArray) {
         StringBuilder locationSet = new StringBuilder();
+        StringBuilder itemTemplateSet = new StringBuilder();
         for (int i = 0; i < actionArray.size(); i++) {
             JSONObject data = actionArray.getJSONObject(i);
 
@@ -248,8 +262,10 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
                 throw MarketItemErrorCodeEnum.PREPARE_QUANTITY_ERROR.throwException("[" + itemTemplate.getName() + "]预上架数量必须大于0");
             }
             locationSet.append("'").append(data.getString("location")).append("'").append(CommonUtils.SPLIT_COMMA);
+            itemTemplateSet.append(itemTemplateId).append(CommonUtils.SPLIT_COMMA);
         }
         locationSet.deleteCharAt(locationSet.length() - 1);
+        itemTemplateSet.deleteCharAt(itemTemplateSet.length() - 1);
 
         List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionsForLocationSet(marketId, locationSet.toString(), PrepareActionStatusEnum.UN_EXECUTOR.getKey());
         if (!CommonUtils.isEmpty(prepareActions)) { // 指定的位置 存在未执行的任务
