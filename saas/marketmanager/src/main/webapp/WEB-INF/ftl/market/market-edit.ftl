@@ -81,14 +81,14 @@
 
                                         <!-- Modal -->
                                         <div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1"
-                                             role="dialog" aria-labelledby="myModalLabel">
+                                             role="dialog">
                                             <div class="modal-dialog modal-lg" role="document">
                                                 <div class="modal-content">
                                                     <div class="modal-header">
                                                         <button type="button" class="close" data-dismiss="modal"
                                                                 aria-label="Close"><span
                                                                 aria-hidden="true">&times;</span></button>
-                                                        <h4 class="modal-title" id="myModalLabel">点击地图选择经纬度</h4>
+                                                        <h4 class="modal-title">点击地图选择经纬度</h4>
                                                     </div>
                                                     <div class="modal-body">
                                                         <div id="allmap" style="width: 830px; height: 520px;"></div>

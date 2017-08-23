@@ -31,6 +31,12 @@ public class ItemController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "getItemTemplateIdAndNames")
+    public JSONObject getItemTemplateIdAndNames() {
+        return itemService.getItemTemplateIdAndNames();
+    }
+
+    @ResponseBody
     @RequestMapping(value = "getItemTemplateByName")
     public JSONObject getItemTemplateByName() {
         return itemService.getItemTemplateByName();

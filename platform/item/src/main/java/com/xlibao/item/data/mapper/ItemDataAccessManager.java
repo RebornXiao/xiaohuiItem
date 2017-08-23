@@ -58,6 +58,10 @@ public class ItemDataAccessManager {
         return templateMapper.getItemTemplateList(template, pageSize, pageStartIndex);
     }
 
+    public List<ItemTemplate> getItemTemplateIdAndNames(long itemTypeId) {
+        return templateMapper.getItemTemplateIdAndNames(itemTypeId);
+    }
+
     public int getItemTemplateCount(ItemTemplate template) {
         return templateMapper.getItemTemplateListCount(template);
     }

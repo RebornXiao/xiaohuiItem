@@ -64,6 +64,19 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return success(response);
     }
 
+
+    public JSONObject getItemTemplateIdAndNames() {
+        long itemTypeId = getLongParameter("itemTypeId");
+        List<ItemTemplate> itemTemplates = itemDataAccessManager.getItemTemplateIdAndNames(itemTypeId);
+        if(itemTemplates.size() > 0) {
+            JSONObject response = new JSONObject();
+            response.put("datas", itemTemplates);
+            return success(response);
+        } else {
+            return fail("该分类下没有商品");
+        }
+    }
+
     @Override
     public JSONObject getItemTemplateByName() {
         String itemName = getUTF("itemName");
