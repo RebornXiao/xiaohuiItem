@@ -77,7 +77,6 @@
                             <th>商品名称</th>
                             <th>商品单位</th>
                             <th>商品库存</th>
-                            <th>等待任务</th>
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -152,14 +151,26 @@
                     _emptyTr.show();
                     _errorInfo.text(msg);
                 }
-//                *              <b>locationCode</b> - String 弹夹的完整编码，如：01010101
-//                *              <b>barcode</b> - String 当前存放的商品条码
-//                *              <b>name</b> - String 当前存放的商品名称
-//                *              <b>unitName</b> - String 当前存放的商品单位
-//                *              <b>stock</b> - int 当前的商品库存
-//                *              <b>taskId</b> - long 任务ID；当没有存在预操作任务时为0，否则为对应的任务ID
-//                               >0存在任务，编辑颜色改变
-//                               =0
+
+                function addBtns(addType, id) {
+                    if (addType == 0) {
+                        return "<button id=\"taskCancelBtn\" type=\"button\""
+                                + "class=\"btn waves-effect waves-light btn-danger btn-sm\""
+                                + "data_id=\"" + id + "\">取消任务</button>";
+                    } else if (addType == 1) {
+                        return "<button id=\"upItemBtn\" type=\"button\""
+                        + "class=\"btn waves-effect waves-light btn-success btn-sm\""
+                        + "data_id=\"" + id + "\">上架商品</button>"
+                        + "<button id=\"changeItemBtn\" type=\"button\""
+                        + "class=\"m-l-10 btn waves-effect waves-light btn-purple btn-sm\""
+                        + "data_id=\"" + id + "\">切换商品</button>";
+                    } else {
+                        return "<button id=\"upItemBtn\" type=\"button\""
+                                + "class=\"btn waves-effect waves-light btn-success btn-sm\""
+                                + "data_id=\"" + id + "\">上架商品</button>";
+                    }
+                }
+
                 function showDatas(json) {
                     //先删除
                     _clipListTable.find('tr[id=dataTr]').each(function () {
@@ -169,29 +180,20 @@
                     _emptyTr.hide();
                     //生成 tr
                     $.each(json, function (n, value) {
-                        alert(value.locationCode);
-                        var txt = "<tr><td>"+value.locationCode+"</td><td>"+value.barcode+"</td><td>"
-                                +"</td><td>"+value.itemName+"</td><td>"
-                                +"</td><td>"+value.unitName+"</td><td>"
-                                +"</td><td>"+value.itemQuantity+"</td>";
-                        if(value.taskId > 0) {
-                            txt = txt + "<td>"+value.taskId+"</td>"
+                        var txt = "<tr><td>" + value.locationCode + "</td>"
+                                + "<td>" + value.barcode + "</td>"
+                                + "<td>" + value.itemName + "</td>"
+                                + "<td>" + value.unitName + "</td>"
+                                + "<td>" + value.itemQuantity + "</td>";
+                        if (value.taskId > 0) {
+                            txt = txt + "<td>" + addBtns(0, value.taskId) + "</td>";
+                        } else if (value.itemTemplateId != 0) {
+                            txt = txt + "<td>" + addBtns(1, value.locationCode) + "</td>";
                         } else {
-                            txt = txt + "<td>0</td>"
+                            txt = txt + "<td>" + addBtns(2, value.locationCode) + "</td>";
                         }
 
-                        txt = txt + "<td>0</td>";
                         _clipListTable.append(txt);
-
-//                        <tr>
-//                        <th>弹夹编码</th>
-//                        <th>商品条码</th>
-//                        <th>商品名称</th>
-//                        <th>商品单位</th>
-//                        <th>商品库存</th>
-//                        <th>等待任务</th>
-//                        <th>操作</th>
-//                        </tr>
                     });
                 }
 
@@ -310,6 +312,21 @@
                         }
                     }, "json");
 
+                });
+
+                _clipListTable.on("click", "button[id=taskCancelBtn]", function () {
+                    //取消任务
+                    alert("取消任务");
+                });
+
+                _clipListTable.on("click", "button[id=upItemBtn]", function () {
+                    //上架商品
+                    alert("上架商品");
+                });
+
+                _clipListTable.on("click", "button[id=changeItemBtn]", function () {
+                    //切换商品
+                    alert("切换商品");
                 });
 
             });
