@@ -36,6 +36,7 @@ public class ChannelController {
      *          <b>status</b> - int 通行证状态，参考：{@link com.xlibao.common.constant.passport.PassportStatusEnum}，
      *                  当<b>status</b>值为{@link com.xlibao.common.constant.passport.PassportStatusEnum#UN_PERFECT_INFORMATION}时，必须执行完善资料的接口
      *          <b>openId</b> - String 微信授权后返回的用户在该公众号下的openId(同一个项目下唯一)
+     *          <b>sessionKey</b> - String 微信返回的会话密钥，小程序授权时有效
      * </pre>
      */
     @ResponseBody

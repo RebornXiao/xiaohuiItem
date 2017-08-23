@@ -48,6 +48,7 @@ public class TencentServiceImpl extends BasicWebService implements TencentServic
             deviceType = DeviceTypeEnum.DEVICE_TYPE_APPLET;
         }
         String openId = response.getString("openId");
+        String sessionKey = response.getString("session_key");
         Passport passport = passportService.getPassport(openId);
         if (passport == null) {
             // 执行注册
@@ -57,6 +58,7 @@ public class TencentServiceImpl extends BasicWebService implements TencentServic
             response = fillPassportMsg(passport);
         }
         response.put("openId", openId);
+        response.put("sessionKey", sessionKey);
         return success(response);
     }
 
@@ -102,11 +104,13 @@ public class TencentServiceImpl extends BasicWebService implements TencentServic
         // 微信在此公众号下的唯一ID
         String openId = response.getString("openid");
         String unionId = response.getString("unionid");
+        String sessionKey = response.getString("session_key");
 
         response.clear();
 
         response.put("openId", openId);
         response.put("unionId", CommonUtils.nullToEmpty(unionId));
+        response.put("sessionKey", CommonUtils.nullToEmpty(sessionKey));
         response.put("accessToken", CommonUtils.nullToEmpty(accessToken));
         return response;
     }
