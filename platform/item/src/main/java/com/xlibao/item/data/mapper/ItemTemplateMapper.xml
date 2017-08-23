@@ -20,6 +20,11 @@
         <result column="upload_time" property="uploadTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <resultMap id="IdNameMap" type="com.xlibao.metadata.item.ItemIdName">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <sql id="Example_Entity_Where_Clause">
         <trim prefix="where" prefixOverrides="and|or">
             <if test="template.id != null and template.id != ''">
@@ -64,6 +69,10 @@
 
     <select id="getItemTemplates" resultMap="BaseResultMap">
         select * from item_template where type_id = #{type} and status = #{status}
+    </select>
+
+    <select id="getItemTemplateIdAndNames" resultMap="IdNameMap">
+        select * from item_template where type_id = #{typeId}
     </select>
 
     <select id="getItemTemplate" resultMap="BaseResultMap">

@@ -13,6 +13,8 @@ public interface ItemService {
 
     JSONObject getItemTemplate();
 
+    JSONObject getItemTemplateIdAndNames();
+
     JSONObject getItemTemplateByName();
 
     JSONObject getItemTemplateByBarcode();

@@ -12,6 +12,7 @@ import com.xlibao.metadata.passport.PassportStreet;
 import com.xlibao.saas.market.manager.BaseController;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.config.LogicConfig;
+import com.xlibao.saas.market.manager.service.itemmanager.ItemManagerService;
 import com.xlibao.saas.market.manager.service.marketmanager.MarketManagerService;
 import com.xlibao.saas.market.manager.service.passportmanager.PassportManagerService;
 import com.xlibao.saas.market.manager.utils.Utils;
@@ -25,6 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.alibaba.fastjson.JSON.parseObject;
+
 /**
  * @author chinahuangxc on 2017/7/10.
  */
@@ -37,6 +40,9 @@ public class MarketManagerController extends BaseController {
 
     @Autowired
     private PassportManagerService passportManagerService;
+
+    @Autowired
+    private ItemManagerService itemManagerService;
 
     //商店 列表 页面
     @RequestMapping("/markets")
@@ -115,7 +121,7 @@ public class MarketManagerController extends BaseController {
             if (itemJson.getIntValue("code") != 0) {
                 return remoteFail(map, itemJson, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
             }
-            MarketEntry entry = JSONObject.parseObject(itemJson.getJSONObject("response").getString("data"), MarketEntry.class);
+            MarketEntry entry = parseObject(itemJson.getJSONObject("response").getString("data"), MarketEntry.class);
             map.put("market", entry);
             //拿省
             String provinceName = entry.getProvince();
@@ -146,7 +152,7 @@ public class MarketManagerController extends BaseController {
                 //拿到这个街道
                 JSONObject streetJson = passportManagerService.getStreetJson(entry.getStreetId());
                 if (streetJson.getIntValue("code") == 0) {
-                    PassportStreet street = JSONObject.parseObject(streetJson.getJSONObject("response").getString("data"), PassportStreet.class);
+                    PassportStreet street = parseObject(streetJson.getJSONObject("response").getString("data"), PassportStreet.class);
                     //拿所有数据
                     JSONObject streetsJson = passportManagerService.getStreets(street.getAreaId());
                     if (streetsJson.getIntValue("code") == 0) {
@@ -249,8 +255,26 @@ public class MarketManagerController extends BaseController {
         //拿到所有店铺
         JSONObject response = marketManagerService.getAllMarkets();
         if (response.getIntValue("code") == 0) {
-            map.put("markets", response.getJSONObject("response").getJSONArray("datas"));
+            List<MarketEntry> entrys = JSONObject.parseArray(response.getJSONObject("response").getString("datas"), MarketEntry.class);
+            if(entrys.size() > 0) {
+                if(marketId == 0) {
+                    marketId = entrys.get(0).getId();
+                }
+                map.put("markets", entrys);
+            }
+            if(marketId != 0) {
+                //拿走道
+                String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/getShelvesMarks.do?marketId="+ marketId);
+                JSONObject jsonObject = JSONObject.parseObject(json);
+                if(jsonObject.getIntValue("code") == 0) {
+                    List<String> groups = JSONObject.parseArray(jsonObject.getJSONObject("response").getString("datas"), String.class);
+                    map.put("groups", groups);
+                }
+            }
         }
+
+        //所有类型
+        map.put("itemTypes", itemManagerService.getSelectItemTypes());
 
         map.put("marketId", marketId);
 
@@ -267,7 +291,7 @@ public class MarketManagerController extends BaseController {
         int shelvesType = getIntParameter("shelvesType", 0);
 
         String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/getShelvesMarks.do?marketId=" + marketId + "&groupCode=" + groupCode + "&unitCode=" + unitCode + "&shelvesType=" + shelvesType);
-        return JSONObject.parseObject(json);
+        return parseObject(json);
     }
 
     //拿商店的一些 走道，层 等数据
@@ -283,6 +307,8 @@ public class MarketManagerController extends BaseController {
         int pageStartIndex = getPageStartIndex(pageSize);
 
         String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/loaderClipDatas.do?marketId=" + marketId + "&groupCode=" + groupCode + "&unitCode=" + unitCode + "&floorCode=" + floorCode + "&pageSize=" + 1000 + "&pageStartIndex=" + pageStartIndex);
-        return JSONObject.parseObject(json);
+        return parseObject(json);
     }
+
+
 }

@@ -175,18 +175,16 @@
         <script type="text/javascript">
             $(document).ready(function () {
 
-                $("#typeSelect").select2();
-
                 moveEnd($("#itemName").get(0));
 
                 //添加类型
                 $("#addTypeBtn").on('click', function () {
-                    location.href = "${base}/marketmanager/item/itemTypeEdit.do";
+                    location.href = "${base}/item/itemTypeEdit.do";
                 });
 
                 //添加单位
                 $("#addUnitBtn").on('click', function () {
-                    location.href = "${base}/marketmanager/item/itemUnitEdit.do";
+                    location.href = "${base}/item/itemUnitEdit.do";
                 });
 
                 $("#backBtn").on('click', function () {
