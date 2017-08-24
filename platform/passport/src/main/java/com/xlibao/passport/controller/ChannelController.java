@@ -51,6 +51,14 @@ public class ChannelController {
      *
      *     <b>访问地址：</b>http://domainName/passport/channel/perfectWeixinInformation
      *     <b>访问方式：</b>GET/POST，推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>passportId</b> - long 通行证ID，必填参数。
+     *          <b>nickName</b> - String 昵称，用于显示，必填参数。
+     *          <b>headImageUrl</b> - String 头像，用于显示，非必填参数。
+     *          <b>sex</b> - byte 用户性别，参考：{@link com.xlibao.common.GlobalAppointmentOptEnum}；默认值为：{@link com.xlibao.common.GlobalAppointmentOptEnum#FEMALE}
+     *
+     *     <b>返回：</b>仅返回操作成功或失败的提示
      * </pre>
      */
     @ResponseBody

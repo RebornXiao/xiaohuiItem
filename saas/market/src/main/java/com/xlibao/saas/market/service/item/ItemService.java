@@ -34,4 +34,6 @@ public interface ItemService {
     JSONObject offShelves();
 
     JSONObject onShelves();
+
+    JSONObject existItemTemplate();
 }

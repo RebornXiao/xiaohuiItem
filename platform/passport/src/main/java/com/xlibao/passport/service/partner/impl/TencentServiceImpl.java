@@ -66,7 +66,7 @@ public class TencentServiceImpl extends BasicWebService implements TencentServic
     public JSONObject perfectWeixinInformation() {
         long passportId = getLongParameter("passportId");
         String nickName = getUTF("nickName");
-        String headImageUrl = getUTF("headImageUrl");
+        String headImageUrl = getUTF("headImageUrl", "");
         byte sex = getByteParameter("sex", GlobalAppointmentOptEnum.FEMALE.getKey());
 
         int result = passportDataManager.perfectPassportInformation(passportId, nickName, headImageUrl, sex, PassportStatusEnum.NORMAL.getKey());

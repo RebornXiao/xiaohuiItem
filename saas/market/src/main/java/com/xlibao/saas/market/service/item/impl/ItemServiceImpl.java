@@ -385,6 +385,15 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return success();
     }
 
+    @Override
+    public JSONObject existItemTemplate() {
+        long marketId = getLongParameter("marketId");
+        long itemTemplateId = getLongParameter("itemTemplateId");
+
+        MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplateId);
+        return item == null ? MarketItemErrorCodeEnum.NOT_FOUND_ITEM.response() : success();
+    }
+
     private long matchMarketId(long passportId, long marketId) {
         if (marketId == 0) { // 若没有指定商店 那么寻找上次访问的商店
             MarketAccessLogger accessLogger = dataAccessFactory.getMarketDataAccessManager().getLastAccessLogger(passportId);
