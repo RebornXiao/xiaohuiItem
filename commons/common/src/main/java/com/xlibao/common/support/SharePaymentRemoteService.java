@@ -26,7 +26,7 @@ public class SharePaymentRemoteService extends BasicWebService {
 
         CommonUtils.fillSignature(signParameters, appKey);
 
-        String parameter = HttpRequest.post(urlPrefix + "paymentController/unifiedOrder", signParameters);
+        String parameter = HttpRequest.post(urlPrefix + "payment/unifiedOrder", signParameters);
 
         JSONObject response = JSONObject.parseObject(parameter);
 

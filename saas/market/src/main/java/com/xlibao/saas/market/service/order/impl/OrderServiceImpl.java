@@ -250,6 +250,9 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             // 自提类型订单 必须处于支付状态才能进行退款
             return MarketOrderErrorCodeEnum.CANNOT_REFUND.response("该订单已不能执行退款操作");
         }
+        if (passportId != Long.parseLong(orderEntry.getPartnerUserId())) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response("");
+        }
         // TODO 执行退款业务
         return null;
     }

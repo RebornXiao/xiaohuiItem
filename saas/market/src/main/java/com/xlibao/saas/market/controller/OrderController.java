@@ -132,7 +132,7 @@ public class OrderController {
      *            然后将上述的JSONObject数据结果当成一个字符串(注意需要进行URLEncode.encode)填充到另一个JSONObject中，key为<b>paymentParameter</b>；连同
      *              <b>passportId</b> - long 通行证ID
      *              <b>paymentPassword</b> - String 支付密码
-     *            向支付中心发起余额支付请求，地址为：http://paymentDomainName/paymentController/balancePayment
+     *            向支付中心发起余额支付请求，地址为：http://paymentDomainName/payment/balancePayment
      *
      *           支付中心负责返回支付结果的成败
      *

@@ -144,7 +144,7 @@ public class TencentPayment extends BasicWebService {
         // 交易结束时间 time_expire 订单失效时间，格式为yyyyMMddHHmmss，如2009年12月27日9点10分10秒表示为20091227091010。注意：最短失效时间间隔必须大于5分钟
         parameters.put("time_expire", CommonUtils.defineDateFormat(System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(30), "yyyyMMddHHmmss"));
         // 通知地址 notify_url 接收微信支付异步通知回调地址，通知url必须为直接可访问的url，不能携带参数。
-        parameters.put("notify_url", ConfigFactory.getDomainNameConfig().paymentRemoteURL + "/channelCallbackController/notifyWeixinNativePaymented");
+        parameters.put("notify_url", ConfigFactory.getDomainNameConfig().paymentRemoteURL + "payment/channelCallback/notifyWeixinNativePayment");
         // 交易类型 trade_type 取值如下：JSAPI，NATIVE，APP，详细说明见参数规定
         parameters.put("trade_type", "APP");
         // JSAPI时需要传openId

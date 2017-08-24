@@ -146,7 +146,7 @@ public class MarketOpenApiController {
      *     <b>参数：</b>
      *          <b>taskId</b> - long 任务ID，必填参数；该参数必定大于0
      *
-     *     <b>返回：</b>
+     *     <b>返回：</b>成功或失败的描述
      * </pre>
      */
     @ResponseBody

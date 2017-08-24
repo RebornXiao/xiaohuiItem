@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author chinahuangxc on 2017/2/2.
  */
 @Controller
-@RequestMapping(value = "/channelCallbackController")
+@RequestMapping(value = "/payment/channelCallbackController")
 public class ChannelCallbackController extends BasicWebService {
 
     @Autowired
@@ -28,8 +28,8 @@ public class ChannelCallbackController extends BasicWebService {
      * @deprecated - <b>特别说明</b>：仅供回调使用，内部系统不可调用
      */
     @ResponseBody
-    @RequestMapping(value = "notifyWeixinNativePaymented")
-    public void notifyWeixinNativePaymented() {
+    @RequestMapping(value = "notifyWeixinNativePayment")
+    public void notifyWeixinNativePayment() {
         tencentPayment.notifyWeixinNativePaymented();
     }
 
@@ -41,8 +41,8 @@ public class ChannelCallbackController extends BasicWebService {
      * @deprecated - <b>特别说明</b>：仅供回调使用，内部系统不可调用
      */
     @ResponseBody
-    @RequestMapping(value = "notifyAlipayNativePaymented")
-    public void notifyAlipayNativePaymented() {
+    @RequestMapping(value = "notifyAlipayNativePayment")
+    public void notifyAlipayNativePayment() {
         alipayPayment.notifyAlipayNativePaymented();
     }
 }
