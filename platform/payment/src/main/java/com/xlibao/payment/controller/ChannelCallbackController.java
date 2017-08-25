@@ -30,12 +30,18 @@ public class ChannelCallbackController extends BasicWebService {
     @ResponseBody
     @RequestMapping(value = "notifyWeixinNativePayment")
     public void notifyWeixinNativePayment() {
-        tencentPayment.notifyWeixinNativePaymented();
+        tencentPayment.notifyWeixinNativePayment();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "notifyWeixinRefund")
+    public void notifyWeixinRefund() {
+        tencentPayment.notifyWeixinRefund();
     }
 
     /**
      * <pre>
-     *     <b>微信支付回调接口</b>
+     *     <b>支付宝支付回调接口</b>
      * </pre>
      *
      * @deprecated - <b>特别说明</b>：仅供回调使用，内部系统不可调用

@@ -36,4 +36,8 @@ public interface ItemService {
     JSONObject onShelves();
 
     JSONObject existItemTemplate();
+
+    JSONObject editItem();
+
+    JSONObject findItemLocation();
 }

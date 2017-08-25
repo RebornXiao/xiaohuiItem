@@ -5,18 +5,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
+import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.exception.code.ItemErrorCodeEnum;
 import com.xlibao.common.lbs.baidu.AddressComponent;
 import com.xlibao.common.lbs.baidu.BaiduWebAPI;
-import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.datacache.item.ItemDataCacheService;
+import com.xlibao.market.data.model.*;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import com.xlibao.saas.market.data.DataAccessFactory;
-import com.xlibao.market.data.model.*;
 import com.xlibao.saas.market.data.model.MarketAccessLogger;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.activity.RecommendItemTypeEnum;
@@ -29,7 +29,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -355,7 +358,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplate.getId());
         if (item == null) {
             // 商店未存在该模版的商品 先添加
-            item = MarketItem.newInstance(marketId, itemTemplate);
+            item = MarketItem.newInstance(marketId, itemTemplate, (byte) ItemStatusEnum.NORMAL.getKey());
             dataAccessFactory.getItemDataAccessManager().createItem(item);
         }
         logger.info("[上架] " + passportId + "正在对商品(条码为：" + barcode + ")进行上架操作；商店ID：" + marketId + "，商品ID：" + item.getId() + "，所在位置：" + location + "，上架数量：" + onShelvesQuantity);
@@ -392,6 +395,57 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
         MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplateId);
         return item == null ? MarketItemErrorCodeEnum.NOT_FOUND_ITEM.response() : success();
+    }
+
+    @Override
+    public JSONObject editItem() {
+        // 编辑商品
+        long passportId = getLongParameter("passportId");
+        long marketId = getLongParameter("marketId");
+        long itemTemplateId = getLongParameter("itemTemplateId");
+        long costPrice = getLongParameter("costPrice");
+        long sellPrice = getLongParameter("sellPrice");
+        long marketPrice = getLongParameter("marketPrice", sellPrice);
+        String description = getUTF("description", "");
+        int status = getIntParameter("status", ItemStatusEnum.OFF_SALE.getKey());
+
+        if (costPrice < 0) {
+            return fail(3, "成本价不能小于0分");
+        }
+        if (sellPrice < 0) {
+            return fail(4, "售价不能小于0分");
+        }
+        if (marketPrice < 0) {
+            return fail(5, "市场售价不能小于0分");
+        }
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
+        if (marketEntry == null) {
+            logger.error("1 -- 用户[" + passportId + "]正在编辑商品[" + itemTemplateId + "]，但用户不存在供应商仓库记录");
+            return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response("找不到商店，错误码：" + marketId);
+        }
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemTemplateId);
+        if (itemTemplate == null) {
+            logger.error("2 -- 用户[" + passportId + "]正在编辑商品[" + itemTemplateId + "]，但无法获取商品模版记录");
+            return ItemErrorCodeEnum.NOT_FOUND_ITEM_TEMPLATE.response("商品模版不存在，错误码：" + itemTemplateId);
+        }
+        MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplateId);
+        if (status == ItemStatusEnum.HIDE.getKey()) {
+            status = ItemStatusEnum.OFF_SALE.getKey();
+        }
+        int result = 0;
+        if (item == null) {
+            // 未有商品存在
+            item = MarketItem.newInstance(marketId, itemTemplate, costPrice, sellPrice, marketPrice, sellPrice, description, (byte) status);
+            result = dataAccessFactory.getItemDataAccessManager().createItem(item);
+        } else {
+            result = dataAccessFactory.getItemDataAccessManager().updateItem(item.getId(), costPrice, item.getSellPrice(), item.getMarketPrice(), item.getDiscountPrice(), (byte) status, description);
+        }
+        return result <= 0 ? fail("编辑商品失败") : success("编辑商品成功");
+    }
+
+    @Override
+    public JSONObject findItemLocation() {
+        return null;
     }
 
     private long matchMarketId(long passportId, long marketId) {

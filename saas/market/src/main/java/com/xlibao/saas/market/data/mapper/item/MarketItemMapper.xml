@@ -110,4 +110,8 @@
         <if test="quantity &lt; 0"> total_out_storage = total_out_storage + #{quantity} </if>
         where id = #{itemId}
     </update>
+
+    <update id="updateItem">
+        update market_item set cost_price = #{costPrice}, sell_price = #{sellPrice}, market_price = #{marketPrice}, discount_price = #{discountPrice}, status = #{status}, description = #{description} where id = #{itemId}
+    </update>
 </mapper>

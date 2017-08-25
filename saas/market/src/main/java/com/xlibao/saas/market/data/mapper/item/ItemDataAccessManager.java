@@ -58,6 +58,10 @@ public class ItemDataAccessManager {
         return itemMapper.getItems(itemSet);
     }
 
+    public int updateItem(long itemId, long costPrice, long sellPrice, long marketPrice, long discountPrice, byte status, String description) {
+        return itemMapper.updateItem(itemId, costPrice, sellPrice, marketPrice, discountPrice, status, description);
+    }
+
     public int lockItemStock(long itemId, int lockQuantity) {
         return itemMapper.lockItemStock(itemId, lockQuantity);
     }

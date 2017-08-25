@@ -23,7 +23,7 @@ public class ApplicationControllerAop extends BasicWebService {
 
     private static final Logger logger = LoggerFactory.getLogger(ApplicationControllerAop.class);
 
-    @Around(value = "execution(* com.xlibao.*.controller.*.*(..))")
+    @Around(value = "execution(* com.xlibao.payment.controller.*.*(..))")
     public Object around(ProceedingJoinPoint point) throws Throwable {
         Object[] args = point.getArgs();
         try {

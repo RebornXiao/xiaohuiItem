@@ -126,4 +126,21 @@ public class ItemOpenApiController {
     public JSONObject existItemTemplate() {
         return itemService.existItemTemplate();
     }
+
+    /**
+     * <pre>
+     *     <b></b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "editItem")
+    public JSONObject editItem() {
+        return itemService.editItem();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "findItemLocation")
+    public JSONObject findItemLocation() {
+        return itemService.findItemLocation();
+    }
 }

@@ -217,7 +217,7 @@ public class PaymentController extends BasicWebService {
      *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#ALIPAY}时，返回：paymentURL(支付宝支付链接)
      *            前端直接将上述参数填充至支付宝提供的SDK中
      *
-     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_NATIVE}时，返回：
+     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_APP}时，返回：
      *              <b>appid</b> - String 微信分配的appId。
      *              <b>partnerid</b> - String 微信支付分配的商户号。
      *              <b>prepayid</b> - String 预支付交易会话ID prepayid，微信返回的支付交易会话ID。

@@ -23,10 +23,10 @@ public class ConfigFactory {
     @Autowired
     private XlibaoConfig xlibaoConfig;
 
-    private static DomainNameConfig domainName;
-    private static TencentWeixinPaymentConfig tencentWeixinPayment;
-    private static AlipayPaymentConfig alipayPayment;
-    private static XlibaoConfig xConfig;
+    private static DomainNameConfig domainName = new DomainNameConfig();
+    private static TencentWeixinPaymentConfig tencentWeixinPayment = new TencentWeixinPaymentConfig();
+    private static AlipayPaymentConfig alipayPayment = new AlipayPaymentConfig();
+    private static XlibaoConfig xConfig = new XlibaoConfig();
 
     @PostConstruct
     public void initialization() {

@@ -45,6 +45,10 @@ public class TencentPayment extends BasicWebService {
     @Autowired
     private CurrencyEventListenerManager currencyEventListenerManager;
 
+    public JSONObject weixinAppPaymentParameters(String tradeNumber, long totalAmount, String function, String desc, String attach, String remoteIP) {
+        return weixinPaymentParameters(PaymentTypeEnum.WEIXIN_APP, "", tradeNumber, totalAmount, function, desc, attach, remoteIP);
+    }
+
     public JSONObject weixinNativePaymentParameters(String tradeNumber, long totalAmount, String function, String desc, String attach, String remoteIP) {
         return weixinPaymentParameters(PaymentTypeEnum.WEIXIN_NATIVE, "", tradeNumber, totalAmount, function, desc, attach, remoteIP);
     }
@@ -65,6 +69,11 @@ public class TencentPayment extends BasicWebService {
         JSONObject parameters = new JSONObject();
         Map<String, String> signParameters = new HashMap<>();
 
+        if (paymentType == PaymentTypeEnum.WEIXIN_NATIVE) {
+            parameters.put("codeUrl", payParameter[0]);
+            return parameters;
+        }
+
         if (paymentType == PaymentTypeEnum.WEIXIN_APPLET) {
             signParameters.put("appId", ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_ID);
             // 时间戳 timestamp 时间戳
@@ -76,14 +85,14 @@ public class TencentPayment extends BasicWebService {
             signParameters.put("nonceStr", payParameter[1]);
 
             // 统一下单接口返回的 prepay_id 参数值，提交格式如：prepay_id=wx2017033010242291fcfe0db70013231072
-            parameters.put("package", "prepay_id="+payParameter[0]);
-            signParameters.put("package", "prepay_id="+payParameter[0]);
+            parameters.put("package", "prepay_id=" + payParameter[0]);
+            signParameters.put("package", "prepay_id=" + payParameter[0]);
 
             // 签名算法，暂支持 MD5
             parameters.put("signType", "MD5");
             signParameters.put("signType", "MD5");
 
-            String paySign = CommonUtils.signature(signParameters,  ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_KEY);
+            String paySign = CommonUtils.signature(signParameters, ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_KEY);
             parameters.put("paySign", paySign);
             return parameters;
         }
@@ -147,6 +156,10 @@ public class TencentPayment extends BasicWebService {
         parameters.put("notify_url", ConfigFactory.getDomainNameConfig().paymentRemoteURL + "payment/channelCallback/notifyWeixinNativePayment");
         // 交易类型 trade_type 取值如下：JSAPI，NATIVE，APP，详细说明见参数规定
         parameters.put("trade_type", "APP");
+        if (paymentType == PaymentTypeEnum.WEIXIN_NATIVE) {
+            parameters.put("trade_type", "NATIVE");
+            parameters.put("product_id", tradeNumber);
+        }
         // JSAPI时需要传openId
         if (paymentType == PaymentTypeEnum.WEIXIN_JS || paymentType == PaymentTypeEnum.WEIXIN_APPLET) {
             parameters.put("trade_type", "JSAPI");
@@ -177,6 +190,9 @@ public class TencentPayment extends BasicWebService {
                 logger.error(result);
                 return null;
             }
+            if (paymentType == PaymentTypeEnum.WEIXIN_NATIVE) {
+                return new String[]{responseResult.get("code_url")};
+            }
             // 以下字段在return_code 和result_code都为SUCCESS的时候有返回
             return new String[]{responseResult.get("prepay_id"), nonceValue};
         } catch (Exception ex) {
@@ -185,7 +201,7 @@ public class TencentPayment extends BasicWebService {
         return null;
     }
 
-    public void notifyWeixinNativePaymented() {
+    public void notifyWeixinNativePayment() {
         try {
             SAXReader reader = new SAXReader();
 
@@ -275,6 +291,9 @@ public class TencentPayment extends BasicWebService {
         // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 以上为业务逻辑程序代码 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
     }
 
+    public void notifyWeixinRefund() {
+    }
+
     private boolean verifyWeixinSign(Map<String, String> params, String sign) {
         params.remove("sign");
         String parameterSort = CommonUtils.parameterSort(params, new ArrayList<>()) + "key=" + ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_KEY;
@@ -341,7 +360,7 @@ public class TencentPayment extends BasicWebService {
 
         // 修改对象的状态
         transactionLogger.setTransStatus(transactionLogger.getTransStatus() | TransStatusEnum.TRADE_SUCCESS_SERVER.getKey());
-        transactionLogger.setPaymentType(PaymentTypeEnum.WEIXIN_NATIVE.getKey());
+        transactionLogger.setPaymentType(PaymentTypeEnum.WEIXIN_APP.getKey());
         transactionLogger.setChannelUserId(openId);
         transactionLogger.setChannelUserName(openId);
         transactionLogger.setChannelTradeNumber(transactionId);
@@ -351,12 +370,12 @@ public class TencentPayment extends BasicWebService {
     }
 
     public static void main(String[] args) {
-        String value = "<xml><appid>wxf3c01ed21e6e9c6f</appid><body><![CDATA[密码]]></body><mch_id>1230969802</mch_id><nonce_str>teHNxDNASW6Q6VAf</nonce_str><notify_url>http://apptest.0085.com/pay/pay/wechat/payCallBack.action</notify_url><openid>ow1CduOTc0yLr40kdMSxgWSgNe0c</openid><out_trade_no>20161201022504810540</out_trade_no><sign><![CDATA[6910EDC3E7828D77310E92E2CE3E7EC0]]></sign><spbill_create_ip>14.150.64.118</spbill_create_ip><total_fee>3</total_fee><trade_type>JSAPI</trade_type></xml>";
+        String value = "<xml><appid>wxf3c01ed21e6e9c6f</appid><body><![CDATA[密码]]></body><mch_id>1230969802</mch_id><nonce_str>teHNxDNASW6Q6VAf</nonce_str><notify_url>http://apptest.0085.com/pay/pay/wechat/payCallBack.action</notify_url><openid>ow1CduOTc0yLr40kdMSxgWSgNe0c</openid><out_trade_no>20171281erq2504810540</out_trade_no><sign><![CDATA[6910EDC3E7828D77310E92E2CE3E7EC0]]></sign><spbill_create_ip>14.150.64.118</spbill_create_ip><total_fee>3</total_fee><trade_type>JSAPI</trade_type></xml>";
         Map<String, String> parameters = XMLSupport.xmlToMap(value);
 
         TencentPayment tencentPayment = new TencentPayment();
 
-        JSONObject response = tencentPayment.weixinNativePaymentParameters(parameters.get("out_trade_no"), 241, "password", parameters.get("mch_id"), parameters.get("spbill_create_ip"), "");
+        JSONObject response = tencentPayment.weixinNativePaymentParameters(parameters.get("out_trade_no"), 1, "password", parameters.get("mch_id"), parameters.get("spbill_create_ip"), "");
         System.out.println(response);
     }
 }

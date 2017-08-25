@@ -117,7 +117,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     public JSONObject unifiedPayment() {
         Map<String, String> signParameters = new HashMap<>();
 
-        String paymentType = getUTF("paymentType", PaymentTypeEnum.WEIXIN_NATIVE.getKey());
+        String paymentType = getUTF("paymentType", PaymentTypeEnum.WEIXIN_APP.getKey());
 
         signParameters.put("passportId", getUTF("passportId"));
         signParameters.put("paymentType", paymentType);
