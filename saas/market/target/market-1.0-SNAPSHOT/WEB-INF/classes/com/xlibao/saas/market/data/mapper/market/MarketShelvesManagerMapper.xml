@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xlibao.saas.market.data.mapper.market.MarketShelvesManagerMapper">
+    <resultMap id="BaseResultMap" type="com.xlibao.market.data.model.MarketShelvesManager">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="market_id" property="marketId" jdbcType="BIGINT"/>
+        <result column="group_code" property="groupCode" jdbcType="VARCHAR"/>
+        <result column="unit_code" property="unitCode" jdbcType="VARCHAR"/>
+        <result column="floor_code" property="floorCode" jdbcType="VARCHAR"/>
+        <result column="clip_code" property="clipCode" jdbcType="VARCHAR"/>
+        <result column="last_modify_time" property="lastModifyTime" jdbcType="TIMESTAMP"/>
+        <result column="modify_passport_id" property="modifyPassportId" jdbcType="BIGINT"/>
+        <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <insert id="createShelves">
+        insert into market_shelves_manager(market_id, group_code, unit_code, floor_code, clip_code, last_modify_time, modify_passport_id, create_time)
+        values(#{marketId}, #{groupCode}, #{unitCode}, #{floorCode}, #{clipCode}, #{lastModifyTime}, #{modifyPassportId}, #{createTime})
+    </insert>
+</mapper>

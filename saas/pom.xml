@@ -16,6 +16,8 @@
         <module>marketshop</module>
         <module>marketcore</module>
         <module>marketmodel</module>
+        <module>test</module>
+        <module>marketadver</module>
     </modules>
 
     <dependencies>

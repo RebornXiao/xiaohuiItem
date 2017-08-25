@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="war" name="xmarket:war">
-    <output-path>$PROJECT_DIR$/target</output-path>
-    <root id="archive" name="xmarket.war">
-      <element id="artifact" artifact-name="xmarket:war exploded" />
-    </root>
-  </artifact>
-</component>
