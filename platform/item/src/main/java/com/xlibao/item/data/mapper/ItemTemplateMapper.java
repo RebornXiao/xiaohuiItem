@@ -30,4 +30,6 @@ public interface ItemTemplateMapper {
     int searchItemTemplateCount(@Param("searchType") String searchType, @Param("searchKey") String searchKey);
 
     List<ItemTemplate> getItemTemplateIdAndNames(@Param("typeId") long typeId);
+
+    List<ItemTemplate> fuzzyMatchItemTemplate(@Param("name") String name);
 }

@@ -445,7 +445,33 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
     @Override
     public JSONObject findItemLocation() {
-        return null;
+        long marketId = getLongParameter("marketId");
+        long itemTemplateId = getLongParameter("itemTemplateId");
+
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemTemplateId);
+        if (itemTemplate == null) {
+            return ItemErrorCodeEnum.NOT_FOUND_ITEM_TEMPLATE.response("商品模版不存在，错误码：" + itemTemplateId);
+        }
+
+        MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplateId);
+        if (item == null) {
+            return MarketItemErrorCodeEnum.NOT_FOUND_ITEM.response("商店未收录该商品【" + itemTemplate.getName() + "】");
+        }
+        List<MarketItemLocation> itemLocations = dataAccessFactory.getItemDataAccessManager().getItemLocations(item.getId());
+        if (CommonUtils.isEmpty(itemLocations)) {
+            return MarketItemErrorCodeEnum.ITEM_LOCATION_ERROR.response("找不到商品【" + itemTemplate.getName() + "】的位置信息，请确认商品是否已上架！");
+        }
+        JSONArray response = new JSONArray();
+
+        for (MarketItemLocation itemLocation : itemLocations) {
+            JSONObject data = new JSONObject();
+
+            data.put("locationCode", itemLocation.getLocationCode());
+            data.put("stock", itemLocation.getStock());
+
+            response.add(data);
+        }
+        return success(response);
     }
 
     private long matchMarketId(long passportId, long marketId) {

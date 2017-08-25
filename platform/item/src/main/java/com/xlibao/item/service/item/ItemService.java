@@ -21,6 +21,8 @@ public interface ItemService {
 
     JSONObject relationItemTemplates();
 
+    JSONObject fuzzyMatchItemTemplate();
+
     JSONObject loaderItemBrands();
 
     JSONObject getItemBrand();

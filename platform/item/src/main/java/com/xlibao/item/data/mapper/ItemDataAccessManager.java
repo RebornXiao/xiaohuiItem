@@ -47,7 +47,6 @@ public class ItemDataAccessManager {
 
     public int addItemTemplate(ItemTemplate template) {
         return templateMapper.add(template);
-        
     }
 
     public void updateItemTemplate(ItemTemplate template) {
@@ -60,6 +59,10 @@ public class ItemDataAccessManager {
 
     public List<ItemTemplate> getItemTemplateIdAndNames(long itemTypeId) {
         return templateMapper.getItemTemplateIdAndNames(itemTypeId);
+    }
+
+    public List<ItemTemplate> fuzzyMatchItemTemplate(String name) {
+        return templateMapper.fuzzyMatchItemTemplate(name);
     }
 
     public int getItemTemplateCount(ItemTemplate template) {
