@@ -18,9 +18,9 @@
                         <ol class="breadcrumb pull-right">
                             <li><a href="#">首页</a></li>
                             <li><a href="#">店铺管理</a></li>
-                            <li class="active"><a href="#">店铺商品列表</a></li>
+                            <li class="active"><a href="#">店铺任务列表</a></li>
                         </ol>
-                        <h4 class="page-title"><b>店铺商品列表</b></h4>
+                        <h4 class="page-title"><b>店铺任务列表</b></h4>
                     </div>
                 </div>
             </div>
@@ -29,10 +29,6 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <form class="form-inline" role="form">
-
-                            <button id="addBtn" type="button" class="btn waves-effect waves-light btn-primary "><i
-                                    class="fa fa-pencil"></i> 添加店铺商品
-                            </button>
 
                             <div class="form-group">
                                 <label>选择店铺：</label>
@@ -61,34 +57,60 @@
                     <table class="table table-striped table-bordered">
                         <thead class="table_head">
                         <tr>
-                            <th>ID</th>
-                            <th>商品模板ID</th>
+                            <th>任务ID</th>
+                            <th>弹夹编码</th>
+                            <th>商品模版ID</th>
                             <th>商品名称</th>
-                            <th>成本价</th>
-                            <th>售价</th>
-                            <th>市场售价</th>
-                            <th>状态</th>
+                            <th>商品数量</th>
+                            <th>商品条码</th>
+                            <th>商品单位</th>
+                            <th>任务状态</th>
+                            <th>期望执行的日期</th>
                             <th>操作</th>
                         </tr>
                         </thead>
-                        <tbody id="itemsTable">
-                        <tr id="emptyTr">
-                            <td colSpan="8" height="200px">
-                                <p class="text-center" id="errorInfo">暂无任何数据</p>
+                        <tbody id="clipListTable">
+
+
+                        <#if tasks?exists && (tasks?size > 0)>
+                            <#list tasks as task>
+                            <tr>
+                                <td>${task.taskId?c}</td>
+                                <td>${task.locationCode}</td>
+                                <td>${task.itemTemplateId}</td>
+                                <td>${task.itemName}</td>
+                                <td>${task.itemQuantity}</td>
+                                <td>${task.barcode}</td>
+                                <td>${task.unitName}</td>
+                                <td>${task.status}</td>
+                                <td>${task.hopeExecutorDate}</td>
+                                <td>
+                                    <button id="editBtn" type="button"
+                                            class="btn waves-effect waves-light btn-warning btn-sm"
+                                            data_id="${task.taskId?c}">编辑
+                                    </button>
+                                </td>
+                            </tr>
+
+                            </#list>
+                        <#else>
+
+                        <tr>
+                            <td colSpan="11" height="200px">
+                                <p class="text-center">暂无任何数据</p>
                             </td>
                         </tr>
+                        </#if>
                         </tbody>
                     </table>
-
-
                 </div>
             </div>
 
-        <#if marketItems?exists && (marketItems?size > 0)>
+        <#if tasks?exists && (tasks?size > 0)>
             <div class="row small_page">
                 <div class="col-sm-12">
                     <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/marketItems.do" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/marketTasks.do" />
                 </div>
             </div>
         </#if>
@@ -98,15 +120,9 @@
 
         <script type="text/javascript">
 
+
             $(document).ready(function () {
 
                 $("#sMarket").select2();
-
-                var s_marketId = ${marketId};
-
-                //添加新品
-                $("#addBtn").on('click', function () {
-                    location.href = "${base}/market/marketItemEdit.do?marketId=" + s_marketId;
-                });
             });
         </script>

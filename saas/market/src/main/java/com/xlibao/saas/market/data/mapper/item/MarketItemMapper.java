@@ -34,4 +34,5 @@ public interface MarketItemMapper {
     int offShelves(@Param("itemId") long itemId, @Param("quantity") int quantity, @Param("status") int status);
 
     int updateItem(@Param("itemId") long itemId, @Param("costPrice") long costPrice, @Param("sellPrice") long sellPrice, @Param("marketPrice") long marketPrice, @Param("discountPrice") long discountPrice, byte status, String description);
+
 }

@@ -228,7 +228,7 @@
 
                             <div class="form-group">
                                 <label>选择店铺：</label>
-                                <select id="sMarket" style="width:120px;">
+                                <select id="sMarket" style="width:200px;">
                                 <#if markets?exists && (markets?size > 0)>
                                     <#list markets as market>
                                         <option data_id="${market.id?c}" <#if marketId == market.id>
@@ -671,7 +671,26 @@
 
                 //提交所有任务
                 $("#submitTaskBtn").on("click", function () {
-
+                    if(task_count < 1) {
+                        swal("当前没有任务可提交");
+                        return;
+                    }
+                    //将 task 拼成 map;
+                    var txt = "";
+                    var hDate = "";
+                    $.each(task_list, function (k, value) {
+                        txt = k + "-" + value.itemId + "-" + value.itemStock + ",";
+                    })
+                    $.post("${base}/market/prepareAction.do?marketId=" + s_MarketId + "&actionDatas=" + txt + "&hopeExecutorDate=" + hDate, function (data) {
+                        //重新刷新
+                        if (data.code == "0") {
+                            showMsg("操作成功", function () {
+                                location.href = "${base}/market/marketItems.do?id=" + s_MarketId;
+                            })
+                        } else {
+                            swal(data.msg);
+                        }
+                    }, "json");
                 });
 
                 //-------------------------------------------------------
