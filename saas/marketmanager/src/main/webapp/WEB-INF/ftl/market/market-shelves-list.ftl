@@ -7,6 +7,202 @@
 <script src="${res}/assets/plugins/bootstrap-select2/select2.min.js"></script>
 <script src="${res}/assets/plugins/bootstrap-select2/zh-CN.js"></script>
 
+<!-- 商品更改库存界面 -->
+<div class="modal fade" id="upItemDialog" tabindex="-1"
+     role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="lItemTitle">上架商品</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">弹夹编码：</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="ipItemCode" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group" id="dItemName">
+                                <label class="col-md-4 control-label" id="lItemName">商品名称：</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="ipItemName" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group" id="dItemStock">
+                                <label class="col-md-4 control-label" id="lItemStock">库存：</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="ipItemStock" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group" id="dItemTypes">
+                                <label class="col-md-4 control-label" id="lItemTypes">选择替换的商品：</label>
+                                <div class="col-md-8">
+                                    <select id="sItemTypes" style="width:120px;">
+                                    <#if itemTypes?exists && (itemTypes?size > 0)>
+                                        <option data_id="0">选择分类</option>
+                                        <#list itemTypes as iType>
+                                            <option data_id="${iType.id?c}" data_v="${iType.title}">
+                                                <#if iType.parentId == 0>
+                                                ${iType.title}
+                                                <#else>
+                                                    &nbsp;&nbsp;&nbsp;&nbsp;${iType.title}
+                                                </#if>
+                                            </option>
+                                        </#list>
+                                    <#else>
+                                        <option data_id="0">选择分类</option>
+                                    </#if>
+                                    </select>
+                                    <select id="sItem" style="width:120px;"></select>
+                                </div>
+                            </div>
+                            <div class="form-group" id="dNewItemStock">
+                                <label class="col-md-4 control-label" id="lNewItemStock">新增库存：</label>
+                                <div class="col-md-6">
+                                    <input type="number" id="ipNewItemStock" class="form-control">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-sm-2"></div>
+                    <div class="col-sm-6">
+                        <button type="button" class="btn btn-default"
+                                data-dismiss="modal">取消
+                        </button>
+                        <button id="upItemOkBtn" type="button"
+                                class="btn btn-primary">确定
+                        </button>
+                    </div>
+                    <div class="col-sm-2"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 任务详情 -->
+<div class="modal fade" id="taskDialog" tabindex="-1"
+     role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="upItemTitle">任务详情</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-10">
+                        <form class="form-horizontal" role="form">
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">任务ID：</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="ipTaskId" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">商品名：</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="ipTaskItemName" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">商品数量：</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="ipTaskItemStock" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">期望执行的日期：</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="ipTaskDate" class="form-control" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-md-4 control-label">任务状态：</label>
+                                <div class="col-md-6">
+                                    <input type="text" id="ipTaskStatus" class="form-control" disabled value="未执行">
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-6">
+                        <button type="button" class="btn btn-success"
+                                data-dismiss="modal">继续任务
+                        </button>
+                        <button id="cancelTaskBtn" type="button"
+                                class="btn btn-danger">取消任务
+                        </button>
+                    </div>
+                    <div class="col-sm-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- 任务列表 -->
+<div class="modal fade" id="taskListDialog" tabindex="-1"
+     role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="upItemTitle">任务列表</h4>
+            </div>
+            <div class="modal-body">
+                <table class="table table-striped table-bordered">
+                    <thead class="table_head">
+                    <tr>
+                        <th>弹夹编码</th>
+                        <th>任务描述</th>
+                        <th>商品名称</th>
+                        <th>原库存</th>
+                        <th>切换商品名称</th>
+                        <th>新库存</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="taskListTable">
+                    </tbody>
+                </table>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-sm-3"></div>
+                    <div class="col-sm-6">
+                        <button id="submitTaskBtn" type="button"
+                                class="btn btn-primary">提交所有任务
+                        </button>
+                    </div>
+                    <div class="col-sm-3"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="content-page">
     <!-- Start content -->
     <div class="content">
@@ -18,9 +214,9 @@
                         <ol class="breadcrumb pull-right">
                             <li><a href="#">首页</a></li>
                             <li><a href="#">店铺管理</a></li>
-                            <li class="active"><a href="#">店铺商品列表</a></li>
+                            <li class="active"><a href="#">店铺列表</a></li>
                         </ol>
-                        <h4 class="page-title"><b>店铺商品列表</b></h4>
+                        <h4 class="page-title"><b>店铺列表</b></h4>
                     </div>
                 </div>
             </div>
@@ -46,6 +242,33 @@
                                 </select>
                             </div>
 
+                            <div class="form-group m-l-15">
+                                <label>组：</label>
+                                <select id="m_group" style="width:120px;">
+                                    <option data_id="0">选择组</option>
+                                <#if groups?exists && (groups?size > 0)>
+                                    <#list groups as group>
+                                        <option value="${group}">${group}</option>
+                                    </#list>
+                                </#if>
+                                </select>
+                            </div>
+
+                            <div class="form-group m-l-15">
+                                <label>单元：</label>
+                                <select id="m_unit" style="width:120px;"></select>
+                            </div>
+
+                            <div class="form-group m-l-15">
+                                <label>层：</label>
+                                <select id="m_layer" style="width:120px;"></select>
+                            </div>
+
+                            <div class="form-group pull-right">
+                                <button id="taskListBtn" type="button"
+                                        class="btn waves-effect waves-light btn-default">任务列表
+                                </button>
+                            </div>
                         </form>
                     </div>
                 </div>

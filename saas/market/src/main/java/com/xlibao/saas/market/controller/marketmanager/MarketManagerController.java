@@ -21,7 +21,6 @@ public class MarketManagerController {
     @Autowired
     private ShelvesService shelvesService;
 
-
     @ResponseBody
     @RequestMapping(value = "searchMarkets")
     public JSONObject searchMarkets() {
@@ -52,5 +51,23 @@ public class MarketManagerController {
     @RequestMapping(value = "loaderClipDatas")
     public JSONObject loaderClipDatas() {
         return shelvesService.loaderClipDatas();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "checkPrepareActionTask")
+    public JSONObject checkPrepareActionTask() {
+        return shelvesService.checkPrepareActionTask();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "cancelPrepareActionTask")
+    public JSONObject cancelPrepareActionTask() {
+        return shelvesService.cancelPrepareActionTask();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "prepareAction")
+    public JSONObject prepareAction() {
+        return shelvesService.prepareAction();
     }
 }

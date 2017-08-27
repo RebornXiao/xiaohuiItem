@@ -15,7 +15,6 @@ import com.xlibao.saas.market.manager.config.LogicConfig;
 import com.xlibao.saas.market.manager.service.itemmanager.ItemManagerService;
 import com.xlibao.saas.market.manager.service.marketmanager.MarketManagerService;
 import com.xlibao.saas.market.manager.service.passportmanager.PassportManagerService;
-import com.xlibao.saas.market.manager.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -247,9 +246,9 @@ public class MarketManagerController extends BaseController {
         return passportManagerService.streetEditSave(id, areaId, title);
     }
 
-    //商店 商品列表
-    @RequestMapping("/marketItems")
-    public String marketItems(ModelMap map) {
+    //商店 货架 商品
+    @RequestMapping("/marketShelves")
+    public String marketShelves(ModelMap map) {
         long marketId = getLongParameter("id", 0);
 
         //拿到所有店铺
@@ -278,7 +277,7 @@ public class MarketManagerController extends BaseController {
 
         map.put("marketId", marketId);
 
-        return jumpPage(map, LogicConfig.FTL_MARKET_ITEM_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ITEM_LIST);
+        return jumpPage(map, LogicConfig.FTL_MARKET_SHELVES_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_SHELVES_LIST);
     }
 
     //拿商店的一些 走道，层 等数据
@@ -294,7 +293,7 @@ public class MarketManagerController extends BaseController {
         return parseObject(json);
     }
 
-    //拿商店的一些 走道，层 等数据
+    //获得弹夹数据
     @ResponseBody
     @RequestMapping("/loaderClipDatas")
     public JSONObject loaderClipDatas() {
@@ -310,5 +309,23 @@ public class MarketManagerController extends BaseController {
         return parseObject(json);
     }
 
+    //检测并返回商品上架任务详情
+    @ResponseBody
+    @RequestMapping("/checkPrepareActionTask")
+    public JSONObject checkPrepareActionTask() {
+        long taskId = getLongParameter("taskId");
 
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/checkPrepareActionTask.do?taskId=" + taskId);
+        return parseObject(json);
+    }
+
+    //取消商品上架任务
+    @ResponseBody
+    @RequestMapping("/cancelPrepareActionTask")
+    public JSONObject cancelPrepareActionTask() {
+        long taskId = getLongParameter("taskId");
+
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/cancelPrepareActionTask.do?taskId=" + taskId);
+        return parseObject(json);
+    }
 }
