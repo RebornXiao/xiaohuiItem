@@ -26,8 +26,6 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-sm-12">
                     <div class="row m-t-30">
                         <div class="col-md-8">
                             <form class="form-horizontal" role="form">
@@ -166,8 +164,6 @@
                             </form>
                         </div>
                     </div>
-                </div>
-            </div>
 
         <!-- end container -->
         </div>

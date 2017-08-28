@@ -21,6 +21,8 @@ public class LogicConfig {
     public static final String TAB_MARKET = "market";
     public static final String TAB_MARKET_LIST = "markets";
     public static final String TAB_MARKET_ITEM_LIST = "mitems";
+    public static final String TAB_MARKET_SHELVES_LIST = "shelves";
+    public static final String TAB_MARKET_TASK_LIST = "stasks";
     public static final String TAB_MARKET_STREET_LIST = "streets";
 
     public static final String ERROR_NAME = "error";
@@ -47,8 +49,12 @@ public class LogicConfig {
     public static final String FTL_MARKET_LIST = "market/market-list";
     public static final String FTL_MARKET_EDIT = "market/market-edit";
 
-    public static final String FTL_MARKET_ITEM_EDIT = "market/market-item-edit";
     public static final String FTL_MARKET_ITEM_LIST = "market/market-item-list";
+    public static final String FTL_MARKET_ITEM_EDIT = "market/market-item-edit";
+
+    public static final String FTL_MARKET_SHELVES_LIST = "market/market-shelves-list";
+
+    public static final String FTL_MARKET_TASK_LIST = "market/market-task-list";
 
     public static final String FTL_MARKET_STREET_EDIT = "market/street-edit";
     public static final String FTL_MARKET_STREET_LIST = "market/street-list";

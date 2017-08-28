@@ -343,9 +343,16 @@ function showDelTi(callback) {
 
 function showMsg(msg, callback) {
     swal({
+        title: "系统提示",
         text: msg,
-        type: "basic",
-    }, callback);
+        type: "success",
+        showCancelButton: false,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "确定",
+        closeOnConfirm: false,
+    }, function(){
+        callback();
+    });
 }
 
 

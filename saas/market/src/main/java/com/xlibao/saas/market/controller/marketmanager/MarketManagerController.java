@@ -7,6 +7,7 @@ import com.xlibao.saas.market.service.market.ShelvesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -20,7 +21,6 @@ public class MarketManagerController {
     private MarketService marketService;
     @Autowired
     private ShelvesService shelvesService;
-
 
     @ResponseBody
     @RequestMapping(value = "searchMarkets")
@@ -52,5 +52,23 @@ public class MarketManagerController {
     @RequestMapping(value = "loaderClipDatas")
     public JSONObject loaderClipDatas() {
         return shelvesService.loaderClipDatas();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "checkPrepareActionTask")
+    public JSONObject checkPrepareActionTask() {
+        return shelvesService.checkPrepareActionTask();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "cancelPrepareActionTask")
+    public JSONObject cancelPrepareActionTask() {
+        return shelvesService.cancelPrepareActionTask();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/prepareAction", method = RequestMethod.POST)
+    public JSONObject prepareAction() {
+        return shelvesService.prepareAction();
     }
 }
