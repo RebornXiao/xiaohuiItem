@@ -23,6 +23,10 @@ public class LogicConfig {
     public static final String TAB_MARKET_ITEM_LIST = "mitems";
     public static final String TAB_MARKET_STREET_LIST = "streets";
 
+    public static final String TAB_ADVERT = "advert";
+    public static final String TAB_ADVERT_LIST = "adverts";
+    public static final String TAB_ADVERT_MANAGER = "admanager";
+
     public static final String ERROR_NAME = "error";
 
     public static final String RIGHT_FTL_PAGE_URL = "page";
@@ -30,6 +34,12 @@ public class LogicConfig {
     public static final String FTL_PAGE = "page";
     public static final String FTL_ERROR = "error";
     public static final String FTL_INDEX = "index";
+
+    //广告相关页面
+    public static final String FTL_ADVERT_EDIT = "advert/advert-item-edit";
+    public static final String FTL_ADVERT_MANAGER = "advert/advert-item-manager";
+
+    public static final String FTL_ADVERT_MANAGET_DETAIL = "advert/advert-item-detail";
 
     //商品相关页面
     public static final String FTL_ITEM_LIST = "item/item-list";

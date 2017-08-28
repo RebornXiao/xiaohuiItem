@@ -1175,3 +1175,31 @@ h3.timeline-title {
     padding-right: 20px;
     margin-top: 10px;
 }
+
+.advert_filter_nav{
+  padding: 20px;
+}
+.modalAdvertStyle form{
+  margin-bottom: 25px;
+}
+.advert_container{
+  padding: 30px 100px;
+}
+.table>tbody{
+  border-top: 1px solid #ddd;
+}
+.table>tbody+tbody{
+  border-top: 1px solid #ddd;
+}
+.advert_detail_table>table>thead>tr>th{
+  color: #000;
+  text-align: center;
+}
+.advert_detail_table>table>tbody>tr>td{
+  color: #000;
+  text-align: center;
+  border-top: 1px solid #ddd;
+}
+.advert_table_control a:hover{
+  cursor: pointer;
+}
