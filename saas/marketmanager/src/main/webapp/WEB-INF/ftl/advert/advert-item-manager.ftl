@@ -13,14 +13,14 @@
                     </div>
                 </div>
             </div>
-            <div class="row">
+           <#-- <div class="row">
                 <div class="col-sm-12">
                     <div class="">
                         <a href="#" class="btn btn-primary btn-lg active" role="button">广告播放</a>
                         <a href="#" class="btn btn-primary btn-lg" role="button">屏幕配置</a>
                     </div>
                 </div>
-            </div>
+            </div>-->
 
 
         </div>
