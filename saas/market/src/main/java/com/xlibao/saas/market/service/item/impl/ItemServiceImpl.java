@@ -315,12 +315,12 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         logger.info("[下架] " + passportId + "正在对商品(条码为：" + barcode + ")进行下架操作；商店ID：" + marketId + "，商品ID：" + item.getId() + "所在位置：" + location + "，下架数量：" + offShelvesQuantity + "；下架后商品状态为：" + status);
         int result = dataAccessFactory.getItemDataAccessManager().offShelves(item.getId(), offShelvesQuantity, status); // 减少库存 当库存为0时 设置为下架
         if (result <= 0) {
-            PlatformErrorCodeEnum.DB_ERROR.throwException("[0001]更新商品库存失败");
+            throw PlatformErrorCodeEnum.DB_ERROR.throwException("[0001]更新商品库存失败");
         }
         // 需减少位置上的数量
         result = dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation.getId(), offShelvesQuantity);
         if (result <= 0) {
-            PlatformErrorCodeEnum.DB_ERROR.throwException("[0002]更新商品库存失败");
+            throw PlatformErrorCodeEnum.DB_ERROR.throwException("[0002]更新商品库存失败");
         }
         return success();
     }

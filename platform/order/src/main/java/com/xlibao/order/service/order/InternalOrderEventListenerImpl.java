@@ -88,6 +88,14 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
         notifyEventListener(orderEntry);
     }
 
+    @Override
+    public void notifyOrderRefund(OrderEntry orderEntry, int beforeStatus) {
+        // 新增退款订单日志
+        createOrderStateLogger(orderEntry, beforeStatus, orderEntry.getPartnerUserId(), orderEntry.getReceiptNickName(), "发起退款请求 “" + OrderTypeEnum.getOrderTypeEnum(orderEntry.getType()).getValue() + "”");
+
+        notifyEventListener(orderEntry);
+    }
+
     private void notifyEventListener(final OrderEntry orderEntry) {
         Runnable runnable = () -> {
             try {

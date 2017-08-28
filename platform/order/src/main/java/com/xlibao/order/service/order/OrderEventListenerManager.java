@@ -1,5 +1,6 @@
 package com.xlibao.order.service.order;
 
+import com.xlibao.common.thread.AsyncScheduledService;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.order.listener.OrderEventListener;
 import org.springframework.stereotype.Component;
@@ -49,7 +50,7 @@ public class OrderEventListenerManager {
         }
     }
 
-    public void notifyDistributionedOrderEntry(OrderEntry orderEntry, int beforeStatus) {
+    public void notifyDistributionOrderEntry(OrderEntry orderEntry, int beforeStatus) {
         for (OrderEventListener orderEventListener : orderEventListenerMap.values()) {
             orderEventListener.notifyDistributionOrder(orderEntry, beforeStatus);
         }
@@ -64,6 +65,19 @@ public class OrderEventListenerManager {
     public void notifyConfirmedOrderEntry(OrderEntry orderEntry, int beforeStatus) {
         for (OrderEventListener orderEventListener : orderEventListenerMap.values()) {
             orderEventListener.notifyConfirmedOrderEntry(orderEntry, beforeStatus);
+        }
+    }
+
+    public void notifyOrderRefund(OrderEntry orderEntry, int beforeStatus) {
+        for (OrderEventListener orderEventListener : orderEventListenerMap.values()) {
+            Runnable runnable = () -> {
+                try {
+                    orderEventListener.notifyOrderRefund(orderEntry, beforeStatus);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            };
+            AsyncScheduledService.submitImmediateRemoteNotifyTask(runnable);
         }
     }
 }

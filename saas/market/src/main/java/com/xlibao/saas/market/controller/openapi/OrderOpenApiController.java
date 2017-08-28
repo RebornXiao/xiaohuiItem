@@ -132,6 +132,9 @@ public class OrderOpenApiController {
      *              <b>timestamp</b> - int 时间戳
      *              <b>sign</b> - String MD5加密后的签名字符串
      *            前端直接将上述参数填充至微信提供的SDK中
+     *
+     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_NATIVE}时，返回：
+     *              <b>codeUrl</b> - String 二维码内容，前端将该内容通过第三方控件(亦可前端编码实现)将其显示为二维码
      * </pre>
      */
     @ResponseBody

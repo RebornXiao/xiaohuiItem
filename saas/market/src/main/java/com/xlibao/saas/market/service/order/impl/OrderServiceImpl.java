@@ -91,7 +91,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                 return PlatformErrorCodeEnum.PHONE_NUMBER_ERROR.response("手机号[" + receiptPhone + "]无效");
             }
             if (CommonUtils.isNullString(receiptAddress) || CommonUtils.isNullString(receiptNickName) || CommonUtils.isNullString(receiptPhone)) {
-                OrderErrorCodeEnum.PERFECT_RECEIPT_ADDRESS.throwException("请填写收货地址、收货人姓名、收货人联系电话等信息");
+                throw OrderErrorCodeEnum.PERFECT_RECEIPT_ADDRESS.throwException("请填写收货地址、收货人姓名、收货人联系电话等信息");
             }
         }
         // 用户购买的商品信息
@@ -198,15 +198,15 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey()) {
             // TODO 推送通知用户订单未支付
-            OrderErrorCodeEnum.UN_PAYMENT_ORDER.throwException();
+            throw OrderErrorCodeEnum.UN_PAYMENT_ORDER.throwException();
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
             // TODO 推送通知用户订单处于配送中
-            OrderErrorCodeEnum.HAS_DISTRIBUTION_ORDER.throwException();
+            throw OrderErrorCodeEnum.HAS_DISTRIBUTION_ORDER.throwException();
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_ARRIVE.getKey()) {
             // TODO 通知用户该订单已取货(已签收、已提货)
-            OrderErrorCodeEnum.HAS_ARRIVE_ORDER.throwException();
+            throw OrderErrorCodeEnum.HAS_ARRIVE_ORDER.throwException();
         }
         if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) { // 自提
             if (passportId != Long.parseLong(orderEntry.getPartnerUserId()) && passportId != Long.parseLong(orderEntry.getReceiptUserId())) {
@@ -244,17 +244,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     public JSONObject refundOrder() {
         long passportId = getPassportId();
         String orderSequenceNumber = getUTF("orderSequenceNumber");
-
-        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
-        if (orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) {
-            // 自提类型订单 必须处于支付状态才能进行退款
-            return MarketOrderErrorCodeEnum.CANNOT_REFUND.response("该订单已不能执行退款操作");
-        }
-        if (passportId != Long.parseLong(orderEntry.getPartnerUserId())) {
-            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response("");
-        }
-        // TODO 执行退款业务
-        return null;
+        // 执行退款业务
+        return PaymentRemoteService.refund(passportId, orderSequenceNumber);
     }
 
     private String orderStatusSet(int roleType, int statusEnter) {

@@ -23,4 +23,6 @@ public interface OrderEventListener {
     void notifyConfirmedOrderEntry(OrderEntry orderEntry, int beforeStatus);
 
     void notifyCanceledOrderEntry(OrderEntry orderEntry, int beforeStatus, boolean isAuto);
+
+    void notifyOrderRefund(OrderEntry orderEntry, int beforeStatus);
 }

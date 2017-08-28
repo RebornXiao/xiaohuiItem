@@ -143,4 +143,6 @@ public interface OrderService {
     JSONObject searchPageOrders();
 
     JSONObject modifyReceivingData();
+
+    JSONObject refund();
 }

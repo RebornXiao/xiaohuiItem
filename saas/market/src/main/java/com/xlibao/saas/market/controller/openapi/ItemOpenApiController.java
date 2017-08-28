@@ -19,7 +19,7 @@ public class ItemOpenApiController {
 
     /**
      * <pre>
-     *
+     *     <b>首页数据</b>
      * </pre>
      */
     @ResponseBody
@@ -129,7 +129,7 @@ public class ItemOpenApiController {
 
     /**
      * <pre>
-     *     <b></b>
+     *     <b>编辑商品</b>
      * </pre>
      */
     @ResponseBody
@@ -138,6 +138,11 @@ public class ItemOpenApiController {
         return itemService.editItem();
     }
 
+    /**
+     * <pre>
+     *     <b>找到商品的位置</b>
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "findItemLocation")
     public JSONObject findItemLocation() {
