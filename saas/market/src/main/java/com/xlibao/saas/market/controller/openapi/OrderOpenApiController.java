@@ -146,6 +146,9 @@ public class OrderOpenApiController {
     /**
      * <pre>
      *     <b>接单</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/acceptOrder
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
      * </pre>
      */
     @ResponseBody
@@ -157,6 +160,15 @@ public class OrderOpenApiController {
     /**
      * <pre>
      *     <b>退款</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/refundOrder
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>passportId</b> - long 通行证ID，必填参数；对应发起退款的用户。
+     *          <b>orderSequenceNumber</b> - String 订单序号，必填参数。
+     *
+     *     <b>返回：</b>仅返回成功或失败的描述
      * </pre>
      */
     @ResponseBody

@@ -31,10 +31,6 @@ public interface ItemService {
 
     void buyQualifications(List<MarketItem> items, List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers, JSONObject buyItems);
 
-    JSONObject offShelves();
-
-    JSONObject onShelves();
-
     JSONObject existItemTemplate();
 
     JSONObject editItem();

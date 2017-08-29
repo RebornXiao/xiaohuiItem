@@ -212,6 +212,22 @@ public class MarketDataCacheService {
         return null;
     }
 
+    public List<MarketEntry> getMarketEntries() {
+        try {
+            if (!MARKET_READ_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
+                return dataAccessFactory.getMarketDataAccessManager().getAllMarkets();
+            }
+            try {
+                return new ArrayList<>(markets.values());
+            } finally {
+                MARKET_READ_LOCK.unlock();
+            }
+        } catch (Throwable cause) {
+            cause.printStackTrace();
+        }
+        return dataAccessFactory.getMarketDataAccessManager().getAllMarkets();
+    }
+
     /**
      * <pre>
      *     <b>将给定的商店ID组合为字符集合</b>格式为：1,2,3
