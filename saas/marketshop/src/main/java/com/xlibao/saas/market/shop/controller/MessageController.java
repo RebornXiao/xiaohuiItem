@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author chinahuangxc on 2017/8/8.
  */
 @Controller
-@RequestMapping(value = "/market/shop/message")
+@RequestMapping(value = "/marketshop/message")
 public class MessageController {
 
     @Autowired

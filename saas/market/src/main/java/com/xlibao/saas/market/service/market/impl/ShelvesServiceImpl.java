@@ -45,9 +45,6 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
 
     @Override
     public void builderShelvesData(MarketEntry marketEntry, String content) {
-        if (marketEntry.getStatus() != MarketStatusEnum.INITIALIZATION.getKey()) {
-            // TODO 不处于初始化过程
-        }
         String[] contentArray = content.split("\r\n");
         for (String c : contentArray) {
             String dataType = c.substring(0, 4);

@@ -50,6 +50,11 @@ public class MarketController {
         return marketService.filterMarket();
     }
 
+    /**
+     * <pre>
+     *     <b>初始化货架数据</b>
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "initShelvesDatas")
     public JSONObject initShelvesDatas() {

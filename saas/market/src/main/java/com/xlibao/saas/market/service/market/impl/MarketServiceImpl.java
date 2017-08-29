@@ -112,10 +112,12 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
 
     @Override
     public JSONObject initShelvesDatas() {
-        long passportId = getLongParameter("passportId");
+        long marketId = getLongParameter("marketId");
+
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
 
         String content = HardwareMessageType.SHELVES + "CC";
-        marketShopRemoteService.shelvesMessage(passportId, content);
+        marketShopRemoteService.shelvesMessage(marketEntry.getPassportId(), content);
         return success();
     }
 

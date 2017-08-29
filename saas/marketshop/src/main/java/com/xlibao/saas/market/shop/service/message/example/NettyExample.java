@@ -40,7 +40,6 @@ public class NettyExample {
 
         @Override
         public void notifyChannelActive(NettySession session) throws Exception {
-
         }
 
         @Override
@@ -52,17 +51,14 @@ public class NettyExample {
 
         @Override
         public void notifySessionClosed(NettySession session) {
-
         }
 
         @Override
         public void notifyExceptionCaught(Throwable cause) {
-
         }
 
         @Override
         public void notifySessionIdle(NettySession session, int idleType, int idleTimes) {
-
         }
     }
 }
