@@ -33,6 +33,7 @@
                             <div class="form-group">
                                 <label>选择店铺：</label>
                                 <select id="sMarket" style="width:200px;">
+                                    <option data_id="0" selected>选择店铺</option>
                                 <#if markets?exists && (markets?size > 0)>
                                     <#list markets as market>
                                         <option data_id="${market.id?c}" <#if marketId == market.id>
@@ -40,8 +41,6 @@
                                         ${market.name}
                                         </option>
                                     </#list>
-                                <#else>
-                                    <option data_id="0" selected>选择店铺</option>
                                 </#if>
                                 </select>
                             </div>
@@ -69,8 +68,7 @@
                             <th>操作</th>
                         </tr>
                         </thead>
-                        <tbody id="clipListTable">
-
+                        <tbody id="taskListTable">
 
                         <#if tasks?exists && (tasks?size > 0)>
                             <#list tasks as task>
@@ -86,15 +84,13 @@
                                 <td>${task.hopeExecutorDate}</td>
                                 <td>
                                     <button id="editBtn" type="button"
-                                            class="btn waves-effect waves-light btn-warning btn-sm"
-                                            data_id="${task.taskId?c}">编辑
+                                            class="btn waves-effect waves-light btn-danger btn-sm"
+                                            data_id="${task.taskId?c}">取消
                                     </button>
                                 </td>
                             </tr>
-
                             </#list>
                         <#else>
-
                         <tr>
                             <td colSpan="11" height="200px">
                                 <p class="text-center">暂无任何数据</p>
@@ -123,6 +119,38 @@
 
             $(document).ready(function () {
 
-                $("#sMarket").select2();
+                var _sMarket = $("#sMarket");
+
+                _sMarket.select2();
+                _sMarket.change(function () {
+                    var select_obj = _sMarket.find("option:selected");
+                    var data_id = select_obj.attr("data_id");
+
+                    location.href = "${base}/market/marketTasks.do?marketId=" + data_id;
+                });
+
+                //删除任务列表里的某项
+                $("#taskListTable").on("click", "button[id=editBtn]", function () {
+                    var task_id = $(this).attr("data_id");
+                    //2次确定
+                    showTi("确定要取消这个任务吗？", function (isConfirm) {
+                        if (!isConfirm) {
+                            return;
+                        }
+                        //去取消
+                        $.get("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
+                            if (json.code != 0) {
+                                swal(json.msg);
+                            } else {
+                                showMsg("操作成功", function () {
+                                    //直接刷新界面
+                                    var select_obj = _sMarket.find("option:selected");
+                                    var data_id = select_obj.attr("data_id");
+                                    location.href = "${base}/market/marketTasks.do?marketId=" + data_id;
+                                });
+                            }
+                        }, "json");
+                    });
+                });
             });
         </script>

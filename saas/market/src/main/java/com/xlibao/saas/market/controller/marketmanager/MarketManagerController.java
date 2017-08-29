@@ -67,8 +67,14 @@ public class MarketManagerController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "/prepareAction", method = RequestMethod.POST)
+    @RequestMapping(value = "prepareAction", method = RequestMethod.POST)
     public JSONObject prepareAction() {
         return shelvesService.prepareAction();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "unExecutorTask")
+    public JSONObject unExecutorTask() {
+        return shelvesService.unExecutorTask();
     }
 }

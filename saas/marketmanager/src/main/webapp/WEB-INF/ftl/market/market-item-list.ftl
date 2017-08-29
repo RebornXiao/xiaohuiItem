@@ -37,6 +37,7 @@
                             <div class="form-group">
                                 <label>选择店铺：</label>
                                 <select id="sMarket" style="width:200px;">
+                                    <option data_id="0" selected>选择店铺</option>
                                 <#if markets?exists && (markets?size > 0)>
                                     <#list markets as market>
                                         <option data_id="${market.id?c}" <#if marketId == market.id>
@@ -44,12 +45,33 @@
                                         ${market.name}
                                         </option>
                                     </#list>
-                                <#else>
-                                    <option data_id="0" selected>选择店铺</option>
                                 </#if>
                                 </select>
                             </div>
 
+                            <div class="input-group m-l-15">
+                                <div class="input-group-btn">
+                                    <button id="searchMenu" type="button"
+                                            class="btn btn-default waves-effect waves-light dropdown-toggle"
+                                            data-toggle="dropdown">按商品模板ID搜索 <span class="caret"></span></button>
+                                    <ul class="dropdown-menu" id="searchType">
+                                        <li><a href="javascript:void(0)" search_name="商品模板ID" search_type="name">按商品模板ID搜索</a>
+                                        </li>
+                                        <li><a href="javascript:void(0)" search_name="商品模板名称" search_type="define_code">按商品模板名称搜索</a>
+                                        </li>
+                                        <li><a href="javascript:void(0)" search_name="条形码"
+                                               search_type="barcode">按条形码搜索</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <input type="text" id="searchKeyTxt"
+                                       class="form-control" placeholder="按商品模板ID搜索">
+                                <span class="input-group-btn">
+                                    <button id="searchBtn" type="button"
+                                            class="btn waves-effect waves-light btn-primary"><i
+                                            class="fa fa-search"></i></button>
+                                </span>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -100,9 +122,17 @@
 
             $(document).ready(function () {
 
-                $("#sMarket").select2();
-
                 var s_marketId = ${marketId};
+                var s_searchType = "${searchType}";
+
+                var _sMarket = $("#sMarket");
+                var _searchKeyTxt = $("#searchKeyTxt");
+
+                _sMarket.select2();
+                _sMarket.change(function () {
+                    var s_searchKey = _searchKeyTxt.val();
+                    location.href = "${base}/market/marketItemEdit.do?marketId=" + s_marketId+"&searchType="+s_searchType+"&searchKey="+s_searchKey;
+                });
 
                 //添加新品
                 $("#addBtn").on('click', function () {
