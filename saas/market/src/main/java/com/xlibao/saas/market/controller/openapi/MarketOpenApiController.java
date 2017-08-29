@@ -237,4 +237,21 @@ public class MarketOpenApiController {
     public JSONObject unExecutorTask() {
         return shelvesService.unExecutorTask();
     }
+
+    /**
+     * <pre>
+     *     <b>我关注的商店</b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "myFocusMarkets")
+    public JSONObject myFocusMarkets() {
+        return marketService.myFocusMarkets();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "showShelvesTask")
+    public JSONObject showShelvesTask() {
+        return shelvesService.showShelvesTask();
+    }
 }

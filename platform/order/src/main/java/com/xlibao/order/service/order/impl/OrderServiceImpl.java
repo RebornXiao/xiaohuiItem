@@ -258,20 +258,20 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
     private JSONObject paymentOrder(OrderEntry orderEntry, int beforeStatus, String transType, int daySortNumber) {
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CANCEL.getKey()) { // 已取消
-            OrderErrorCodeEnum.CANCELED_ORDER.throwException();
+            throw OrderErrorCodeEnum.CANCELED_ORDER.throwException();
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) { // 已支付
-            OrderErrorCodeEnum.HAS_PAYMENT_ORDER.throwException();
+            throw OrderErrorCodeEnum.HAS_PAYMENT_ORDER.throwException();
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey()) { // 已完成
-            OrderErrorCodeEnum.COMPLETE_ORDER.throwException();
+            throw OrderErrorCodeEnum.COMPLETE_ORDER.throwException();
         }
         if (beforeStatus != orderEntry.getStatus()) {
-            PlatformErrorCodeEnum.SETTING_ERROR.throwException("根据您的应用设置，当前状态不能进行支付操作");
+            throw PlatformErrorCodeEnum.SETTING_ERROR.throwException("根据您的应用设置，当前状态不能进行支付操作");
         }
         int result = orderDataAccessManager.paymentOrder(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_PAYMENT, beforeStatus, transType, daySortNumber);
         if (result <= 0) {
-            OrderErrorCodeEnum.FAIL_PAYMENT_ORDER.throwException();
+            throw OrderErrorCodeEnum.FAIL_PAYMENT_ORDER.throwException();
         }
         orderEntry.setStatus(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey());
         orderEntry.setTransType(transType);
@@ -485,7 +485,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         }
         // 设置为配送中
         orderEntry.setDeliverStatus(deliverStatus);
-        orderEventListenerManager.notifyDistributionedOrderEntry(orderEntry, beforeStatus);
+        orderEventListenerManager.notifyDistributionOrderEntry(orderEntry, beforeStatus);
         return success("配送成功");
     }
 
@@ -877,6 +877,35 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
         int result = orderDataAccessManager.modifyReceivingData(orderSequenceNumber, currentLocation, collectingFees, receiptProvince, receiptCity, receiptDistrict, receiptAddress, receiptNickName, receiptPhone, receiptLocation, remark);
         return result <= 0 ? fail("更新收货地址失败，订单编号：" + orderSequenceNumber) : success("更新收货数据成功");
+    }
+
+    @Override
+    public JSONObject refund() {
+        long passportId = getLongParameter("passportId");
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+        int matchStatus = getIntParameter("matchStatus", OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey());
+
+        OrderEntry orderEntry = getOrder(orderSequenceNumber);
+        if (orderEntry.getStatus() != matchStatus) {
+            // 必须处于支付状态才能进行退款
+            return OrderErrorCodeEnum.CANNOT_REFUND.response("当前状态不能执行退款操作，状态值：" + orderEntry.getStatus());
+        }
+        if (passportId != Long.parseLong(orderEntry.getPartnerUserId())) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+        }
+        int result = orderDataAccessManager.updateOrderStatus(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_REFUND.getKey(), matchStatus, orderEntry.getDeliverStatus(), orderEntry.getDeliverStatus());
+        if (result <= 0) { // 预操作，当远程失败时，回滚该操作；否则提交
+            return OrderErrorCodeEnum.REFUND_FAIL.response("退款失败，请稍后重试！");
+        }
+        // 远程操作
+        JSONObject response = SharePaymentRemoteService.refund(ConfigFactory.getOrderConfig().getPartnerId(), ConfigFactory.getOrderConfig().getPaymentAppId(), ConfigFactory.getOrderConfig().getPaymentAppkey(),
+                orderSequenceNumber, ConfigFactory.getDomainNameConfig().paymentRemoteURL);
+        if (response.getIntValue("code") != BasicWebService.SUCCESS_CODE) { // 失败时，抛异常
+            throw new XlibaoRuntimeException(response.getIntValue("code"), response.getString("msg"));
+        }
+        orderEntry.setStatus(OrderStatusEnum.ORDER_STATUS_REFUND.getKey()); // 更新为退款状态
+        orderEventListenerManager.notifyOrderRefund(orderEntry, matchStatus); // 通知退款结果
+        return response;
     }
 
     private OrderEntry getOrder(String orderSequenceNumber) {

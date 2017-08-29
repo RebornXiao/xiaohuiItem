@@ -62,7 +62,7 @@ public class MarketShopRemoteService extends BasicRemoteService {
 
         CommonUtils.fillSignature(parameters, ConfigFactory.getXMarketConfig().getMarketShopAppkey());
 
-        String url = ConfigFactory.getDomainNameConfig().marketShopRemoteURL + "market/shop/message/sendHardwarePush.do";
+        String url = ConfigFactory.getDomainNameConfig().marketShopRemoteURL + "marketshop/message/sendHardwarePush.do";
         executor(url, parameters);
     }
 }

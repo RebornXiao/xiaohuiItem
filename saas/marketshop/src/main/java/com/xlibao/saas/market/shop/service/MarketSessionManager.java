@@ -28,7 +28,7 @@ public class MarketSessionManager {
     public void sendHardwarePush(long passportId, String content) {
         NettySession session = marketSessions.get(passportId);
         if (session == null) {
-            PlatformErrorCodeEnum.NOT_FOUND_TARGET.throwException();
+            throw PlatformErrorCodeEnum.NOT_FOUND_TARGET.throwException();
         }
         MessageOutputStream message = MessageFactory.createInternalMessage(ShopProtocol.CS_HARDWARE);
         message.writeUTF(content);

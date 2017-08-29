@@ -52,4 +52,6 @@ public interface PaymentService {
     JSONObject showBanks();
 
     JSONObject setDefaultBank();
+
+    JSONObject refund();
 }

@@ -39,4 +39,12 @@ public class PaymentRemoteService extends BasicRemoteService {
         logger.info("请求支付订单结果：" + response);
         return response;
     }
+
+    public static JSONObject refund(long passportId, String orderSequenceNumber) {
+        Map<String, String> parameters = initialParameter();
+        parameters.put("passportId", String.valueOf(passportId));
+        parameters.put("orderSequenceNumber", orderSequenceNumber);
+
+        return postOrderMsg("order/payment/refund", parameters);
+    }
 }

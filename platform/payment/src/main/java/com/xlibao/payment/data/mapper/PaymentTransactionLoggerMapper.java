@@ -13,6 +13,8 @@ public interface PaymentTransactionLoggerMapper {
 
     PaymentTransactionLogger getTransactionLogger(@Param("transSequenceNumber") String transSequenceNumber);
 
+    PaymentTransactionLogger getTransactionLoggerForPartnerTradeNumber(@Param("partnerTradeNumber") String partnerTradeNumber);
+
     PaymentTransactionLogger getTransactionLoggerById(@Param("tid") long tid);
 
     List<PaymentTransactionLogger> getTransactionLoggers(@Param("passportId") long passportId, @Param("transType") int transType, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
@@ -21,4 +23,6 @@ public interface PaymentTransactionLoggerMapper {
                                                                  @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 
     int modifyTransactionStatus(PaymentTransactionLogger transactionLogger);
+
+    int updateRefundParameter(PaymentTransactionLogger transactionLogger);
 }

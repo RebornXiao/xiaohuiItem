@@ -2,6 +2,7 @@ package com.xlibao.saas.market.controller.openapi;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.saas.market.service.item.ItemService;
+import com.xlibao.saas.market.service.market.ShelvesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +17,12 @@ public class ItemOpenApiController {
 
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private ShelvesService shelvesService;
 
     /**
      * <pre>
-     *
+     *     <b>首页数据</b>
      * </pre>
      */
     @ResponseBody
@@ -88,7 +91,7 @@ public class ItemOpenApiController {
     @ResponseBody
     @RequestMapping(value = "offShelves")
     public JSONObject offShelves() {
-        return itemService.offShelves();
+        return shelvesService.offShelves();
     }
 
     /**
@@ -104,7 +107,7 @@ public class ItemOpenApiController {
     @ResponseBody
     @RequestMapping(value = "onShelves")
     public JSONObject onShelves() {
-        return itemService.onShelves();
+        return shelvesService.onShelves();
     }
 
     /**
@@ -129,7 +132,7 @@ public class ItemOpenApiController {
 
     /**
      * <pre>
-     *     <b></b>
+     *     <b>编辑商品</b>
      * </pre>
      */
     @ResponseBody
@@ -138,6 +141,11 @@ public class ItemOpenApiController {
         return itemService.editItem();
     }
 
+    /**
+     * <pre>
+     *     <b>找到商品的位置</b>
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "findItemLocation")
     public JSONObject findItemLocation() {

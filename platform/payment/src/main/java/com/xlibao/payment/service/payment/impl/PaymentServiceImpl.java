@@ -777,6 +777,31 @@ public class PaymentServiceImpl extends BasicWebService implements PaymentServic
         return success();
     }
 
+    @Override
+    public JSONObject refund() {
+        // 签名验证
+        PassportRemoteService.signatureSecurity(getHttpServletRequest());
+
+        String partnerSequenceNumber = getUTF("partnerSequenceNumber");
+
+        PaymentTransactionLogger transactionLogger = paymentDataAccessManager.getTransactionLoggerForPartnerTradeNumber(partnerSequenceNumber);
+        if (transactionLogger == null) {
+            return fail("未存在交易记录，错误码：" + partnerSequenceNumber);
+        }
+        if ((transactionLogger.getTransStatus() & TransStatusEnum.TRADE_SUCCESS_SERVER.getKey()) != TransStatusEnum.TRADE_SUCCESS_SERVER.getKey()) {
+            logger.error("异常操作，请求退款的订单并未成功支付，合作伙伴单号：" + partnerSequenceNumber + "；交易订单号：" + transactionLogger.getTransSequenceNumber());
+            return fail("未完成支付的订单不能进行退款操作");
+        }
+        if (transactionLogger.getRefundStatus() == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) {
+            return success("该交易已退款成功，请留意发起渠道(微信或支付宝等)的退款进度");
+        }
+        if (transactionLogger.getPaymentType().equals(PaymentTypeEnum.WEIXIN_APP.getKey()) || transactionLogger.getPaymentType().equals(PaymentTypeEnum.WEIXIN_NATIVE.getKey())
+                || transactionLogger.getPaymentType().equals(PaymentTypeEnum.WEIXIN_JS.getKey()) || transactionLogger.getPaymentType().equals(PaymentTypeEnum.WEIXIN_APPLET.getKey())) {
+            return tencentPayment.refund(transactionLogger);
+        }
+        return success();
+    }
+
     private double[] calculationCommissionAmount(long amount, PaymentTakeRule takeCashRule) {
         // 配置表中的费率为万份比
         double rate = takeCashRule.getRate() / 10000f;

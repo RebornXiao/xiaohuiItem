@@ -38,6 +38,7 @@ public class PaymentTransactionLogger {
     private Long discountAmount;
     private Byte refundStatus;
     private Date refundTime;
+    private String channelRefundParameters = "";
     private String notifyFrontUrl;
     private String notifyUrl;
     private String extendParameter;
@@ -312,6 +313,14 @@ public class PaymentTransactionLogger {
 
     public void setRefundTime(Date refundTime) {
         this.refundTime = refundTime;
+    }
+
+    public String getChannelRefundParameters() {
+        return channelRefundParameters;
+    }
+
+    public void setChannelRefundParameters(String channelRefundParameters) {
+        this.channelRefundParameters = channelRefundParameters;
     }
 
     public String getNotifyFrontUrl() {

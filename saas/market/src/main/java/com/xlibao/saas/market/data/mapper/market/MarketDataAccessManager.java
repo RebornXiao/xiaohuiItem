@@ -1,7 +1,9 @@
 package com.xlibao.saas.market.data.mapper.market;
 
 import com.xlibao.market.data.model.MarketEntry;
+import com.xlibao.market.data.model.MarketRelationship;
 import com.xlibao.market.data.model.MarketShelvesManager;
+import com.xlibao.market.data.model.MarketTaskLogger;
 import com.xlibao.saas.market.data.model.MarketAccessLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -21,9 +23,13 @@ public class MarketDataAccessManager {
     @Autowired
     private MarketCabinetMapper cabinetMapper;
     @Autowired
+    private MarketRelationshipMapper relationshipMapper;
+    @Autowired
     private MarketAccessLoggerMapper accessLoggerMapper;
     @Autowired
     private MarketShelvesManagerMapper shelvesManagerMapper;
+    @Autowired
+    private MarketTaskLoggerMapper taskLoggerMapper;
 
     public List<MarketEntry> loaderMarkets() {
         return entryMapper.loaderMarkets();
@@ -71,5 +77,21 @@ public class MarketDataAccessManager {
 
     public List<MarketShelvesManager> getClipDatas(long marketId, String groupCode, String unitCode, String floorCode, int pageStartIndex, int pageSize) {
         return shelvesManagerMapper.getClipDatas(marketId, groupCode, unitCode, floorCode, pageStartIndex, pageSize);
+    }
+
+    public List<MarketRelationship> myFocusMarkets(long passportId, int type) {
+        return relationshipMapper.myFocusMarkets(passportId, type);
+    }
+
+    public MarketRelationship getRelationship(long passportId, long marketId, int type) {
+        return relationshipMapper.getRelationship(passportId, marketId, type);
+    }
+
+    public List<MarketTaskLogger> getTaskLoggers(long passportId, long marketId, int pageStartIndex, int pageSize) {
+        return taskLoggerMapper.getTaskLoggers(passportId, marketId, pageStartIndex, pageSize);
+    }
+
+    public int createTaskLogger(MarketTaskLogger taskLogger) {
+        return taskLoggerMapper.createTaskLogger(taskLogger);
     }
 }

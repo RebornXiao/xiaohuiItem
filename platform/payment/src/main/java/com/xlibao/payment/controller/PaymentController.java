@@ -602,4 +602,15 @@ public class PaymentController extends BasicWebService {
     public JSONObject setDefaultBank() {
         return paymentService.setDefaultBank();
     }
+
+    /**
+     * <pre>
+     *     <b>退款</b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "refund")
+    public JSONObject refund() {
+        return paymentService.refund();
+    }
 }

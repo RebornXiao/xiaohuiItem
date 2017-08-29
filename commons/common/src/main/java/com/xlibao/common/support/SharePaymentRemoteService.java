@@ -62,4 +62,18 @@ public class SharePaymentRemoteService extends BasicWebService {
 
         return parameters;
     }
+
+    public static JSONObject refund(String partnerId, String appId, String appKey, String orderSequenceNumber, String urlPrefix) {
+        Map<String, String> signParameters = new HashMap<>();
+        signParameters.put("partnerId", partnerId);
+        signParameters.put("appId", appId);
+        signParameters.put("randomParameter", DefineRandom.randomString(32));
+        signParameters.put("orderSequenceNumber", orderSequenceNumber);
+
+        CommonUtils.fillSignature(signParameters, appKey);
+
+        String response = HttpRequest.post(urlPrefix + "payment/refund", signParameters);
+
+        return JSONObject.parseObject(response);
+    }
 }
