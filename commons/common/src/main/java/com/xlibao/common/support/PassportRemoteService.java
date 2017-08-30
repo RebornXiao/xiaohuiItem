@@ -65,7 +65,7 @@ public class PassportRemoteService {
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        String data = HttpRequest.post(passportRemoteServiceURL + "partner/signatureSecurity", parameters);
+        String data = HttpRequest.post(passportRemoteServiceURL + "passport/partner/signatureSecurity", parameters);
         try {
             JSONObject response = JSONObject.parseObject(data);
             logger.info("签名验证结果：" + response);
@@ -85,7 +85,7 @@ public class PassportRemoteService {
         Map<String, String> p = new HashMap<>();
         p.put("data", parameters.toJSONString());
 
-        String result = HttpRequest.post(passportRemoteServiceURL + "partner/signatureParameters", p);
+        String result = HttpRequest.post(passportRemoteServiceURL + "passport/partner/signatureParameters", p);
 
         JSONObject response = JSONObject.parseObject(result);
         if (response == null) {
@@ -101,7 +101,7 @@ public class PassportRemoteService {
     public static Passport getPassport(long passportId) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("passportId", String.valueOf(passportId));
-        String data = HttpRequest.post(passportRemoteServiceURL + "openApi/getPassport", parameters);
+        String data = HttpRequest.post(passportRemoteServiceURL + "passport/openApi/getPassport", parameters);
 
         JSONObject response = JSONObject.parseObject(data);
         int code = response.getIntValue("code");
@@ -148,7 +148,7 @@ public class PassportRemoteService {
         parameters.put("phone", phone);
         parameters.put("smsCode", smsCode);
         parameters.put("smsType", String.valueOf(smsType));
-        String data = HttpRequest.post(passportRemoteServiceURL + "sms/verifySmsCode", parameters);
+        String data = HttpRequest.post(passportRemoteServiceURL + "passport/sms/verifySmsCode", parameters);
 
         JSONObject response = JSONObject.parseObject(data);
         int code = response.getIntValue("code");

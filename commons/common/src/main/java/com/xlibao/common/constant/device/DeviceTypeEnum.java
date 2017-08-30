@@ -22,6 +22,8 @@ public enum DeviceTypeEnum {
     DEVICE_TYPE_APPLET(5, "APPLET"),
     /** 6 - 设备类型 -- AUTO */
     DEVICE_TYPE_AUTO(6, "AUTO"),
+    /** 7 - 设备类型 -- HARD_WARE */
+    DEVICE_TYPE_HARD_WARE(7, "HARD_WARE"),
     ;
 
     private int key;

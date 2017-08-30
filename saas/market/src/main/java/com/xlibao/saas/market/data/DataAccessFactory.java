@@ -3,6 +3,7 @@ package com.xlibao.saas.market.data;
 import com.xlibao.saas.market.data.mapper.activity.ActivityDataAccessManager;
 import com.xlibao.saas.market.data.mapper.item.ItemDataAccessManager;
 import com.xlibao.saas.market.data.mapper.market.MarketDataAccessManager;
+import com.xlibao.saas.market.data.mapper.message.MessageDataAccessManager;
 import com.xlibao.saas.market.data.mapper.order.OrderDataAccessManager;
 import com.xlibao.saas.market.service.item.MarketItemDataCacheService;
 import com.xlibao.saas.market.service.market.MarketDataCacheService;
@@ -23,6 +24,8 @@ public class DataAccessFactory {
     private MarketDataAccessManager marketDataAccessManager;
     @Autowired
     private OrderDataAccessManager orderDataAccessManager;
+    @Autowired
+    private MessageDataAccessManager messageDataAccessManager;
 
     @Autowired
     private MarketDataCacheService marketDataCacheService;
@@ -51,5 +54,9 @@ public class DataAccessFactory {
 
     public MarketItemDataCacheService getMarketItemDataCacheService() {
         return marketItemDataCacheService;
+    }
+
+    public MessageDataAccessManager getMessageDataAccessManager() {
+        return messageDataAccessManager;
     }
 }

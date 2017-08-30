@@ -54,7 +54,6 @@ public class HexMessageEventListenerImpl implements MessageEventListener {
         message.readBytes(bytes);
         // 硬件消息内容
         String parameters = new String(bytes);
-
         // 通知消息处理适配器
         messageHandlerAdapter.hardwareMessageExecute(session, parameters);
     }

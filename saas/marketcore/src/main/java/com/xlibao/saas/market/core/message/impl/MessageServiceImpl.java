@@ -21,7 +21,7 @@ public class MessageServiceImpl implements MessageService {
     @Autowired
     private MessageEventFactory messageEventFactory;
 
-    public void connectorMarketServer() {
+    public boolean connectorMarketServer() {
         NettyConfig config = ConfigFactory.newNettyConfig();
         // 商店业务消息监听器
         MessageEventListener marketMessageEventListener = messageEventFactory.getMarketMessageEventListener();
@@ -29,9 +29,11 @@ public class MessageServiceImpl implements MessageService {
         NettyClient.getInstance().init(config);
         try {
             NettyClient.getInstance().start(ConfigFactory.getServer().getServerIP(), ConfigFactory.getServer().getServerPort(), marketMessageEventListener);
+            return true;
         } catch (Exception ex) {
             ex.getMessage();
         }
+        return false;
     }
 
     @Override

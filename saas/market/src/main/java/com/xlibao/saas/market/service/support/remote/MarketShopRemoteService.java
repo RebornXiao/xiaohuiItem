@@ -46,7 +46,7 @@ public class MarketShopRemoteService extends BasicRemoteService {
 
     public void shelvesMessage(long passportId, String content) {
         // 记录发送状态
-        logger.info("推送货柜消息到商店系统，passport id is " + passportId + ", content is " + content);
+        logger.info("推送货柜消息到商店系统 passport id is " + passportId + ", content is " + content);
 
         Runnable runnable = () -> sendMessage(passportId, content);
         // 执行即时任务

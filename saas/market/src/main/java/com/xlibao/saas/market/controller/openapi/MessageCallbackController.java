@@ -28,4 +28,10 @@ public class MessageCallbackController {
     public JSONObject notifyShelvesData() {
         return messageService.notifyShelvesData();
     }
+
+    @ResponseBody
+    @RequestMapping(value = "askOrderPickUp")
+    public JSONObject askOrderPickUp() {
+        return messageService.askOrderPickUp();
+    }
 }

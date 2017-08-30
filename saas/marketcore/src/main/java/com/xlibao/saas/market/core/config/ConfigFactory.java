@@ -17,15 +17,19 @@ public class ConfigFactory {
 
     @Autowired
     private ServerConfig serverConfig;
+    @Autowired
+    private DomainNameConfig domainNameConfig;
 
     @Autowired
     private MessageService messageService;
 
     private static ServerConfig server;
+    private static DomainNameConfig domainName;
 
     @PostConstruct
     public void initialization() {
         server = serverConfig;
+        domainName = domainNameConfig;
 
         messageService.connectorMarketServer();
         messageService.startListener();
@@ -41,5 +45,9 @@ public class ConfigFactory {
 
     public static ServerConfig getServer() {
         return server;
+    }
+
+    public static DomainNameConfig getDomainName() {
+        return domainName;
     }
 }

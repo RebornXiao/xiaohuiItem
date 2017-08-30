@@ -145,6 +145,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         String orderSequenceNumber = getUTF("orderSequenceNumber");
         String paymentType = getUTF("paymentType");
         int deliverType = getIntParameter("deliverType", DeliverTypeEnum.PICKED_UP.getKey());
+        String partnerUserId = getUTF("partnerUserId", String.valueOf(passportId));
 
         OrderEntry order = OrderRemoteService.getOrder(orderSequenceNumber);
         if ((order.getStatus() & OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) == OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) {
@@ -155,7 +156,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         // 总共需要支付的费用
         long paymentAmount = order.getActualPrice();
         // 支付过程由订单中心执行
-        return PaymentRemoteService.paymentOrder(passportId, passportId, orderSequenceNumber, paymentType, String.valueOf(TransTypeEnum.MARKET_PAYMENT.getKey()), paymentAmount, TransTypeEnum.PAYMENT.getKey(),
+        return PaymentRemoteService.paymentOrder(passportId, partnerUserId, orderSequenceNumber, paymentType, String.valueOf(TransTypeEnum.MARKET_PAYMENT.getKey()), paymentAmount, TransTypeEnum.PAYMENT.getKey(),
                 paymentAmount, TransTypeEnum.PAYMENT.getValue(), "", GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), 0, "");
     }
 

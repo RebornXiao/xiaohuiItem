@@ -50,7 +50,7 @@ public class BasicRemoteService extends BasicWebService {
             return response;
         } catch (Exception ex) {
             logger.error("执行" + url + "操作发生异常，请求参数为：" + parameters + "，异常信息：" + ex.getMessage(), ex);
-            throw new XlibaoRuntimeException("远程操作失败");
+            throw new XlibaoRuntimeException(-1, "远程操作失败");
         }
     }
 }

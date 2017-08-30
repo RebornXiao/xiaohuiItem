@@ -22,6 +22,12 @@ public class ServerConfig {
     private int writeTimeout = 10;
     @Value("${bothTimeout}")
     private int bothTimeout = 15;
+    @Value("${login_name}")
+    private String username;
+    @Value("${password}")
+    private String password;
+    @Value("${reconnector_period}")
+    private int reconnectorPeriod = 1;
 
     public String getServerIP() {
         return serverIP;
@@ -45,5 +51,17 @@ public class ServerConfig {
 
     public int getBothTimeout() {
         return bothTimeout;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public int getReconnectorPeriod() {
+        return reconnectorPeriod;
     }
 }

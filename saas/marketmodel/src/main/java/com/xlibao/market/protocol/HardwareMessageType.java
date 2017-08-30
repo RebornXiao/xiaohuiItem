@@ -20,7 +20,7 @@ public interface HardwareMessageType {
     String ORDER = "0003";
 
     /** 退货 */
-    String RETURN = "0004";
+    String REFUND = "0004";
 
     /** 发送取货货命令（打开预存箱柜门） */
     String PICK_UP = "0005";

@@ -102,6 +102,8 @@ public class OrderOpenApiController {
      *          <b>sequenceNumber</b> - String 订单序列号。
      *          <b>deliverType</b> - int 配送类型，非必填参数；参看：{@link com.xlibao.common.constant.order.DeliverTypeEnum}
      *          <b>paymentType</b> - String 支付类型，必填参数；参考：{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum}
+     *          <b>partnerUserId</b> - String 合作方的用户ID，非必填参数；
+     *              当为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_APPLET}、{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_JS}时填充openId
      *
      *     <b>返回结果：</b>
      *
@@ -132,6 +134,13 @@ public class OrderOpenApiController {
      *              <b>timestamp</b> - int 时间戳
      *              <b>sign</b> - String MD5加密后的签名字符串
      *            前端直接将上述参数填充至微信提供的SDK中
+     *
+     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_APPLET}时，返回：
+     *              <b>timeStamp</b> - long 时间戳 timestamp 时间戳
+     *              <b>nonceStr</b> - String 随机字符串 nonceStr 不长于32位
+     *              <b>package</b> - String 统一下单接口返回的 prepay_id 参数值，提交格式如：prepay_id=wx2017033010242291fcfe0db70013231072
+     *              <b>signType</b> - String 签名算法，暂支持 MD5
+     *              <b>paySign</b> - String 签名内容
      *
      *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_NATIVE}时，返回：
      *              <b>codeUrl</b> - String 二维码内容，前端将该内容通过第三方控件(亦可前端编码实现)将其显示为二维码
