@@ -249,14 +249,14 @@
                 //单项编辑
                 _marketListTable.find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/merketEdit.do?id=" + $(this).attr("data_id");
+                        location.href = "${base}/market/merketEdit.do?marketId=" + $(this).attr("data_id");
                     });
                 });
 
                 //单项查看商品
                 _marketListTable.find('button[id=seeBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/marketItems.do?id=" + $(this).attr("data_id");
+                        location.href = "${base}/market/marketItems.do?marketId=" + $(this).attr("data_id");
                     });
                 });
 

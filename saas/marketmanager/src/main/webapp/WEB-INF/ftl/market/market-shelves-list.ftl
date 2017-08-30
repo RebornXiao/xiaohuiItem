@@ -508,36 +508,27 @@
                 _taskListTable.on("click", "button[id=delTaskBtn]", function () {
                     var obj = $(this);
                     var code = obj.attr("data_code");
-                    swal({
-                        title: "提醒",
-                        text: "确认要删除该任务吗？",
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#DD6B55",
-                        confirmButtonText: "删除",
-                        cancelButtonText: "取消",
-                        closeOnConfirm: true,
-                        closeOnCancel: true
-                    }, function (isConfirm) {
-                        if (isConfirm) {
-                            $("#t" + code).remove();//删除ui
-                            delete task_list[code];
-                            //回复按钮
-                            var td = $("#h" + code);
-                            if (td != null) {
-                                td.empty();
-                                td.append(addBtns(td.attr("data_t"), td.attr("data_id"), td.attr("data_code")));
-                            }
-                            //删除一项任务
-                            task_count = task_count - 1;
-                            if(task_count < 1) {
-                                _taskListDialog.modal('hide');
-                            }
-                            if(task_count > 0) {
-                                _taskListBtn.text("任务列表( " + task_count + " )");
-                            } else {
-                                _taskListBtn.text("任务列表");
-                            }
+                    showTi("确定要删除该任务吗?", function (isConfirm) {
+                        if (!isConfirm) {
+                            return;
+                        }
+                        $("#t" + code).remove();//删除ui
+                        delete task_list[code];
+                        //回复按钮
+                        var td = $("#h" + code);
+                        if (td != null) {
+                            td.empty();
+                            td.append(addBtns(td.attr("data_t"), td.attr("data_id"), td.attr("data_code")));
+                        }
+                        //删除一项任务
+                        task_count = task_count - 1;
+                        if(task_count < 1) {
+                            _taskListDialog.modal('hide');
+                        }
+                        if(task_count > 0) {
+                            _taskListBtn.text("任务列表( " + task_count + " )");
+                        } else {
+                            _taskListBtn.text("任务列表");
                         }
                     });
                 });
@@ -645,28 +636,34 @@
                     var task_id = $(this).attr("data_t");
                     var data_id = $(this).attr("data_id");
                     var data_code = $(this).attr("data_code");
-                    //去取消
-                    $.get("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
-                        if (json.code != 0) {
-                            swal(json.msg);
-                        } else {
-                            //取消完，关闭详情
-                            _taskDialog.modal('hide');
-                            //改变按钮样式
-                            var td = $("#h" + data_code);
-                            if(td != null) {
-                                td.empty();
-                                td.attr("data_t", task_id);
-                                td.attr("data_id", data_id);
-                                td.attr("data_code", data_code);
-                                if (data_id == 0) {
-                                    td.append(addBtns(2, 0, data_code));
-                                } else {
-                                    td.append(addBtns(1, data_id, data_code));
+                    //2次确定
+                    showTi("确定要取消这个任务吗？", function (isConfirm) {
+                        if(!isConfirm) {
+                            return;
+                        }
+                        //去取消
+                        $.get("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
+                            if (json.code != 0) {
+                                swal(json.msg);
+                            } else {
+                                //取消完，关闭详情
+                                _taskDialog.modal('hide');
+                                //改变按钮样式
+                                var td = $("#h" + data_code);
+                                if(td != null) {
+                                    td.empty();
+                                    td.attr("data_t", task_id);
+                                    td.attr("data_id", data_id);
+                                    td.attr("data_code", data_code);
+                                    if (data_id == 0) {
+                                        td.append(addBtns(2, 0, data_code));
+                                    } else {
+                                        td.append(addBtns(1, data_id, data_code));
+                                    }
                                 }
                             }
-                        }
-                    }, "json");
+                        }, "json");
+                    })
                 });
 
                 //提交所有任务
@@ -680,12 +677,12 @@
                     var hDate = "";
                     $.each(task_list, function (k, value) {
                         txt = k + "-" + value.itemId + "-" + value.itemStock + ",";
-                    })
+                    });
                     $.post("${base}/market/prepareAction.do?marketId=" + s_MarketId + "&actionDatas=" + txt + "&hopeExecutorDate=" + hDate, function (data) {
                         //重新刷新
-                        if (data.code == "0") {
+                        if (data.code == 0) {
                             showMsg("操作成功", function () {
-                                location.href = "${base}/market/marketItems.do?id=" + s_MarketId;
+                                location.href = "${base}/market/marketItems.do?id=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer;
                             })
                         } else {
                             swal(data.msg);
@@ -805,7 +802,7 @@
                         }, function (isConfirm) {
                             if (isConfirm) {
                                 //直接切换
-                                location.href = "${base}/market/marketItems.do?id=" + s_MarketId;
+                                location.href = "${base}/market/marketShelves.do?id=" + s_MarketId;
                             } else {
                                 //弹出任务列表
                                 showTaskDailog();
@@ -813,7 +810,7 @@
                         });
                     } else {
                         //直接切换
-                        location.href = "${base}/market/marketItems.do?id=" + s_MarketId;
+                        location.href = "${base}/market/marketShelves.do?id=" + s_MarketId;
                     }
                 });
 
