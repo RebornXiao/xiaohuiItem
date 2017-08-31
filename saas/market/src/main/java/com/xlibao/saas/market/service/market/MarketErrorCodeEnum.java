@@ -9,29 +9,17 @@ import com.xlibao.common.exception.XlibaoRuntimeException;
  */
 public enum MarketErrorCodeEnum {
 
-    /**
-     * 1000 -- 您所在区域暂时未找到合适的商店
-     */
+    /** 1000 -- 您所在区域暂时未找到合适的商店 */
     CAN_NOT_FIND_MARKET(1000, "您所在区域暂时未找到合适的商店"),
-    /**
-     * 1001 -- 错误的商店信息
-     */
+    /** 1001 -- 错误的商店信息 */
     ERROR_MARKET_INFORMATION(1001, "错误的商店信息"),
-    /**
-     * 1002 -- 不处于维护中
-     */
+    /** 1002 -- 不处于维护中 */
     DON_NOT_MAINTAIN(1002, "不处于维护中"),
-    /**
-     * 1100 -- 货架信息有误
-     */
+    /** 1100 -- 货架信息有误 */
     SHELVES_LOCATION_ERROR(1100, "货架信息有误"),
-    /**
-     * 1101 -- 货架位置上的任务有误
-     */
+    /** 1101 -- 货架位置上的任务有误 */
     SHELVES_LOCATION_TASK_ERROR(1101, "货架位置上的任务有误"),
-    /**
-     * 1200 -- 找不到关注关系记录
-     */
+    /** 1200 -- 找不到关注关系记录 */
     CAN_NOT_FOUND_FOCUS_RELATIONSHIP(1200, "找不到关注关系记录"),;
 
     private int key;

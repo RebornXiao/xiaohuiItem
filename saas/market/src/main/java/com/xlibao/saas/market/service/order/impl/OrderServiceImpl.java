@@ -258,7 +258,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                 return String.valueOf(OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey());
             }
             if (statusEnter == StatusEnterEnum.WAIT_RECEIPT.getKey()) { // 用户 待收货
-                return String.valueOf(OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey());
+                return OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_ACCEPT.getKey()
+                        + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey();
             }
             if (statusEnter == StatusEnterEnum.REFUND.getKey()) { // 用户 退款中
                 return String.valueOf(OrderStatusEnum.ORDER_STATUS_REFUND.getKey());

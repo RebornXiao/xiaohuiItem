@@ -23,7 +23,7 @@ public class OrderEventListenerController {
     @ResponseBody
     @RequestMapping(value = "notifyPaymentOrder")
     public JSONObject notifyPaymentOrder() {
-        // 接单通知
+        // 支付通知
         return paymentService.notifyPaymentOrder();
     }
 

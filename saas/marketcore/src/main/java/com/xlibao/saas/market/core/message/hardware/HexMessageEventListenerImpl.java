@@ -42,6 +42,9 @@ public class HexMessageEventListenerImpl implements MessageEventListener {
     public void notifyChannelActive(NettySession session) throws Exception {
         logger.info("作为服务端(与硬件交互) 建立一个Socket监听通道 " + session.netTrack());
 
+        // 初始化货架
+        initShelvesDatas();
+
         sessionManager.setHardwareSession(session);
         // 建立连接后的消息补发操作
         messageHandlerAdapter.afterHardwareChannelActive(session);
@@ -68,5 +71,10 @@ public class HexMessageEventListenerImpl implements MessageEventListener {
 
     @Override
     public void notifySessionIdle(NettySession session, int idleType, int idleTimes) {
+    }
+
+    private void initShelvesDatas() {
+        String content = HardwareMessageType.SHELVES + "CC";
+        sessionManager.sendHardwareMessage(content);
     }
 }

@@ -737,7 +737,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                 throw new XlibaoIllegalArgumentException("错误的角色类型，错误码：" + roleType);
         }
         if (CommonUtils.isEmpty(orders)) {
-            throw new XlibaoRuntimeException(pageStartIndex == 0 ? "订单列表为空" : "已展示全部数据");
+            throw PlatformErrorCodeEnum.NO_MORE_DATA.throwException(pageStartIndex == 0 ? "没有更多数据" : "已展示全部数据");
         }
         fillOrdersItemSnapshots(orders);
 
@@ -762,7 +762,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         List<OrderEntry> orderEntries = orderDataAccessManager.searchOrders(partnerId, passportId, searchKeyValue, orderType, roleType, pageStartIndex, pageSize);
 
         if (CommonUtils.isEmpty(orderEntries)) {
-            throw new XlibaoRuntimeException(pageStartIndex == 0 ? "没有符合条件的记录" : "已展示全部数据");
+            throw PlatformErrorCodeEnum.NO_MORE_DATA.throwException(pageStartIndex == 0 ? "没有更多数据" : "已展示全部数据");
         }
         fillOrdersItemSnapshots(orderEntries);
 
@@ -1021,7 +1021,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         OrderEntry orderEntry = JSONObject.parseObject(order.toJSONString(), OrderEntry.class);
 
         orderEntry.setSequenceNumber(orderSequence.getSequenceNumber());
-        orderEntry.setOrderSequenceNumber(String.valueOf(orderSequence.getType()) + uniquePrimaryKey());
+        orderEntry.setOrderSequenceNumber(uniquePrimaryKey(String.valueOf(orderSequence.getType())));
         orderEntry.setPartnerId(orderSequence.getPartnerId());
         orderEntry.setPartnerUserId(orderSequence.getPartnerUserId());
 

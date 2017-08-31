@@ -79,15 +79,19 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
 
         // TODO 需要考虑分包
         StringBuilder message = new StringBuilder().append(HardwareMessageType.SHIPMENT).append(orderEntry.getOrderSequenceNumber()).append(CommonUtils.toHexString(1, 4, "0"));
+        int locationCount = 0;
         if (!CommonUtils.isEmpty(itemStockLockLoggers)) { // 原来存在锁定的记录 进行解锁同时新增挂起数量
             for (MarketItemStockLockLogger itemStockLockLogger : itemStockLockLoggers) {
                 // 对商品进行库存挂起操作
                 dataAccessFactory.getItemDataAccessManager().itemPending(itemStockLockLogger.getItemId(), itemStockLockLogger.getLockQuantity());
                 // 设定锁定记录为：出货状态
                 dataAccessFactory.getItemDataAccessManager().modifyStockLockStatus(itemStockLockLogger.getId(), ItemStockLockStatusEnum.SHIPMENT.getKey());
-                String msg = decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemStockLockLogger.getItemId(), itemStockLockLogger.getItemTemplateId(), itemStockLockLogger.getLockQuantity());
-                message.append(msg);
+                String[] msg = decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemStockLockLogger.getItemId(), itemStockLockLogger.getItemTemplateId(), itemStockLockLogger.getLockQuantity());
+                message.append(msg[0]);
+
+                locationCount += Integer.parseInt(msg[1]);
             }
+            message.append(CommonUtils.toHexString(locationCount, 4, "0"));
             // 发送消息给硬件做出货操作
             marketShopRemoteService.shipmentMessage(marketEntry.getPassportId(), orderEntry.getOrderSequenceNumber() + CommonUtils.SPLIT_UNDER_LINE + CommonUtils.toHexString(1, 4, "0"), message.toString());
             return;
@@ -96,20 +100,25 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
         List<OrderItemSnapshot> itemSnapshots = orderEntry.getItemSnapshots();
         for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
             dataAccessFactory.getItemDataAccessManager().incrementPending(itemSnapshot.getItemId(), itemSnapshot.totalQuantity());
-            String msg = decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemSnapshot.getItemId(), itemSnapshot.getItemTemplateId(), itemSnapshot.totalQuantity());
-            message.append(msg);
+            String[] msg = decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemSnapshot.getItemId(), itemSnapshot.getItemTemplateId(), itemSnapshot.totalQuantity());
+            message.append(msg[0]);
+
+            locationCount += Integer.parseInt(msg[1]);
         }
+        message.append(CommonUtils.toHexString(locationCount, 4, "0"));
         // 发送消息给硬件做出货操作
         marketShopRemoteService.shipmentMessage(marketEntry.getPassportId(), orderEntry.getOrderSequenceNumber() + CommonUtils.SPLIT_UNDER_LINE + CommonUtils.toHexString(1, 4, "0"), message.toString());
     }
 
-    private String decrementItemLocationStock(String orderSequenceNumber, long itemId, long itemTemplateId, int quantity) {
+    private String[] decrementItemLocationStock(String orderSequenceNumber, long itemId, long itemTemplateId, int quantity) {
         List<MarketItemLocation> itemLocations = dataAccessFactory.getItemDataAccessManager().getItemLocations(itemId);
 
         ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemTemplateId);
         // 组合硬件消息
         StringBuilder msgBuilder = new StringBuilder();
+        int locationCount = 0;
         for (MarketItemLocation itemLocation : itemLocations) {
+            locationCount++;
             int decrementStock = quantity;
             if (itemLocation.getStock() < quantity) { // 库存不足时 将库存清空
                 decrementStock = itemLocation.getStock();
@@ -126,9 +135,9 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
         }
         if (quantity > 0) {
             logger.error("【" + orderSequenceNumber + "】严重问题，商品库存不足，商品ID：" + itemId + "(" + itemTemplate.getName() + ")，需要扣除数量：" + quantity);
-            MarketItemErrorCodeEnum.ITEM_STOCK_NOT_ENOUGH.throwException();
+            throw MarketItemErrorCodeEnum.ITEM_STOCK_NOT_ENOUGH.throwException();
         }
-        return msgBuilder.toString();
+        return new String[]{msgBuilder.toString(), String.valueOf(locationCount)};
     }
 
     @Override

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author chinahuangxc on 2017/2/2.
  */
 @Controller
-@RequestMapping(value = "/payment/channelCallbackController")
+@RequestMapping(value = "/payment/channelCallback")
 public class ChannelCallbackController extends BasicWebService {
 
     @Autowired

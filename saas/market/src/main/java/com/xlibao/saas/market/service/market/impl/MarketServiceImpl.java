@@ -8,6 +8,10 @@ import com.xlibao.datacache.location.LocationDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketRelationship;
 import com.xlibao.market.protocol.HardwareMessageType;
+import com.xlibao.metadata.passport.PassportArea;
+import com.xlibao.metadata.passport.PassportCity;
+import com.xlibao.metadata.passport.PassportProvince;
+import com.xlibao.metadata.passport.PassportStreet;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketAccessLogger;
 import com.xlibao.saas.market.service.market.*;
@@ -76,16 +80,16 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         double latitude = getDoubleParameter("latitude", 0.0);
 
         if (type == ChoiceMarketTypeEnum.PROVINCE.getKey()) {
-            return success(locationMessage(LocationDataCacheService.getProvinces()));
+            return success(provinceMessage(LocationDataCacheService.getProvinces()));
         }
         if (type == ChoiceMarketTypeEnum.CITY.getKey()) {
-            return success(locationMessage(LocationDataCacheService.getCitys(parentId)));
+            return success(cityMessage(LocationDataCacheService.getCitys(parentId)));
         }
         if (type == ChoiceMarketTypeEnum.DISTRICT.getKey()) {
-            return success(locationMessage(LocationDataCacheService.getDistricts(parentId)));
+            return success(districtMessage(LocationDataCacheService.getDistricts(parentId)));
         }
         if (type == ChoiceMarketTypeEnum.STREET.getKey()) {
-            return success(locationMessage(LocationDataCacheService.getStreets(parentId)));
+            return success(streetMessage(LocationDataCacheService.getStreets(parentId)));
         }
         if (type == ChoiceMarketTypeEnum.MARKET.getKey()) {
             List<MarketEntry> marketEntries = dataAccessFactory.getMarketDataCacheService().getMarkets(parentId);
@@ -192,7 +196,58 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         return success(response);
     }
 
-    private <T> JSONArray locationMessage(List<T> t) {
-        return t.stream().map(JSONObject::toJSONString).collect(Collectors.toCollection(JSONArray::new));
+    private JSONArray provinceMessage(List<PassportProvince> provinces) {
+        JSONArray response = new JSONArray();
+        for (PassportProvince province : provinces) {
+            JSONObject data = new JSONObject();
+
+            data.put("id", province.getId());
+            data.put("name", province.getName());
+
+            response.add(data);
+        }
+        return response;
+    }
+
+    private JSONArray cityMessage(List<PassportCity> cities) {
+        JSONArray response = new JSONArray();
+        for (PassportCity city : cities) {
+            JSONObject data = new JSONObject();
+
+            data.put("id", city.getId());
+            data.put("provinceId", city.getProvinceId());
+            data.put("name", city.getName());
+
+            response.add(data);
+        }
+        return response;
+    }
+
+    private JSONArray districtMessage(List<PassportArea> districts) {
+        JSONArray response = new JSONArray();
+        for (PassportArea district : districts) {
+            JSONObject data = new JSONObject();
+
+            data.put("id", district.getId());
+            data.put("cityId", district.getCityId());
+            data.put("name", district.getName());
+
+            response.add(data);
+        }
+        return response;
+    }
+
+    private JSONArray streetMessage(List<PassportStreet> streets) {
+        JSONArray response = new JSONArray();
+        for (PassportStreet street : streets) {
+            JSONObject data = new JSONObject();
+
+            data.put("id", street.getId());
+            data.put("areaId", street.getAreaId());
+            data.put("name", street.getName());
+
+            response.add(data);
+        }
+        return response;
     }
 }

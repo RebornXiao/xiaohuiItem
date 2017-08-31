@@ -371,9 +371,10 @@ public class BasicWebService {
      * @param uniqueMark 标志位
      */
     public static String uniquePrimaryKey(String uniqueMark) {
-        StringBuilder primaryKey = new StringBuilder(GlobalConstantConfig.UNIQUE_PRIMARY_KEY_PREFIX); // 3位
-        primaryKey.append(CommonUtils.defineDateFormat(System.currentTimeMillis(), "yyyyMMddHHmmssSSS")); // 17位
-        primaryKey.append(uniqueMark); // 不能超过10位
+        StringBuilder primaryKey = new StringBuilder();
+        primaryKey.append(uniqueMark);
+        primaryKey.append(DefineRandom.randomNumber(4)); // 4位
+        primaryKey.append(String.valueOf(System.currentTimeMillis() + DefineRandom.random(10000, 99999)).substring(2)); // 11位
         return primaryKey.toString(); // 最长不能超过32位(主要是由于微信的限制)
     }
 

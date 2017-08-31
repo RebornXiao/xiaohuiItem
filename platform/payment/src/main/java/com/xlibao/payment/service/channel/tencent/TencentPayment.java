@@ -178,7 +178,7 @@ public class TencentPayment extends BasicWebService {
         if (paymentType == PaymentTypeEnum.WEIXIN_APPLET) {
             signParameters.put("appId", ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_ID);
             // 时间戳 timestamp 时间戳
-            parameters.put("timeStamp", System.currentTimeMillis() / 1000);
+            parameters.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
             signParameters.put("timeStamp", String.valueOf(System.currentTimeMillis() / 1000));
 
             // 随机字符串 nonceStr 不长于32位

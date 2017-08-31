@@ -79,13 +79,5 @@ public class ApplicationServiceImpl implements ApplicationService {
         sessionManager.setMarketSession(session);
         // 启动心跳线程
         heartbeatCallable.start();
-
-        // 初始化货架
-        initShelvesDatas();
-    }
-
-    private void initShelvesDatas() {
-        String content = HardwareMessageType.SHELVES + "CC";
-        sessionManager.sendHardwareMessage(content);
     }
 }
