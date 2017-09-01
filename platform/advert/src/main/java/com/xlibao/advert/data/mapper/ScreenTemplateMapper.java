@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface ScreenTemplateMapper {
 
-    List<ScreenInfo> getScreenTemplateList(@Param("code") String code,@Param("marketName") String marketName,@Param("size") String size,@Param("pageSize") int pageSize,@Param("pageStartIndex") int pageStartIndex);
+    List<ScreenInfo> getScreenTemplateList(@Param("code") String code,@Param("marketId") String marketId,@Param("size") String size,@Param("pageSize") int pageSize,@Param("pageStartIndex") int pageStartIndex);
 
     List<ScreenInfo> getScreenInfoFromMAC(@Param("mac") String mac);
 

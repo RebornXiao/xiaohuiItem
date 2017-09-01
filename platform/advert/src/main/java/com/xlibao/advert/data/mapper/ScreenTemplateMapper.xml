@@ -13,6 +13,7 @@
         <result column="mac" property="mac" jdbcType="VARCHAR"/>
         <result column="advert_count" property="advertCount" jdbcType="BIGINT"/>
         <result column="used" property="used" jdbcType="BIGINT"/>
+        <result column="screen_remark" property="screenRemark"/>
         <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
     </resultMap>
 
@@ -21,8 +22,8 @@
         <if test="code!=null">
             AND code = #{code}
         </if>
-        <if test="marketName!=null">
-            AND marketName = #{marketName}
+        <if test="marketId!=null">
+            AND market_id = #{marketId}
         </if>
         <if test="size!=null">
             AND size = #{size}
@@ -36,8 +37,8 @@
     </select>
 
     <insert id="addScreenInfo" parameterType="com.xlibao.metadata.advert.ScreenInfo">
-        insert into screen_info (screen_id,market_id,market_name,require_time,size,code,mac,advert_count,used)
-        values (#{screenID},#{marketId},#{marketName},#{requireTime},#{size},#{code},#{mac},#{advertCount},#{used});
+        insert into screen_info (screen_id,market_id,market_name,require_time,size,code,mac,advert_count,used,screen_remark)
+        values (#{screenID},#{marketId},#{marketName},#{requireTime},#{size},#{code},#{mac},#{advertCount},#{used},#{screenRemark});
     </insert>
 
     <select id="getMaxScreenID" resultType="int">

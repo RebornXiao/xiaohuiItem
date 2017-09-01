@@ -182,12 +182,12 @@ public class advertServiceImpl extends BasicWebService implements advertService 
 
     public JSONObject getScreenTemplateList(){
         String code = getUTF("code",null);
-        String marketName = getUTF("marketName",null);
+        String marketId = getUTF("marketID",null);
         String size = getUTF("size",null);
         int pageSize = getIntParameter("pageSize", GlobalConstantConfig.DEFAULT_PAGE_SIZE);
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
 
-        List<ScreenInfo> infos = advertDataAccessManager.getScreenTemplateList(code,marketName,size,pageSize,pageStartIndex);
+        List<ScreenInfo> infos = advertDataAccessManager.getScreenTemplateList(code,marketId,size,pageSize,pageStartIndex);
 
         JSONObject response = new JSONObject();
         response.put("data", JSONObject.parseArray(JSONObject.toJSONString(infos)));
@@ -206,6 +206,7 @@ public class advertServiceImpl extends BasicWebService implements advertService 
         String mac = getUTF("mac",null);
         int advertCount = getIntParameter("advertCount",5);
         int used = getIntParameter("used",1);
+        String screenRemark = getUTF("screenRemark",null);
 
         if(marketName==null || size ==null || code ==null || mac ==null){
             return fail("参数错误");
@@ -221,6 +222,7 @@ public class advertServiceImpl extends BasicWebService implements advertService 
         screenInfo.setMac(mac);
         screenInfo.setAdvertCount(advertCount);
         screenInfo.setUsed(used);
+        screenInfo.setScreenRemark(screenRemark);
 
         advertDataAccessManager.addScreenInfo(screenInfo);
 

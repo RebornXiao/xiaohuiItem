@@ -29,6 +29,8 @@ public class LogicConfig {
     public static final String TAB_ADVERT_LIST = "adverts";
     public static final String TAB_ADVERT_MANAGER = "admanager";
 
+    public static final String TAB_ADVERT_SCREEN = "adscreen";
+
     public static final String ERROR_NAME = "error";
 
     public static final String RIGHT_FTL_PAGE_URL = "page";
@@ -40,8 +42,12 @@ public class LogicConfig {
     //广告相关页面
     public static final String FTL_ADVERT_EDIT = "advert/advert-item-edit";
     public static final String FTL_ADVERT_MANAGER = "advert/advert-item-manager";
-
     public static final String FTL_ADVERT_MANAGET_DETAIL = "advert/advert-item-detail";
+
+    public static final String FTL_ADVERT_MANAGET_SCREEN = "advert/advert-item-screen";
+    public static final String FTL_ADVERT_MANAGET_SCREENCONFIG = "advert/advert-item-screenConfig";
+    public static final String FTL_ADVERT_MANAGET_PLAYDETAIL = "advert/advert-item-playDetail";
+    public static final String FTL_ADVERT_MANAGET_ADDPLAY = "advert/advert-item-addPlay";
 
     //商品相关页面
     public static final String FTL_ITEM_LIST = "item/item-list";

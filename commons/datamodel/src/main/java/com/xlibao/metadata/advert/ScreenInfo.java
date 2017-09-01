@@ -18,6 +18,7 @@ public class ScreenInfo {
     private Integer advertCount;
     private Integer used;
     private Date createTime;
+    private String screenRemark;
 
 
     /**
@@ -136,6 +137,17 @@ public class ScreenInfo {
         this.used = used;
     }
 
+
+    /**
+     * 屏幕备注
+     */
+    public String getScreenRemark() {
+        return screenRemark;
+    }
+
+    public void setScreenRemark(String screenRemark) {
+        this.screenRemark = screenRemark;
+    }
 
     /**
      * 创建时间

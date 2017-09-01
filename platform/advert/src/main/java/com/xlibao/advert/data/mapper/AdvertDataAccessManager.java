@@ -5,7 +5,6 @@ import com.xlibao.metadata.advert.AdvertScreenInfo;
 import com.xlibao.metadata.advert.ScreenInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import sun.plugin.javascript.navig.LinkArray;
 
 import java.util.List;
 
@@ -56,7 +55,7 @@ public class AdvertDataAccessManager {
 
     public List<ScreenInfo> getScreenInfoFromMAC(String mac){return screenTemplateMapper.getScreenInfoFromMAC(mac);}
 
-    public List<ScreenInfo> getScreenTemplateList(String code,String marketName,String size,int pageSize,int pageStartIndex){return screenTemplateMapper.getScreenTemplateList(code,marketName,size,pageSize,pageStartIndex);}
+    public List<ScreenInfo> getScreenTemplateList(String code,String marketId,String size,int pageSize,int pageStartIndex){return screenTemplateMapper.getScreenTemplateList(code,marketId,size,pageSize,pageStartIndex);}
 
     public int getMaxScreenID(){return screenTemplateMapper.getMaxScreenID();}
 

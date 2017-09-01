@@ -23,7 +23,6 @@ public class AdvertManagerController extends BaseController {
 
     @RequestMapping("/admanager")
     public String advertManager(ModelMap map){
-
         return jumpPage(map,LogicConfig.FTL_ADVERT_MANAGER,LogicConfig.TAB_ADVERT,LogicConfig.TAB_ADVERT_MANAGER);
     }
 
@@ -32,5 +31,23 @@ public class AdvertManagerController extends BaseController {
         return jumpPage(map,LogicConfig.FTL_ADVERT_MANAGET_DETAIL,LogicConfig.TAB_ADVERT,LogicConfig.TAB_ADVERT_LIST);
     }
 
+    @RequestMapping("/adverts/screen")
+    public String advertScreen(ModelMap map){
+        return jumpPage(map,LogicConfig.FTL_ADVERT_MANAGET_SCREEN,LogicConfig.TAB_ADVERT,LogicConfig.TAB_ADVERT_LIST);
+    }
 
+    @RequestMapping("/adverts/screenConfig")
+    public String advertScreenConfig(ModelMap map){
+        return jumpPage(map,LogicConfig.FTL_ADVERT_MANAGET_SCREENCONFIG,LogicConfig.TAB_ADVERT,LogicConfig.TAB_ADVERT_LIST);
+    }
+
+    @RequestMapping(value = "/adverts/playDetail")
+    public String advertPlayDetail(ModelMap map){
+        return jumpPage(map,LogicConfig.FTL_ADVERT_MANAGET_PLAYDETAIL,LogicConfig.TAB_ADVERT,LogicConfig.TAB_ADVERT_LIST);
+    }
+
+    @RequestMapping(value = "/adverts/addPlay")
+    public String advertAddPlay(ModelMap map){
+        return jumpPage(map,LogicConfig.FTL_ADVERT_MANAGET_ADDPLAY,LogicConfig.TAB_ADVERT,LogicConfig.TAB_ADVERT_LIST);
+    }
 }
