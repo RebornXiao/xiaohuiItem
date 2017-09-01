@@ -892,7 +892,8 @@ th {
   border-top: 1px solid #f3f3f3;
 }
 .table > thead > tr > th {
-  border-bottom: 2px solid #f3f3f3;
+  border-bottom: 1px solid #ddd;
+  text-align: center;
 }
 .table > tbody > tr.success > td,
 .table > tbody > tr.success > th,
