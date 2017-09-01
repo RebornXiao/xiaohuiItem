@@ -33,7 +33,7 @@ public enum OrderStatusEnum {
     /** 1024、分批配送 */
     ORDER_STATUS_BATCH(1024, "分批配送"),
     /** 2048、退款 */
-    ORDER_STATUS_REFUND(2048, "退款"),
+    ORDER_STATUS_REFUND(2048, "退款中"),
     /** 2301、已退货 */
     ORDER_STATUS_CONFIRM_REFUND(2304, "已退货"),
     ;

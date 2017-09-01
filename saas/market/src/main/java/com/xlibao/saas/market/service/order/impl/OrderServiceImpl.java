@@ -342,6 +342,11 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         int orderStatus = orderEntry.getStatus();
         String statusValue = OrderStatusEnum.getOrderStatusEnum(orderStatus).getValue();
 
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
+        orderMsg.put("marketId", marketEntry.getId());
+        orderMsg.put("marketName", marketEntry.getName());
+        orderMsg.put("marketAddress", marketEntry.formatAddress());
+
         orderMsg.put("orderId", orderEntry.getId());
         orderMsg.put("sequenceNumber", orderEntry.getSequenceNumber());
         orderMsg.put("orderSequenceNumber", orderEntry.getOrderSequenceNumber());
@@ -352,7 +357,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         orderMsg.put("statusValue", statusValue);
 
         orderMsg.put("deliverTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "配送进度" : "自提进度");
-        orderMsg.put("deliverResult", orderStatus == OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey() ? "已签收" : "已取货");
+        orderMsg.put("deliverResult", orderStatusTitle(orderEntry.getDeliverType(), orderEntry.getStatus()));
 
         // 实收费用
         orderMsg.put("actualPrice", orderEntry.getActualPrice());

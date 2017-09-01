@@ -101,7 +101,7 @@
     </update>
 
     <update id="decrementItemStock">
-        update market_item set stock = stock - #{quantity}, pending_quantity = pending_quantity - #{quantity}, total_out_storage = total_out_storage + #{quantity} where id = #{itemId}
+        update market_item set stock = stock - #{quantity}, lock_stock = lock_stock - #{quantity}, total_out_storage = total_out_storage + #{quantity} where id = #{itemId}
     </update>
 
     <update id="offShelves">

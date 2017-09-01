@@ -1,6 +1,5 @@
 package com.xlibao.saas.market.controller.marketmanager;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.saas.market.service.market.MarketService;
 import com.xlibao.saas.market.service.market.ShelvesService;
@@ -14,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * Created by zhumg on 8/15.
  */
 @Controller
-@RequestMapping(value = "/marketmanager")
+@RequestMapping(value = "/market/manager")
 public class MarketManagerController {
 
     @Autowired

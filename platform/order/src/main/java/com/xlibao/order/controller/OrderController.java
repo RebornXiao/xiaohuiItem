@@ -374,5 +374,4 @@ public class OrderController {
     public JSONObject searchPageOrders() {
         return orderService.searchPageOrders();
     }
-
 }

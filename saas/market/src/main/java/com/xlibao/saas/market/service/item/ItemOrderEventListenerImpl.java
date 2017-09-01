@@ -83,7 +83,9 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
         if (!CommonUtils.isEmpty(itemStockLockLoggers)) { // 原来存在锁定的记录 进行解锁同时新增挂起数量
             for (MarketItemStockLockLogger itemStockLockLogger : itemStockLockLoggers) {
                 // 对商品进行库存挂起操作
-                dataAccessFactory.getItemDataAccessManager().itemPending(itemStockLockLogger.getItemId(), itemStockLockLogger.getLockQuantity());
+                // dataAccessFactory.getItemDataAccessManager().itemPending(itemStockLockLogger.getItemId(), itemStockLockLogger.getLockQuantity());
+                // 这里已修改为不减少挂起数量
+                dataAccessFactory.getItemDataAccessManager().decrementItemStock(itemStockLockLogger.getItemId(), itemStockLockLogger.getLockQuantity());
                 // 设定锁定记录为：出货状态
                 dataAccessFactory.getItemDataAccessManager().modifyStockLockStatus(itemStockLockLogger.getId(), ItemStockLockStatusEnum.SHIPMENT.getKey());
                 String[] msg = decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemStockLockLogger.getItemId(), itemStockLockLogger.getItemTemplateId(), itemStockLockLogger.getLockQuantity());
@@ -99,7 +101,9 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
         // 如果本来没有锁定的记录 那么则只需要进行挂起
         List<OrderItemSnapshot> itemSnapshots = orderEntry.getItemSnapshots();
         for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
-            dataAccessFactory.getItemDataAccessManager().incrementPending(itemSnapshot.getItemId(), itemSnapshot.totalQuantity());
+            // dataAccessFactory.getItemDataAccessManager().incrementPending(itemSnapshot.getItemId(), itemSnapshot.totalQuantity());
+            // 这里已修改为不减少挂起数量
+            dataAccessFactory.getItemDataAccessManager().decrementItemStock(itemSnapshot.getItemId(), itemSnapshot.totalQuantity());
             String[] msg = decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemSnapshot.getItemId(), itemSnapshot.getItemTemplateId(), itemSnapshot.totalQuantity());
             message.append(msg[0]);
 
