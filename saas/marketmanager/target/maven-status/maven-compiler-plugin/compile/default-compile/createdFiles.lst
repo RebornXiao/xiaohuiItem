@@ -10,6 +10,7 @@ com\xlibao\saas\market\manager\config\DomainNameConfig.class
 com\xlibao\saas\market\manager\config\ConfigFactory.class
 com\xlibao\saas\market\manager\service\marketmanager\MarketManagerService.class
 com\xlibao\saas\market\manager\config\LogicConfig.class
+com\xlibao\saas\market\manager\controller\AdvertManagerController.class
 com\xlibao\saas\market\manager\controller\ItemManagerController.class
 com\xlibao\saas\market\manager\controller\OrderManagerController.class
 com\xlibao\saas\market\manager\utils\Utils.class

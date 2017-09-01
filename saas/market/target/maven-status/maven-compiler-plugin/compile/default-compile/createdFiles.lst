@@ -4,6 +4,7 @@ com\xlibao\saas\market\service\item\MarketItemDataCacheService.class
 com\xlibao\saas\market\controller\marketmanager\MarketManagerController.class
 com\xlibao\saas\market\config\ConfigFactory.class
 com\xlibao\saas\market\service\support\ItemSupport.class
+com\xlibao\saas\market\service\item\PrepareActionStatusEnum.class
 com\xlibao\saas\market\service\order\OrderApplicationContextNotify.class
 com\xlibao\saas\market\service\item\DiscountTypeEnum.class
 com\xlibao\saas\market\data\mapper\item\MarketItemStockLockLoggerMapper.class
@@ -18,6 +19,7 @@ com\xlibao\saas\market\service\order\OrderNotifyTypeEnum.class
 com\xlibao\saas\market\service\order\OrderEventListenerManager.class
 com\xlibao\saas\market\service\item\ItemStatusEnum.class
 com\xlibao\saas\market\config\DomainNameConfig.class
+com\xlibao\saas\market\service\market\ShelvesTypeEnum.class
 com\xlibao\saas\market\service\order\MarketOrderErrorCodeEnum.class
 com\xlibao\saas\market\service\item\RestrictionQuantityEnum.class
 com\xlibao\saas\market\controller\openapi\MarketOpenApiController.class
@@ -36,6 +38,7 @@ com\xlibao\saas\market\listener\PaymentEventListener.class
 com\xlibao\saas\market\service\support\BasicRemoteService.class
 com\xlibao\saas\market\service\support\remote\PaymentRemoteService.class
 com\xlibao\saas\market\listener\OrderEventListener.class
+com\xlibao\saas\market\data\mapper\item\MarketPrepareActionMapper.class
 com\xlibao\saas\market\service\payment\PaymentService.class
 com\xlibao\saas\market\data\mapper\activity\MarketRecommendItemMapper.class
 com\xlibao\saas\market\XMarketControllerAop.class

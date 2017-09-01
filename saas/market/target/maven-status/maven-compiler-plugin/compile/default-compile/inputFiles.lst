@@ -26,6 +26,7 @@ D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\lis
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\service\market\ChoiceMarketTypeEnum.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\controller\marketmanager\MarketManagerController.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\service\market\ShelvesService.java
+D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\data\mapper\item\MarketPrepareActionMapper.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\service\order\StatusEnterEnum.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\service\item\ItemApplicationContextNotify.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\data\mapper\item\MarketItemDailyPurchaseLoggerMapper.java
@@ -64,6 +65,7 @@ D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\dat
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\service\item\RestrictionQuantityEnum.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\data\mapper\market\MarketCabinetMapper.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\listener\OrderEventListener.java
+D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\service\market\ShelvesTypeEnum.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\service\support\ItemSupport.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\data\model\MarketOrderStatusLogger.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\service\payment\PaymentService.java
@@ -84,5 +86,6 @@ D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\dat
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\data\mapper\order\OrderDataAccessManager.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\service\item\ItemService.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\service\item\ItemSpecialTypeEnum.java
+D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\service\item\PrepareActionStatusEnum.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\controller\openapi\MessageCallbackController.java
 D:\work\xiaohuiItem\xmarket\saas\market\src\main\java\com\xlibao\saas\market\data\mapper\market\MarketAccessLoggerMapper.java

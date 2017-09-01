@@ -37,6 +37,19 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <insert id="createItem" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.market.data.model.MarketItem">
+        insert into market_item(item_template_id, define_name, define_image, default_sort, owner_id, product_batches, batches_code, stock, lock_stock, pending_quantity, warning_quantity, keep_quantity, oversold_quantity,
+        maximum_sell_count, minimum_sell_count, allocation_quantity, purchase_quantity, status, cost_price, sell_price, market_price, discount_price, discount_type, restriction_quantity, beyond_control, delivery_delay,
+        initial_sales, actual_sales, total_storage, total_out_storage, description, create_time)
+        values(#{itemTemplateId}, #{defineName}, #{defineImage}, #{defaultSort}, #{ownerId}, #{productBatches}, #{batchesCode}, #{stock}, #{lockStock}, #{pendingQuantity}, #{warningQuantity}, #{keepQuantity}, #{oversoldQuantity},
+        #{maximumSellCount}, #{minimumSellCount}, #{allocationQuantity}, #{purchaseQuantity}, #{status}, #{costPrice}, #{sellPrice}, #{marketPrice}, #{discountPrice}, #{discountType}, #{restrictionQuantity}, #{beyondControl}, #{deliveryDelay},
+        #{initialSales}, #{actualSales}, #{totalStorage}, #{totalOutStorage}, #{description}, #{createTime})
+    </insert>
+
+    <select id="getItem" resultMap="BaseResultMap">
+        select * from market_item where market_id = #{marketId} and item_template_id = #{itemTemplateId}
+    </select>
+
     <select id="specialProducts" resultMap="BaseResultMap">
         select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0
             <if test="appointType == -100">and #{timeout} > timestampdiff(second, create_time, now())</if>
@@ -88,6 +101,13 @@
     </update>
 
     <update id="decrementItemStock">
-        update market_item set stock = stock - #{quantity}, pending_quantity = pending_quantity - #{quantity} where id = #{itemId}
+        update market_item set stock = stock - #{quantity}, pending_quantity = pending_quantity - #{quantity}, total_out_storage = total_out_storage + #{quantity} where id = #{itemId}
+    </update>
+
+    <update id="offShelves">
+        update market_item set stock = stock - #{quantity}, status = #{status}
+        <if test="quantity > 0"> total_storage = total_storage + #{stock} </if>
+        <if test="quantity &lt; 0"> total_out_storage = total_out_storage + #{quantity} </if>
+        where id = #{itemId}
     </update>
 </mapper>

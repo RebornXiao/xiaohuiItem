@@ -16,10 +16,21 @@
 
     <select id="getStreet" resultMap="BaseResultMap">
         select * from passport_street
-        <if test="id != 0">
+        <if test="streetId != 0">
             where id = #{streetId}
         </if>
     </select>
 
+    <select id="searchStreetByName" resultMap="BaseResultMap">
+        select * from passport_street where area_id = #{areaId} and name = #{name}
+    </select>
+
+    <insert id="createStreet" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.metadata.passport.PassportStreet">
+        insert into passport_street(area_id, name) values(#{street.areaId}, #{street.name})
+    </insert>
+
+    <update id="updateStreet">
+        update passport_street set name = #{name} where id = #{streetId}
+    </update>
 
 </mapper>

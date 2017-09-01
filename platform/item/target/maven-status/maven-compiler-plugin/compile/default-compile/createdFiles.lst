@@ -7,4 +7,3 @@ com\xlibao\item\data\mapper\ItemBrandMapper.class
 com\xlibao\item\data\mapper\ItemRelationshipMapper.class
 com\xlibao\item\service\item\ItemService.class
 com\xlibao\item\service\item\impl\ItemServiceImpl.class
-com\xlibao\item\controller\ItemOpenApiController.class

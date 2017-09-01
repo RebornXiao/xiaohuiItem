@@ -35,6 +35,7 @@ com\xlibao\passport\data\mapper\version\VersionDataManager.class
 com\xlibao\passport\service\address\AddressService.class
 com\xlibao\passport\data\mapper\sms\SmsDataManager.class
 com\xlibao\passport\listener\PassportEventListener.class
+com\xlibao\passport\service\partner\WeixinAuthorTypeEnum.class
 com\xlibao\passport\data\mapper\partner\PassportPartnerApplicationMapper.class
 com\xlibao\passport\data\mapper\passport\PassportMapper.class
 com\xlibao\passport\controller\LocationController.class

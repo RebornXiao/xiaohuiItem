@@ -36,6 +36,7 @@
         <result column="discount_amount" property="discountAmount" jdbcType="BIGINT"/>
         <result column="refund_status" property="refundStatus" jdbcType="TINYINT"/>
         <result column="refund_time" property="refundTime" jdbcType="TIMESTAMP"/>
+        <result column="channel_refund_parameters" property="channelRefundParameters" jdbcType="VARCHAR"/>
         <result column="notify_front_url" property="notifyFrontUrl" jdbcType="VARCHAR"/>
         <result column="notify_url" property="notifyUrl" jdbcType="VARCHAR"/>
         <result column="extend_parameter" property="extendParameter" jdbcType="VARCHAR"/>
@@ -58,6 +59,10 @@
         select * from payment_transaction_logger where trans_sequence_number = #{transSequenceNumber}
     </select>
 
+    <select id="getTransactionLoggerForPartnerTradeNumber" resultMap="BaseResultMap">
+        select * from payment_transaction_logger where partner_trade_number = #{partnerTradeNumber}
+    </select>
+
     <select id="getTransactionLoggers" resultMap="BaseResultMap">
         select * from payment_transaction_logger where passport_id = #{passportId} and trans_type = #{transType} order by trans_status asc, id desc limit #{pageStartIndex}, #{pageSize}
     </select>
@@ -75,5 +80,9 @@
     <update id="modifyTransactionStatus">
         update payment_transaction_logger set passport_id = #{passportId}, trans_status = trans_status | #{transStatus}, channel_user_id = #{channelUserId}, channel_user_name = #{channelUserName}, channel_trade_number = #{channelTradeNumber},
         trans_create_time = #{transCreateTime}, payment_time = #{paymentTime}, channel_remark = #{channelRemark}, trans_total_amount = #{transTotalAmount} where id = #{id} and (trans_status &amp; #{transStatus} != #{transStatus})
+    </update>
+
+    <update id="updateRefundParameter">
+        update payment_transaction_logger set refund_status = #{refundStatus}, refund_time = #{refundTime}, channel_refund_parameters = #{channelRefundParameters} where id = #{id} and refund_status = 0
     </update>
 </mapper>

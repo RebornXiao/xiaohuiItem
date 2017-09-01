@@ -32,6 +32,8 @@ public class uploadServiceImpl implements uploadService {
 
         JSONObject json = new JSONObject();
 
+        String key = null;
+
         for (MultipartFile item : files)
         {
             if(item.getSize()>0){
@@ -50,7 +52,7 @@ public class uploadServiceImpl implements uploadService {
                         Auth auth = Auth.create(ConfigFactory.getQiNiuConfig().getAccessKey(),ConfigFactory.getQiNiuConfig().getSecretKey());
                         String upToken = auth.uploadToken(ConfigFactory.getQiNiuConfig().getBucket());
 
-                        Response response =  uploadManager.put(byteArrayInputStream,filename,upToken,null,null);
+                        Response response =  uploadManager.put(byteArrayInputStream,key,upToken,null,null);
                         DefaultPutRet putRet = new Gson().fromJson(response.bodyString(),DefaultPutRet.class);
                         System.out.println(putRet.key);
                         System.out.println(putRet.hash);

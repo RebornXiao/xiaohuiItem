@@ -5,6 +5,7 @@ com\xlibao\market\data\model\MarketItemDailyPurchaseLogger.class
 com\xlibao\market\data\model\MarketItemLocation.class
 com\xlibao\market\data\model\MarketSpecialButton.class
 com\xlibao\market\data\model\MarketShelvesManager.class
+com\xlibao\market\data\model\MarketPrepareAction.class
 com\xlibao\market\protocol\ShopProtocol.class
 com\xlibao\market\data\model\MarketItemStockLockLogger.class
 com\xlibao\market\data\model\MarketCabinet.class

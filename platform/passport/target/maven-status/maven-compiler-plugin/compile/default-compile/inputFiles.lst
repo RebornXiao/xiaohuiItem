@@ -6,6 +6,7 @@ D:\work\xiaohuiItem\xmarket\platform\passport\src\main\java\com\xlibao\passport\
 D:\work\xiaohuiItem\xmarket\platform\passport\src\main\java\com\xlibao\passport\service\address\impl\AddressServiceImpl.java
 D:\work\xiaohuiItem\xmarket\platform\passport\src\main\java\com\xlibao\passport\service\passport\InternalPassportEventListenerImpl.java
 D:\work\xiaohuiItem\xmarket\platform\passport\src\main\java\com\xlibao\passport\controller\PartnerController.java
+D:\work\xiaohuiItem\xmarket\platform\passport\src\main\java\com\xlibao\passport\service\partner\WeixinAuthorTypeEnum.java
 D:\work\xiaohuiItem\xmarket\platform\passport\src\main\java\com\xlibao\passport\service\passport\PassportApplicationContextNotify.java
 D:\work\xiaohuiItem\xmarket\platform\passport\src\main\java\com\xlibao\passport\data\mapper\channel\PassportChannelMapper.java
 D:\work\xiaohuiItem\xmarket\platform\passport\src\main\java\com\xlibao\passport\data\mapper\location\PassportAreaMapper.java

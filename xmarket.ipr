@@ -108,6 +108,7 @@ under the License.
       <module filepath="$PROJECT_DIR$/platform/payment/payment.iml"/>
       <module filepath="$PROJECT_DIR$/platform/order/order.iml"/>
       <module filepath="$PROJECT_DIR$/platform/item/item.iml"/>
+      <module filepath="$PROJECT_DIR$/platform/advert/advert.iml"/>
       <module filepath="$PROJECT_DIR$/platform/platform.iml"/>
       <module filepath="$PROJECT_DIR$/saas/market/market.iml"/>
       <module filepath="$PROJECT_DIR$/saas/marketmanager/marketmanager.iml"/>
@@ -115,6 +116,7 @@ under the License.
       <module filepath="$PROJECT_DIR$/saas/marketcore/marketcore.iml"/>
       <module filepath="$PROJECT_DIR$/saas/marketmodel/marketmodel.iml"/>
       <module filepath="$PROJECT_DIR$/saas/test/test.iml"/>
+      <module filepath="$PROJECT_DIR$/saas/marketadver/marketadver.iml"/>
       <module filepath="$PROJECT_DIR$/saas/saas.iml"/>
     </modules> 
   </component>  

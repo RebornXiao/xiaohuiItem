@@ -20,6 +20,11 @@
         <result column="upload_time" property="uploadTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
+    <resultMap id="IdNameMap" type="com.xlibao.metadata.item.ItemIdName">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+    </resultMap>
+
     <sql id="Example_Entity_Where_Clause">
         <trim prefix="where" prefixOverrides="and|or">
             <if test="template.id != null and template.id != ''">
@@ -56,7 +61,6 @@
         insert into item_template(name, define_code, brand_id, barcode, type_id, unit_id, cost_price, default_price, image_url, banner_url, introduction_page, description, status, uploaders_role_id, upload_time)
         values(#{name}, #{defineCode}, #{brandId}, #{barcode}, #{typeId}, #{unitId}, #{costPrice}, #{defaultPrice}, #{imageUrl}, #{bannerUrl}, #{introductionPage}, #{description}, #{status}, #{uploadersRoleId}, #{uploadTime})
     </insert>
-    
 
     <select id="loaderItemTemplates" resultMap="BaseResultMap">
         select * from item_template where status = #{status}
@@ -64,6 +68,14 @@
 
     <select id="getItemTemplates" resultMap="BaseResultMap">
         select * from item_template where type_id = #{type} and status = #{status}
+    </select>
+
+    <select id="fuzzyMatchItemTemplate" resultMap="BaseResultMap">
+        select * from item_template where name like concat('%', #{name}, '%')
+    </select>
+
+    <select id="getItemTemplateIdAndNames" resultMap="IdNameMap">
+        select * from item_template where type_id = #{typeId}
     </select>
 
     <select id="getItemTemplate" resultMap="BaseResultMap">
@@ -96,8 +108,6 @@
         <include refid="Example_Entity_Where_Clause"/>
     </select>
 
-
-
     <select id="searchItemTemplates" resultMap="BaseResultMap">
         select * from item_template
         <if test="searchKey != null" >
@@ -128,5 +138,4 @@
             </if>
         </if>
     </select>
-
 </mapper>
