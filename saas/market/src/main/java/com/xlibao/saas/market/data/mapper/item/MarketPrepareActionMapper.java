@@ -11,11 +11,11 @@ public interface MarketPrepareActionMapper {
 
     MarketPrepareAction getPrepareAction(@Param("marketId") long marketId, @Param("itemLocation") String itemLocation, @Param("status") int status);
 
+    List<MarketPrepareAction> getPrepareActions(@Param("marketId") long marketId, @Param("status") int status, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
+
     List<MarketPrepareAction> getPrepareActionsForLocationSet(@Param("marketId") long marketId, @Param("locationSet") String locationSet, @Param("status") int status);
 
-    List<MarketPrepareAction> getUnCompletePrepareActions(@Param("marketId") long marketId, @Param("status") int status, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
-
-    List<MarketPrepareAction> getPrepareActionForBarcode(long marketId, String barcode, int status);
+    List<MarketPrepareAction> getPrepareActionForBarcode(@Param("marketId") long marketId, @Param("barcode") String barcode, @Param("status") int status);
 
     int modifyPrepareActionStatus(@Param("marketId") long marketId, @Param("itemLocation") String itemLocation, @Param("matchStatus") int matchStatus, @Param("status") int status, @Param("time") String time);
 

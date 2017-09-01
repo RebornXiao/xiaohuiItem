@@ -60,6 +60,10 @@ public class PaymentDataAccessManager {
         return transactionLoggerMapper.getRechargeTransactionLoggers(passportId, TransTypeEnum.RECHARGE.getKey(), currencyType, TransStatusEnum.TRADE_SUCCESS_SERVER.getKey(), pageStartIndex, pageSize);
     }
 
+    public int updateRefundParameter(PaymentTransactionLogger transactionLogger) {
+        return transactionLoggerMapper.updateRefundParameter(transactionLogger);
+    }
+
     public int createTransactionProperties(String transSequenceNumber, int type, String key, String value) {
         PaymentTransactionProperties transactionProperties = new PaymentTransactionProperties();
         transactionProperties.setTransSequenceNumber(transSequenceNumber);
@@ -167,6 +171,10 @@ public class PaymentDataAccessManager {
 
     public PaymentTransactionLogger getTransactionLogger(String transSequenceNumber) {
         return transactionLoggerMapper.getTransactionLogger(transSequenceNumber);
+    }
+
+    public PaymentTransactionLogger getTransactionLoggerForPartnerTradeNumber(String partnerTradeNumber) {
+        return transactionLoggerMapper.getTransactionLoggerForPartnerTradeNumber(partnerTradeNumber);
     }
 
     public PaymentTransactionLogger getTransactionLoggerById(long tid) {

@@ -22,6 +22,12 @@ import java.util.Map;
 @Service("marketManagerService")
 public class MarketManagerServiceImpl implements MarketManagerService {
 
+    public JSONObject getAllMarkets() {
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/getAllMarkets.do");
+        JSONObject response = JSONObject.parseObject(json);
+        return response;
+    }
+
     public JSONObject searchMarkets(MarketEntry entry, int pageSize, int pageIndex) {
 
         StringBuilder sb = new StringBuilder();

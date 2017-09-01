@@ -3,10 +3,13 @@ package com.xlibao.saas.market.manager.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.CommonUtils;
+import com.xlibao.common.http.HttpRequest;
+import com.xlibao.metadata.item.ItemIdName;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
 import com.xlibao.saas.market.manager.BaseController;
+import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.config.LogicConfig;
 import com.xlibao.saas.market.manager.service.itemmanager.ItemManagerService;
 import com.xlibao.saas.market.manager.utils.Utils;
@@ -17,8 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.alibaba.fastjson.JSON.parseObject;
 
 /**
  * @author chinahuangxc on 2017/7/10.
@@ -256,12 +262,37 @@ public class ItemManagerController extends BaseController {
     @ResponseBody
     @RequestMapping(value = "/itemUnitEditSave", method = RequestMethod.POST)
     public JSONObject itemUnitEditSave() {
-
         long itemUnitId = getLongParameter("id");
         String title = getUTF("title");
         byte status = getByteParameter("status");
-
         //通知修改
         return itemManagerService.updateItemUnit(itemUnitId, title, status);
+    }
+
+    @ResponseBody
+    @RequestMapping("/idNameItems")
+    public JSONObject idNameItems() {
+
+        long itemTypeId = getLongParameter("itemTypeId", 0);
+
+        if(itemTypeId == 0) {
+            return fail("该分类下没有商品");
+        }
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/getItemTemplateIdAndNames.do?itemTypeId=" + itemTypeId);
+        JSONObject response = parseObject(json);
+
+        if(response.getIntValue("code") == 0) {
+            List<ItemIdName> templates = JSONObject.parseArray(response.getJSONObject("response").getString("datas"), ItemIdName.class);
+            Map map = new HashMap();
+            for (int i = 0; i < templates.size(); i++) {
+                ItemIdName template = templates.get(i);
+                map.put(template.getId(), template.getName());
+            }
+            JSONObject result = new JSONObject();
+            result.put("datas", map);
+            return success(result);
+        } else {
+            return fail("该分类下没有商品");
+        }
     }
 }

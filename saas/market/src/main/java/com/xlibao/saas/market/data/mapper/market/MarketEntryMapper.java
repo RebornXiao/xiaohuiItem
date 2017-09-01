@@ -19,4 +19,6 @@ public interface MarketEntryMapper {
 
     int searchMarketsCount(@Param("searchModel")MarketEntry searchModel);
 
+    List<MarketEntry> getAllMarkets();
+
 }

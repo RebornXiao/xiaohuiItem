@@ -70,7 +70,7 @@ public class AlipayPayment extends BasicWebService {
         // 商品金额
         payURL.append("&total_fee=\"").append(price).append("\"");
         // 服务器异步通知页面路径
-        payURL.append("&notify_url=\"").append(ConfigFactory.getDomainNameConfig().paymentRemoteURL).append("/channelCallbackController/notifyAlipayNativePaymented\"");
+        payURL.append("&notify_url=\"").append(ConfigFactory.getDomainNameConfig().paymentRemoteURL).append("payment/channelCallback/notifyAlipayNativePayment\"");
         // 服务接口名称， 固定值
         payURL.append("&service=\"mobile.securitypay.pay\"");
         // 支付类型， 固定值

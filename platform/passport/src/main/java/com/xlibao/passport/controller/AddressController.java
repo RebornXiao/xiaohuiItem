@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author chinahuangxc on 2017/3/29.
  */
 @Controller
-@RequestMapping(value = "/address")
+@RequestMapping(value = "/passport/address")
 public class AddressController {
 
     @Autowired

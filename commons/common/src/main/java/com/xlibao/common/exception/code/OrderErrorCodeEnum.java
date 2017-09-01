@@ -1,5 +1,7 @@
 package com.xlibao.common.exception.code;
 
+import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.BasicWebService;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 
 /**
@@ -30,6 +32,10 @@ public enum OrderErrorCodeEnum {
     HAS_ARRIVE_ORDER(20007, "订单已送达"),
     /** 20008 -- 请完善收货地址 */
     PERFECT_RECEIPT_ADDRESS(20008, "请完善收货地址"),
+    /** 20009 -- 不能退款 */
+    CANNOT_REFUND(20009, "不能退款"),
+    /** 20010 -- 退款失败 */
+    REFUND_FAIL(20010, "退款失败"),
     ;
 
     private int key;
@@ -48,11 +54,19 @@ public enum OrderErrorCodeEnum {
         return value;
     }
 
-    public void throwException() {
-        throwException(getValue());
+    public JSONObject response() {
+        return response(getValue());
     }
 
-    public void throwException(String message) {
-        throw new XlibaoRuntimeException(getKey(), message);
+    public JSONObject response(String errorMsg) {
+        return BasicWebService.fail(getKey(), errorMsg);
+    }
+
+    public XlibaoRuntimeException throwException() {
+        return throwException(getValue());
+    }
+
+    public XlibaoRuntimeException throwException(String message) {
+        return new XlibaoRuntimeException(getKey(), message);
     }
 }

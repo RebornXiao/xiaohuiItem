@@ -10,6 +10,8 @@ public interface PassportService {
 
     JSONObject registerPassport();
 
+    Passport channelAuthorize(String channelUserId, String password, int channelType, int deviceType, String deviceName);
+
     JSONObject loginPassport();
 
     JSONObject modifyPassword();
@@ -24,7 +26,11 @@ public interface PassportService {
 
     JSONObject changeAccessToken();
 
+    void changeAccessToken(Passport passport);
+
     Passport getPassport(long passportId);
+
+    Passport getPassport(String loginName);
 
     JSONObject modifyNickname();
 }

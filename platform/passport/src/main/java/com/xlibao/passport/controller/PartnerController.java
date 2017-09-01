@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author chinahuangxc on 2017/2/12.
  */
 @Controller
-@RequestMapping(value = "/partner")
+@RequestMapping(value = "/passport/partner")
 public class PartnerController {
 
     @Autowired

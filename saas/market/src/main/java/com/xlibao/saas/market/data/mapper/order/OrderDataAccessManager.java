@@ -28,7 +28,7 @@ public class OrderDataAccessManager {
     }
 
     public int modifyOrderRemoteStatusLogger(String orderSequenceNumber, int notifyType, OrderStatusEnum localStatus, int remoteStatus, long remoteCompleteTime) {
-        return orderStatusLoggerMapper.modifyOrderRemoteStatusLogger(orderSequenceNumber, notifyType, localStatus.getKey(), remoteStatus, remoteCompleteTime);
+        return orderStatusLoggerMapper.modifyOrderRemoteStatusLogger(orderSequenceNumber, notifyType, localStatus.getKey(), remoteStatus, new Date(remoteCompleteTime));
     }
 
     public MarketOrderStatusLogger getOrderStatusLogger(String orderSequenceNumber, OrderStatusEnum localStatus) {

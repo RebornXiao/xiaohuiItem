@@ -29,4 +29,10 @@ public class OrderPaymentController {
     public JSONObject unifiedPayment() {
         return orderService.unifiedPayment();
     }
+
+    @ResponseBody
+    @RequestMapping(value = "refund")
+    public JSONObject refund() {
+        return orderService.refund();
+    }
 }

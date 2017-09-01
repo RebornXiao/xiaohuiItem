@@ -64,6 +64,18 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return success(response);
     }
 
+
+    public JSONObject getItemTemplateIdAndNames() {
+        long itemTypeId = getLongParameter("itemTypeId");
+        List<ItemTemplate> itemTemplates = itemDataAccessManager.getItemTemplateIdAndNames(itemTypeId);
+        if (itemTemplates.size() > 0) {
+            JSONObject response = new JSONObject();
+            response.put("datas", itemTemplates);
+            return success(response);
+        }
+        return fail("该分类下没有商品");
+    }
+
     @Override
     public JSONObject getItemTemplateByName() {
         String itemName = getUTF("itemName");
@@ -91,6 +103,17 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
         JSONObject response = new JSONObject();
         response.put("itemTemplateArray", itemTemplateArray);
+        return success(response);
+    }
+
+    @Override
+    public JSONObject fuzzyMatchItemTemplate() {
+        String name = getUTF("name");
+        List<ItemTemplate> itemTemplates = itemDataAccessManager.fuzzyMatchItemTemplate(name);
+        if (CommonUtils.isEmpty(itemTemplates)) {
+            return fail("找不到名称包含【" + name + "】的商品模版");
+        }
+        JSONArray response = itemTemplates.stream().map(itemTemplate -> JSONObject.parseObject(JSONObject.toJSONString(itemTemplate))).collect(Collectors.toCollection(JSONArray::new));
         return success(response);
     }
 
@@ -199,7 +222,6 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         } else {
             itemDataAccessManager.addItemTemplate(template);
         }
-
         template = itemDataAccessManager.getItemTemplate(template.getId(), ItemStatusEnum.ALL);
         JSONObject response = JSONObject.parseObject(JSONObject.toJSONString(template));
         return success(response);
@@ -219,24 +241,21 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             //更新
             itemDataAccessManager.updateItemUnit(id, title, status);
             return success("修改成功");
-        } else {
-            //检查名称是否重复
-            ItemUnit unit = itemDataAccessManager.getItemUnitByTitle(title);
-            if (unit != null) {
-                return fail(-1, "已存在相同名称的单位");
-            }
-            //新增
-            ItemUnit itemUnit = new ItemUnit();
-            itemUnit.setTitle(title);
-            itemUnit.setStatus(status);
-            if (itemDataAccessManager.createItemUnit(itemUnit) > 0) {
-                return success("添加成功");
-            } else {
-                return fail("添加失败");
-            }
         }
+        // 检查名称是否重复
+        ItemUnit unit = itemDataAccessManager.getItemUnitByTitle(title);
+        if (unit != null) {
+            return fail(-1, "已存在相同名称的单位");
+        }
+        // 新增
+        ItemUnit itemUnit = new ItemUnit();
+        itemUnit.setTitle(title);
+        itemUnit.setStatus(status);
+        if (itemDataAccessManager.createItemUnit(itemUnit) > 0) {
+            return success("添加成功");
+        }
+        return fail("添加失败");
     }
-
 
     @Override
     public JSONObject saveItemType() {
@@ -250,7 +269,6 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         } else {
             itemDataAccessManager.addItemType(type);
         }
-
         type = itemDataAccessManager.getItemType(type.getId());
         JSONObject response = JSONObject.parseObject(JSONObject.toJSONString(type));
         return success(response);
@@ -269,7 +287,6 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         } else {
             itemDataAccessManager.addItemBrand(brand);
         }
-
         brand = itemDataAccessManager.getItemBrand(brand.getId(), ItemStatusEnum.ALL);
         JSONObject response = JSONObject.parseObject(JSONObject.toJSONString(brand));
         return success(response);
@@ -278,19 +295,20 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     @Override
     public JSONObject saveItemRelationship() {
         Long id = getLongParameter("id", 0);
-        ItemRelationship rship = new ItemRelationship();
+        ItemRelationship itemRelationship = new ItemRelationship();
 
-        if (id != 0) rship = itemDataAccessManager.getItemRelationship(id);
-        getEntityParameter(rship);
-        rship.setCreateTime(new Date());
         if (id != 0) {
-            itemDataAccessManager.updateItemRelationship(rship);
-        } else {
-            itemDataAccessManager.addItemRelationship(rship);
+            itemRelationship = itemDataAccessManager.getItemRelationship(id);
         }
-
-        rship = itemDataAccessManager.getItemRelationship(rship.getId());
-        JSONObject response = JSONObject.parseObject(JSONObject.toJSONString(rship));
+        getEntityParameter(itemRelationship);
+        itemRelationship.setCreateTime(new Date());
+        if (id != 0) {
+            itemDataAccessManager.updateItemRelationship(itemRelationship);
+        } else {
+            itemDataAccessManager.addItemRelationship(itemRelationship);
+        }
+        itemRelationship = itemDataAccessManager.getItemRelationship(itemRelationship.getId());
+        JSONObject response = JSONObject.parseObject(JSONObject.toJSONString(itemRelationship));
         return success(response);
     }
 
@@ -332,9 +350,9 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     @Override
     public JSONObject searchItemTypePage() {
         long parentItemTypeId = getLongParameter("parentItemTypeId", 0);
-        int pageSize = getIntParameter("pageSize", 0);//默认所有类型全部返回
+        int pageSize = getIntParameter("pageSize", 0); // 默认所有类型全部返回
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
-        boolean sort = getIntParameter("sort", 0) == 1 ? true : false;
+        boolean sort = getIntParameter("sort", 0) == 1;
 
         List<ItemType> types = itemDataAccessManager.pageItemType(parentItemTypeId, pageSize, pageStartIndex, sort);
         int count = itemDataAccessManager.itemTypesCount(parentItemTypeId);
@@ -353,7 +371,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             searchKey = null;
         }
         String searchType = getUTF("searchType", null);
-        int pageSize = getPageSize();//必须分页
+        int pageSize = getPageSize(); // 必须分页
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
 
         List<ItemTemplate> items = itemDataAccessManager.searchItemTemplates(searchType, searchKey, pageSize, pageStartIndex);
@@ -368,17 +386,15 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
     @Override
     public JSONObject updateItemTypesSort() {
-
-        //修改的ID们
+        // 修改的ID们
         String ids = getUTF("ids");
-        String[] id_list = ids.split(",");
-        for (int i = 0; i < id_list.length; i+=2) {
-            long id = Long.parseLong(id_list[i]);
-            int sort = Integer.parseInt(id_list[i+1]);
-            //更新
+        String[] idList = ids.split(CommonUtils.SPLIT_COMMA);
+        for (int i = 0; i < idList.length; i += 2) {
+            long id = Long.parseLong(idList[i]);
+            int sort = Integer.parseInt(idList[i + 1]);
+            // 更新
             itemDataAccessManager.updateItemTypeSort(id, sort);
         }
-
         return success("操作成功");
     }
 }

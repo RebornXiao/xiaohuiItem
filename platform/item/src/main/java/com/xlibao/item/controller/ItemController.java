@@ -31,6 +31,12 @@ public class ItemController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "getItemTemplateIdAndNames")
+    public JSONObject getItemTemplateIdAndNames() {
+        return itemService.getItemTemplateIdAndNames();
+    }
+
+    @ResponseBody
     @RequestMapping(value = "getItemTemplateByName")
     public JSONObject getItemTemplateByName() {
         return itemService.getItemTemplateByName();
@@ -90,9 +96,6 @@ public class ItemController {
         return itemService.getItemUnit();
     }
 
-    /**
-     * list
-     **/
     @ResponseBody
     @RequestMapping(value = "getItemUnitList")
     public JSONObject getItemUnitList() {
@@ -105,11 +108,20 @@ public class ItemController {
         return itemService.getItemTemplateList();
     }
 
+    /**
+     * <pre>
+     *     <b>模糊匹配商品模版记录</b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "fuzzyMatchItemTemplate")
+    public JSONObject fuzzyMatchItemTemplate() {
+        return itemService.fuzzyMatchItemTemplate();
+    }
 
     /**
      * update data
      **/
-
     @ResponseBody
     @RequestMapping(value = "saveItemTemplate", method = RequestMethod.POST)
     public JSONObject saveItemTemplate() {
@@ -139,7 +151,6 @@ public class ItemController {
     public JSONObject saveItemRelationship() {
         return itemService.saveItemRelationship();
     }
-
 
     /**
      * zhumg

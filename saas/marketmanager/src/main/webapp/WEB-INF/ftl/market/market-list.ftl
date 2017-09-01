@@ -89,7 +89,7 @@
                             <th>ID</th>
                             <th>商店名字</th>
                             <th>商店类型</th>
-                            <th>当前状态</th>
+                            <th>店铺状态</th>
                             <th>所在地区</th>
                             <th>具体地址</th>
                             <th>配送方式</th>
@@ -249,14 +249,14 @@
                 //单项编辑
                 _marketListTable.find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/merketEdit.do?id=" + $(this).attr("data_id");
+                        location.href = "${base}/market/merketEdit.do?marketId=" + $(this).attr("data_id");
                     });
                 });
 
                 //单项查看商品
                 _marketListTable.find('button[id=seeBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/merketItemList.do?id=" + $(this).attr("data_id");
+                        location.href = "${base}/market/marketItems.do?marketId=" + $(this).attr("data_id");
                     });
                 });
 

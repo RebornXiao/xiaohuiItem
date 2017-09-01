@@ -83,7 +83,7 @@ public class ShopServiceImpl extends BasicWebService implements ShopService {
         if (HardwareMessageType.ORDER.equals(messageType)) {
             // 订单信息
         }
-        if (HardwareMessageType.RETURN.equals(messageType)) {
+        if (HardwareMessageType.REFUND.equals(messageType)) {
             // 退货
         }
         if (HardwareMessageType.PICK_UP.equals(messageType)) {

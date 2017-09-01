@@ -7,6 +7,7 @@
         <result column="password" property="password" jdbcType="VARCHAR"/>
         <result column="show_name" property="showName" jdbcType="VARCHAR"/>
         <result column="real_name" property="realName" jdbcType="VARCHAR"/>
+        <result column="head_image" property="headImage" jdbcType="VARCHAR"/>
         <result column="id_number" property="idNumber" jdbcType="VARCHAR"/>
         <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR"/>
         <result column="sex" property="sex" jdbcType="TINYINT"/>
@@ -20,13 +21,17 @@
     </resultMap>
 
     <insert id="createPassport" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.metadata.passport.Passport">
-        insert into passport(default_name, password, show_name, real_name, id_number, phone_number, sex, type, status, from_channel, device_type, device_name)
-        values(#{defaultName}, #{password}, #{showName}, #{realName}, #{idNumber}, #{phoneNumber}, #{sex}, #{type}, #{status}, #{fromChannel}, #{deviceType}, #{deviceName})
+        insert into passport(default_name, password, show_name, real_name, head_image, id_number, phone_number, sex, type, status, from_channel, device_type, device_name)
+        values(#{defaultName}, #{password}, #{showName}, #{realName}, #{headImage}, #{idNumber}, #{phoneNumber}, #{sex}, #{type}, #{status}, #{fromChannel}, #{deviceType}, #{deviceName})
     </insert>
 
     <select id="getPassport" resultMap="BaseResultMap">
         select * from passport where id = #{id}
     </select>
+
+    <update id="perfectPassportInformation">
+        update passport set show_name = #{nickName}, head_image = #{headImageUrl}, sex = #{sex}, status = #{status} where id = #{id}
+    </update>
 
     <update id="modifyPassportPassword">
         update passport set password = #{password} where id = #{id}

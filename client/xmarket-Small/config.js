@@ -162,7 +162,7 @@ var config = {
         BALANCE : {
             host : "payment",
             islogin : false,
-            url : "/paymentController/balancePayment",
+            url : "/payment/balancePayment",
             data : { passportId : 100001 , paymentPassword : '123456'}
         },
         WEIXIN_JS : {

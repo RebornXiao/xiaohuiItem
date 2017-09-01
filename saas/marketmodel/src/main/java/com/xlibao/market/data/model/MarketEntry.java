@@ -2,6 +2,7 @@ package com.xlibao.market.data.model;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.CommonUtils;
+import com.xlibao.common.lbs.SimpleLocationUtils;
 
 import java.util.Date;
 
@@ -224,7 +225,7 @@ public class MarketEntry {
         return marketEntry;
     }
 
-    public JSONObject message() {
+    public JSONObject message(double latitude, double longitude) {
         JSONObject response = new JSONObject();
 
         response.put("id", getId());
@@ -238,7 +239,7 @@ public class MarketEntry {
         response.put("coveringDistance", CommonUtils.formatDistance(getCoveringDistance()));
         response.put("deliveryMode", getDeliveryMode());
         response.put("deliveryCost", getDeliveryCost());
-        response.put("formatDistance", CommonUtils.formatDistance(distance));
+        response.put("formatDistance", CommonUtils.formatDistance(SimpleLocationUtils.simpleDistance(latitude, longitude, Double.parseDouble(getLocation().split(CommonUtils.SPLIT_COMMA)[1]), Double.parseDouble(getLocation().split(CommonUtils.SPLIT_COMMA)[0]))));
 
         return response;
     }

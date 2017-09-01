@@ -2,6 +2,7 @@ package com.xlibao.saas.market.controller.openapi;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.saas.market.service.item.ItemService;
+import com.xlibao.saas.market.service.market.ShelvesService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,10 +17,12 @@ public class ItemOpenApiController {
 
     @Autowired
     private ItemService itemService;
+    @Autowired
+    private ShelvesService shelvesService;
 
     /**
      * <pre>
-     *
+     *     <b>首页数据</b>
      * </pre>
      */
     @ResponseBody
@@ -56,7 +59,7 @@ public class ItemOpenApiController {
      * <pre>
      *     <b>商品分组</b> -- 归类每个店的商品集合
      *
-     *     <b>访问地址：</b>http://domainName/item/splitItems
+     *     <b>访问地址：</b>http://domainName/market/item/openapi/splitItems.do
      *     <b>访问方式：</b>GET/POST；推荐使用POST
      *
      *     <b>参数：</b>
@@ -75,15 +78,77 @@ public class ItemOpenApiController {
         return itemService.splitItems();
     }
 
+    /**
+     * <pre>
+     *     <b>下架商品</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/item/openapi/offShelves.do
+     *     <b>访问方式：</b>GET/POST；推荐使用POST
+     *
+     *     <b>参数：</b>
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "offShelves")
     public JSONObject offShelves() {
-        return itemService.offShelves();
+        return shelvesService.offShelves();
     }
 
+    /**
+     * <pre>
+     *     <b>上架商品</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/item/openapi/onShelves.do
+     *     <b>访问方式：</b>GET/POST；推荐使用POST
+     *
+     *     <b>参数：</b>
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "onShelves")
     public JSONObject onShelves() {
-        return itemService.onShelves();
+        return shelvesService.onShelves();
+    }
+
+    /**
+     * <pre>
+     *     <b>是否存在商品</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/item/openapi/existItemTemplate.do
+     *     <b>访问方式：</b>GET/POST；推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>marketId</b> - long 商店ID，必填参数。
+     *          <b>itemTemplateId</b> - long 商品模版ID，必填参数。
+     *
+     *     <b>返回：</b>仅返回成功或失败的提示
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "existItemTemplate")
+    public JSONObject existItemTemplate() {
+        return itemService.existItemTemplate();
+    }
+
+    /**
+     * <pre>
+     *     <b>编辑商品</b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "editItem")
+    public JSONObject editItem() {
+        return itemService.editItem();
+    }
+
+    /**
+     * <pre>
+     *     <b>找到商品的位置</b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "findItemLocation")
+    public JSONObject findItemLocation() {
+        return itemService.findItemLocation();
     }
 }

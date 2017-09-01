@@ -62,7 +62,7 @@ public class PartnerParameters {
     }
 
     public String getWeixinMpAppSecret() {
-        return weixinMpAppSecret;
+        return weixinMpAppSecret.trim();
     }
 
     public String getWeixinAppletAppId() {
@@ -70,6 +70,6 @@ public class PartnerParameters {
     }
 
     public String getWeixinAppletAppSecret() {
-        return weixinAppletAppSecret;
+        return weixinAppletAppSecret.trim();
     }
 }

@@ -28,7 +28,7 @@ public class AbstractChannelInitializer extends ChannelInitializer<Channel> {
         ChannelPipeline channelPipeline = socketChannel.pipeline();
         // 设置解码器、编码器
         channelPipeline.addLast(messageEventListener.newDecoder()).addLast(messageEventListener.newEncoder());
-        // 设置超时处理
+        // 设置超时处理(空闲)
         channelPipeline.addLast(new IdleStateHandler(config.getReadTimeout(), config.getWriteTimeout(), config.getBothTimeout(), TimeUnit.SECONDS));
         // 设置适配器
         channelPipeline.addLast(channelInboundHandlerAdapter);

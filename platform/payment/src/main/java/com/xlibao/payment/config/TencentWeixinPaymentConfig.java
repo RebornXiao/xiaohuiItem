@@ -11,14 +11,14 @@ public class TencentWeixinPaymentConfig {
 
     /** 公众账号ID */
     @Value("${wx_app_id}")
-    public String WX_APP_ID;
+    public String WX_APP_ID = "wx38553758f24a3baa";
     /** 公众账号下的密钥 */
     @Value("${wx_app_secret}")
-    public String WX_APP_SECRET;
+    public String WX_APP_SECRET = "1e599e69f6a76e399bb80108d9c29217";
     /** 商户号 */
     @Value("${wx_partner_id}")
-    public String WX_PARTNER_ID;
+    public String WX_PARTNER_ID = "1487203162";
     /** 签名KEY */
     @Value("${wx_app_key}")
-    public String WX_APP_KEY;
+    public String WX_APP_KEY = "QufeJLjas8UWHAjkibvQ2V60shTGwY6T";
 }

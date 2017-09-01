@@ -35,6 +35,10 @@ public class XlibaoFilterChain implements Filter {
     }
 
     private void requestInfoTrack(HttpServletRequest request) {
+        Map<String, String[]> requestParams = request.getParameterMap();
+        if (requestParams == null || requestParams.isEmpty()) {
+            return;
+        }
         HttpSession session = request.getSession();
 
         Enumeration<String> headerNames = request.getHeaderNames();
@@ -50,7 +54,6 @@ public class XlibaoFilterChain implements Filter {
         fullRequestURL.append("?");
 
         builder.append("\r\n\t\t========================================== Parameter begin ==========================================\r\n\t\t");
-        Map<String, String[]> requestParams = request.getParameterMap();
         for (Map.Entry<String, String[]> entry : requestParams.entrySet()) {
             String name = entry.getKey();
             String[] values = entry.getValue();

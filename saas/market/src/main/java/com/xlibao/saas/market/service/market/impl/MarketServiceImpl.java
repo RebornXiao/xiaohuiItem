@@ -6,14 +6,15 @@ import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.datacache.location.LocationDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
-import com.xlibao.market.data.model.MarketShelvesManager;
+import com.xlibao.market.data.model.MarketRelationship;
 import com.xlibao.market.protocol.HardwareMessageType;
+import com.xlibao.metadata.passport.PassportArea;
+import com.xlibao.metadata.passport.PassportCity;
+import com.xlibao.metadata.passport.PassportProvince;
+import com.xlibao.metadata.passport.PassportStreet;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketAccessLogger;
-import com.xlibao.saas.market.service.market.ChoiceMarketTypeEnum;
-import com.xlibao.saas.market.service.market.MarketErrorCodeEnum;
-import com.xlibao.saas.market.service.market.MarketFindTypeEnum;
-import com.xlibao.saas.market.service.market.MarketService;
+import com.xlibao.saas.market.service.market.*;
 import com.xlibao.saas.market.service.support.remote.MarketShopRemoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,10 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -46,6 +44,9 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         long passportId = getLongParameter("passportId", 0);
         long marketId = getLongParameter("marketId", 0);
 
+        double longitude = getDoubleParameter("longitude", 0.0);
+        double latitude = getDoubleParameter("latitude", 0.0);
+
         MarketEntry marketEntry = null;
         MarketFindTypeEnum findType = MarketFindTypeEnum.CLIENT_PROVIDE;
         if (marketId != 0) {
@@ -65,7 +66,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
             // 1000 -- 您所在区域暂时未找到合适的商店
             return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response();
         }
-        JSONObject response = marketEntry.message();
+        JSONObject response = marketEntry.message(latitude, longitude);
         response.put("findType", findType.getKey());
         return success(response);
     }
@@ -75,21 +76,24 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         int type = getIntParameter("type", ChoiceMarketTypeEnum.PROVINCE.getKey());
         long parentId = getLongParameter("parentId", 0);
 
+        double longitude = getDoubleParameter("longitude", 0.0);
+        double latitude = getDoubleParameter("latitude", 0.0);
+
         if (type == ChoiceMarketTypeEnum.PROVINCE.getKey()) {
-            return success(locationMessage(LocationDataCacheService.getProvinces()));
+            return success(provinceMessage(LocationDataCacheService.getProvinces()));
         }
         if (type == ChoiceMarketTypeEnum.CITY.getKey()) {
-            return success(locationMessage(LocationDataCacheService.getCitys(parentId)));
+            return success(cityMessage(LocationDataCacheService.getCitys(parentId)));
         }
         if (type == ChoiceMarketTypeEnum.DISTRICT.getKey()) {
-            return success(locationMessage(LocationDataCacheService.getDistricts(parentId)));
+            return success(districtMessage(LocationDataCacheService.getDistricts(parentId)));
         }
         if (type == ChoiceMarketTypeEnum.STREET.getKey()) {
-            return success(locationMessage(LocationDataCacheService.getStreets(parentId)));
+            return success(streetMessage(LocationDataCacheService.getStreets(parentId)));
         }
         if (type == ChoiceMarketTypeEnum.MARKET.getKey()) {
             List<MarketEntry> marketEntries = dataAccessFactory.getMarketDataCacheService().getMarkets(parentId);
-            JSONArray response = marketEntries.stream().map(MarketEntry::message).collect(Collectors.toCollection(JSONArray::new));
+            JSONArray response = marketEntries.stream().map(marketEntry -> marketEntry.message(latitude, longitude)).collect(Collectors.toCollection(JSONArray::new));
             return success(response);
         }
         // 1001 -- 错误的商店信息
@@ -106,16 +110,18 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         if (CommonUtils.isEmpty(marketEntries)) {
             return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response();
         }
-        JSONArray response = marketEntries.stream().map(MarketEntry::message).collect(Collectors.toCollection(JSONArray::new));
+        JSONArray response = marketEntries.stream().map(marketEntry -> marketEntry.message(0, 0)).collect(Collectors.toCollection(JSONArray::new));
         return success(response);
     }
 
     @Override
     public JSONObject initShelvesDatas() {
-        long passportId = getLongParameter("passportId");
+        long marketId = getLongParameter("marketId");
+
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
 
         String content = HardwareMessageType.SHELVES + "CC";
-        marketShopRemoteService.shelvesMessage(passportId, content);
+        marketShopRemoteService.shelvesMessage(marketEntry.getPassportId(), content);
         return success();
     }
 
@@ -155,16 +161,93 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
     }
 
     public JSONObject getMarket() {
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataAccessManager().getMarket(getLongParameter("id", 0));
+        long marketId = getLongParameter("id", 0);
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
         if (marketEntry == null) {
-            return fail("没有该店铺数据");
+            return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response("找不到店铺记录，店铺ID：" + marketId);
         }
-        JSONObject response = new JSONObject();
-        response.put("data", marketEntry);
+        JSONObject response = JSONObject.parseObject(JSONObject.toJSONString(marketEntry));
         return success(response);
     }
 
-    private <T> JSONArray locationMessage(List<T> t) {
-        return t.stream().map(JSONObject::toJSONString).collect(Collectors.toCollection(JSONArray::new));
+    public JSONObject getAllMarkets() {
+        List<MarketEntry> marketEntries = dataAccessFactory.getMarketDataCacheService().getMarketEntries();
+        if (CommonUtils.isEmpty(marketEntries)) {
+            return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response("系统不存在商店记录，请联系管理员！");
+        }
+        return success(marketEntries);
+    }
+
+    @Override
+    public JSONObject myFocusMarkets() {
+        long passportId = getLongParameter("passportId");
+        List<MarketRelationship> marketRelationships = dataAccessFactory.getMarketDataAccessManager().myFocusMarkets(passportId, MarketRelationshipTypeEnum.FOCUS.getKey());
+        if (CommonUtils.isEmpty(marketRelationships)) {
+            return MarketErrorCodeEnum.CAN_NOT_FOUND_FOCUS_RELATIONSHIP.response("您的帐号未绑定任何商店，请联系管理员！");
+        }
+        JSONArray response = new JSONArray();
+        for (MarketRelationship marketRelationship : marketRelationships) {
+            MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketRelationship.getMarketId());
+            if (marketEntry == null) {
+                continue;
+            }
+            response.add(marketEntry.message(Double.parseDouble(marketEntry.getLocation().split(CommonUtils.SPLIT_COMMA)[1]), Double.parseDouble(marketEntry.getLocation().split(CommonUtils.SPLIT_COMMA)[0])));
+        }
+        return success(response);
+    }
+
+    private JSONArray provinceMessage(List<PassportProvince> provinces) {
+        JSONArray response = new JSONArray();
+        for (PassportProvince province : provinces) {
+            JSONObject data = new JSONObject();
+
+            data.put("id", province.getId());
+            data.put("name", province.getName());
+
+            response.add(data);
+        }
+        return response;
+    }
+
+    private JSONArray cityMessage(List<PassportCity> cities) {
+        JSONArray response = new JSONArray();
+        for (PassportCity city : cities) {
+            JSONObject data = new JSONObject();
+
+            data.put("id", city.getId());
+            data.put("provinceId", city.getProvinceId());
+            data.put("name", city.getName());
+
+            response.add(data);
+        }
+        return response;
+    }
+
+    private JSONArray districtMessage(List<PassportArea> districts) {
+        JSONArray response = new JSONArray();
+        for (PassportArea district : districts) {
+            JSONObject data = new JSONObject();
+
+            data.put("id", district.getId());
+            data.put("cityId", district.getCityId());
+            data.put("name", district.getName());
+
+            response.add(data);
+        }
+        return response;
+    }
+
+    private JSONArray streetMessage(List<PassportStreet> streets) {
+        JSONArray response = new JSONArray();
+        for (PassportStreet street : streets) {
+            JSONObject data = new JSONObject();
+
+            data.put("id", street.getId());
+            data.put("areaId", street.getAreaId());
+            data.put("name", street.getName());
+
+            response.add(data);
+        }
+        return response;
     }
 }

@@ -40,14 +40,20 @@ public class MarketItem {
     private String description = "";
     private Date createTime = new Date();
 
-    public static MarketItem newInstance(long ownerId, ItemTemplate itemTemplate) {
+    public static MarketItem newInstance(long ownerId, ItemTemplate itemTemplate, byte status) {
+        return newInstance(ownerId, itemTemplate, itemTemplate.getCostPrice(), itemTemplate.getDefaultPrice(), itemTemplate.getDefaultPrice(), itemTemplate.getDefaultPrice(), "", status);
+    }
+
+    public static MarketItem newInstance(long ownerId, ItemTemplate itemTemplate, long costPrice, long sellPrice, long marketPrice, long discountPrice, String description, byte status) {
         MarketItem item = new MarketItem();
         item.setOwnerId(ownerId);
         item.setItemTemplateId(itemTemplate.getId());
-        item.setCostPrice(itemTemplate.getCostPrice());
-        item.setSellPrice(itemTemplate.getDefaultPrice());
-        item.setMarketPrice(itemTemplate.getDefaultPrice());
-        item.setDiscountPrice(itemTemplate.getDefaultPrice());
+        item.setCostPrice(costPrice);
+        item.setSellPrice(sellPrice);
+        item.setMarketPrice(marketPrice);
+        item.setDiscountPrice(discountPrice);
+        item.setDescription(description);
+        item.setStatus(status);
         return item;
     }
 

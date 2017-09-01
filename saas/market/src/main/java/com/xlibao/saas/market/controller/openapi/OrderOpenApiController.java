@@ -102,6 +102,8 @@ public class OrderOpenApiController {
      *          <b>sequenceNumber</b> - String 订单序列号。
      *          <b>deliverType</b> - int 配送类型，非必填参数；参看：{@link com.xlibao.common.constant.order.DeliverTypeEnum}
      *          <b>paymentType</b> - String 支付类型，必填参数；参考：{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum}
+     *          <b>partnerUserId</b> - String 合作方的用户ID，非必填参数；
+     *              当为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_APPLET}、{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_JS}时填充openId
      *
      *     <b>返回结果：</b>
      *
@@ -116,14 +118,14 @@ public class OrderOpenApiController {
      *            然后将上述的JSONObject数据结果当成一个字符串(注意需要进行URLEncode.encode)填充到另一个JSONObject中，key为<b>paymentParameter</b>；连同
      *              <b>passportId</b> - long 通行证ID
      *              <b>paymentPassword</b> - String 支付密码
-     *            向支付中心发起余额支付请求，地址为：http://paymentDomainName/paymentController/balancePayment
+     *            向支付中心发起余额支付请求，地址为：http://paymentDomainName/payment/balancePayment
      *
      *           支付中心负责返回支付结果的成败
      *
      *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#ALIPAY}时，返回：paymentURL(支付宝支付链接)
      *            前端直接将上述参数填充至支付宝提供的SDK中
      *
-     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_NATIVE}时，返回：
+     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_APP}时，返回：
      *              <b>appid</b> - String 微信分配的appId。
      *              <b>partnerid</b> - String 微信支付分配的商户号。
      *              <b>prepayid</b> - String 预支付交易会话ID prepayid，微信返回的支付交易会话ID。
@@ -132,11 +134,82 @@ public class OrderOpenApiController {
      *              <b>timestamp</b> - int 时间戳
      *              <b>sign</b> - String MD5加密后的签名字符串
      *            前端直接将上述参数填充至微信提供的SDK中
+     *
+     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_APPLET}时，返回：
+     *              <b>timeStamp</b> - long 时间戳 timestamp 时间戳
+     *              <b>nonceStr</b> - String 随机字符串 nonceStr 不长于32位
+     *              <b>package</b> - String 统一下单接口返回的 prepay_id 参数值，提交格式如：prepay_id=wx2017033010242291fcfe0db70013231072
+     *              <b>signType</b> - String 签名算法，暂支持 MD5
+     *              <b>paySign</b> - String 签名内容
+     *
+     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_NATIVE}时，返回：
+     *              <b>codeUrl</b> - String 二维码内容，前端将该内容通过第三方控件(亦可前端编码实现)将其显示为二维码
      * </pre>
      */
     @ResponseBody
     @RequestMapping(value = "paymentOrder")
     public JSONObject paymentOrder() {
         return orderService.paymentOrder();
+    }
+
+    /**
+     * <pre>
+     *     <b>修改收货数据</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/order/modifyReceivingData
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>orderSequenceNumber</b> - String 订单序号
+     *          <b>currentLocation</b> - String 当前位置信息，非必填参数；尽量提供，方便后期跟踪；格式为：latitude,longitude。
+     *          <b>collectingFees</b> - byte 代收费用，非必填参数；默认为{@linkplain com.xlibao.common.constant.order.CollectingFeesEnum#UN_COLLECTION} 不代收。
+     *          <b>receiptProvince</b> - String 收货省份，必填参数。
+     *          <b>receiptCity</b> - String 收货城市，必填参数。
+     *          <b>receiptDistrict</b> - String 收货区域，必填参数
+     *          <b>receiptAddress</b> - String 具体收货地址，必填参数。
+     *          <b>receiptNickName</b> - String 收货人昵称，必填参数。
+     *          <b>receiptPhone</b> - String 收货人联系号码，必填参数。
+     *          <b>receiptLocation</b> - String 收货地址经纬度，非必填参数；请尽量提供，方便距离跟踪；格式为：latitude,longitude。
+     *          <b>remark</b> - String 描述内容(备注)。
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "modifyReceivingData")
+    public JSONObject modifyReceivingData() {
+        return orderService.modifyReceivingData();
+    }
+
+    /**
+     * <pre>
+     *     <b>接单</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/acceptOrder
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "acceptOrder")
+    public JSONObject acceptOrder() {
+        return orderService.acceptOrder();
+    }
+
+    /**
+     * <pre>
+     *     <b>退款</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/refundOrder
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>passportId</b> - long 通行证ID，必填参数；对应发起退款的用户。
+     *          <b>orderSequenceNumber</b> - String 订单序号，必填参数。
+     *
+     *     <b>返回：</b>仅返回成功或失败的描述
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "refundOrder")
+    public JSONObject refundOrder() {
+        return orderService.refundOrder();
     }
 }

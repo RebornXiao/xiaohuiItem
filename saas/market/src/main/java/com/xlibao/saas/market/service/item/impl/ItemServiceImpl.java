@@ -5,18 +5,18 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
+import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.exception.code.ItemErrorCodeEnum;
 import com.xlibao.common.lbs.baidu.AddressComponent;
 import com.xlibao.common.lbs.baidu.BaiduWebAPI;
-import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.datacache.item.ItemDataCacheService;
+import com.xlibao.market.data.model.*;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import com.xlibao.saas.market.data.DataAccessFactory;
-import com.xlibao.market.data.model.*;
 import com.xlibao.saas.market.data.model.MarketAccessLogger;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.activity.RecommendItemTypeEnum;
@@ -29,7 +29,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -265,124 +268,89 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     }
 
     @Override
-    public JSONObject offShelves() {
-        // 主要用于记录操作日志
-        long passportId = getLongParameter("passportId");
+    public JSONObject existItemTemplate() {
         long marketId = getLongParameter("marketId");
-        String location = getUTF("location");
-        String barcode = getUTF("barcode");
-        int offShelvesQuantity = getIntParameter("offShelvesQuantity");
+        long itemTemplateId = getLongParameter("itemTemplateId");
 
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
-        if (marketEntry.getStatus() != MarketStatusEnum.MAINTAIN.getKey()) {
-            logger.error("[下架] " + passportId + "没有先将商店[" + marketEntry.getName() + "]进行维护操作便执行了下架操作，系统已拦截该请求！");
-            return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("商店[" + marketEntry.getName() + "]必须处于维护中才能执行该操作");
-        }
-
-        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplateForBarcode(barcode);
-        if (itemTemplate == null) {
-            throw ItemErrorCodeEnum.BARCODE_NOT_EXIST.throwException("不存在条码为[" + barcode + "]的商品");
-        }
-
-        MarketPrepareAction prepareAction = dataAccessFactory.getItemDataAccessManager().getPrepareAction(marketId, location, PrepareActionStatusEnum.UN_EXECUTOR.getKey());
-        if (prepareAction == null) {
-            return MarketItemErrorCodeEnum.NOT_FOUND_PREPARE_ACTION.response("位置" + location + "不存在预操作行为");
-        }
-
-        MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplate.getId());
-        if (item == null) {
-            return MarketItemErrorCodeEnum.NOT_FOUND_ITEM.response("商店不存在条码为[" + barcode + "]的商品");
-        }
-
-        MarketItemLocation itemLocation = dataAccessFactory.getItemDataAccessManager().getItemLocation(item.getId(), location);
-        if (itemLocation == null) {
-            return MarketItemErrorCodeEnum.ITEM_LOCATION_ERROR.response("位置[" + location + "]上不存在条码为[" + barcode + "]的商品");
-        }
-
-        if (itemLocation.getStock() < offShelvesQuantity) {
-            return MarketItemErrorCodeEnum.ITEM_LOCATION_QUANTITY_ERROR.response("[0001]下架数量有误；商品剩余数量：" + itemLocation.getStock() + "；本次下架数量：" + offShelvesQuantity);
-        }
-        if (item.getStock() < offShelvesQuantity) {
-            return MarketItemErrorCodeEnum.ITEM_LOCATION_QUANTITY_ERROR.response("[0002]下架数量有误；商品剩余数量：" + item.getStock() + "；本次下架数量：" + offShelvesQuantity);
-        }
-        int status = ItemStatusEnum.NORMAL.getKey();
-        if (item.getStock() <= offShelvesQuantity) {
-            status = ItemStatusEnum.OFF_SALE.getKey();
-        }
-        logger.info("[下架] " + passportId + "正在对商品(条码为：" + barcode + ")进行下架操作；商店ID：" + marketId + "，商品ID：" + item.getId() + "所在位置：" + location + "，下架数量：" + offShelvesQuantity + "；下架后商品状态为：" + status);
-        int result = dataAccessFactory.getItemDataAccessManager().offShelves(item.getId(), offShelvesQuantity, status); // 减少库存 当库存为0时 设置为下架
-        if (result <= 0) {
-            PlatformErrorCodeEnum.DB_ERROR.throwException("[0001]更新商品库存失败");
-        }
-        // 需减少位置上的数量
-        result = dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation.getId(), offShelvesQuantity);
-        if (result <= 0) {
-            PlatformErrorCodeEnum.DB_ERROR.throwException("[0002]更新商品库存失败");
-        }
-        return success();
+        MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplateId);
+        return item == null ? MarketItemErrorCodeEnum.NOT_FOUND_ITEM.response() : success();
     }
 
     @Override
-    public JSONObject onShelves() {
-        // 主要用于记录操作日志
+    public JSONObject editItem() {
+        // 编辑商品
         long passportId = getLongParameter("passportId");
         long marketId = getLongParameter("marketId");
-        String location = getUTF("location");
-        String barcode = getUTF("barcode");
-        int onShelvesQuantity = getIntParameter("onShelvesQuantity");
+        long itemTemplateId = getLongParameter("itemTemplateId");
+        long costPrice = getLongParameter("costPrice");
+        long sellPrice = getLongParameter("sellPrice");
+        long marketPrice = getLongParameter("marketPrice", sellPrice);
+        String description = getUTF("description", "");
+        int status = getIntParameter("status", ItemStatusEnum.OFF_SALE.getKey());
 
+        if (costPrice < 0) {
+            return fail(3, "成本价不能小于0分");
+        }
+        if (sellPrice < 0) {
+            return fail(4, "售价不能小于0分");
+        }
+        if (marketPrice < 0) {
+            return fail(5, "市场售价不能小于0分");
+        }
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
-        if (marketEntry.getStatus() != MarketStatusEnum.MAINTAIN.getKey()) {
-            logger.error("[上架] " + passportId + "没有先将商店[" + marketEntry.getName() + "]进行维护操作便执行了上架操作，系统已拦截该请求！");
-            return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("商店[" + marketEntry.getName() + "]必须处于维护中才能执行该操作");
+        if (marketEntry == null) {
+            logger.error("1 -- 用户[" + passportId + "]正在编辑商品[" + itemTemplateId + "]，但用户不存在供应商仓库记录");
+            return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response("找不到商店，错误码：" + marketId);
         }
-
-        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplateForBarcode(barcode);
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemTemplateId);
         if (itemTemplate == null) {
-            throw ItemErrorCodeEnum.BARCODE_NOT_EXIST.throwException("不存在条码为[" + barcode + "]的商品");
+            logger.error("2 -- 用户[" + passportId + "]正在编辑商品[" + itemTemplateId + "]，但无法获取商品模版记录");
+            return ItemErrorCodeEnum.NOT_FOUND_ITEM_TEMPLATE.response("商品模版不存在，错误码：" + itemTemplateId);
         }
-
-        MarketPrepareAction prepareAction = dataAccessFactory.getItemDataAccessManager().getPrepareAction(marketId, location, PrepareActionStatusEnum.UN_EXECUTOR.getKey());
-        if (prepareAction == null) {
-            return MarketItemErrorCodeEnum.NOT_FOUND_PREPARE_ACTION.response("位置" + location + "不存在预操作行为");
+        MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplateId);
+        if (status == ItemStatusEnum.HIDE.getKey()) {
+            status = ItemStatusEnum.OFF_SALE.getKey();
         }
-        if (!barcode.equals(prepareAction.getHopeItemBarcode())) {
-            ItemTemplate it = ItemDataCacheService.getItemTemplateForBarcode(prepareAction.getHopeItemBarcode());
-            return MarketItemErrorCodeEnum.ERROR_PREPARE_ACTION.response("操作被拒绝；预操作行为期望该位置存放商品(条码：" + prepareAction.getHopeItemBarcode() + "，名称：[" + it.getName() + "])的商品，" +
-                    "与您提供的商品(条码：" + barcode + "，名称：[" + itemTemplate.getName() + "])不一致");
-        }
-
-        MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplate.getId());
+        int result = 0;
         if (item == null) {
-            // 商店未存在该模版的商品 先添加
-            item = MarketItem.newInstance(marketId, itemTemplate);
-            dataAccessFactory.getItemDataAccessManager().createItem(item);
+            // 未有商品存在
+            item = MarketItem.newInstance(marketId, itemTemplate, costPrice, sellPrice, marketPrice, sellPrice, description, (byte) status);
+            result = dataAccessFactory.getItemDataAccessManager().createItem(item);
+        } else {
+            result = dataAccessFactory.getItemDataAccessManager().updateItem(item.getId(), costPrice, item.getSellPrice(), item.getMarketPrice(), item.getDiscountPrice(), (byte) status, description);
         }
-        logger.info("[上架] " + passportId + "正在对商品(条码为：" + barcode + ")进行上架操作；商店ID：" + marketId + "，商品ID：" + item.getId() + "，所在位置：" + location + "，上架数量：" + onShelvesQuantity);
-        // 存在该模版的商品时 更新库存和状态即可
-        dataAccessFactory.getItemDataAccessManager().offShelves(item.getId(), -onShelvesQuantity, ItemStatusEnum.NORMAL.getKey());
+        return result <= 0 ? fail("编辑商品失败") : success("编辑商品成功");
+    }
 
-        MarketItemLocation itemLocation = dataAccessFactory.getItemDataAccessManager().getItemLocationForMarket(marketId, location);
-        if (itemLocation != null) {
-            if (itemLocation.getStock() > 0) {
-                if (!Objects.equals(itemLocation.getItemId(), item.getId())) {
-                    itemTemplate = ItemDataCacheService.getItemTemplate(item.getItemTemplateId());
-                    throw MarketItemErrorCodeEnum.ITEM_LOCATION_ERROR.throwException("位置[" + location + "]上存在条码为[" + itemTemplate.getBarcode() + "]的商品[" + itemTemplate.getName() + "]");
-                }
-                // 需增加位置上的数量
-                dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation.getId(), -onShelvesQuantity);
-                // 完成了预操作行为
-                dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(marketId, location, PrepareActionStatusEnum.UN_EXECUTOR.getKey(), PrepareActionStatusEnum.COMPLETE.getKey(), CommonUtils.nowFormat());
-                return success();
-            }
-            dataAccessFactory.getItemDataAccessManager().removeItemLocation(itemLocation.getId());
+    @Override
+    public JSONObject findItemLocation() {
+        long marketId = getLongParameter("marketId");
+        long itemTemplateId = getLongParameter("itemTemplateId");
+
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemTemplateId);
+        if (itemTemplate == null) {
+            return ItemErrorCodeEnum.NOT_FOUND_ITEM_TEMPLATE.response("商品模版不存在，错误码：" + itemTemplateId);
         }
-        itemLocation = MarketItemLocation.newInstance(marketId, item.getId(), item.getItemTemplateId(), location, onShelvesQuantity);
-        // 新建位置信息
-        dataAccessFactory.getItemDataAccessManager().createItemLocation(itemLocation);
-        // 完成了预操作行为
-        dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(marketId, location, PrepareActionStatusEnum.UN_EXECUTOR.getKey(), PrepareActionStatusEnum.COMPLETE.getKey(), CommonUtils.nowFormat());
-        return success();
+
+        MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplateId);
+        if (item == null) {
+            return MarketItemErrorCodeEnum.NOT_FOUND_ITEM.response("商店未收录该商品【" + itemTemplate.getName() + "】");
+        }
+        List<MarketItemLocation> itemLocations = dataAccessFactory.getItemDataAccessManager().getItemLocations(item.getId());
+        if (CommonUtils.isEmpty(itemLocations)) {
+            return MarketItemErrorCodeEnum.ITEM_LOCATION_ERROR.response("找不到商品【" + itemTemplate.getName() + "】的位置信息，请确认商品是否已上架！");
+        }
+        JSONArray response = new JSONArray();
+
+        for (MarketItemLocation itemLocation : itemLocations) {
+            JSONObject data = new JSONObject();
+
+            data.put("locationCode", itemLocation.getLocationCode());
+            data.put("stock", itemLocation.getStock());
+
+            response.add(data);
+        }
+        return success(response);
     }
 
     private long matchMarketId(long passportId, long marketId) {

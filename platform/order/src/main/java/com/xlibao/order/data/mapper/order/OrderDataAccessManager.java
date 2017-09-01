@@ -1,6 +1,5 @@
 package com.xlibao.order.data.mapper.order;
 
-import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.constant.order.OrderSequenceNumberStatusEnum;

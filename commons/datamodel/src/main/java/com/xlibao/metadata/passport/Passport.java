@@ -14,6 +14,8 @@ public class Passport {
     private String showName;
     /** 用户的真实姓名(主要是实名认证使用，实名认证通过后不可修改) */
     private String realName;
+    /** 头像 */
+    private String headImage;
     /** 身份证号(主要是实名认证使用，实名认证通过后不可修改) */
     private String idNumber;
     /** 用户联系号码，必选且必须有效(丢失时可修改) */
@@ -75,6 +77,14 @@ public class Passport {
 
     public void setRealName(String realName) {
         this.realName = realName == null ? null : realName.trim();
+    }
+
+    public String getHeadImage() {
+        return headImage;
+    }
+
+    public void setHeadImage(String headImage) {
+        this.headImage = headImage;
     }
 
     public String getIdNumber() {

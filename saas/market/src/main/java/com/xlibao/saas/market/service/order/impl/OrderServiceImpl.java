@@ -91,7 +91,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                 return PlatformErrorCodeEnum.PHONE_NUMBER_ERROR.response("手机号[" + receiptPhone + "]无效");
             }
             if (CommonUtils.isNullString(receiptAddress) || CommonUtils.isNullString(receiptNickName) || CommonUtils.isNullString(receiptPhone)) {
-                OrderErrorCodeEnum.PERFECT_RECEIPT_ADDRESS.throwException("请填写收货地址、收货人姓名、收货人联系电话等信息");
+                throw OrderErrorCodeEnum.PERFECT_RECEIPT_ADDRESS.throwException("请填写收货地址、收货人姓名、收货人联系电话等信息");
             }
         }
         // 用户购买的商品信息
@@ -145,6 +145,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         String orderSequenceNumber = getUTF("orderSequenceNumber");
         String paymentType = getUTF("paymentType");
         int deliverType = getIntParameter("deliverType", DeliverTypeEnum.PICKED_UP.getKey());
+        String partnerUserId = getUTF("partnerUserId", String.valueOf(passportId));
 
         OrderEntry order = OrderRemoteService.getOrder(orderSequenceNumber);
         if ((order.getStatus() & OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) == OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) {
@@ -155,7 +156,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         // 总共需要支付的费用
         long paymentAmount = order.getActualPrice();
         // 支付过程由订单中心执行
-        return PaymentRemoteService.paymentOrder(passportId, passportId, orderSequenceNumber, paymentType, String.valueOf(TransTypeEnum.MARKET_PAYMENT.getKey()), paymentAmount, TransTypeEnum.PAYMENT.getKey(),
+        return PaymentRemoteService.paymentOrder(passportId, partnerUserId, orderSequenceNumber, paymentType, String.valueOf(TransTypeEnum.MARKET_PAYMENT.getKey()), paymentAmount, TransTypeEnum.PAYMENT.getKey(),
                 paymentAmount, TransTypeEnum.PAYMENT.getValue(), "", GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), 0, "");
     }
 
@@ -198,15 +199,15 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey()) {
             // TODO 推送通知用户订单未支付
-            OrderErrorCodeEnum.UN_PAYMENT_ORDER.throwException();
+            throw OrderErrorCodeEnum.UN_PAYMENT_ORDER.throwException();
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
             // TODO 推送通知用户订单处于配送中
-            OrderErrorCodeEnum.HAS_DISTRIBUTION_ORDER.throwException();
+            throw OrderErrorCodeEnum.HAS_DISTRIBUTION_ORDER.throwException();
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_ARRIVE.getKey()) {
             // TODO 通知用户该订单已取货(已签收、已提货)
-            OrderErrorCodeEnum.HAS_ARRIVE_ORDER.throwException();
+            throw OrderErrorCodeEnum.HAS_ARRIVE_ORDER.throwException();
         }
         if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) { // 自提
             if (passportId != Long.parseLong(orderEntry.getPartnerUserId()) && passportId != Long.parseLong(orderEntry.getReceiptUserId())) {
@@ -244,14 +245,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     public JSONObject refundOrder() {
         long passportId = getPassportId();
         String orderSequenceNumber = getUTF("orderSequenceNumber");
-
-        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
-        if (orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) {
-            // 自提类型订单 必须处于支付状态才能进行退款
-            return MarketOrderErrorCodeEnum.CANNOT_REFUND.response("该订单已不能执行退款操作");
-        }
-        // TODO 执行退款业务
-        return null;
+        // 执行退款业务
+        return PaymentRemoteService.refund(passportId, orderSequenceNumber);
     }
 
     private String orderStatusSet(int roleType, int statusEnter) {
@@ -263,7 +258,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                 return String.valueOf(OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey());
             }
             if (statusEnter == StatusEnterEnum.WAIT_RECEIPT.getKey()) { // 用户 待收货
-                return String.valueOf(OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey());
+                return OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_ACCEPT.getKey()
+                        + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey();
             }
             if (statusEnter == StatusEnterEnum.REFUND.getKey()) { // 用户 退款中
                 return String.valueOf(OrderStatusEnum.ORDER_STATUS_REFUND.getKey());
@@ -346,6 +342,11 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         int orderStatus = orderEntry.getStatus();
         String statusValue = OrderStatusEnum.getOrderStatusEnum(orderStatus).getValue();
 
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
+        orderMsg.put("marketId", marketEntry.getId());
+        orderMsg.put("marketName", marketEntry.getName());
+        orderMsg.put("marketAddress", marketEntry.formatAddress());
+
         orderMsg.put("orderId", orderEntry.getId());
         orderMsg.put("sequenceNumber", orderEntry.getSequenceNumber());
         orderMsg.put("orderSequenceNumber", orderEntry.getOrderSequenceNumber());
@@ -356,7 +357,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         orderMsg.put("statusValue", statusValue);
 
         orderMsg.put("deliverTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "配送进度" : "自提进度");
-        orderMsg.put("deliverResult", orderStatus == OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey() ? "已签收" : "已取货");
+        orderMsg.put("deliverResult", orderStatusTitle(orderEntry.getDeliverType(), orderEntry.getStatus()));
 
         // 实收费用
         orderMsg.put("actualPrice", orderEntry.getActualPrice());

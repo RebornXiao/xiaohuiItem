@@ -13,11 +13,15 @@ public interface ItemService {
 
     JSONObject getItemTemplate();
 
+    JSONObject getItemTemplateIdAndNames();
+
     JSONObject getItemTemplateByName();
 
     JSONObject getItemTemplateByBarcode();
 
     JSONObject relationItemTemplates();
+
+    JSONObject fuzzyMatchItemTemplate();
 
     JSONObject loaderItemBrands();
 

@@ -53,11 +53,11 @@ public enum PlatformErrorCodeEnum {
         return response(getValue());
     }
 
-    public void throwException() {
-        throwException(getValue());
+    public XlibaoRuntimeException throwException() {
+        return throwException(getValue());
     }
 
-    public void throwException(String message) {
-        throw new XlibaoRuntimeException(getKey(), message);
+    public XlibaoRuntimeException throwException(String message) {
+        return new XlibaoRuntimeException(getKey(), message);
     }
 }

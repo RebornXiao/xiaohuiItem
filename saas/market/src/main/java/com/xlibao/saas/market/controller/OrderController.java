@@ -132,14 +132,14 @@ public class OrderController {
      *            然后将上述的JSONObject数据结果当成一个字符串(注意需要进行URLEncode.encode)填充到另一个JSONObject中，key为<b>paymentParameter</b>；连同
      *              <b>passportId</b> - long 通行证ID
      *              <b>paymentPassword</b> - String 支付密码
-     *            向支付中心发起余额支付请求，地址为：http://paymentDomainName/paymentController/balancePayment
+     *            向支付中心发起余额支付请求，地址为：http://paymentDomainName/payment/balancePayment
      *
      *           支付中心负责返回支付结果的成败
      *
      *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#ALIPAY}时，返回：paymentURL(支付宝支付链接)
      *            前端直接将上述参数填充至支付宝提供的SDK中
      *
-     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_NATIVE}时，返回：
+     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_APP}时，返回：
      *              <b>appid</b> - String 微信分配的appId。
      *              <b>partnerid</b> - String 微信支付分配的商户号。
      *              <b>prepayid</b> - String 预支付交易会话ID prepayid，微信返回的支付交易会话ID。

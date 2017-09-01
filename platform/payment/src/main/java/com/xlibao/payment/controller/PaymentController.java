@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @author chinahuangxc on 2017/2/2.
  */
 @Controller
-@RequestMapping(value = "/paymentController")
+@RequestMapping(value = "/payment")
 public class PaymentController extends BasicWebService {
 
     @Autowired
@@ -38,7 +38,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>余额支付</b>
      *
-     *     <b>请求地址：</b>http://domainName/paymentController/balancePayment
+     *     <b>请求地址：</b>http://domainName/payment/balancePayment
      *     <b>请求方式：</b>GET/POST 推荐POST
      *
      *     <b>passportId</b> - long 通行证ID，必填参数；本次支付的用户。
@@ -72,7 +72,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>检查用户是否已设置了支付密码</b>
      *
-     *     <b>请求地址：</b>http://domainName/paymentController/isSetPaymentPassword
+     *     <b>请求地址：</b>http://domainName/payment/isSetPaymentPassword
      *     <b>请求方式：</b>GET/POST 推荐POST
      *
      *     <b>参数：</b>
@@ -93,7 +93,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>首次设置支付密码</b>
      *
-     *     <b>请求地址：</b>http://domainName/paymentController/firstSetPaymentPassword
+     *     <b>请求地址：</b>http://domainName/payment/firstSetPaymentPassword
      *     <b>请求方式：</b>GET/POST 推荐POST
      *
      *     <b>参数：</b>
@@ -114,7 +114,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>重设支付密码</b>
      *
-     *     <b>请求地址：</b>http://domainName/paymentController/setPaymentPassword
+     *     <b>请求地址：</b>http://domainName/payment/setPaymentPassword
      *     <b>请求方式：</b>GET/POST 推荐POST
      *
      *     <b>请求参数：</b>
@@ -137,7 +137,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>获取用户所有货币信息</b>
      *
-     *     <b>请求地址：</b>http://domainName/paymentController/passportCurrency
+     *     <b>请求地址：</b>http://domainName/payment/passportCurrency
      *     <b>请求方式：</b>GET/POST 推荐POST
      *
      *     <b>请求参数：</b>
@@ -163,7 +163,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>充值活动模版</b>
      *
-     *     <b>请求地址：</b>http://domainName/paymentController/rechargeActivityTemplates
+     *     <b>请求地址：</b>http://domainName/payment/rechargeActivityTemplates
      *     <b>请求方式：</b>GET/POST 推荐POST
      *
      *     <b>请求参数：</b>
@@ -188,7 +188,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>充值余额</b>
      *
-     *     <b>请求地址：</b>http://domainName/paymentController/rechargeBalance
+     *     <b>请求地址：</b>http://domainName/payment/rechargeBalance
      *     <b>请求方式：</b>GET/POST 推荐POST
      *
      *     <b>参数：</b>
@@ -210,14 +210,14 @@ public class PaymentController extends BasicWebService {
      *            然后将上述的JSONObject数据结果当成一个字符串(注意需要进行URLEncode.encode)填充到另一个JSONObject中，key为<b>paymentParameter</b>；连同
      *              <b>passportId</b> - long 通行证ID
      *              <b>paymentPassword</b> - String 支付密码
-     *            向支付中心发起余额支付请求，地址为：http://paymentDomainName/paymentController/balancePayment
+     *            向支付中心发起余额支付请求，地址为：http://paymentDomainName/payment/balancePayment
      *
      *           支付中心负责返回支付结果的成败
      *
      *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#ALIPAY}时，返回：paymentURL(支付宝支付链接)
      *            前端直接将上述参数填充至支付宝提供的SDK中
      *
-     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_NATIVE}时，返回：
+     *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_APP}时，返回：
      *              <b>appid</b> - String 微信分配的appId。
      *              <b>partnerid</b> - String 微信支付分配的商户号。
      *              <b>prepayid</b> - String 预支付交易会话ID prepayid，微信返回的支付交易会话ID。
@@ -238,7 +238,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>充值流水</b>
      *
-     *     访问地址：http://domainName/paymentController/rechargeFlows
+     *     访问地址：http://domainName/payment/rechargeFlows
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>参数：</b>
@@ -265,7 +265,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>充值详情</b>
      *
-     *     访问地址：http://domainName/paymentController/rechargeDetail
+     *     访问地址：http://domainName/payment/rechargeDetail
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>参数：</b>
@@ -290,7 +290,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>获取收支明细</b>
      *
-     *     访问地址：http://domainName/paymentController/showAmountBalanceOfPayments
+     *     访问地址：http://domainName/payment/showAmountBalanceOfPayments
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     访问参数：
@@ -327,7 +327,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>余额流水</b>
      *
-     *     访问地址：http://domainName/paymentController/balanceFlows
+     *     访问地址：http://domainName/payment/balanceFlows
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     访问参数：
@@ -357,7 +357,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>提现流水</b>
      *
-     *     访问地址：http://domainName/paymentController/drawCashFlows
+     *     访问地址：http://domainName/payment/drawCashFlows
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>访问参数：</b>
@@ -386,7 +386,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>查看支付流水详情</b>
      *
-     *     访问地址：http://domainName/paymentController/paymentDetail
+     *     访问地址：http://domainName/payment/paymentDetail
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>访问参数：</b>
@@ -411,7 +411,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>收入统计</b>
      *
-     *     访问地址：http://domainName/paymentController/incomeStatistics
+     *     访问地址：http://domainName/payment/incomeStatistics
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>访问参数：</b>
@@ -432,7 +432,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>显示银行模版</b>
      *
-     *     访问地址：http://domainName/paymentController/showBankTemplates
+     *     访问地址：http://domainName/payment/showBankTemplates
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>参数：</b>无需访问参数
@@ -457,7 +457,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>绑定银行账户</b>
      *
-     *     访问地址：http://domainName/paymentController/bindBankAccount
+     *     访问地址：http://domainName/payment/bindBankAccount
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>参数：</b>
@@ -480,7 +480,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>展示提现方式</b>
      *
-     *     访问地址：http://domainName/paymentController/showDrawCashMode
+     *     访问地址：http://domainName/payment/showDrawCashMode
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>参数：</b>
@@ -507,7 +507,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>提现前的规则检测</b>
      *
-     *     访问地址：http://domainName/paymentController/beforeTakeCash
+     *     访问地址：http://domainName/payment/beforeTakeCash
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>参数：</b>
@@ -534,7 +534,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>提现</b>
      *
-     *     访问地址：http://domainName/paymentController/drawCash
+     *     访问地址：http://domainName/payment/drawCash
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>参数：</b>
@@ -559,7 +559,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>获取个人的所有银行卡</b>
      *
-     *     访问地址：http://domainName/paymentController/showBanks
+     *     访问地址：http://domainName/payment/showBanks
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>参数：</b>
@@ -587,7 +587,7 @@ public class PaymentController extends BasicWebService {
      * <pre>
      *     <b>设置默认银行卡</b>
      *
-     *     访问地址：http://domainName/paymentController/setDefaultBank
+     *     访问地址：http://domainName/payment/setDefaultBank
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>参数：</b>
@@ -601,5 +601,16 @@ public class PaymentController extends BasicWebService {
     @RequestMapping(value = "setDefaultBank")
     public JSONObject setDefaultBank() {
         return paymentService.setDefaultBank();
+    }
+
+    /**
+     * <pre>
+     *     <b>退款</b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "refund")
+    public JSONObject refund() {
+        return paymentService.refund();
     }
 }

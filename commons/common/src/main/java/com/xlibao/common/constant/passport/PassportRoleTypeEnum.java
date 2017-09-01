@@ -12,8 +12,8 @@ package com.xlibao.common.constant.passport;
  */
 public enum PassportRoleTypeEnum {
 
-    /** 11 -- 普通商家 */
-    DEFAULT(11, ClientTypeEnum.CONSUMER, "普通商家", true),
+    /** 11 -- 普通用户 */
+    DEFAULT(11, ClientTypeEnum.CONSUMER, "普通用户", true),
     /** 12 -- 平台供应商 */
     PLATFORM_SUPPLIER(12, ClientTypeEnum.CONSUMER, "平台供应商", false),
     /** 13 -- 门店供应商 */
@@ -36,7 +36,6 @@ public enum PassportRoleTypeEnum {
         this.value = value;
         this.isDefault = isDefault;
     }
-
 
     public int getKey() {
         return key;

@@ -31,7 +31,9 @@ public class InternalPassportEventListenerImpl extends BasicWebService implement
         if (!CommonUtils.nullToEmpty(passport.getDefaultName()).equals(CommonUtils.nullToEmpty(passport.getPhoneNumber()))) {
             createPassportAlias(passport.getId(), passport.getDefaultName(), PassportAliasTypeEnum.DEFAULT.getKey());
         }
-        createPassportAlias(passport.getId(), passport.getPhoneNumber(), PassportAliasTypeEnum.PHONE.getKey());
+        if (CommonUtils.isNotNullString(passport.getPhoneNumber())) {
+            createPassportAlias(passport.getId(), passport.getPhoneNumber(), PassportAliasTypeEnum.PHONE.getKey());
+        }
         // 新增帐号操作日志
         createPassportLogger(passport.getId(), PassportLoggerTypeEnum.REGISTER, String.valueOf(passport.getVersionIndex()), passport.getAccessToken(), passport.getId());
     }
