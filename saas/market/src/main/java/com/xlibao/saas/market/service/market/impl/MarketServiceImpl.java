@@ -7,7 +7,6 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.datacache.location.LocationDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketRelationship;
-import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.metadata.passport.PassportArea;
 import com.xlibao.metadata.passport.PassportCity;
 import com.xlibao.metadata.passport.PassportProvince;
@@ -120,8 +119,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
 
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
 
-        String content = HardwareMessageType.SHELVES + "CC";
-        marketShopRemoteService.shelvesMessage(marketEntry.getPassportId(), content);
+        marketShopRemoteService.shelvesMessage(marketEntry.getPassportId(), "CC");
         return success();
     }
 

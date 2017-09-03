@@ -10,7 +10,6 @@ import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.exception.code.ItemErrorCodeEnum;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.market.data.model.*;
-import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemUnit;
 import com.xlibao.saas.market.data.DataAccessFactory;
@@ -49,7 +48,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         for (String c : contentArray) {
             String dataType = c.substring(0, 4);
             String data = c.substring(4).replaceAll("\\[", "").replaceAll("]", "");
-            if ("0000".equals(dataType)) {
+            if ("0000".equals(dataType)) { // 反馈整个店铺有多少个组，每组有多少个单元的信息
                 groupAdapter(marketEntry, data);
                 continue;
             }
@@ -534,9 +533,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
     }
 
     private void refreshUnitDatas(MarketEntry marketEntry, String groupCode) {
-        String content = HardwareMessageType.SHELVES + groupCode;
-
-        marketShopRemoteService.shelvesMessage(marketEntry.getPassportId(), content);
+        marketShopRemoteService.shelvesMessage(marketEntry.getPassportId(), groupCode);
     }
 
     private void createShelves(long marketId, long passportId, String groupCode, String unitCode, String floorCode, String clipCode) {

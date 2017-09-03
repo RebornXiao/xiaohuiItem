@@ -17,6 +17,10 @@ import com.xlibao.payment.data.mapper.PaymentDataAccessManager;
 import com.xlibao.payment.data.model.PaymentTransactionLogger;
 import com.xlibao.payment.service.currency.CurrencyEventListenerManager;
 import com.xlibao.payment.service.trans.TransactionEventListenerManager;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.ssl.SSLContexts;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
@@ -25,6 +29,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.net.ssl.SSLContext;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.security.*;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -77,7 +86,7 @@ public class TencentPayment extends BasicWebService {
         // 签名类型	sign_type HMAC-SHA256	签名类型，目前支持HMAC-SHA256和MD5，默认为MD5
         parameters.put("sign_type", "MD5");
         // 微信订单号 transaction_id 1217752501201407033233368018 微信生成的订单号，在支付通知中有返回
-        parameters.put("transaction_id", transactionLogger.getTransSequenceNumber());
+        parameters.put("transaction_id", transactionLogger.getChannelTradeNumber());
         // 商户订单号 out_trade_no 1217752501201407033233368018	商户侧传给微信的订单号 与 微信订单号 二选一即可
         // 商户退款单号 out_refund_no 1217752501201407033233368018 商户系统内部的退款单号，商户系统内部唯一，同一退款单号多次请求只退一笔
         parameters.put("out_refund_no", transactionLogger.getTransSequenceNumber());
@@ -97,7 +106,7 @@ public class TencentPayment extends BasicWebService {
         CommonUtils.fillSignature(parameters, ConfigFactory.getTencentWeixinPaymentConfig().WX_APP_KEY);
 
         try {
-            String result = HttpRequest.sendPost(TENCENT_REFUND_URL, XMLSupport.mapToXML("xml", parameters));
+            String result = HttpRequest.pkcs12Post(ConfigFactory.getTencentWeixinPaymentConfig().WX_CERTIFICATE_PATH, ConfigFactory.getTencentWeixinPaymentConfig().WX_PARTNER_ID, TENCENT_REFUND_URL, XMLSupport.mapToXML("xml", parameters));
             Map<String, String> responseResult = XMLSupport.xmlToMap(result);
             logger.info("return " + responseResult);
 
@@ -118,6 +127,20 @@ public class TencentPayment extends BasicWebService {
             ex.printStackTrace();
         }
         return fail();
+    }
+
+    private void findCertificate(String path) throws KeyStoreException, IOException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyManagementException {
+        KeyStore keyStore = KeyStore.getInstance("PKCS12");
+        try (FileInputStream inputStream = new FileInputStream(new File(path))) {
+            keyStore.load(inputStream, "111111".toCharArray());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        // Trust own CA and all self-signed certs
+        SSLContext sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, "111111".toCharArray()).build();
+        // Allow TLSv1 protocol only
+        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(sslcontext, new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+        CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(sslsf).build();
     }
 
     private void afterRefund(PaymentTransactionLogger transactionLogger, Map<String, String> parameters, String channelParameters) {
@@ -461,7 +484,6 @@ public class TencentPayment extends BasicWebService {
 
         // 修改对象的状态
         transactionLogger.setTransStatus(transactionLogger.getTransStatus() | TransStatusEnum.TRADE_SUCCESS_SERVER.getKey());
-        transactionLogger.setPaymentType(PaymentTypeEnum.WEIXIN_APP.getKey());
         transactionLogger.setChannelUserId(openId);
         transactionLogger.setChannelUserName(openId);
         transactionLogger.setChannelTradeNumber(transactionId);

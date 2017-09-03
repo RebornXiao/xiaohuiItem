@@ -144,5 +144,7 @@ public interface OrderService {
 
     JSONObject modifyReceivingData();
 
+    JSONObject applyRefund();
+
     JSONObject refund();
 }

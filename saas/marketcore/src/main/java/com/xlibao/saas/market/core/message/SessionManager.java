@@ -4,6 +4,7 @@ import com.xlibao.io.entry.MessageOutputStream;
 import com.xlibao.io.service.netty.NettySession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
@@ -18,6 +19,9 @@ public class SessionManager {
     private NettySession hardwareSession;
     // 商店业务消息会话，必须是通过验证后才能使用；由本进程的心跳机制来保持链接的有效性
     private NettySession marketSession;
+
+    @Autowired
+    private MessageService messageService;
 
     public void setHardwareSession(NettySession session) {
         hardwareSession = session;
@@ -34,18 +38,18 @@ public class SessionManager {
     public void sendHardwareMessage(String content) {
         if (hardwareSession == null) {
             // 无法发送，需记录内容后在硬件连接成功时补发
-            logger.error("发送消息到硬件失败，消息内容：" + content);
+            logger.error("发送消息到硬件失败，消息内容：" + content + "；失败原因：硬件未与主机连接");
             return;
         }
         hardwareSession.send(content);
     }
 
-    public void sendMarketSession(MessageOutputStream message) {
+    public void sendMarketMessage(MessageOutputStream message) {
         if (marketSession == null) {
-            // TODO 发起建立链接的请求
+            // 发起建立链接的请求
+            messageService.connectorMarketServer();
+            return;
         }
-        if (marketSession != null) {
-            marketSession.send(message);
-        }
+        marketSession.send(message);
     }
 }

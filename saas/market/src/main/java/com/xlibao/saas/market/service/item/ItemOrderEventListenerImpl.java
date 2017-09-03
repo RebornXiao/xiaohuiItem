@@ -4,14 +4,13 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.datacache.item.ItemDataCacheService;
-import com.xlibao.market.protocol.HardwareMessageType;
+import com.xlibao.market.data.model.MarketEntry;
+import com.xlibao.market.data.model.MarketItemLocation;
+import com.xlibao.market.data.model.MarketItemStockLockLogger;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import com.xlibao.saas.market.data.DataAccessFactory;
-import com.xlibao.market.data.model.MarketEntry;
-import com.xlibao.market.data.model.MarketItemLocation;
-import com.xlibao.market.data.model.MarketItemStockLockLogger;
 import com.xlibao.saas.market.listener.OrderEventListener;
 import com.xlibao.saas.market.service.support.remote.MarketShopRemoteService;
 import org.slf4j.Logger;
@@ -78,7 +77,7 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
 
         // TODO 需要考虑分包
-        StringBuilder message = new StringBuilder().append(HardwareMessageType.SHIPMENT).append(orderEntry.getOrderSequenceNumber()).append(CommonUtils.toHexString(1, 4, "0"));
+        StringBuilder message = new StringBuilder().append(orderEntry.getOrderSequenceNumber()).append(CommonUtils.toHexString(1, 4, "0"));
         int locationCount = 0;
         if (!CommonUtils.isEmpty(itemStockLockLoggers)) { // 原来存在锁定的记录 进行解锁同时新增挂起数量
             for (MarketItemStockLockLogger itemStockLockLogger : itemStockLockLoggers) {

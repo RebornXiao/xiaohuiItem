@@ -241,6 +241,11 @@ public class MarketOpenApiController {
     /**
      * <pre>
      *     <b>我关注的商店</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/open/myFocusMarkets.do
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
      * </pre>
      */
     @ResponseBody
@@ -249,6 +254,16 @@ public class MarketOpenApiController {
         return marketService.myFocusMarkets();
     }
 
+    /**
+     * <pre>
+     *     <b>展示货架任务</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/open/showShelvesTask.do
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "showShelvesTask")
     public JSONObject showShelvesTask() {

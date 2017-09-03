@@ -17,6 +17,7 @@ import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketItem;
 import com.xlibao.market.data.model.MarketItemDailyPurchaseLogger;
+import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
@@ -28,6 +29,7 @@ import com.xlibao.saas.market.service.order.OrderEventListenerManager;
 import com.xlibao.saas.market.service.order.OrderService;
 import com.xlibao.saas.market.service.order.StatusEnterEnum;
 import com.xlibao.saas.market.service.support.ItemSupport;
+import com.xlibao.saas.market.service.support.remote.MarketShopRemoteService;
 import com.xlibao.saas.market.service.support.remote.OrderRemoteService;
 import com.xlibao.saas.market.service.support.remote.PaymentRemoteService;
 import org.slf4j.Logger;
@@ -53,6 +55,9 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     private OrderEventListenerManager orderEventListenerManager;
     @Autowired
     private ItemSupport itemSupport;
+    @Autowired
+    private MarketShopRemoteService marketShopRemoteService;
+
 
     @Override
     public JSONObject prepareCreateOrder() {
@@ -245,8 +250,17 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     public JSONObject refundOrder() {
         long passportId = getPassportId();
         String orderSequenceNumber = getUTF("orderSequenceNumber");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+        if (orderEntry == null) {
+            return OrderErrorCodeEnum.NOT_FOUND_ORDER.response();
+        }
+        // 申请退款
+        PaymentRemoteService.applyRefund(passportId, orderSequenceNumber, (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) ? OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey() : OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey());
+        // 请求商店进行退货
+        marketShopRemoteService.refundMessage(passportId, orderSequenceNumber);
         // 执行退款业务
-        return PaymentRemoteService.refund(passportId, orderSequenceNumber);
+        return success("已发起退货申请，请稍后刷新订单状态");
     }
 
     private String orderStatusSet(int roleType, int statusEnter) {
@@ -262,7 +276,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                         + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey();
             }
             if (statusEnter == StatusEnterEnum.REFUND.getKey()) { // 用户 退款中
-                return String.valueOf(OrderStatusEnum.ORDER_STATUS_REFUND.getKey());
+                return OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_REFUND.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_CONFIRM_REFUND.getKey();
             }
         }
         return OrderStatusEnum.ORDER_STATUS_CANCEL.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey();

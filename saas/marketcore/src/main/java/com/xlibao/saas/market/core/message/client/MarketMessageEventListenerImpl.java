@@ -36,7 +36,6 @@ public class MarketMessageEventListenerImpl implements MessageEventListener {
     @Autowired
     private MessageService messageService;
 
-
     @Override
     public ByteToMessageDecoder newDecoder() {
         return new DefaultMessageDecoder();
@@ -50,8 +49,7 @@ public class MarketMessageEventListenerImpl implements MessageEventListener {
     @Override
     public void notifyChannelActive(NettySession session) throws Exception {
         logger.info("【商店业务】作为客户端(与业务服务交互) 建立一个Socket通道 " + session.netTrack());
-
-        // 模拟登录过程 实际应存在页面或客户端操作 这里仅为了测试而编写的内容
+        // 自动登录
         login(session);
     }
 

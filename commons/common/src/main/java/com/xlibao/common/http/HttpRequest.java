@@ -15,10 +15,14 @@ import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.conn.ConnectionPoolTimeoutException;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.ssl.SSLContexts;
 import org.apache.http.util.EntityUtils;
 
 import javax.net.ssl.SSLContext;
@@ -26,10 +30,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.io.*;
 import java.net.*;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.UnrecoverableKeyException;
+import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
@@ -96,11 +97,9 @@ public class HttpRequest {
                 }
 
                 public void checkClientTrusted(X509Certificate[] xcs, String str) {
-
                 }
 
                 public void checkServerTrusted(X509Certificate[] xcs, String str) {
-
                 }
             };
             ctx.init(null, new TrustManager[]{tm}, null);
@@ -120,22 +119,15 @@ public class HttpRequest {
 
     public static String post(String url, Map<String, String> params, String charset) {
         DefaultHttpClient httpclient = new DefaultHttpClient();
-        String body = null;
-
         HttpPost post = postForm(url, params, charset);
-
-        body = invoke(httpclient, post);
-
+        String body = invoke(httpclient, post);
         httpclient.getConnectionManager().shutdown();
-
         return body;
     }
 
     public static String requestUrl(String url, Map<String, String> data) throws IOException {
         HttpURLConnection conn;
         try {
-            // if GET....
-            // URL requestUrl = new URL(url + "?" + httpBuildQuery(data));
             URL requestUrl = new URL(url);
             conn = (HttpURLConnection) requestUrl.openConnection();
         } catch (MalformedURLException e) {
@@ -158,9 +150,6 @@ public class HttpRequest {
         try {
             streamReader = new InputStreamReader(conn.getInputStream(), "UTF-8");
         } catch (IOException e) {
-            /*
-             * Boolean ret2 = true; if (ret2) { return e.getMessage(); }
-             */
             streamReader = new InputStreamReader(conn.getErrorStream(), "UTF-8");
         } finally {
             if (streamReader != null) {
@@ -200,8 +189,8 @@ public class HttpRequest {
         return body;
     }
 
-    private static String invoke(DefaultHttpClient httpclient, HttpUriRequest httpost) {
-        HttpResponse response = sendRequest(httpclient, httpost);
+    private static String invoke(DefaultHttpClient httpclient, HttpUriRequest httPost) {
+        HttpResponse response = sendRequest(httpclient, httPost);
 
         return paseResponse(response);
     }
@@ -229,22 +218,21 @@ public class HttpRequest {
     }
 
     private static HttpPost postForm(String url, Map<String, String> params, String charset) {
-        HttpPost httpost = new HttpPost(url);
-        List<NameValuePair> nvps = new ArrayList<>();
+        HttpPost httPost = new HttpPost(url);
+        List<NameValuePair> nameValuePairs = new ArrayList<>();
 
         Set<String> keySet = params.keySet();
-        nvps.addAll(keySet.stream().map(key -> new BasicNameValuePair(key, params.get(key))).collect(Collectors.toList()));
+        nameValuePairs.addAll(keySet.stream().map(key -> new BasicNameValuePair(key, params.get(key))).collect(Collectors.toList()));
         try {
-            httpost.setEntity(new UrlEncodedFormEntity(nvps, charset));
+            httPost.setEntity(new UrlEncodedFormEntity(nameValuePairs, charset));
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
-        return httpost;
+        return httPost;
     }
 
-    public static String sendPost(String url, String xmlObj) throws IOException, KeyStoreException, UnrecoverableKeyException, NoSuchAlgorithmException, KeyManagementException {
+    public static String sendPost(String url, String xmlObj) {
         String result = null;
-
         HttpPost httpPost = new HttpPost(url);
 
         // 解决XStream对出现双下划线的bug
@@ -265,7 +253,6 @@ public class HttpRequest {
             HttpResponse response = httpClient.execute(httpPost);
 
             HttpEntity entity = response.getEntity();
-
             result = EntityUtils.toString(entity, "UTF-8");
         } catch (ConnectionPoolTimeoutException e) {
             System.out.println("http get throw ConnectionPoolTimeoutException(wait time out)");
@@ -279,6 +266,31 @@ public class HttpRequest {
             httpPost.abort();
         }
         return result;
+    }
+
+    public static String pkcs12Post(String certificatePath, String sshKey, String url, String parameters) {
+        try {
+            KeyStore keyStore = KeyStore.getInstance("PKCS12");
+            try (FileInputStream inputStream = new FileInputStream(new File(certificatePath))) {
+                keyStore.load(inputStream, sshKey.toCharArray());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            // Trust own CA and all self-signed certs
+            SSLContext sslcontext = SSLContexts.custom().loadKeyMaterial(keyStore, sshKey.toCharArray()).build();
+            // Allow TLSv1 protocol only
+            SSLConnectionSocketFactory sslConnectionSocketFactory = new SSLConnectionSocketFactory(sslcontext, new String[]{"TLSv1"}, null, SSLConnectionSocketFactory.BROWSER_COMPATIBLE_HOSTNAME_VERIFIER);
+            CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(sslConnectionSocketFactory).build();
+
+            HttpPost httpPost = new HttpPost(url);
+
+            httpPost.setEntity(new StringEntity(parameters, "UTF-8"));
+            HttpResponse response = httpClient.execute(httpPost);
+            return EntityUtils.toString(response.getEntity(), "UTF-8");
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return "请求失败";
     }
 
     public static byte[] readBytes(String urlPath) {
