@@ -20,7 +20,8 @@ public enum MarketErrorCodeEnum {
     /** 1101 -- 货架位置上的任务有误 */
     SHELVES_LOCATION_TASK_ERROR(1101, "货架位置上的任务有误"),
     /** 1200 -- 找不到关注关系记录 */
-    CAN_NOT_FOUND_FOCUS_RELATIONSHIP(1200, "找不到关注关系记录"),;
+    CAN_NOT_FOUND_FOCUS_RELATIONSHIP(1200, "找不到关注关系记录"),
+    ;
 
     private int key;
     private String value;

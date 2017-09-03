@@ -54,15 +54,17 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         MarketOrderProperties orderProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.CONTAINER_DATA.getTypeEnum().getKey(), PropertiesKeyEnum.CONTAINER_DATA.getKey());
         JSONObject containerData = JSONObject.parseObject(orderProperties.getV());
         // 需要的货架数量
-        int containerCount = containerData.getIntValue("containerCount");
+        // int containerCount = containerData.getIntValue("containerCount");
         // 已出货完成的副单记录
         JSONArray containers = containerData.getJSONArray("containers");
 
         if (!containers.contains(serialNumber)) {
             containers.add(serialNumber);
+            containerData.put("containers", containers);
             dataAccessFactory.getOrderDataAccessManager().updateOrderProperties(orderProperties.getId(), containerData.toJSONString());
         }
-        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() && containerCount == containers.size()) { // 自提订单时，出货完成将订单状态设置为配送中(展示则为：待取货)
+        // if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() && containerCount == containers.size()) { // 自提订单时，出货完成将订单状态设置为配送中(展示则为：待取货)
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) { // 自提订单时，出货完成将订单状态设置为配送中(展示则为：待取货)
             // 修改订单状态
             OrderRemoteService.distributionOrder(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey(), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
         }
@@ -193,13 +195,14 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
             // 获取订单货柜信息
             marketShopRemoteService.orderDataMessage(passportId, orderSequenceNumber);
             // 未获取订单货柜信息
-            return fail("未出货完成，请稍后重试");
+            // return fail(2, "未出货完成，请稍后重试");
         }
         MarketOrderProperties pickUpContainerSetProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getKey());
         if (pickUpContainerSetProperties == null) { // 未存在取货记录 可继续执行取货操作
             return success();
         }
-        if (pickUpContainerSetProperties.getV().length() >= orderContainerSetProperties.getV().length()) {
+        JSONObject data = JSONObject.parseObject(pickUpContainerSetProperties.getV());
+        if (pickUpContainerSetProperties.getV().length() >= containerCount) {
             return fail("全部商品已完成出货，不能重复取货");
         }
         return success();

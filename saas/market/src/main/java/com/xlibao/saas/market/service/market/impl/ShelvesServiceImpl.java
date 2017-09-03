@@ -140,7 +140,6 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
 
             response.add(data);
         }
-
         //TODO 将当前分页，当前页内容数量都要发回去
 
         return success(response);

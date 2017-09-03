@@ -216,7 +216,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             return OrderErrorCodeEnum.NOT_FOUND_ORDER.response();
         }
         // 申请退款
-        PaymentRemoteService.applyRefund(passportId, orderSequenceNumber, (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) ? OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey() : OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey());
+        PaymentRemoteService.applyRefund(passportId, orderSequenceNumber, (orderEntry.getDeliverType() != DeliverTypeEnum.PICKED_UP.getKey()) ? String.valueOf(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) :
+                (OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DELIVER + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()));
         // 请求商店进行退货
         marketShopRemoteService.refundMessage(passportId, orderSequenceNumber);
         // 执行退款业务
@@ -237,6 +238,9 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             }
             if (statusEnter == StatusEnterEnum.REFUND.getKey()) { // 用户 退款中
                 return OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_REFUND.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_CONFIRM_REFUND.getKey();
+            }
+            if (statusEnter == StatusEnterEnum.RECOMMEND.getKey()) { // 首页推荐
+                return OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey();
             }
         }
         return OrderStatusEnum.ORDER_STATUS_CANCEL.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey();

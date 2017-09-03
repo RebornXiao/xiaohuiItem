@@ -40,11 +40,11 @@ public class PaymentRemoteService extends BasicRemoteService {
         return response;
     }
 
-    public static JSONObject applyRefund(long passportId, String orderSequenceNumber, int matchStatus) {
+    public static JSONObject applyRefund(long passportId, String orderSequenceNumber, String matchStatusSet) {
         Map<String, String> parameters = initialParameter();
         parameters.put("passportId", String.valueOf(passportId));
         parameters.put("orderSequenceNumber", orderSequenceNumber);
-        parameters.put("matchStatus", String.valueOf(matchStatus));
+        parameters.put("matchStatusSet", matchStatusSet);
 
         return postOrderMsg("order/payment/applyRefund", parameters);
     }
