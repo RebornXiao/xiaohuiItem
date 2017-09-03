@@ -49,6 +49,8 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             String dataType = c.substring(0, 4);
             String data = c.substring(4).replaceAll("\\[", "").replaceAll("]", "");
             if ("0000".equals(dataType)) { // 反馈整个店铺有多少个组，每组有多少个单元的信息
+                // 清空原来的货架数据
+                dataAccessFactory.getMarketDataAccessManager().clearShelves(marketEntry.getId());
                 groupAdapter(marketEntry, data);
                 continue;
             }

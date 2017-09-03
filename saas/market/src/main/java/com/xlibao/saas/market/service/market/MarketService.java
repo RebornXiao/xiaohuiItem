@@ -19,6 +19,8 @@ public interface MarketService {
 
     JSONObject getMarket();
 
+    JSONObject marketResponse();
+
     JSONObject getAllMarkets();
 
     JSONObject myFocusMarkets();

@@ -35,4 +35,8 @@ public class MarketSessionManager {
 
         session.send(message);
     }
+
+    public NettySession remove(long passportId) {
+        return marketSessions.remove(passportId);
+    }
 }

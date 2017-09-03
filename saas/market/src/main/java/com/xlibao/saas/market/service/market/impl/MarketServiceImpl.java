@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
+import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.datacache.location.LocationDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketRelationship;
@@ -166,6 +167,21 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         }
         JSONObject response = JSONObject.parseObject(JSONObject.toJSONString(marketEntry));
         return success(response);
+    }
+
+    @Override
+    public JSONObject marketResponse() {
+        long passportId = getLongParameter("passportId");
+        byte responseStatus = getByteParameter("responseStatus", GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
+
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarketForPassport(passportId);
+        if (marketEntry == null) {
+            return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response("找不到商店，通行证ID：" + passportId);
+        }
+        int status = (responseStatus == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) ? (marketEntry.getStatus() | MarketStatusEnum.NO_RESPONSE.getKey()) : (marketEntry.getStatus() ^ MarketStatusEnum.NO_RESPONSE.getKey());
+        marketEntry.setStatus((responseStatus == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) ? (marketEntry.getStatus() | MarketStatusEnum.NO_RESPONSE.getKey()) : (marketEntry.getStatus() ^ MarketStatusEnum.NO_RESPONSE.getKey()));
+        dataAccessFactory.getMarketDataAccessManager().marketResponse(marketEntry.getId(), status);
+        return success();
     }
 
     public JSONObject getAllMarkets() {

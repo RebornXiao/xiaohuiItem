@@ -16,27 +16,15 @@ public class MarketRemoteService extends BasicRemoteService {
 
     private static final Logger logger = LoggerFactory.getLogger(MarketRemoteService.class);
 
-    public static JSONObject notifyShipment(String orderSequenceNumber, String serialNumber) {
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("orderSequenceNumber", orderSequenceNumber);
-        parameters.put("serialNumber", serialNumber);
-
-        String url = ConfigFactory.getDomainNameConfig().marketRemoteURL + "market/message/callback/notifyShipment.do";
-        JSONObject response = executor(url, parameters);
-
-        logger.info(orderSequenceNumber + "[" + serialNumber + "]通知商店取货结果：" + response);
-        return response;
-    }
-
-    public static JSONObject notifyShelvesData(long passportId, String content) {
+    public static JSONObject marketResponse(long passportId, byte responseStatus) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("passportId", String.valueOf(passportId));
-        parameters.put("content", content);
+        parameters.put("responseStatus", String.valueOf(responseStatus));
 
-        String url = ConfigFactory.getDomainNameConfig().marketRemoteURL + "market/message/callback/notifyShelvesData.do";
+        String url = ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/openapi/marketResponse.do";
         JSONObject response = executor(url, parameters);
 
-        logger.info(passportId + " -- 通知商店货架信息结果：" + response);
+        logger.info(passportId + "[" + responseStatus + "]修改商店状态结果：" + response);
         return response;
     }
 }

@@ -1,5 +1,6 @@
 package com.xlibao.saas.market.service.message.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
@@ -49,7 +50,19 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         String serialNumber = getUTF("serialNumber");
 
         OrderEntry orderEntry = checkOrderAdministrators(orderSequenceNumber, passportId);
-        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) { // 自提订单时，出货完成将订单状态设置为配送中(展示则为：待取货)
+
+        MarketOrderProperties orderProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.CONTAINER_DATA.getTypeEnum().getKey(), PropertiesKeyEnum.CONTAINER_DATA.getKey());
+        JSONObject containerData = JSONObject.parseObject(orderProperties.getV());
+        // 需要的货架数量
+        int containerCount = containerData.getIntValue("containerCount");
+        // 已出货完成的副单记录
+        JSONArray containers = containerData.getJSONArray("containers");
+
+        if (!containers.contains(serialNumber)) {
+            containers.add(serialNumber);
+            dataAccessFactory.getOrderDataAccessManager().updateOrderProperties(orderProperties.getId(), containerData.toJSONString());
+        }
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() && containerCount == containers.size()) { // 自提订单时，出货完成将订单状态设置为配送中(展示则为：待取货)
             // 修改订单状态
             OrderRemoteService.distributionOrder(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey(), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
         }
@@ -147,8 +160,11 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         // 刷新订单的取货货柜信息
         refreshOrderProperties(orderEntry, PropertiesKeyEnum.PICK_UP_CONTAINER_SET, containerCode);
         if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) {
-            MarketOrderProperties orderProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.CONTAINER_SET.getKey());
-            if (containerCode.equals(orderProperties.getV())) { // 完成了取货时将订单设置为完成状态
+            MarketOrderProperties orderProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.CONTAINER_DATA.getTypeEnum().getKey(), PropertiesKeyEnum.CONTAINER_DATA.getKey());
+            JSONObject containerData = JSONObject.parseObject(orderProperties.getV());
+            // 需要的货架数量
+            int containerCount = containerData.getIntValue("containerCount");
+            if (containerCode.length() / 2 >= containerCount) { // 完成取货时将订单设置为完成状态
                 return OrderRemoteService.confirmOrder(orderEntry.getId(), Long.parseLong(orderEntry.getPartnerUserId()), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
             }
         }
@@ -166,9 +182,14 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         if (orderStatusLogger == null) { // 记录请求取货状态
             dataAccessFactory.getOrderDataAccessManager().createOrderStatusLogger(orderSequenceNumber, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_ARRIVE, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), System.currentTimeMillis());
         }
+        MarketOrderProperties orderProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.CONTAINER_DATA.getTypeEnum().getKey(), PropertiesKeyEnum.CONTAINER_DATA.getKey());
+        JSONObject containerData = JSONObject.parseObject(orderProperties.getV());
+        // 需要的货架数量
+        int containerCount = containerData.getIntValue("containerCount");
+
         // 获取订单的货柜记录，检查是否已全部出货
         MarketOrderProperties orderContainerSetProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.CONTAINER_SET.getKey());
-        if (orderContainerSetProperties == null) { // 未存在订单货柜信息
+        if (orderContainerSetProperties == null || (orderContainerSetProperties.getV().length() / 2 < containerCount)) { // 未完成订单货柜信息
             // 获取订单货柜信息
             marketShopRemoteService.orderDataMessage(passportId, orderSequenceNumber);
             // 未获取订单货柜信息
@@ -178,7 +199,7 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         if (pickUpContainerSetProperties == null) { // 未存在取货记录 可继续执行取货操作
             return success();
         }
-        if (pickUpContainerSetProperties.getV().equals(orderContainerSetProperties.getV())) {
+        if (pickUpContainerSetProperties.getV().length() >= orderContainerSetProperties.getV().length()) {
             return fail("全部商品已完成出货，不能重复取货");
         }
         return success();

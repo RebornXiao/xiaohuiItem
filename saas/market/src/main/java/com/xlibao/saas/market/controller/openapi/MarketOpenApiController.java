@@ -55,6 +55,17 @@ public class MarketOpenApiController {
 
     /**
      * <pre>
+     *     <b></b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "marketResponse")
+    public JSONObject marketResponse() {
+        return marketService.marketResponse();
+    }
+
+    /**
+     * <pre>
      *     <b>获取组(走道)、货架(单元)、层(楼层)的值</b>
      *
      *     <b>访问地址：</b>http://domainName/market/open/getShelvesMarks.do

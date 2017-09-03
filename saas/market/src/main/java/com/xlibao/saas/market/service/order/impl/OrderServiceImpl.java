@@ -17,7 +17,6 @@ import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketItem;
 import com.xlibao.market.data.model.MarketItemDailyPurchaseLogger;
-import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
@@ -191,45 +190,6 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     }
 
     @Override
-    public JSONObject pickUpItems() {
-        long passportId = getLongParameter("passportId");
-        String orderSequenceNumber = getUTF("orderSequenceNumber");
-
-        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
-
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarketForPassport(passportId);
-        if (!Objects.equals(orderEntry.getShippingPassportId(), marketEntry.getId())) {
-            // TODO 推送通知用户订单权限出错
-            return MarketOrderErrorCodeEnum.NON_MARKET_ORDER.response();
-        }
-        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey()) {
-            // TODO 推送通知用户订单未支付
-            throw OrderErrorCodeEnum.UN_PAYMENT_ORDER.throwException();
-        }
-        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
-            // TODO 推送通知用户订单处于配送中
-            throw OrderErrorCodeEnum.HAS_DISTRIBUTION_ORDER.throwException();
-        }
-        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_ARRIVE.getKey()) {
-            // TODO 通知用户该订单已取货(已签收、已提货)
-            throw OrderErrorCodeEnum.HAS_ARRIVE_ORDER.throwException();
-        }
-        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) { // 自提
-            if (passportId != Long.parseLong(orderEntry.getPartnerUserId()) && passportId != Long.parseLong(orderEntry.getReceiptUserId())) {
-                // 通知用户权限出错
-                return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
-            }
-        }
-        if (orderEntry.getDeliverType() == DeliverTypeEnum.DISTRIBUTION.getKey()) {
-            if (passportId != orderEntry.getCourierPassportId()) {
-                // 通知用户权限出错
-                return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
-            }
-        }
-        return null;
-    }
-
-    @Override
     public JSONObject acceptOrder() {
         // 接单者
         long passportId = getLongParameter("passportId");
@@ -346,10 +306,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
     private JSONObject fillOrderDetailMsg(OrderEntry orderEntry, int roleType, long passportId) {
         if (roleType != OrderRoleTypeEnum.CONSUMER.getKey()) {
-            return fail("您没有权限查看该订单详情");
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response("您没有权限查看该订单详情");
         }
         if (Long.parseLong(orderEntry.getPartnerUserId()) != passportId && Long.parseLong(orderEntry.getReceiptUserId()) != passportId) {
-            return fail("您没有权限查看该订单详情");
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response("您没有权限查看该订单详情");
         }
         JSONObject orderMsg = new JSONObject();
 
