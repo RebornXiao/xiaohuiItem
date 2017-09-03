@@ -42,23 +42,34 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
         // 按最短的进行排序
         Collections.sort(itemSnapshots, itemLengthComparator);
         // 分组
-        // Map<Integer, List<OrderItemSnapshot>> groupOrders = new HashMap<>();
+        Map<Integer, List<OrderItemSnapshot>> groupOrders = new HashMap<>();
         // 计数器
         int counter = 1;
 
         int currentLength = 0;
         for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
-            // List<OrderItemSnapshot> groupOrder = groupOrders.get(counter);
-            // if (groupOrder == null) {
-            //     groupOrder = new ArrayList<>();
-            //     groupOrders.put(counter, groupOrder);
-            // }
-            // groupOrder.add(itemSnapshot);
             ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemSnapshot.getItemTemplateId());
-            currentLength += itemTemplate.minimumLength();
-            if (currentLength >= XMarketServiceConfig.ORDER_ITEM_MAX_LENGTH) {
-                counter++;
-                currentLength = 0;
+
+            int productNumber = 0;
+            for (int i = 0; i < itemSnapshot.totalQuantity(); i++) {
+                if (currentLength >= XMarketServiceConfig.ORDER_ITEM_MAX_LENGTH) {
+                    groupItemSnapshot(groupOrders, counter, itemSnapshot, productNumber);
+
+                    counter++;
+                    currentLength = 0;
+                    productNumber = 0;
+                    continue;
+                }
+                currentLength += itemTemplate.minimumLength();
+                productNumber++;
+            }
+            if (productNumber > 0) {
+                groupItemSnapshot(groupOrders, counter, itemSnapshot, productNumber);
+
+                if (currentLength >= XMarketServiceConfig.ORDER_ITEM_MAX_LENGTH) {
+                    counter++;
+                    currentLength = 0;
+                }
             }
         }
         logger.info("对本次购买商品进行分组，分组结果数量：" + counter);
@@ -68,6 +79,19 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
         containerData.put("containers", new JSONArray());
 
         dataAccessFactory.getOrderDataAccessManager().createOrderProperties(entry.getId(), entry.getOrderSequenceNumber(), PropertiesKeyEnum.CONTAINER_DATA.getTypeEnum().getKey(), PropertiesKeyEnum.CONTAINER_DATA.getKey(), containerData.toJSONString());
+    }
+
+    private void groupItemSnapshot(Map<Integer, List<OrderItemSnapshot>> groupOrders, int counter, OrderItemSnapshot itemSnapshot, int productNumber) {
+        List<OrderItemSnapshot> groupOrder = groupOrders.get(counter);
+        if (groupOrder == null) {
+            groupOrder = new ArrayList<>();
+            groupOrders.put(counter, groupOrder);
+        }
+        OrderItemSnapshot copyItemSnapshot = new OrderItemSnapshot();
+        copyItemSnapshot.setItemId(itemSnapshot.getItemId());
+        copyItemSnapshot.setNormalQuantity(productNumber);
+
+        groupOrder.add(copyItemSnapshot);
     }
 
     @Override
