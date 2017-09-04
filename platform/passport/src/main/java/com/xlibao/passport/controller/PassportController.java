@@ -217,6 +217,25 @@ public class PassportController extends BasicWebService {
         return passportService.versionUpgrade();
     }
 
+    /**
+     * <pre>
+     *     <b>确认手机号是否已被使用</b>
+     *
+     *     <b>访问地址：</b>http://domainName/passport/phoneBeUsed
+     *     <b>访问方式：</b>GET/POST，推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>phoneNumber</b> - String 需要验证的手机号
+     *
+     *     <b>返回：</b>仅返回是否被使用的描述
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "phoneBeUsed")
+    public JSONObject phoneBeUsed() {
+        return passportService.phoneBeUsed();
+    }
+
     @ResponseBody
     @RequestMapping(value = "changeAccessToken")
     public JSONObject changeAccessToken() {

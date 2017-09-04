@@ -134,6 +134,10 @@ public class OrderDataAccessManager {
     public int refreshOrderStatus(String orderSequenceNumber, int targetStatus, String validStatusSet) {
         return entryMapper.refreshOrderStatus(orderSequenceNumber, targetStatus, validStatusSet);
     }
+
+    public int applyRefund(long orderId, int refundStatus, String matchStatusSet, String refundReason) {
+        return entryMapper.applyRefund(orderId, refundStatus, matchStatusSet, refundReason);
+    }
     // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 订单访问接口(orderEntryMapper) ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
     // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 订单商品快照(orderItemSnapshotMapper) ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
@@ -251,6 +255,7 @@ public class OrderDataAccessManager {
     public List<OrderEntry> searchPageOrders(long marketId, int orderState, String startTime, String endTime, String searchType, String searchKey, int pageSize, int pageStartIndex) {
         return entryMapper.searchPageOrders(marketId, orderState, startTime, endTime, searchType, searchKey, pageSize, pageStartIndex);
     }
+
     public int searchPageOrderCount(long marketId, int orderState, String startTime, String endTime, String searchType, String searchKey, int pageSize, int pageStartIndex) {
         return entryMapper.searchPageOrderCount(marketId, orderState, startTime, endTime, searchType, searchKey, pageSize, pageStartIndex);
     }

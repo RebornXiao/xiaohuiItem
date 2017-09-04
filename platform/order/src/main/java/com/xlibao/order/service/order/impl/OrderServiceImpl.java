@@ -915,6 +915,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         long passportId = getLongParameter("passportId");
         String orderSequenceNumber = getUTF("orderSequenceNumber");
         String matchStatusSet = getUTF("matchStatusSet", String.valueOf(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()));
+        String refundReason = getUTF("refundReason", "");
 
         OrderEntry orderEntry = getOrder(orderSequenceNumber);
         if (matchStatusSet.contains(String.valueOf(orderEntry.getStatus()))) {
@@ -924,7 +925,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if (passportId != Long.parseLong(orderEntry.getPartnerUserId())) {
             return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
         }
-        int result = orderDataAccessManager.updateOrderStatus(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey(), orderEntry.getStatus(), orderEntry.getDeliverStatus(), orderEntry.getDeliverStatus());
+        int result = orderDataAccessManager.applyRefund(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey(), matchStatusSet, refundReason);
         if (result <= 0) { // 预操作，当执行失败时，回滚该操作；否则提交
             return OrderErrorCodeEnum.REFUND_FAIL.response("申请退款失败，请稍后重试！");
         }

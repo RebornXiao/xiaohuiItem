@@ -170,4 +170,8 @@
     <update id="refreshOrderStatus">
         update order_entry set status = #{targetStatus} where order_sequence_number = #{orderSequenceNumber} and status in (${validStatusSet})
     </update>
+
+    <update id="applyRefund">
+        update order_entry set status = #{targetStatus}, detail = #{refundReason} where id = #{orderId} and status in (${matchStatusSet})
+    </update>
 </mapper>

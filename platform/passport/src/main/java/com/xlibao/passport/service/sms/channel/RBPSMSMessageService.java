@@ -3,11 +3,14 @@ package com.xlibao.passport.service.sms.channel;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.http.HttpUtils;
+import com.xlibao.passport.config.ConfigFactory;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Component
 public class RBPSMSMessageService {
 
     private static final Logger logger = Logger.getLogger(RBPSMSMessageService.class);
@@ -44,11 +47,11 @@ public class RBPSMSMessageService {
             throw new XlibaoIllegalArgumentException("Message content can't not null");
         }
         JSONObject parameter = new JSONObject();
-        parameter.put("account", "N5556265");
-        parameter.put("password", "l9LyacnFJecb5f00");
-        parameter.put("report", "true");
+        parameter.put("account", ConfigFactory.getPartner().getRbpAccount());
+        parameter.put("password", ConfigFactory.getPartner().getRbpPassword());
+        parameter.put("report", ConfigFactory.getPartner().isRbpReport());
         parameter.put("phone", mobileNumbers);
-        parameter.put("msg", "【253云通讯】" + messageContent);
+        parameter.put("msg", ConfigFactory.getPartner().getRbpSignName() + messageContent);
 
         JSONObject returnParameter = HttpUtils.post(RBP_SMS_URL, parameter, false);
 

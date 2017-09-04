@@ -27,6 +27,8 @@ public enum PlatformErrorCodeEnum {
     NOT_FOUND_TARGET(400, "找不到目标"),
     /** 401 -- 您没有权限执行该操作 */
     NOT_HAVE_PERMISSION(401, "您没有权限执行该操作"),
+    /** 500 -- 未完善通行证资料 */
+    UN_PERFECT_PASSPORT(500, "未完善通行证资料"),
     ;
 
     private int key;

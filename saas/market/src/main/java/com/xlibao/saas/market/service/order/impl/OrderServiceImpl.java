@@ -13,6 +13,8 @@ import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.exception.code.OrderErrorCodeEnum;
+import com.xlibao.common.exception.code.PassportErrorCodeEnum;
+import com.xlibao.common.support.PassportRemoteService;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketItem;
@@ -20,6 +22,7 @@ import com.xlibao.market.data.model.MarketItemDailyPurchaseLogger;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
+import com.xlibao.metadata.passport.Passport;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.item.MarketItemErrorCodeEnum;
@@ -57,7 +60,6 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     @Autowired
     private MarketShopRemoteService marketShopRemoteService;
 
-
     @Override
     public JSONObject prepareCreateOrder() {
         long passportId = getPassportId();
@@ -65,6 +67,13 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         OrderTypeEnum orderTypeEnum = OrderTypeEnum.getOrderTypeEnum(orderType);
         if (orderTypeEnum == null) {
             return fail("订单类型出错，无法预创建订单，类型值：" + orderType);
+        }
+        Passport passport = PassportRemoteService.getPassport(passportId);
+        if (passport == null) {
+            return PassportErrorCodeEnum.NOT_FOUND_PASSPORT.response("找不到通行证记录，错误码：" + passportId);
+        }
+        if (CommonUtils.isNullString(passport.getPhoneNumber())) {
+            return PlatformErrorCodeEnum.UN_PERFECT_PASSPORT.response("请绑定平台帐号");
         }
         return OrderRemoteService.prepareCreateOrder(passportId, orderTypeEnum);
     }
@@ -210,14 +219,17 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     public JSONObject refundOrder() {
         long passportId = getPassportId();
         String orderSequenceNumber = getUTF("orderSequenceNumber");
+        String title = getUTF("title"); // 退款原因标题，必填参数。
+        String content = getUTF("content", "");
 
         OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
         if (orderEntry == null) {
             return OrderErrorCodeEnum.NOT_FOUND_ORDER.response();
         }
+        String matchStatusSet = OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DELIVER + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey();
         // 申请退款
-        OrderRemoteService.refreshOrderStatus(orderSequenceNumber, OrderPermissionTypeEnum.CONSUMER.getKey(), String.valueOf(passportId), OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey(), OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()
-                + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DELIVER + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey());
+        PaymentRemoteService.applyRefund(passportId, orderSequenceNumber, matchStatusSet, title, content);
+
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
         // 请求商店进行退货
         marketShopRemoteService.refundMessage(marketEntry.getPassportId(), orderSequenceNumber);

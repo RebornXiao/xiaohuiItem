@@ -203,6 +203,8 @@ public class OrderOpenApiController {
      *     <b>参数：</b>
      *          <b>passportId</b> - long 通行证ID，必填参数；对应发起退款的用户。
      *          <b>orderSequenceNumber</b> - String 订单序号，必填参数。
+     *          <b>title</b> - String 退款原因标题，必填参数。
+     *          <b>content</b> - String 退款说明，非必填参数。
      *
      *     <b>返回：</b>仅返回成功或失败的描述
      * </pre>
