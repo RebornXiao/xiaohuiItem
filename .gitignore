@@ -2,6 +2,13 @@
 ### Example user template template
 ### Example user template
 
+##ignore this file##
+/target/ 
+
+.classpath
+.project
+.settings
+
 # IntelliJ project files
 .idea
 *.iml
