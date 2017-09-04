@@ -90,7 +90,8 @@ public class AdvertManagerController extends BaseController {
      * @param map
      * @return
      */
-    @RequestMapping("/delAdvert")
+    @ResponseBody
+    @RequestMapping(value = "/delAdvert", method = RequestMethod.POST)
     public JSONObject delAdvert(ModelMap map){
         return adverManagerService.delAdvertByID();
     }
@@ -130,7 +131,8 @@ public class AdvertManagerController extends BaseController {
      * @param map
      * @return
      */
-    @RequestMapping("/delScreen")
+    @ResponseBody
+    @RequestMapping(value = "/delScreen", method = RequestMethod.POST)
     public JSONObject delScreen(ModelMap map){
         return adverManagerService.delScreenByID();
     }
@@ -181,7 +183,8 @@ public class AdvertManagerController extends BaseController {
      * @param map
      * @return
      */
-    @RequestMapping("/delScreenAdvert")
+    @ResponseBody
+    @RequestMapping(value = "/delScreenAdvert", method = RequestMethod.POST)
     public JSONObject delScreenAdvert(ModelMap map){
         return adverManagerService.delAdvertScreenByID();
     }
