@@ -233,7 +233,6 @@
                 </#if>
 
                 showLocation(${provinceId}, ${cityId}, ${districtId}, ${streetId}, ${streets_assign}, function (id, func) {
-                    alert("id="+id);
                     $.get("${base}/market/getStreets.do?districtId=" + id, function (data) {
                         func(id, data);
                     }, "json");

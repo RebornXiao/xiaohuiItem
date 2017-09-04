@@ -103,7 +103,7 @@
                                 <td>${item.itemTemplateId?c}</td>
                                 <td>${item.defineName}</td>
                                 <#if marketId == 0>
-                                    <th>${item.ownerId}</th>
+                                    <td>${item.ownerId?c}</td>
                                 </#if>
                                 <td>${item.costPrice}</td>
                                 <td>${item.sellPrice}</td>
