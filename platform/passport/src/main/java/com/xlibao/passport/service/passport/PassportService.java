@@ -34,5 +34,7 @@ public interface PassportService {
 
     Passport getPassport(String loginName);
 
+    JSONObject phoneBeUsed();
+
     JSONObject modifyNickname();
 }

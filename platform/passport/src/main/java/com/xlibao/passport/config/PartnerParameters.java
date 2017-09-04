@@ -3,6 +3,8 @@ package com.xlibao.passport.config;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
+import java.io.UnsupportedEncodingException;
+
 /**
  * @author chinahuangxc on 2017/5/31.
  */
@@ -22,6 +24,15 @@ public class PartnerParameters {
 
     @Value("${sms_open}")
     private String smsOpen;
+
+    @Value("${rbp_account}")
+    private String rbpAccount;
+    @Value("${rbp_password}")
+    private String rbpPassword;
+    @Value("${rbp_sign_name}")
+    private String rbpSignName;
+    @Value("${rbp_report}")
+    private String rbpReport;
 
     @Value("${weixin_mp_app_id}")
     private String weixinMpAppId;
@@ -55,6 +66,27 @@ public class PartnerParameters {
 
     public boolean isSmsOpen() {
         return "true".equals(smsOpen);
+    }
+
+    public String getRbpAccount() {
+        return rbpAccount;
+    }
+
+    public String getRbpPassword() {
+        return rbpPassword;
+    }
+
+    public String getRbpSignName() {
+        try {
+            return new String(rbpSignName.getBytes("ISO-8859-1"), "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public boolean isRbpReport() {
+        return "true".equals(rbpReport);
     }
 
     public String getWeixinMpAppId() {

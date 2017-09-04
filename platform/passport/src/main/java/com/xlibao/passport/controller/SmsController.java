@@ -42,9 +42,12 @@ public class SmsController extends BasicWebService {
      *     访问地址：http://domainName/sms/verifySmsCode
      *     访问方式：POST/GET(推荐使用POST)
      *
-     *     <b>phone</b> - String 手机号，必填参数。
-     *     <b>smsCode</b> - String 验证码，必填参数。
-     *     <b>smsType</b> - int 验证码类型，非必填参数；具体参考{@linkplain com.xlibao.common.constant.sms.SmsCodeTypeEnum}。
+     *     <b>参数：</b>
+     *          <b>phone</b> - String 手机号，必填参数。
+     *          <b>smsCode</b> - String 验证码，必填参数。
+     *          <b>smsType</b> - int 验证码类型，非必填参数；具体参考{@linkplain com.xlibao.common.constant.sms.SmsCodeTypeEnum}。
+     *
+     *     <b>返回：</b>仅返回成功或失败的描述
      * </pre>
      */
     @ResponseBody

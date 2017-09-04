@@ -361,6 +361,16 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
     }
 
     @Override
+    public JSONObject phoneBeUsed() {
+        String phoneNumber = getUTF("phoneNumber");
+        if (!CommonUtils.isMobileNum(phoneNumber)) {
+            return PlatformErrorCodeEnum.PHONE_NUMBER_ERROR.response("手机号格式错误，号码：" + phoneNumber);
+        }
+        Passport passport = getPassport(phoneNumber);
+        return passport == null ? success() : fail("手机号[" + phoneNumber + "]已被使用");
+    }
+
+    @Override
     public JSONObject modifyNickname() {
         changeAccessToken();
         long passportId = getLongParameter("passportId");

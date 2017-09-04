@@ -50,4 +50,6 @@ public interface OrderEntryMapper {
                             @Param("receiptPhone") String receiptPhone, @Param("receiptLocation") String receiptLocation, @Param("remark") String remark);
 
     int refreshOrderStatus(@Param("orderSequenceNumber") String orderSequenceNumber, @Param("targetStatus") int targetStatus, @Param("validStatusSet") String validStatusSet);
+
+    int applyRefund(@Param("orderId") long orderId, @Param("refundStatus") int refundStatus, @Param("matchStatusSet") String matchStatusSet, @Param("refundReason") String refundReason);
 }
