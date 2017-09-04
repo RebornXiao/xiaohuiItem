@@ -3,10 +3,12 @@ package com.xlibao.saas.market.core.service.hardware.impl;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.io.service.netty.NettySession;
 import com.xlibao.market.protocol.HardwareMessageType;
+import com.xlibao.saas.market.core.message.SessionManager;
 import com.xlibao.saas.market.core.service.hardware.HardwareService;
 import com.xlibao.saas.market.core.service.support.MarketApplicationRemoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -16,6 +18,9 @@ import org.springframework.stereotype.Service;
 public class HardwareServiceImpl implements HardwareService {
 
     private static final Logger logger = LoggerFactory.getLogger(HardwareServiceImpl.class);
+
+    @Autowired
+    private SessionManager sessionManager;
 
     @Override
     public void fromHardwareMessageExecute(NettySession session, String content) {
@@ -29,21 +34,22 @@ public class HardwareServiceImpl implements HardwareService {
             return;
         }
         content = content.substring(8);
+        NettySession marketSession = sessionManager.getMarketSession();
         switch (messageType) {
             case HardwareMessageType.SHIPMENT:
-                MarketApplicationRemoteService.notifyShipment((Long) session.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 20));
+                MarketApplicationRemoteService.notifyShipment((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 20));
                 break;
             case HardwareMessageType.SHELVES:
-                MarketApplicationRemoteService.notifyShelvesData((Long) session.getAttribute("passportId"), content);
+                MarketApplicationRemoteService.notifyShelvesData((Long) marketSession.getAttribute("passportId"), content);
                 break;
             case HardwareMessageType.ORDER:
-                MarketApplicationRemoteService.notifyOrderData((Long) session.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18), content.substring(18));
+                MarketApplicationRemoteService.notifyOrderData((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18), content.substring(18));
                 break;
             case HardwareMessageType.REFUND:
-                MarketApplicationRemoteService.notifyRefund((Long) session.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18));
+                MarketApplicationRemoteService.notifyRefund((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18));
                 break;
             case HardwareMessageType.PICK_UP:
-                MarketApplicationRemoteService.notifyPickUp((Long) session.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18), content.substring(18));
+                MarketApplicationRemoteService.notifyPickUp((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18), content.substring(18));
                 break;
         }
     }

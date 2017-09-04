@@ -263,6 +263,7 @@ public class VGFrame extends javax.swing.JFrame {
 
     private void btnClearHistoryActionPerformed(java.awt.event.ActionEvent evt) {
         txtHistory.setText("");
+        lineIndex = 0;
         appendHistory("清空了操作历史记录");
     }
 

@@ -60,6 +60,10 @@ public class PassportDataManager {
         return passportMapper.modifyAccessToken(id, accessToken);
     }
 
+    public int modifyPhoneNumber(long passportId, String mobileNumber) {
+        return passportMapper.modifyPhoneNumber(passportId, mobileNumber);
+    }
+
     public int createPassportAlias(PassportAlias passportAlias) {
         return passportAliasMapper.createPassportAlias(passportAlias);
     }

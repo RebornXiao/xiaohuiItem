@@ -20,6 +20,8 @@ public enum SmsCodeTypeEnum {
     DRAW_CASH(5, "(提现验证码，五分钟内有效)", "SMS_67151232"),
     /** 6 -- 重置手机号 */
     RESET_MOBILE_NUMBER(6, "(重置手机验证码，五分钟内有效)", "SMS_67286220"),
+    /** 7 -- 绑定手机号 */
+    BINDING_MOBILE_NUMBER(7, "(绑定手机号，验证码5分钟有效)", ""),
     ;
 
     private int key;

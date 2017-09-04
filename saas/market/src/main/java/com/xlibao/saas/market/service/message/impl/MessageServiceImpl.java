@@ -148,7 +148,7 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
 
         // 订单记录
         OrderEntry orderEntry = checkOrderAdministrators(orderSequenceNumber, passportId);
-        // 修改该状态的远程状态
+        // 修改该请求的远程状态
         dataAccessFactory.getOrderDataAccessManager().modifyOrderRemoteStatusLogger(orderSequenceNumber, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_ARRIVE, GlobalAppointmentOptEnum.LOGIC_TRUE.getKey(), System.currentTimeMillis());
         if ("00".equals(containerCode)) {
             return fail("商品未配送完成，请稍等");
@@ -180,7 +180,7 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
 
         OrderEntry orderEntry = checkOrderAdministrators(orderSequenceNumber, passportId);
 
-        MarketOrderStatusLogger orderStatusLogger = dataAccessFactory.getOrderDataAccessManager().getOrderStatusLogger(orderSequenceNumber, OrderStatusEnum.ORDER_STATUS_ARRIVE);
+        MarketOrderStatusLogger orderStatusLogger = dataAccessFactory.getOrderDataAccessManager().getOrderStatusLogger(orderSequenceNumber, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_ARRIVE);
         if (orderStatusLogger == null) { // 记录请求取货状态
             dataAccessFactory.getOrderDataAccessManager().createOrderStatusLogger(orderSequenceNumber, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_ARRIVE, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), System.currentTimeMillis());
         }
@@ -201,7 +201,7 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         if (pickUpContainerSetProperties == null) { // 未存在取货记录 可继续执行取货操作
             return success();
         }
-        JSONObject data = JSONObject.parseObject(pickUpContainerSetProperties.getV());
+        // JSONObject data = JSONObject.parseObject(pickUpContainerSetProperties.getV());
         if (pickUpContainerSetProperties.getV().length() >= containerCount) {
             return fail("全部商品已完成出货，不能重复取货");
         }

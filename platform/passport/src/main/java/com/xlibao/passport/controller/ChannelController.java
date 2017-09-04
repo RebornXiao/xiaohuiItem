@@ -66,4 +66,25 @@ public class ChannelController {
     public JSONObject perfectWeixinInformation() {
         return tencentService.perfectWeixinInformation();
     }
+
+    /**
+     * <pre>
+     *     <b>微信账户绑定手机号</b>
+     *
+     *     <b>访问地址：</b>http://domainName/passport/channel/weixinBindingCellNumber
+     *     <b>访问方式：</b>GET/POST，推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>openId</b> - String 微信授权后获取的openId
+     *          <b>phoneNumber</b> - String 期望绑定的手机号
+     *          <b>smsCode</b> - String 收到的验证码
+     *
+     *     <b>返回：</b>仅返回成功或失败的描述
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "weixinBindingCellNumber")
+    public JSONObject weixinBindingCellNumber() {
+        return tencentService.weixinBindingCellNumber();
+    }
 }

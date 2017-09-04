@@ -41,6 +41,10 @@
         update passport set access_token = #{accessToken} where id = #{id}
     </update>
 
+    <update id="modifyPhoneNumber">
+        update passport set phone_number = #{mobileNumber} where id = #{passportId}
+    </update>
+
     <update id="modifyNickname">
         update passport set show_name = #{nickname} where id = #{id}
     </update>

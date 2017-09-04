@@ -216,10 +216,11 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             return OrderErrorCodeEnum.NOT_FOUND_ORDER.response();
         }
         // 申请退款
-        PaymentRemoteService.applyRefund(passportId, orderSequenceNumber, (orderEntry.getDeliverType() != DeliverTypeEnum.PICKED_UP.getKey()) ? String.valueOf(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) :
-                (OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DELIVER + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()));
+        OrderRemoteService.refreshOrderStatus(orderSequenceNumber, OrderPermissionTypeEnum.CONSUMER.getKey(), String.valueOf(passportId), OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey(), OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()
+                + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DELIVER + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey());
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
         // 请求商店进行退货
-        marketShopRemoteService.refundMessage(passportId, orderSequenceNumber);
+        marketShopRemoteService.refundMessage(marketEntry.getPassportId(), orderSequenceNumber);
         // 执行退款业务
         return success("已发起退货申请，请稍后刷新订单状态");
     }

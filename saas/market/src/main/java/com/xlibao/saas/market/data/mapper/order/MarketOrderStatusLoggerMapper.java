@@ -9,7 +9,7 @@ public interface MarketOrderStatusLoggerMapper {
 
     int createOrderStatusLogger(MarketOrderStatusLogger orderStatusLogger);
 
-    MarketOrderStatusLogger getOrderStatusLogger(@Param("orderSequenceNumber") String orderSequenceNumber, @Param("localStatus") int localStatus);
+    MarketOrderStatusLogger getOrderStatusLogger(@Param("orderSequenceNumber") String orderSequenceNumber, @Param("notifyType") int notifyType, @Param("localStatus") int localStatus);
 
     int modifyOrderRemoteStatusLogger(@Param("orderSequenceNumber") String orderSequenceNumber, @Param("notifyType") int notifyType, @Param("localStatus") int localStatus, @Param("remoteStatus") int remoteStatus, @Param("remoteCompleteTime") Date remoteCompleteTime);
 }

@@ -37,7 +37,7 @@ public class MarketShopRemoteService extends BasicRemoteService {
         // 记录发送状态
         logger.info("推送出货消息到商店系统，passport id is " + passportId + ", content is " + content);
 
-        final MarketOrderStatusLogger orderStatusLogger = dataAccessFactory.getOrderDataAccessManager().getOrderStatusLogger(mark, OrderStatusEnum.ORDER_STATUS_PAYMENT);
+        final MarketOrderStatusLogger orderStatusLogger = dataAccessFactory.getOrderDataAccessManager().getOrderStatusLogger(mark, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_PAYMENT);
         if (orderStatusLogger != null && orderStatusLogger.getRemoteStatus() == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) {
             logger.error("订单重复请求出货功能，mark : " + mark);
             throw new XlibaoRuntimeException("不能重复出货");

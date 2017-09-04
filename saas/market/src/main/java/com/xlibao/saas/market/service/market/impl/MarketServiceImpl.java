@@ -178,8 +178,8 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         if (marketEntry == null) {
             return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response("找不到商店，通行证ID：" + passportId);
         }
-        int status = (responseStatus == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) ? (marketEntry.getStatus() | MarketStatusEnum.NO_RESPONSE.getKey()) : (marketEntry.getStatus() ^ MarketStatusEnum.NO_RESPONSE.getKey());
-        marketEntry.setStatus((responseStatus == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) ? (marketEntry.getStatus() | MarketStatusEnum.NO_RESPONSE.getKey()) : (marketEntry.getStatus() ^ MarketStatusEnum.NO_RESPONSE.getKey()));
+        int status = (responseStatus == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) ? (marketEntry.getStatus() ^ MarketStatusEnum.NO_RESPONSE.getKey()) : (marketEntry.getStatus() | MarketStatusEnum.NO_RESPONSE.getKey());
+        marketEntry.setStatus(status);
         dataAccessFactory.getMarketDataAccessManager().marketResponse(marketEntry.getId(), status);
         return success();
     }

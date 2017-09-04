@@ -34,8 +34,8 @@ public class OrderDataAccessManager {
         return orderStatusLoggerMapper.modifyOrderRemoteStatusLogger(orderSequenceNumber, notifyType, localStatus.getKey(), remoteStatus, new Date(remoteCompleteTime));
     }
 
-    public MarketOrderStatusLogger getOrderStatusLogger(String orderSequenceNumber, OrderStatusEnum localStatus) {
-        return orderStatusLoggerMapper.getOrderStatusLogger(orderSequenceNumber, localStatus.getKey());
+    public MarketOrderStatusLogger getOrderStatusLogger(String orderSequenceNumber, int notifyType, OrderStatusEnum localStatus) {
+        return orderStatusLoggerMapper.getOrderStatusLogger(orderSequenceNumber, notifyType, localStatus.getKey());
     }
 
     public MarketOrderProperties createOrderProperties(long orderId, String orderSequenceNumber, int propertiesType, String propertiesKey, String propertiesValue) {

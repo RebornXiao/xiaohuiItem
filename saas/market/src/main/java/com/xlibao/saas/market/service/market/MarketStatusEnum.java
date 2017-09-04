@@ -17,6 +17,8 @@ public enum MarketStatusEnum {
     private String value;
 
     MarketStatusEnum(int key, String value) {
+        this.key = key;
+        this.value = value;
     }
 
     public int getKey() {

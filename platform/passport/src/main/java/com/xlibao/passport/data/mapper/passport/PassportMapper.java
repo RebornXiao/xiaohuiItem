@@ -13,6 +13,8 @@ public interface PassportMapper {
 
     int modifyAccessToken(@Param("id") long id, @Param("accessToken") String accessToken);
 
+    int modifyPhoneNumber(@Param("passportId") long passportId, @Param("mobileNumber") String mobileNumber);
+
     int modifyNickname(@Param("id") long id, @Param("nickname") String nickname);
 
     int perfectPassportInformation(@Param("id") long id, @Param("nickName") String nickName, @Param("headImageUrl") String headImageUrl, @Param("sex") byte sex, @Param("status") int status);

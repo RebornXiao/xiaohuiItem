@@ -19,6 +19,7 @@ import com.xlibao.metadata.passport.PassportProperties;
 import com.xlibao.passport.data.mapper.channel.ChannelDataManager;
 import com.xlibao.passport.data.mapper.passport.PassportDataManager;
 import com.xlibao.passport.data.mapper.version.VersionDataManager;
+import com.xlibao.passport.data.model.PassportAlias;
 import com.xlibao.passport.data.model.PassportVersion;
 import com.xlibao.passport.service.passport.PassportEventListenerManager;
 import com.xlibao.passport.service.passport.PassportService;
@@ -274,6 +275,29 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         smsService.verifySmsCode(expectMobileNumber, smsCode, SmsCodeTypeEnum.RESET_MOBILE_NUMBER.getKey());
         // TODO 数据库操作
         return success("重置手机号码成功，您可以使用手机号码[" + expectMobileNumber + "]进行登录");
+    }
+
+    @Override
+    public int bindingMobileNumber(long passportId, String mobileNumber) {
+        Passport passport = passportDataManager.getPassport(mobileNumber);
+        if (passport != null) {
+            throw new XlibaoRuntimeException("手机号：" + mobileNumber + "已被使用，请重新设置！");
+        }
+        int result = passportDataManager.modifyPhoneNumber(passportId, mobileNumber);
+        if (result <= 0) {
+            throw new XlibaoRuntimeException("绑定手机号出错，请稍后重试");
+        }
+        PassportAlias passportAlias = new PassportAlias();
+        passportAlias.setPassportId(passportId);
+        passportAlias.setType(PassportAliasTypeEnum.PHONE.getKey());
+        passportAlias.setAliasName(mobileNumber);
+        passportAlias.setStatus((byte) PassportStatusEnum.NORMAL.getKey());
+
+        result = passportDataManager.createPassportAlias(passportAlias);
+        if (result <= 0) {
+            throw new XlibaoRuntimeException("绑定手机号出错，请稍后重试");
+        }
+        return result;
     }
 
     @Override

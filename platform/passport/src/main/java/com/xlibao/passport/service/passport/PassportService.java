@@ -20,6 +20,8 @@ public interface PassportService {
 
     JSONObject resetMobileNumber();
 
+    int bindingMobileNumber(long passportId, String mobileNumber);
+
     JSONObject authentication();
 
     JSONObject versionUpgrade();
