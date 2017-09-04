@@ -76,30 +76,30 @@
 
     <select id="showConsumerOrders" resultMap="BaseResultMap">
         select * from order_entry where partner_id = #{partnerId}
-          <if test='orderStatusSet != null and orderStatusSet != "0"'> and status in (${orderStatusSet}) </if>
-          <if test="target == 0"> and partner_user_id = #{partnerUserId} </if>
-          <if test="target == 1"> and receipt_user_id = #{partnerUserId} </if>
-          <if test="type != -1"> and type = #{type} </if>
+        <if test='orderStatusSet != null and orderStatusSet != "0"'> and status in (${orderStatusSet}) </if>
+        <if test="target == 0"> and partner_user_id = #{partnerUserId} </if>
+        <if test="target == 1"> and receipt_user_id = #{partnerUserId} </if>
+        <if test="type != -1"> and type = #{type} </if>
         order by payment_time desc, id desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="showMerchantOrders" resultMap="BaseResultMap">
         select * from order_entry where partner_id = #{partnerId} and shipping_passport_id = #{shippingPassportId} and status in (${orderStatusSet})
-          <if test="type != -1"> and type = #{type} </if>
+        <if test="type != -1"> and type = #{type} </if>
         order by payment_time desc, id desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="showCourierOrders" resultMap="BaseResultMap">
         select * from order_entry where partner_id = #{partnerId} and courier_passport_id = #{courierPassportId} and status in (${orderStatusSet})
-          <if test="type != -1"> and type = #{type} </if>
+        <if test="type != -1"> and type = #{type} </if>
         order by payment_time desc, id desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="searchOrders" resultMap="BaseResultMap">
         select * from order_entry where partner_id = #{partnerId}
-          <if test="roleType == 2"> and shipping_passport_id = #{passportId} and (order_sequence_number like concat('%', #{searchKeyValue}, '%') or receipt_nick_name like concat('%', #{searchKeyValue}, '%'))</if>
-          <if test="roleType == 1"> and partner_user_id = #{passportId} and (order_sequence_number like concat('%', #{searchKeyValue}, '%') or shipping_nick_name  like concat('%', #{searchKeyValue}, '%'))</if>
-          <if test="type != -1"> and type = #{type} </if>
+        <if test="roleType == 2"> and shipping_passport_id = #{passportId} and (order_sequence_number like concat('%', #{searchKeyValue}, '%') or receipt_nick_name like concat('%', #{searchKeyValue}, '%')) </if>
+        <if test="roleType == 1"> and partner_user_id = #{passportId} and (order_sequence_number like concat('%', #{searchKeyValue}, '%') or shipping_nick_name like concat('%', #{searchKeyValue}, '%')) </if>
+        <if test="type != -1"> and type = #{type} </if>
         and status != 4 order by payment_time desc, id desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
@@ -135,30 +135,26 @@
         update order_entry set refund_status = refund_status | #{refundStatus} where order_id = #{orderId} and ((refund_status &amp; #{refundStatus}) != #{refundStatus})
     </update>
 
-    <update id="batchResetOverdueOrderStatus">
-        update order_entry set status = #{expectStatus} where partner_id = #{partnerId} and type = #{orderType} and status = #{matchStatus} and #{timeout} >= create_time
-    </update>
-
     <select id="searchPageOrders" resultMap="BaseResultMap">
-        select * from order_entry where 1=1
-        <if test="marketId != -1" > and shipping_passport_id = #{marketId} </if>
-        <if test="orderState != -1" > and status = #{orderState} </if>
-        <if test="startTime != null" > and create_time >= #{startTime} </if>
-        <if test="endTime != null" > and create_time &lt;= #{endTime} </if>
-        <if test="searchType == 'orderNum'"> and order_sequence_number like "%"#{searchKey}"%" </if>
-        <if test="searchType == 'receName'"> and receipt_nick_name like "%"#{searchKey}"%" </if>
-        <if test="searchType == 'recePhone'"> and receipt_phone like "%"#{searchKey}"%" </if>
-        <if test="searchType == 'courierName'"> and courier_nick_name like "%"#{searchKey}"%" </if>
-        <if test="searchType == 'courierPhone'"> and courier_phone like "%"#{searchKey}"%" </if>
+        select * from order_entry where 1 = 1
+            <if test="marketId != -1"> and shipping_passport_id = #{marketId} </if>
+            <if test="orderState != -1"> and status = #{orderState} </if>
+            <if test="startTime != null"> and create_time >= #{startTime} </if>
+            <if test="endTime != null"> and create_time &lt;= #{endTime} </if>
+            <if test="searchType == 'orderNum'"> and order_sequence_number like "%"#{searchKey}"%" </if>
+            <if test="searchType == 'receName'"> and receipt_nick_name like "%"#{searchKey}"%" </if>
+            <if test="searchType == 'recePhone'"> and receipt_phone like "%"#{searchKey}"%" </if>
+            <if test="searchType == 'courierName'"> and courier_nick_name like "%"#{searchKey}"%" </if>
+            <if test="searchType == 'courierPhone'"> and courier_phone like "%"#{searchKey}"%" </if>
         order by create_time desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="searchPageOrderCount" resultType="int">
-        select count(id) from order_entry where 1=1
-        <if test="marketId != -1" > and shipping_passport_id = #{marketId} </if>
-        <if test="orderState != -1" > and status = #{orderState} </if>
-        <if test="startTime != null" > and create_time >= #{startTime} </if>
-        <if test="endTime != null" > and create_time &lt;= #{endTime} </if>
+        select count(id) from order_entry where 1 = 1
+        <if test="marketId != -1"> and shipping_passport_id = #{marketId} </if>
+        <if test="orderState != -1"> and status = #{orderState} </if>
+        <if test="startTime != null"> and create_time >= #{startTime} </if>
+        <if test="endTime != null"> and create_time &lt;= #{endTime} </if>
         <if test="searchType == 'orderNum'"> and order_sequence_number like "%"#{searchKey}"%" </if>
         <if test="searchType == 'receName'"> and receipt_nick_name like "%"#{searchKey}"%" </if>
         <if test="searchType == 'recePhone'"> and receipt_phone like "%"#{searchKey}"%" </if>
@@ -166,9 +162,12 @@
         <if test="searchType == 'courierPhone'"> and courier_phone like "%"#{searchKey}"%" </if>
     </select>
 
-
     <update id="modifyReceivingData">
         update order_entry set current_location = #{currentLocation}, collecting_fees = #{collectingFees}, receipt_province = #{receiptProvince}, receipt_city = #{receiptCity}, receipt_district = #{receiptDistrict},
         receipt_address = #{receiptAddress}, receipt_nick_name = #{receiptNickName}, receipt_phone = #{receiptPhone}, receipt_location = #{receiptLocation}, remark = #{remark} where order_sequence_number = #{orderSequenceNumber}
+    </update>
+
+    <update id="refreshOrderStatus">
+        update order_entry set status = #{targetStatus} where order_sequence_number = #{orderSequenceNumber} and status in (${validStatusSet})
     </update>
 </mapper>

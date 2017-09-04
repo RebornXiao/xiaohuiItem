@@ -16,5 +16,9 @@ D:\work\xiaohuiItem\xmarket\saas\marketcore\src\main\java\com\xlibao\saas\market
 D:\work\xiaohuiItem\xmarket\saas\marketcore\src\main\java\com\xlibao\saas\market\core\config\ServerConfig.java
 D:\work\xiaohuiItem\xmarket\saas\marketcore\src\main\java\com\xlibao\saas\market\core\message\hardware\HardwareServer.java
 D:\work\xiaohuiItem\xmarket\saas\marketcore\src\main\java\com\xlibao\saas\market\core\config\ConfigFactory.java
+D:\work\xiaohuiItem\xmarket\saas\marketcore\src\main\java\com\xlibao\saas\market\core\config\DomainNameConfig.java
 D:\work\xiaohuiItem\xmarket\saas\marketcore\src\main\java\com\xlibao\saas\market\core\service\MessageHandlerAdapter.java
 D:\work\xiaohuiItem\xmarket\saas\marketcore\src\main\java\com\xlibao\saas\market\core\message\SessionManager.java
+D:\work\xiaohuiItem\xmarket\saas\marketcore\src\main\java\com\xlibao\saas\market\core\service\hisdk\Demo.java
+D:\work\xiaohuiItem\xmarket\saas\marketcore\src\main\java\com\xlibao\saas\market\core\service\example\NettyExample.java
+D:\work\xiaohuiItem\xmarket\saas\marketcore\src\main\java\com\xlibao\saas\market\core\service\hisdk\Vapi.java

@@ -3637,7 +3637,6 @@ XAddress.prototype.find = function (items, id) {
 }
 
 XAddress.prototype.setData = function (ui, json, selected_id) {
-    var index = 1;
     $.each(json, function (k, v) {
         if (k == selected_id) {
             var option = '<option value="' + k + '" selected="selected">' + v + '</option>';
@@ -3646,7 +3645,6 @@ XAddress.prototype.setData = function (ui, json, selected_id) {
             var option = '<option value="' + k + '" >' + v + '</option>';
             ui.append(option);
         }
-        index++;
     });
 }
 
@@ -3673,7 +3671,7 @@ function showLocation(province_id, city_id, district_id, street_id, street_list,
 
     var title = ['省份', '地级市', '区、县、镇', '街道'];
     $.each(title, function (k, v) {
-        title[k] = '<option data_id="0">' + v + '</option>';
+        title[k] = '<option value=\"k\">' + v + '</option>';
     });
 
     if (street_list != null && street_list != "" && district_id != 0) {
@@ -3723,9 +3721,9 @@ function showLocation(province_id, city_id, district_id, street_id, street_list,
             //如果有数据，则执行数据，否则，POST拿数据
             if (typeof(streets) == "undefined") {
                 if (loc.post_func != null) {
-                    loc.post_func(loc.now_district_id, function (post_id, data) {
-                        if (data.code == 0) {
-                            var streets_data = data.datas;
+                    loc.post_func(loc.now_district_id, function (post_id, json) {
+                        if (json.code == 0) {
+                            var streets_data = json.datas;
                             loc.streets[post_id] = streets_data;
                             if (post_id == loc.now_district_id) {
                                 //刷新
@@ -3733,7 +3731,7 @@ function showLocation(province_id, city_id, district_id, street_id, street_list,
                                 _loc_street.change();
                             }
                         } else {
-                            alert("获取失败，" + data.msg);
+                            alert("获取失败，" + json.msg);
                         }
                     });
                 }
@@ -3742,18 +3740,20 @@ function showLocation(province_id, city_id, district_id, street_id, street_list,
                 _loc_street.change();
             }
         } else {
+            if (!$.isNumeric(_loc_district.val())) {
+                return;
+            }
             if (loc.post_func != null) {
-                loc.post_func();
+                loc.post_func(_loc_district.val());
             }
         }
     });
 
-    if (_loc_street) {
-        _loc_street.change(function () {
-            $('input[name=location_id]').val($(this).val());
-        });
-    }
-
+    //if (_loc_street) {
+        //_loc_street.change(function () {
+        //    $('input[name=location_id]').val($(this).val());
+        //});
+    //}
 
     if (province_id && province_id != 0) {
         loc.setData(_loc_province, loc.provinces, province_id);

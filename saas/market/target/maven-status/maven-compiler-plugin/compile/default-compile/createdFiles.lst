@@ -1,8 +1,10 @@
 com\xlibao\saas\market\service\item\ItemSpecialTypeEnum.class
+com\xlibao\saas\market\controller\marketmanager\ItemManagerController.class
 com\xlibao\saas\market\data\mapper\market\MarketCabinetLoggerMapper.class
 com\xlibao\saas\market\service\item\MarketItemDataCacheService.class
 com\xlibao\saas\market\controller\marketmanager\MarketManagerController.class
 com\xlibao\saas\market\config\ConfigFactory.class
+com\xlibao\saas\market\XMarketManagerControllerAop.class
 com\xlibao\saas\market\service\support\ItemSupport.class
 com\xlibao\saas\market\service\item\PrepareActionStatusEnum.class
 com\xlibao\saas\market\service\order\OrderApplicationContextNotify.class
@@ -14,6 +16,7 @@ com\xlibao\saas\market\service\item\MarketItemDataCacheService$MarketSpecialButt
 com\xlibao\saas\market\service\order\impl\OrderServiceImpl.class
 com\xlibao\saas\market\service\payment\PaymentEventListenerManager.class
 com\xlibao\saas\market\controller\openapi\MessageCallbackController.class
+com\xlibao\saas\market\data\mapper\message\MarketCoreMessageLoggerMapper.class
 com\xlibao\saas\market\data\mapper\market\MarketCabinetMapper.class
 com\xlibao\saas\market\service\order\OrderNotifyTypeEnum.class
 com\xlibao\saas\market\service\order\OrderEventListenerManager.class
@@ -36,6 +39,7 @@ com\xlibao\saas\market\service\order\StatusEnterEnum.class
 com\xlibao\saas\market\data\mapper\market\MarketAccessLoggerMapper.class
 com\xlibao\saas\market\listener\PaymentEventListener.class
 com\xlibao\saas\market\service\support\BasicRemoteService.class
+com\xlibao\saas\market\data\mapper\market\MarketTaskLoggerMapper.class
 com\xlibao\saas\market\service\support\remote\PaymentRemoteService.class
 com\xlibao\saas\market\listener\OrderEventListener.class
 com\xlibao\saas\market\data\mapper\item\MarketPrepareActionMapper.class
@@ -45,9 +49,12 @@ com\xlibao\saas\market\XMarketControllerAop.class
 com\xlibao\saas\market\service\support\remote\MarketShopRemoteService.class
 com\xlibao\saas\market\service\item\ItemService.class
 com\xlibao\saas\market\data\mapper\item\ItemDataAccessManager.class
+com\xlibao\saas\market\data\mapper\message\MessageDataAccessManager.class
+com\xlibao\saas\market\service\market\MarketRelationshipTypeEnum.class
 com\xlibao\saas\market\controller\openapi\OrderOpenApiController.class
 com\xlibao\saas\market\listener\ItemEventListener.class
 com\xlibao\saas\market\data\mapper\activity\MarketBannerMapper.class
+com\xlibao\saas\market\data\mapper\market\MarketRelationshipMapper.class
 com\xlibao\saas\market\service\market\MarketDataCacheService$1.class
 com\xlibao\saas\market\service\market\ChoiceMarketTypeEnum.class
 com\xlibao\saas\market\service\item\ItemApplicationContextNotify.class
@@ -65,6 +72,7 @@ com\xlibao\saas\market\data\mapper\market\MarketShelvesManagerMapper.class
 com\xlibao\saas\market\service\XMarketServiceConfig.class
 com\xlibao\saas\market\controller\openapi\ItemOpenApiController.class
 com\xlibao\saas\market\service\item\MarketItemDataCacheService$1.class
+com\xlibao\saas\market\data\model\MarketCoreMessageLogger.class
 com\xlibao\saas\market\data\mapper\order\OrderDataAccessManager.class
 com\xlibao\saas\market\service\market\MarketService.class
 com\xlibao\saas\market\config\XMarketConfig.class
@@ -78,12 +86,14 @@ com\xlibao\saas\market\data\model\MarketAccessLogger.class
 com\xlibao\saas\market\service\market\MarketFindTypeEnum.class
 com\xlibao\saas\market\service\market\MarketApplicationContextNotify.class
 com\xlibao\saas\market\service\market\MarketErrorCodeEnum.class
+com\xlibao\saas\market\service\manager\MarketItemService.class
 com\xlibao\saas\market\controller\MarketController.class
 com\xlibao\saas\market\data\model\MarketOrderStatusLogger.class
 com\xlibao\saas\market\service\activity\RecommendItemTypeEnum.class
 com\xlibao\saas\market\service\market\MarketStatusEnum.class
 com\xlibao\saas\market\data\mapper\activity\ActivityDataAccessManager.class
 com\xlibao\saas\market\service\market\MarketDataCacheService$MarketDistanceComparator.class
+com\xlibao\saas\market\service\manager\impl\MarketItemServiceImpl.class
 com\xlibao\saas\market\data\mapper\market\MarketDataAccessManager.class
 com\xlibao\saas\market\service\market\impl\MarketServiceImpl.class
 com\xlibao\saas\market\data\mapper\order\MarketOrderStatusLoggerMapper.class

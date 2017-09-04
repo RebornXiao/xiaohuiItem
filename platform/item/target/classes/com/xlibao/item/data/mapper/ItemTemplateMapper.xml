@@ -16,7 +16,7 @@
         <result column="introduction_page" property="introductionPage" jdbcType="VARCHAR"/>
         <result column="status" property="status" jdbcType="TINYINT"/>
         <result column="description" property="description" jdbcType="VARCHAR"/>
-        <result column="uploaders_passport_id" property="uploadersPassportId" jdbcType="BIGINT"/>
+        <result column="uploader_passport_id" property="uploaderPassportId" jdbcType="BIGINT"/>
         <result column="upload_time" property="uploadTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
@@ -48,8 +48,8 @@
             <if test="template.unitId != null and template.unitId != ''">
                 and unit_id = ${template.unitId}
             </if>
-            <if test="template.uploadersPassportId != null and template.uploadersPassportId != ''">
-                and uploaders_passport_id = ${template.uploadersPassportId}
+            <if test="template.uploaderPassportId != null and template.uploaderPassportId != ''">
+                and uploader_passport_id = ${template.uploaderPassportId}
             </if>
             <if test="template.uploadTime != null and template.uploadTime != ''">
                 and upload_time like "%"#{template.uploadTime}"%"
@@ -58,8 +58,8 @@
     </sql>
     
     <insert id="add" useGeneratedKeys="true" keyProperty="id">
-        insert into item_template(name, define_code, brand_id, barcode, type_id, unit_id, cost_price, default_price, image_url, banner_url, introduction_page, description, status, uploaders_role_id, upload_time)
-        values(#{name}, #{defineCode}, #{brandId}, #{barcode}, #{typeId}, #{unitId}, #{costPrice}, #{defaultPrice}, #{imageUrl}, #{bannerUrl}, #{introductionPage}, #{description}, #{status}, #{uploadersRoleId}, #{uploadTime})
+        insert into item_template(name, define_code, brand_id, barcode, type_id, unit_id, cost_price, default_price, image_url, banner_url, introduction_page, description, status, uploader_passport_id, upload_time)
+        values(#{name}, #{defineCode}, #{brandId}, #{barcode}, #{typeId}, #{unitId}, #{costPrice}, #{defaultPrice}, #{imageUrl}, #{bannerUrl}, #{introductionPage}, #{description}, #{status}, #{uploaderPassportId}, #{uploadTime})
     </insert>
 
     <select id="loaderItemTemplates" resultMap="BaseResultMap">
@@ -93,7 +93,7 @@
 
     <update id="updateItemTemplate">
         update item_template set name = #{name}, define_code = #{defineCode}, brand_id = #{brandId}, barcode = #{barcode}, type_id = #{typeId}, unit_id = #{unitId}, cost_price = #{costPrice}, default_price = #{defaultPrice},
-        image_url = #{imageUrl}, banner_url = #{bannerUrl}, introduction_page = #{introductionPage}, description = #{description}, status = #{status}, uploaders_passport_id = #{uploadersPassportId}, upload_time = #{uploadTime}
+        image_url = #{imageUrl}, banner_url = #{bannerUrl}, introduction_page = #{introductionPage}, description = #{description}, status = #{status}, uploader_passport_id = #{uploaderPassportId}, upload_time = #{uploadTime}
         where id = #{id}
     </update>
 

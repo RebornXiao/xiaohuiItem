@@ -22,54 +22,57 @@
                 </div>
             </div>
 
-            <div class="row small_page">
-                <div class="col-sm-12">
-                    <form class="form-inline">
-                        <button id="addBtn" type="button" class="btn waves-effect waves-light btn-primary "><i
-                                class="fa fa-pencil"></i> 添加商品模板
-                        </button>
-                        <div class="input-group">
-                            <div class="input-group-btn">
-                                <button id="searchMenu" type="button" search_name="名称"
-                                        class="btn btn-default waves-effect waves-light dropdown-toggle"
-                                        data-toggle="dropdown">按名称搜索 <span class="caret"></span></button>
-                                <ul class="dropdown-menu" id="searchType">
-                                    <li><a href="javascript:void(0)" search_name="名称" search_type="name">按名称搜索</a></li>
-                                    <li><a href="javascript:void(0)" search_name="自定义编码" search_type="define_code">按自定义编码搜索</a>
-                                    </li>
-                                    <li><a href="javascript:void(0)" search_name="条形码" search_type="barcode">按条形码搜索</a>
-                                    </li>
-                                </ul>
-                            </div>
-                            <input type="text" id="searchKeyTxt"
-                                   class="form-control" placeholder="按名称查">
-                            <span class="input-group-btn">
+
+                <div class="row small_page">
+                    <div class="col-sm-12">
+                        <form class="form-inline" role="form">
+                            <button id="addBtn" type="button" class="btn waves-effect waves-light btn-primary "><i
+                                    class="fa fa-pencil"></i> 添加商品模板
+                            </button>
+                            <div class="input-group">
+                                <div class="input-group-btn">
+                                    <button id="searchMenu" type="button" search_name="名称"
+                                            class="btn btn-default waves-effect waves-light dropdown-toggle"
+                                            data-toggle="dropdown">按名称搜索 <span class="caret"></span></button>
+                                    <ul class="dropdown-menu" id="searchType">
+                                        <li><a href="javascript:void(0)" search_name="名称" search_type="name">按名称搜索</a>
+                                        </li>
+                                        <li><a href="javascript:void(0)" search_name="自定义编码" search_type="define_code">按自定义编码搜索</a>
+                                        </li>
+                                        <li><a href="javascript:void(0)" search_name="条形码"
+                                               search_type="barcode">按条形码搜索</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <input type="text" id="searchKeyTxt"
+                                       class="form-control" placeholder="按名称查">
+                                <span class="input-group-btn">
                                     <button id="searchBtn" type="button"
                                             class="btn waves-effect waves-light btn-primary"><i
                                             class="fa fa-search"></i></button>
                                 </span>
-                        </div>
-                        <div class="form-group pull-right">
-                            <div class="btn-group">
-                                <button type="button"
-                                        class="btn btn-default waves-effect waves-light dropdown-toggle"
-                                        data-toggle="dropdown" aria-expanded="false">导出 商品模板库 <span
-                                        class="caret"></span></button>
-                                <ul class="dropdown-menu">
-                                    <li><a href="#" id="outExcelBtn">To Excel</a></li>
-                                    <li><a href="#" id="outPdfBtn">To PDF</a></li>
-                                    <li class="divider"></li>
-                                    <li><a href="#" id="outCopyBtn">To 剪贴板</a></li>
-                                </ul>
                             </div>
-                        </div>
-                    </form>
-                </div>
+                            <div class="form-group pull-right">
+                                <div class="btn-group">
+                                    <button type="button"
+                                            class="btn btn-default waves-effect waves-light dropdown-toggle"
+                                            data-toggle="dropdown" aria-expanded="false">导出 商品模板库 <span
+                                            class="caret"></span></button>
+                                    <ul class="dropdown-menu">
+                                        <li><a href="#" id="outExcelBtn">To Excel</a></li>
+                                        <li><a href="#" id="outPdfBtn">To PDF</a></li>
+                                        <li class="divider"></li>
+                                        <li><a href="#" id="outCopyBtn">To 剪贴板</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
             </div>
 
-            <div class="row small_page">
+            <div class="row m-t-15 small_page">
                 <div class="col-sm-12">
-                    <table class="table table-striped table-bordered m-t-10">
+                    <table class="table table-striped table-bordered">
                         <thead class="table_head">
                         <tr>
                             <th>商品ID</th>

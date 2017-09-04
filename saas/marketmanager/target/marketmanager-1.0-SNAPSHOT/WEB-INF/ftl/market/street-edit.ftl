@@ -75,11 +75,12 @@
 
             $(document).ready(function () {
 
+                var _now_areaId = 0;
                 var _streetTitle = $("#streetTitle");
                 var _streetId = <#if street?exists>${street.id?c};<#else>0;</#if>
 
-                showLocation(${provinceId?c}, ${cityId?c}, ${areaId?c}, 0, null, function () {
-                    alert("==========");
+                showLocation(${provinceId?c}, ${cityId?c}, ${areaId?c}, 0, null, function (id) {
+                    _now_areaId = id;
                 });
 
                 moveEnd(_streetTitle.get(0));
@@ -98,9 +99,7 @@
                         return;
                     }
 
-                    var areaId = $("#loc_district").val();
-
-                    $.post("${base}/market/streetEditSave.do?id=" + _streetId + "&title=" + title + "&areaId=" + areaId, function (data) {
+                    $.post("${base}/market/streetEditSave.do?id=" + _streetId + "&title=" + title + "&areaId=" + _now_areaId, function (data) {
                         //重新刷新
                         if (data.code == "0") {
                             swal("提示", "操作成功", "success");

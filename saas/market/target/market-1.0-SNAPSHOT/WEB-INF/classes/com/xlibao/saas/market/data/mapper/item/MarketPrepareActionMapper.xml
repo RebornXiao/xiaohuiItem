@@ -28,12 +28,12 @@
         select * from market_prepare_action where market_id = #{marketId} and item_location = #{itemLocation} and status = #{status}
     </select>
 
-    <select id="getPrepareActionsForLocationSet" resultMap="BaseResultMap">
-        select * from market_prepare_action where market_id = #{marketId} and item_location in (${locationSet}) and status = #{status}
+    <select id="getPrepareActions" resultMap="BaseResultMap">
+        select * from market_prepare_action where market_id = #{marketId} and status = #{status} order by hope_executor_date desc, item_location, hope_item_quantity limit #{pageStartIndex}, #{pageSize}
     </select>
 
-    <select id="getUnCompletePrepareActions" resultMap="BaseResultMap">
-        select * from market_prepare_action where market_id = #{marketId} and status = #{status} order by item_location asc limit #{pageStartIndex}, #{pageSize}
+    <select id="getPrepareActionsForLocationSet" resultMap="BaseResultMap">
+        select * from market_prepare_action where market_id = #{marketId} and item_location in (${locationSet}) and status = #{status} order by item_location asc, hope_item_quantity asc
     </select>
 
     <select id="getPrepareActionForBarcode" resultMap="BaseResultMap">

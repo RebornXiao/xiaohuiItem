@@ -101,7 +101,7 @@
     </update>
 
     <update id="decrementItemStock">
-        update market_item set stock = stock - #{quantity}, pending_quantity = pending_quantity - #{quantity}, total_out_storage = total_out_storage + #{quantity} where id = #{itemId}
+        update market_item set stock = stock - #{quantity}, lock_stock = lock_stock - #{quantity}, total_out_storage = total_out_storage + #{quantity} where id = #{itemId}
     </update>
 
     <update id="offShelves">
@@ -109,5 +109,9 @@
         <if test="quantity > 0"> total_storage = total_storage + #{stock} </if>
         <if test="quantity &lt; 0"> total_out_storage = total_out_storage + #{quantity} </if>
         where id = #{itemId}
+    </update>
+
+    <update id="updateItem">
+        update market_item set cost_price = #{costPrice}, sell_price = #{sellPrice}, market_price = #{marketPrice}, discount_price = #{discountPrice}, status = #{status}, description = #{description} where id = #{itemId}
     </update>
 </mapper>

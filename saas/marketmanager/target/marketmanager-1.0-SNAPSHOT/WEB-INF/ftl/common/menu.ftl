@@ -89,7 +89,9 @@
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="store"> style="display: block;" </#if> >
                             <li <#if tab_child=="markets"> class="active" </#if> ><a href="${base}/market/markets.do">店铺列表</a></li>
-                            <li <#if tab_child=="mitems"> class="active" </#if> ><a href="${base}/market/mitems.do">店铺商品</a></li>
+                            <li <#if tab_child=="mitems"> class="active" </#if> ><a href="${base}/market/marketItems.do">店铺商品</a></li>
+                            <li <#if tab_child=="shelves"> class="active" </#if> ><a href="${base}/market/marketShelves.do">货架商品</a></li>
+                            <li <#if tab_child=="stasks"> class="active" </#if> ><a href="${base}/market/marketTasks.do">店铺任务</a></li>
                             <li <#if tab_child=="streets"> class="active" </#if> ><a href="${base}/market/streets.do">街道信息</a></li>
                         </ul>
                     </li>
@@ -100,7 +102,7 @@
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="store"> style="display: block;" </#if> >
                             <li <#if tab_child=="adverts"> class="active" </#if> ><a href="${base}/advert/adverts.do">广告管理</a></li>
-                            <li <#if tab_child=="admanager"> class="active" </#if> ><a href="${base}/advert/admanager.do">投放管理</a></li>
+                            <li <#if tab_child=="admanager"> class="active" </#if> ><a href="${base}/advert/advertScreens.do">投放管理</a></li>
                         </ul>
                     </li>
 

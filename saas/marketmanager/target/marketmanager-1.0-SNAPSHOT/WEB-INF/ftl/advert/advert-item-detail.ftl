@@ -9,11 +9,11 @@
                             <li><a href="#">广告端管理</a></li>
                             <li class="active"><a href="#">广告详情</a></li>
                         </ol>
-                        <h4 class="page-title "><b><button type="button" id="advertReturnBtn" class="btn btn-primary" style="padding-right: 20px;padding-left: 20px" onclick="window.location='${base}/advert/adverts.do'">返回列表</button></b></h4>
+                        <h4 class="page-title "><b>广告详情</b></h4>
                     </div>
                 </div>
-                <h3 class="page-title "><b>广告详情</b></h3>
             </div>
+            <button type="button" id="advertReturnBtn" class="btn btn-primary" style="padding-right:0px 20px;" onclick="window.location='${base}/advert/adverts.do'"><i class="fa fa-backward"></i> 返回列表</button>
             <div class="row">
                 <div class="col-sm-12">
                     <div class="advert_container">
@@ -33,20 +33,20 @@
                                         <col class="col-xs-3">
                                     </colgroup>
                                     <tbody>
-                                        <tr>
-                                            <td style="background-color: #f9f9f9">广告标题</td>
-                                            <td>xxx的广告</td>
-                                            <td style="background-color: #f9f9f9">广告状态</td>
-                                            <td>待投放</td>
-                                        </tr>
-                                    </thead>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">广告标题</td>
+                                        <td>xxx的广告</td>
+                                        <td style="background-color: #f9f9f9">广告状态</td>
+                                        <td>待投放</td>
+                                    </tr>
+                                    </tbody>
                                     <tbody>
-                                        <tr>
-                                            <td style="background-color: #f9f9f9">广告时长</td>
-                                            <td>30s</td>
-                                            <td style="background-color: #f9f9f9">更新时间</td>
-                                            <td>2017-08-22 10:47:22</td>
-                                        </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">广告时长</td>
+                                        <td>30s</td>
+                                        <td style="background-color: #f9f9f9">更新时间</td>
+                                        <td>2017-08-22 10:47:22</td>
+                                    </tr>
                                     </tbody>
                                     <tbody>
                                     <tr>
@@ -74,18 +74,18 @@
                                         <col class="col-xs-4">
                                     </colgroup>
                                     <thead>
-                                        <tr>
-                                            <th style="background-color: #f9f9f9">门店</th>
-                                            <th style="background-color: #f9f9f9">地址</th>
-                                            <th style="background-color: #f9f9f9">屏幕编码</th>
-                                        </tr>
+                                    <tr>
+                                        <th style="background-color: #f9f9f9">门店</th>
+                                        <th style="background-color: #f9f9f9">地址</th>
+                                        <th style="background-color: #f9f9f9">屏幕编码</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>---</td>
-                                            <td>---</td>
-                                            <td>---</td>
-                                        </tr>
+                                    <tr>
+                                        <td>---</td>
+                                        <td>---</td>
+                                        <td>---</td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
@@ -127,6 +127,7 @@
                 </div>
             </div>
             <div class="modal-footer" style="text-align: center">
+                <button type="button" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
                 <button type="button" class="btn btn-primary" style="padding:10px 80px">确定</button>
             </div>
         </div>
@@ -144,8 +145,8 @@
                 <p style="text-align: center">确定要删除该广告吗？</p>
             </div>
             <div class="modal-footer" style="text-align: center">
-                <button type="button" class="btn btn-primary" style="padding:10px 80px">确定</button>
                 <button type="button" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
+                <button type="button" class="btn btn-primary" style="padding:10px 80px">确定</button>
             </div>
         </div>
     </div>

@@ -26,8 +26,6 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-sm-12">
                     <div class="row m-t-30">
                         <div class="col-md-8">
                             <form class="form-horizontal" role="form">
@@ -166,8 +164,6 @@
                             </form>
                         </div>
                     </div>
-                </div>
-            </div>
 
         <!-- end container -->
         </div>
@@ -175,18 +171,16 @@
         <script type="text/javascript">
             $(document).ready(function () {
 
-                $("#typeSelect").select2();
-
                 moveEnd($("#itemName").get(0));
 
                 //添加类型
                 $("#addTypeBtn").on('click', function () {
-                    location.href = "${base}/marketmanager/item/itemTypeEdit.do";
+                    location.href = "${base}/item/itemTypeEdit.do";
                 });
 
                 //添加单位
                 $("#addUnitBtn").on('click', function () {
-                    location.href = "${base}/marketmanager/item/itemUnitEdit.do";
+                    location.href = "${base}/item/itemUnitEdit.do";
                 });
 
                 $("#backBtn").on('click', function () {

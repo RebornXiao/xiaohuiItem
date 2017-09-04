@@ -9,13 +9,11 @@ com\xlibao\saas\market\shop\service\message\example\NettyExample.class
 com\xlibao\saas\market\shop\service\message\example\NettyExample$1.class
 com\xlibao\saas\market\shop\service\message\example\NettyExample$MessageEventListenerDemo.class
 com\xlibao\saas\market\shop\service\message\MessageApplicationContextNotify.class
-com\xlibao\saas\market\shop\controller\ItemController.class
 com\xlibao\saas\market\shop\service\ApplicationContextLoaderNotify.class
 com\xlibao\saas\market\shop\service\MarketSessionManager.class
 com\xlibao\saas\market\shop\MarketShopControllerAop.class
 com\xlibao\saas\market\shop\controller\MessageController.class
 com\xlibao\saas\market\shop\config\DomainNameConfig.class
 com\xlibao\saas\market\shop\service\message\impl\MessageServiceImpl.class
-com\xlibao\saas\market\shop\controller\OrderController.class
 com\xlibao\saas\market\shop\service\shop\ShopService.class
 com\xlibao\saas\market\shop\service\MessageHandlerAdapter.class

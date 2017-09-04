@@ -33,20 +33,20 @@
                                         <col class="col-xs-3">
                                     </colgroup>
                                     <tbody>
-                                        <tr>
-                                            <td style="background-color: #f9f9f9">广告标题</td>
-                                            <td>xxx的广告</td>
-                                            <td style="background-color: #f9f9f9">广告状态</td>
-                                            <td>待投放</td>
-                                        </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">广告标题</td>
+                                        <td>xxx的广告</td>
+                                        <td style="background-color: #f9f9f9">广告状态</td>
+                                        <td>待投放</td>
+                                    </tr>
                                     </tbody>
                                     <tbody>
-                                        <tr>
-                                            <td style="background-color: #f9f9f9">广告时长</td>
-                                            <td>30s</td>
-                                            <td style="background-color: #f9f9f9">更新时间</td>
-                                            <td>2017-08-22 10:47:22</td>
-                                        </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">广告时长</td>
+                                        <td>30s</td>
+                                        <td style="background-color: #f9f9f9">更新时间</td>
+                                        <td>2017-08-22 10:47:22</td>
+                                    </tr>
                                     </tbody>
                                     <tbody>
                                     <tr>
@@ -74,18 +74,18 @@
                                         <col class="col-xs-4">
                                     </colgroup>
                                     <thead>
-                                        <tr>
-                                            <th style="background-color: #f9f9f9">门店</th>
-                                            <th style="background-color: #f9f9f9">地址</th>
-                                            <th style="background-color: #f9f9f9">屏幕编码</th>
-                                        </tr>
+                                    <tr>
+                                        <th style="background-color: #f9f9f9">门店</th>
+                                        <th style="background-color: #f9f9f9">地址</th>
+                                        <th style="background-color: #f9f9f9">屏幕编码</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <td>---</td>
-                                            <td>---</td>
-                                            <td>---</td>
-                                        </tr>
+                                    <tr>
+                                        <td>---</td>
+                                        <td>---</td>
+                                        <td>---</td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>

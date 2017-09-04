@@ -41,20 +41,6 @@
                         <select id="loc_city" style="width:120px; margin-left: 10px"></select>
                         <select id="loc_district" style="width:120px;margin-left: 10px"></select>
                     </div>
-
-                    <div class="form-group m-l-15">
-                        <label for="exampleInputName2">店铺类型：</label>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">自动化</option>
-                        </select>
-                    </div>
-
-                    <div class="form-group m-l-15">
-                        <label for="exampleInputName2">店铺状态：</label>
-                        <select class="form-control" id="itSelect" style="width:150px">
-                            <option data_id="0">正常</option>
-                        </select>
-                    </div>
                 </form>
             </div>
 
@@ -108,13 +94,18 @@
 
             $(document).ready(function () {
 
-                showLocation(${provinceId?c}, ${cityId?c}, ${areaId?c}, 0, null, function () {
-                    //直接跳转
-                    var provinceId = $('#loc_province').val();
-                    var cityId = $('#loc_city').val();
-                    var areaId = $('#loc_district').val();
+                var old_areaId = ${areaId?c};
 
-                    //location.href = "${base}/market/streets.do?provinceId=" + provinceId + "&cityId=" + cityId + "&areaId=" + areaId;
+                showLocation(${provinceId?c}, ${cityId?c}, ${areaId?c}, 0, null, function (id) {
+
+                    if(old_areaId != id) {
+                        //直接跳转
+                        var provinceId = $('#loc_province').val();
+                        var cityId = $('#loc_city').val();
+                        var areaId = $('#loc_district').val();
+
+                        location.href = "${base}/market/streets.do?provinceId=" + provinceId + "&cityId=" + cityId + "&areaId=" + areaId;
+                    }
                 });
 
                 $("#addBtn").on('click', function () {

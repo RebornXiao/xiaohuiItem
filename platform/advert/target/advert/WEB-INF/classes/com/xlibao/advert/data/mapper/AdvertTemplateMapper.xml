@@ -7,6 +7,7 @@
         <result column="advert_id" property="advertID" jdbcType="BIGINT"/>
         <result column="title" property="title" jdbcType="VARCHAR"/>
         <result column="video_name" property="videoName" jdbcType="VARCHAR"/>
+        <result column="time_size" property="timeSize"/>
         <result column="time_type" property="timeType" jdbcType="BIGINT"/>
         <result column="remark" property="remark" jdbcType="VARCHAR"/>
         <result column="url" property="url" jdbcType="VARCHAR"/>

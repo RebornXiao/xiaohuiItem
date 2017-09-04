@@ -5,6 +5,10 @@
  */
 
 
+// Roar////////......callback
+
+
+
 !function($) {
     "use strict";
 
@@ -328,14 +332,15 @@ var containSpecial = RegExp(/[(\ )(\~)(\!)(\@)(\#)(\$)(\%)(\^)(\&)(\*)(\()(\))(\
 //     }(window.jQuery);
 
 
-function showDelTi(callback) {
+
+function showTi(msg, callback) {
     swal({
-        title: "确定要删除该项记录?",
-        text: "注：删除后无法恢复!",
+        title: "系统提示?",
+        text: msg,
         type: "warning",
         showCancelButton: true,
         confirmButtonColor: "#DD6B55",
-        confirmButtonText: "删除!",
+        confirmButtonText: "确定!",
         cancelButtonText: "取消",
         closeOnConfirm: false
     }, callback);
@@ -343,11 +348,15 @@ function showDelTi(callback) {
 
 function showMsg(msg, callback) {
     swal({
+        title: "系统提示",
         text: msg,
-        type: "basic",
+        type: "success",
+        showCancelButton: false,
+        confirmButtonColor: "#DD6B55",
+        confirmButtonText: "确定",
+        closeOnConfirm: false,
     }, callback);
 }
-
 
 function moveEnd(obj){
     obj.focus();
