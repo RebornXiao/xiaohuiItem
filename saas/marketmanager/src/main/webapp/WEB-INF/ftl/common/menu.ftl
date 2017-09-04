@@ -102,7 +102,7 @@
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="store"> style="display: block;" </#if> >
                             <li <#if tab_child=="adverts"> class="active" </#if> ><a href="${base}/advert/adverts.do">广告管理</a></li>
-                            <li <#if tab_child=="admanager"> class="active" </#if> ><a href="${base}/advert/advertScreens.do">投放管理</a></li>
+                            <li <#if tab_child=="admanager"> class="active" </#if> ><a href="${base}/advert/admanager.do">投放管理</a></li>
                         </ul>
                     </li>
 
