@@ -131,8 +131,8 @@ public class OrderDataAccessManager {
         return entryMapper.findInvalidOrders(partnerId, orderType, matchStatus, timeout);
     }
 
-    public int batchResetOverdueOrderStatus(String partnerId, int orderType, int matchStatus, int expectStatus, String timeout) {
-        return entryMapper.batchResetOverdueOrderStatus(partnerId, orderType, matchStatus, expectStatus, timeout);
+    public int refreshOrderStatus(String orderSequenceNumber, int targetStatus, String validStatusSet) {
+        return entryMapper.refreshOrderStatus(orderSequenceNumber, targetStatus, validStatusSet);
     }
     // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 订单访问接口(orderEntryMapper) ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 

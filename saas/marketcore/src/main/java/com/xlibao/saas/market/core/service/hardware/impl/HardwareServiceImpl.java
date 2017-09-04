@@ -31,16 +31,19 @@ public class HardwareServiceImpl implements HardwareService {
         content = content.substring(8);
         switch (messageType) {
             case HardwareMessageType.SHIPMENT:
-                MarketApplicationRemoteService.notifyShipment(content.substring(0, 16), content.substring(16, 20));
+                MarketApplicationRemoteService.notifyShipment((Long) session.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 20));
                 break;
             case HardwareMessageType.SHELVES:
                 MarketApplicationRemoteService.notifyShelvesData((Long) session.getAttribute("passportId"), content);
                 break;
             case HardwareMessageType.ORDER:
+                MarketApplicationRemoteService.notifyOrderData((Long) session.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18), content.substring(18));
                 break;
             case HardwareMessageType.REFUND:
+                MarketApplicationRemoteService.notifyRefund((Long) session.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18));
                 break;
             case HardwareMessageType.PICK_UP:
+                MarketApplicationRemoteService.notifyPickUp((Long) session.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18), content.substring(18));
                 break;
         }
     }

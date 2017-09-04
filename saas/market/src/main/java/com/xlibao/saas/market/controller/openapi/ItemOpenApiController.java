@@ -151,4 +151,24 @@ public class ItemOpenApiController {
     public JSONObject findItemLocation() {
         return itemService.findItemLocation();
     }
+
+    /**
+     * <pre>
+     *     <b>模糊匹配完整的商品名字</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/item/openapi/fuzzyMatchItemName.do
+     *     <b>访问方式：</b>GET/POST；推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>fuzzyItemName</b> - String 本次查询的关键字，必填参数。
+     *
+     *     <b>返回：</b>
+     *          <b>datas</b> - JSONArray 完整的商品名字集合，每个元素为String，即商品名字
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "fuzzyMatchItemName")
+    public JSONObject fuzzyMatchItemName() {
+        return itemService.fuzzyMatchItemName();
+    }
 }

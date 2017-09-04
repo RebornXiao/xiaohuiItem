@@ -11,5 +11,11 @@ public interface MessageService {
 
     JSONObject notifyShelvesData();
 
+    JSONObject notifyOrderData();
+
+    JSONObject notifyRefund();
+
+    JSONObject notifyPickUp();
+
     JSONObject askOrderPickUp();
 }

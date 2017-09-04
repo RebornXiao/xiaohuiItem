@@ -15,4 +15,6 @@ public interface MarketShelvesManagerMapper {
 
     List<MarketShelvesManager> getClipDatas(@Param("marketId") long marketId, @Param("groupCode") String groupCode, @Param("unitCode") String unitCode, @Param("floorCode") String floorCode,
                                             @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
+
+    int clearShelves(@Param("marketId") long marketId);
 }

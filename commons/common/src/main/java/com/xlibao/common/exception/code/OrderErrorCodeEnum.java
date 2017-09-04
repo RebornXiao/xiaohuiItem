@@ -36,6 +36,8 @@ public enum OrderErrorCodeEnum {
     CANNOT_REFUND(20009, "不能退款"),
     /** 20010 -- 退款失败 */
     REFUND_FAIL(20010, "退款失败"),
+    /** 20011 -- 刷新订单状态错误 */
+    REFRESH_STATUS_ERROR(20011, "刷新订单状态错误"),
     ;
 
     private int key;

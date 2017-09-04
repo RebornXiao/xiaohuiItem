@@ -48,6 +48,8 @@ public class ShopServiceImpl extends BasicWebService implements ShopService {
 
             output.writeByte(GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
             output.writeUTF(response.toString());
+
+            MarketRemoteService.marketResponse(passportData.getLong("passportId"), GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
         } catch (Exception ex) {
             output.writeByte(GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
             if (ex instanceof XlibaoRuntimeException) {
@@ -70,25 +72,6 @@ public class ShopServiceImpl extends BasicWebService implements ShopService {
 
         logger.info("【硬件】消息内容：message type is \"" + messageType + "\"， message content is \"" + hardwareMessage + "\"；" + session.netTrack());
 
-        if (HardwareMessageType.SHIPMENT.equals(messageType)) {
-            // 出货结果
-            MarketRemoteService.notifyShipment(hardwareMessage.substring(0, 8), hardwareMessage.substring(8, 12));
-            return;
-        }
-        if (HardwareMessageType.SHELVES.equals(messageType)) {
-            // 货架信息
-            MarketRemoteService.notifyShelvesData((Long) session.getAttribute("passportId"), hardwareMessage);
-            return;
-        }
-        if (HardwareMessageType.ORDER.equals(messageType)) {
-            // 订单信息
-        }
-        if (HardwareMessageType.REFUND.equals(messageType)) {
-            // 退货
-        }
-        if (HardwareMessageType.PICK_UP.equals(messageType)) {
-            // 取货
-        }
         if (HardwareMessageType.WARN.equals(messageType)) {
             // 警告
         }

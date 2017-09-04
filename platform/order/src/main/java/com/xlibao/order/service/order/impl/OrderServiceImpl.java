@@ -301,7 +301,6 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         for (int i = 0; i < targets.length; i++) {
             targets[i] = targetArray.getString(i);
         }
-
         OrderEntry orderEntry = JSONObject.parseObject(orderParameters, OrderEntry.class);
         orderEventListenerManager.notifyPushedOrderEntry(orderEntry, pushType, title, content, write, targets);
         return success();
@@ -564,12 +563,6 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     }
 
     @Override
-    public JSONObject transferOrder() {
-        // TODO 转移订单 只能转移快递员
-        return null;
-    }
-
-    @Override
     public JSONObject confirmOrder() {
         long orderId = getLongParameter("orderId");
         String partnerId = getUTF("partnerId");
@@ -691,6 +684,44 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             orderEventListenerManager.notifyConfirmedOrderEntry(orderEntry, beforeStatus);
         }
         return result > 0 ? success("收货成功") : fail("收货失败");
+    }
+
+    public JSONObject refreshOrderStatus() {
+        String orderSequenceNumber = getUTF("orderSequenceNumber"); // 订单序列号
+        String operationPassportId = getUTF("operationPassportId"); // 操作者通行证ID
+        int permissionType = getIntParameter("permissionType", 1);  // 等于或包含以下值时：1、下单方 2、销售方 4、收货方 8、发货方 16、配送方
+        String validStatusSet = getUTF("validStatusSet");           // 有效的状态集合，即处于指定状态下才可执行该请求的意思
+        int targetStatus = getIntParameter("targetStatus");         // 状态的目标值
+
+        OrderEntry orderEntry = getOrder(orderSequenceNumber);
+        if (!validStatusSet.contains(String.valueOf(orderEntry.getStatus()))) {
+            return OrderErrorCodeEnum.REFRESH_STATUS_ERROR.response("当前状态不能执行刷新请求");
+        }
+        int result = -1;
+        if ((permissionType & OrderPermissionTypeEnum.CONSUMER.getKey()) == OrderPermissionTypeEnum.CONSUMER.getKey()) {
+            if (operationPassportId.equals(orderEntry.getPartnerUserId())) { // 通过
+                result = orderDataAccessManager.refreshOrderStatus(orderSequenceNumber, targetStatus, validStatusSet);
+            }
+        }
+        if (((permissionType & OrderPermissionTypeEnum.SALE.getKey()) == OrderPermissionTypeEnum.SALE.getKey() || (permissionType & OrderPermissionTypeEnum.SHIPPER.getKey()) == OrderPermissionTypeEnum.SHIPPER.getKey()) && result == -1) {
+            if (Long.parseLong(operationPassportId) == orderEntry.getShippingPassportId()) { // 通过
+                result = orderDataAccessManager.refreshOrderStatus(orderSequenceNumber, targetStatus, validStatusSet);
+            }
+        }
+        if ((permissionType & OrderPermissionTypeEnum.CONSIGNEE.getKey()) == OrderPermissionTypeEnum.CONSIGNEE.getKey() && result == -1) {
+            if (operationPassportId.equals(orderEntry.getReceiptUserId())) { // 通过
+                result = orderDataAccessManager.refreshOrderStatus(orderSequenceNumber, targetStatus, validStatusSet);
+            }
+        }
+        if ((permissionType & OrderPermissionTypeEnum.DELIVERY.getKey()) == OrderPermissionTypeEnum.DELIVERY.getKey() && result == -1) {
+            if (Long.parseLong(operationPassportId) == orderEntry.getCourierPassportId()) { // 通过
+                result = orderDataAccessManager.refreshOrderStatus(orderSequenceNumber, targetStatus, validStatusSet);
+            }
+        }
+        if (result == -1) {
+            throw PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.throwException();
+        }
+        return result >= 1 ? success() : fail();
     }
 
     @Override
@@ -880,10 +911,31 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     }
 
     @Override
+    public JSONObject applyRefund() {
+        long passportId = getLongParameter("passportId");
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+        String matchStatusSet = getUTF("matchStatusSet", String.valueOf(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()));
+
+        OrderEntry orderEntry = getOrder(orderSequenceNumber);
+        if (matchStatusSet.contains(String.valueOf(orderEntry.getStatus()))) {
+            // 必须处于支付状态才能进行退款
+            return OrderErrorCodeEnum.CANNOT_REFUND.response("当前状态不能执行退款操作，状态值：" + orderEntry.getStatus());
+        }
+        if (passportId != Long.parseLong(orderEntry.getPartnerUserId())) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+        }
+        int result = orderDataAccessManager.updateOrderStatus(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey(), orderEntry.getStatus(), orderEntry.getDeliverStatus(), orderEntry.getDeliverStatus());
+        if (result <= 0) { // 预操作，当执行失败时，回滚该操作；否则提交
+            return OrderErrorCodeEnum.REFUND_FAIL.response("申请退款失败，请稍后重试！");
+        }
+        return success("申请成功，请稍后查看订单状态");
+    }
+
+    @Override
     public JSONObject refund() {
         long passportId = getLongParameter("passportId");
         String orderSequenceNumber = getUTF("orderSequenceNumber");
-        int matchStatus = getIntParameter("matchStatus", OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey());
+        int matchStatus = getIntParameter("matchStatus", OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey());
 
         OrderEntry orderEntry = getOrder(orderSequenceNumber);
         if (orderEntry.getStatus() != matchStatus) {

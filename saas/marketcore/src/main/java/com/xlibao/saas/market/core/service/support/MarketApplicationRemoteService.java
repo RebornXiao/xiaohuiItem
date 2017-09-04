@@ -17,8 +17,17 @@ public class MarketApplicationRemoteService extends BasicRemoteService {
 
     private static final Logger logger = LoggerFactory.getLogger(MarketApplicationRemoteService.class);
 
-    public static JSONObject notifyShipment(String orderSequenceNumber, String serialNumber) {
+    /**
+     * <pre>
+     *     <b>0001 -- 通知配货结果</b>
+     * </pre>
+     *
+     * @param orderSequenceNumber 订单号
+     * @param serialNumber        订单副号
+     */
+    public static JSONObject notifyShipment(long passportId, String orderSequenceNumber, String serialNumber) {
         Map<String, String> parameters = new HashMap<>();
+        parameters.put("passportId", String.valueOf(passportId));
         parameters.put("orderSequenceNumber", orderSequenceNumber);
         parameters.put("serialNumber", serialNumber);
 
@@ -29,6 +38,14 @@ public class MarketApplicationRemoteService extends BasicRemoteService {
         return response;
     }
 
+    /**
+     * <pre>
+     *     <b>0002 -- 通知货架数据</b> -- 一般在初始化时使用
+     * </pre>
+     *
+     * @param passportId    商店的通行证ID
+     * @param content       货架数据
+     */
     public static JSONObject notifyShelvesData(long passportId, String content) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("passportId", String.valueOf(passportId));
@@ -38,6 +55,81 @@ public class MarketApplicationRemoteService extends BasicRemoteService {
         JSONObject response = executor(url, parameters);
 
         logger.info(passportId + " -- 通知商店货架信息结果：" + response);
+        return response;
+    }
+
+    /**
+     * <pre>
+     *     <b>0003 -- 通知订单数据信息</b>
+     * </pre>
+     *
+     * @param passportId            店铺的通行证ID
+     * @param orderSequenceNumber   反馈的订单编号
+     * @param statusCode            状态码 --------- 00表示订单还未执行
+     *                                      --------- 01表示订单正在配送中
+     *                                      --------- 10表示已完成
+     * @param containerCode         货柜编码
+     */
+    public static JSONObject notifyOrderData(Long passportId, String orderSequenceNumber, String statusCode, String containerCode) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("passportId", String.valueOf(passportId));
+        parameters.put("orderSequenceNumber", orderSequenceNumber);
+        parameters.put("statusCode", statusCode);
+        parameters.put("containerCode", containerCode);
+
+        String url = ConfigFactory.getDomainName().marketRemoteURL + "market/message/callback/notifyOrderData.do";
+        JSONObject response = executor(url, parameters);
+
+        logger.info(passportId + " -- 通知商店订单信息结果：" + response);
+        return response;
+    }
+
+    /**
+     * <pre>
+     *     <b>0004 -- 通知退款结果</b>
+     * </pre>
+     *
+     * @param passportId            店铺的通行证ID
+     * @param orderSequenceNumber   完成退货的订单编号
+     * @param statusCode            状态码 --------- 00表示退货完成
+     *                                      --------- 01表示退货发生了故障
+     */
+    public static JSONObject notifyRefund(Long passportId, String orderSequenceNumber, String statusCode) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("passportId", String.valueOf(passportId));
+        parameters.put("orderSequenceNumber", orderSequenceNumber);
+        parameters.put("statusCode", statusCode);
+
+        String url = ConfigFactory.getDomainName().marketRemoteURL + "market/message/callback/notifyRefund.do";
+        JSONObject response = executor(url, parameters);
+
+        logger.info(passportId + " -- 通知订单退款结果：" + response);
+        return response;
+    }
+
+    /**
+     * <pre>
+     *     <b>0005 -- 通知取货结果</b>
+     * </pre>
+     *
+     * @param passportId            店铺的通行证ID
+     * @param orderSequenceNumber   取货的订单编号
+     * @param statusCode            状态码 --------- 00表示柜门打开
+     *                                      --------- 01表示柜门打开发生了故障
+     *                                      --------- 02表示还没有配送完成
+     * @param containerCode         预存货柜的编号，当订单未完成时，反馈00
+     */
+    public static JSONObject notifyPickUp(long passportId, String orderSequenceNumber, String statusCode, String containerCode) {
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("passportId", String.valueOf(passportId));   // 店铺的通行证ID
+        parameters.put("orderSequenceNumber", orderSequenceNumber); // 取货的单号
+        parameters.put("statusCode", statusCode);                   // 状态码
+        parameters.put("containerCode", containerCode);             // 货柜编码
+
+        String url = ConfigFactory.getDomainName().marketRemoteURL + "market/message/callback/notifyPickUp.do";
+        JSONObject response = executor(url, parameters);
+
+        logger.info(passportId + " -- 通知商店提货信息结果：" + response);
         return response;
     }
 

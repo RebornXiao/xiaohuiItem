@@ -1,5 +1,6 @@
 package com.xlibao.saas.market.config;
 
+import com.xlibao.common.support.PassportRemoteService;
 import com.xlibao.datacache.DataCacheApplicationContextLoaderNotify;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.datacache.location.LocationDataCacheService;
@@ -33,6 +34,8 @@ public class ConfigFactory {
 
         DataCacheApplicationContextLoaderNotify.setItemRemoteServiceURL(domainName.itemRemoteURL);
         ItemDataCacheService.initItemCache();
+
+        PassportRemoteService.setPassportRemoteServiceURL(domainName.passportRemoteURL);
 
         xmarket = xmarketConfig;
     }

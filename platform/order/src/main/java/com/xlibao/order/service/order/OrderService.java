@@ -93,18 +93,13 @@ public interface OrderService {
      */
     JSONObject arriveOrder();
 
-    /**
-     * <pre>
-     *     <b>转移订单</b>
-     * </pre>
-     */
-    JSONObject transferOrder();
-
     JSONObject confirmOrder();
 
     JSONObject confirmOfPayment();
 
     JSONObject batchReceipt();
+
+    JSONObject refreshOrderStatus();
 
     /**
      * <pre>
@@ -143,6 +138,8 @@ public interface OrderService {
     JSONObject searchPageOrders();
 
     JSONObject modifyReceivingData();
+
+    JSONObject applyRefund();
 
     JSONObject refund();
 }

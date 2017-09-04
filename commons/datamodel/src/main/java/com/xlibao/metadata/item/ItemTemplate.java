@@ -13,12 +13,15 @@ public class ItemTemplate {
     private Long unitId;
     private Long costPrice;
     private Long defaultPrice;
+    private Integer length = 1;
+    private Integer width = 1;
+    private Integer height = 1;
     private String imageUrl;
     private String bannerUrl;
     private String introductionPage;
     private Byte status;
     private String description;
-    private Long uploadersPassportId;
+    private Long uploaderPassportId;
     private Date uploadTime;
 
     public Long getId() {
@@ -93,6 +96,30 @@ public class ItemTemplate {
         this.defaultPrice = defaultPrice;
     }
 
+    public Integer getLength() {
+        return length;
+    }
+
+    public void setLength(Integer length) {
+        this.length = length;
+    }
+
+    public Integer getWidth() {
+        return width;
+    }
+
+    public void setWidth(Integer width) {
+        this.width = width;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
+    }
+
     public String getImageUrl() {
         return imageUrl;
     }
@@ -133,12 +160,12 @@ public class ItemTemplate {
         this.description = description;
     }
 
-    public Long getUploadersPassportId() {
-        return uploadersPassportId;
+    public Long getUploaderPassportId() {
+        return uploaderPassportId;
     }
 
-    public void setUploadersPassportId(Long uploadersPassportId) {
-        this.uploadersPassportId = uploadersPassportId;
+    public void setUploaderPassportId(Long uploaderPassportId) {
+        this.uploaderPassportId = uploaderPassportId;
     }
 
     public Date getUploadTime() {
@@ -147,5 +174,27 @@ public class ItemTemplate {
 
     public void setUploadTime(Date uploadTime) {
         this.uploadTime = uploadTime;
+    }
+
+    public int minimumLength() {
+        int l = length;
+        if (l > width) {
+            l = width;
+        }
+        if (l > height) {
+            l = height;
+        }
+        return l;
+    }
+
+    public int longest() {
+        int l = length;
+        if (l < width) {
+            l = width;
+        }
+        if (l < height) {
+            l = height;
+        }
+        return l;
     }
 }

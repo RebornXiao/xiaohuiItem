@@ -73,6 +73,21 @@ public class OrderRemoteService extends BasicRemoteService {
         return response;
     }
 
+    public static JSONObject refreshOrderStatus(String orderSequenceNumber, int permissionType, String operationPassportId, int targetStatus, String validStatusSet) {
+        Map<String, String> parameters = initialParameter();
+
+        parameters.put("orderSequenceNumber", orderSequenceNumber);
+        parameters.put("permissionType", String.valueOf(permissionType));
+        parameters.put("operationPassportId", operationPassportId);
+        parameters.put("targetStatus", String.valueOf(targetStatus));
+        parameters.put("validStatusSet", validStatusSet);
+
+        JSONObject response = postOrderMsg("order/refreshOrderStatus", parameters);
+        logger.info("订单状态刷新结果：" + response);
+
+        return response;
+    }
+
     public static JSONObject distributionOrder(long orderId, long courierPassportId, byte self) {
         Map<String, String> parameters = initialParameter();
 

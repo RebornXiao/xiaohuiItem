@@ -22,7 +22,6 @@ import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.activity.RecommendItemTypeEnum;
 import com.xlibao.saas.market.service.item.*;
 import com.xlibao.saas.market.service.market.MarketErrorCodeEnum;
-import com.xlibao.saas.market.service.market.MarketStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -351,6 +349,17 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             response.add(data);
         }
         return success(response);
+    }
+
+    @Override
+    public JSONObject fuzzyMatchItemName() {
+        String itemName = getUTF("fuzzyItemName");
+        List<ItemTemplate> itemTemplates = ItemDataCacheService.fuzzyQueryItemTemplates(itemName);
+        if (CommonUtils.isEmpty(itemTemplates)) {
+            return PlatformErrorCodeEnum.NO_MORE_DATA.response();
+        }
+        JSONArray itemNameSet = itemTemplates.stream().map(ItemTemplate::getName).collect(Collectors.toCollection(JSONArray::new));
+        return success(itemNameSet);
     }
 
     private long matchMarketId(long passportId, long marketId) {

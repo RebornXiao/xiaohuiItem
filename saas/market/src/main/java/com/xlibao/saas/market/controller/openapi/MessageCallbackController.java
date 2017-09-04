@@ -30,6 +30,24 @@ public class MessageCallbackController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "notifyOrderData")
+    public JSONObject notifyOrderData() {
+        return messageService.notifyOrderData();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "notifyRefund")
+    public JSONObject notifyRefund() {
+        return messageService.notifyRefund();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "notifyPickUp")
+    public JSONObject notifyPickUp() {
+        return messageService.notifyPickUp();
+    }
+
+    @ResponseBody
     @RequestMapping(value = "askOrderPickUp")
     public JSONObject askOrderPickUp() {
         return messageService.askOrderPickUp();

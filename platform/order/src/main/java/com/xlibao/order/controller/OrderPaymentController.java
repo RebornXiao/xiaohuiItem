@@ -31,6 +31,12 @@ public class OrderPaymentController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "applyRefund")
+    public JSONObject applyRefund() {
+        return orderService.applyRefund();
+    }
+
+    @ResponseBody
     @RequestMapping(value = "refund")
     public JSONObject refund() {
         return orderService.refund();

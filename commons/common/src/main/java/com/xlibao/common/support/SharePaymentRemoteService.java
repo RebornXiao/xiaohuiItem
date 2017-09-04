@@ -68,7 +68,7 @@ public class SharePaymentRemoteService extends BasicWebService {
         signParameters.put("partnerId", partnerId);
         signParameters.put("appId", appId);
         signParameters.put("randomParameter", DefineRandom.randomString(32));
-        signParameters.put("orderSequenceNumber", orderSequenceNumber);
+        signParameters.put("partnerSequenceNumber", orderSequenceNumber);
 
         CommonUtils.fillSignature(signParameters, appKey);
 

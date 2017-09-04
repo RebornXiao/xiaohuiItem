@@ -28,6 +28,7 @@ import com.xlibao.saas.market.service.order.OrderEventListenerManager;
 import com.xlibao.saas.market.service.order.OrderService;
 import com.xlibao.saas.market.service.order.StatusEnterEnum;
 import com.xlibao.saas.market.service.support.ItemSupport;
+import com.xlibao.saas.market.service.support.remote.MarketShopRemoteService;
 import com.xlibao.saas.market.service.support.remote.OrderRemoteService;
 import com.xlibao.saas.market.service.support.remote.PaymentRemoteService;
 import org.slf4j.Logger;
@@ -53,6 +54,9 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     private OrderEventListenerManager orderEventListenerManager;
     @Autowired
     private ItemSupport itemSupport;
+    @Autowired
+    private MarketShopRemoteService marketShopRemoteService;
+
 
     @Override
     public JSONObject prepareCreateOrder() {
@@ -186,45 +190,6 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     }
 
     @Override
-    public JSONObject pickUpItems() {
-        long passportId = getLongParameter("passportId");
-        String orderSequenceNumber = getUTF("orderSequenceNumber");
-
-        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
-
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarketForPassport(passportId);
-        if (!Objects.equals(orderEntry.getShippingPassportId(), marketEntry.getId())) {
-            // TODO 推送通知用户订单权限出错
-            return MarketOrderErrorCodeEnum.NON_MARKET_ORDER.response();
-        }
-        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey()) {
-            // TODO 推送通知用户订单未支付
-            throw OrderErrorCodeEnum.UN_PAYMENT_ORDER.throwException();
-        }
-        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
-            // TODO 推送通知用户订单处于配送中
-            throw OrderErrorCodeEnum.HAS_DISTRIBUTION_ORDER.throwException();
-        }
-        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_ARRIVE.getKey()) {
-            // TODO 通知用户该订单已取货(已签收、已提货)
-            throw OrderErrorCodeEnum.HAS_ARRIVE_ORDER.throwException();
-        }
-        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) { // 自提
-            if (passportId != Long.parseLong(orderEntry.getPartnerUserId()) && passportId != Long.parseLong(orderEntry.getReceiptUserId())) {
-                // 通知用户权限出错
-                return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
-            }
-        }
-        if (orderEntry.getDeliverType() == DeliverTypeEnum.DISTRIBUTION.getKey()) {
-            if (passportId != orderEntry.getCourierPassportId()) {
-                // 通知用户权限出错
-                return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
-            }
-        }
-        return null;
-    }
-
-    @Override
     public JSONObject acceptOrder() {
         // 接单者
         long passportId = getLongParameter("passportId");
@@ -245,8 +210,18 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     public JSONObject refundOrder() {
         long passportId = getPassportId();
         String orderSequenceNumber = getUTF("orderSequenceNumber");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+        if (orderEntry == null) {
+            return OrderErrorCodeEnum.NOT_FOUND_ORDER.response();
+        }
+        // 申请退款
+        PaymentRemoteService.applyRefund(passportId, orderSequenceNumber, (orderEntry.getDeliverType() != DeliverTypeEnum.PICKED_UP.getKey()) ? String.valueOf(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) :
+                (OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DELIVER + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()));
+        // 请求商店进行退货
+        marketShopRemoteService.refundMessage(passportId, orderSequenceNumber);
         // 执行退款业务
-        return PaymentRemoteService.refund(passportId, orderSequenceNumber);
+        return success("已发起退货申请，请稍后刷新订单状态");
     }
 
     private String orderStatusSet(int roleType, int statusEnter) {
@@ -262,7 +237,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                         + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey();
             }
             if (statusEnter == StatusEnterEnum.REFUND.getKey()) { // 用户 退款中
-                return String.valueOf(OrderStatusEnum.ORDER_STATUS_REFUND.getKey());
+                return OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_REFUND.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_CONFIRM_REFUND.getKey();
+            }
+            if (statusEnter == StatusEnterEnum.RECOMMEND.getKey()) { // 首页推荐
+                return OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey();
             }
         }
         return OrderStatusEnum.ORDER_STATUS_CANCEL.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey();
@@ -332,10 +310,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
     private JSONObject fillOrderDetailMsg(OrderEntry orderEntry, int roleType, long passportId) {
         if (roleType != OrderRoleTypeEnum.CONSUMER.getKey()) {
-            return fail("您没有权限查看该订单详情");
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response("您没有权限查看该订单详情");
         }
         if (Long.parseLong(orderEntry.getPartnerUserId()) != passportId && Long.parseLong(orderEntry.getReceiptUserId()) != passportId) {
-            return fail("您没有权限查看该订单详情");
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response("您没有权限查看该订单详情");
         }
         JSONObject orderMsg = new JSONObject();
 

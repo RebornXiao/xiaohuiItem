@@ -296,7 +296,7 @@ public class BasicWebService {
         return response;
     }
 
-    protected static HttpServletRequest getHttpServletRequest() {
+    public static HttpServletRequest getHttpServletRequest() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
         try {
             request.setCharacterEncoding("UTF-8");

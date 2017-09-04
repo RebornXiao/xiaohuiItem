@@ -37,6 +37,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         }
         String content = HardwareMessageType.HARDWARE_MSG_START + HardwareMessageType.PICK_UP + orderSequenceNumber + HardwareMessageType.HARDWARE_MSG_END;
         logger.info("【硬件消息】发送取货消息，消息内容：" + content);
+
         // 发送消息到硬件处理
         sessionManager.sendHardwareMessage(content);
     }

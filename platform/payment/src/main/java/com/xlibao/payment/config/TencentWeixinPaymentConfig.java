@@ -21,4 +21,7 @@ public class TencentWeixinPaymentConfig {
     /** 签名KEY */
     @Value("${wx_app_key}")
     public String WX_APP_KEY = "QufeJLjas8UWHAjkibvQ2V60shTGwY6T";
+    /** 微信证书地址 */
+    @Value("${wx_certificate_path}")
+    public String  WX_CERTIFICATE_PATH = "";
 }

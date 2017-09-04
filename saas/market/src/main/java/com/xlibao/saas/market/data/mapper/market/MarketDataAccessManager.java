@@ -47,8 +47,8 @@ public class MarketDataAccessManager {
         return entryMapper.getMarketForPassport(passportId);
     }
 
-    public MarketAccessLogger getLastAccessLogger(long passportId) {
-        return accessLoggerMapper.getLastAccessLogger(passportId);
+    public int marketResponse(long marketId, int status) {
+        return entryMapper.marketResponse(marketId, status);
     }
 
     public List<MarketEntry> searchMarkets(MarketEntry searchModel, int pageSize, int pageStartIndex) {
@@ -61,6 +61,10 @@ public class MarketDataAccessManager {
 
     public List<MarketEntry> getAllMarkets() {
         return entryMapper.getAllMarkets();
+    }
+
+    public MarketAccessLogger getLastAccessLogger(long passportId) {
+        return accessLoggerMapper.getLastAccessLogger(passportId);
     }
 
     public int createShelves(MarketShelvesManager shelvesManager) {
@@ -93,5 +97,9 @@ public class MarketDataAccessManager {
 
     public int createTaskLogger(MarketTaskLogger taskLogger) {
         return taskLoggerMapper.createTaskLogger(taskLogger);
+    }
+
+    public int clearShelves(long marketId) {
+        return shelvesManagerMapper.clearShelves(marketId);
     }
 }

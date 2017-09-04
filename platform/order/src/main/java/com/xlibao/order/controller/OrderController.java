@@ -280,17 +280,6 @@ public class OrderController {
 
     /**
      * <pre>
-     *     <b>转移订单</b>
-     * </pre>
-     */
-    @ResponseBody
-    @RequestMapping(value = "transferOrder")
-    public JSONObject transferOrder() {
-        return orderService.transferOrder();
-    }
-
-    /**
-     * <pre>
      *     <b>确认订单</b>
      * </pre>
      */
@@ -310,6 +299,12 @@ public class OrderController {
     @RequestMapping(value = "batchReceipt")
     public JSONObject batchReceipt() {
         return orderService.batchReceipt();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "refreshOrderStatus")
+    public JSONObject refreshOrderStatus() {
+        return orderService.refreshOrderStatus();
     }
 
     /**

@@ -27,7 +27,7 @@ public class HeartbeatCallable extends Thread {
             MessageOutputStream message = MessageFactory.createPlatformMessage(MessageFactory.MSG_ID_HEARTBEAT);
             message.writeUTF("商店心跳信息");
 
-            sessionManager.sendMarketSession(message);
+            sessionManager.sendMarketMessage(message);
         }
     }
 }

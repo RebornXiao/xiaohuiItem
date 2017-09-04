@@ -36,4 +36,8 @@
     <select id="getClipDatas" resultMap="BaseResultMap">
         select * from market_shelves_manager where market_id = #{marketId} and group_code = #{groupCode} and unit_code = #{unitCode} and floor_code = #{floorCode} limit #{pageStartIndex}, #{pageSize}
     </select>
+
+    <update id="clearShelves">
+        delete from market_shelves_manager where market_id = #{marketId}
+    </update>
 </mapper>
