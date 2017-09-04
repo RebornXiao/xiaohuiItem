@@ -106,6 +106,10 @@
                                             class="btn waves-effect waves-light btn-warning btn-sm"
                                             data_id="${item.id?c}">编辑
                                     </button>
+                                    <button id="seeBtn" type="button"
+                                            class="btn waves-effect waves-light btn-info btn-sm"
+                                            data_id="${item.id?c}">商品是否在店铺上架
+                                    </button>
                                 </td>
                             </tr>
 
@@ -126,7 +130,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/item/itemList.do?searchType=${searchType}&searchKey=${searchKey}" />
+                    <@paginate pageItemCount=pageSize nowPage=pageIndex itemCount=count action="${base}/item/itemList.do?searchType=${searchType}&searchKey=${searchKey}" />
                 </div>
             </div>
 
@@ -151,11 +155,14 @@
 
                 if (searchTypeValue == "define_code") {
                     _searchMenu.html("按自定义编码搜索<span class=\"caret\"></span>");
+                    _searchKeyTxt.attr("placeholder", "按自定义编码搜索");
                 } else if (searchTypeValue == "barcode") {
                     _searchMenu.html("按条形码搜索<span class=\"caret\"></span>");
+                    _searchKeyTxt.attr("placeholder", "按条形码搜索");
                 } else {
                     searchTypeValue = "name";
                     _searchMenu.html("按名称搜索<span class=\"caret\"></span>");
+                    _searchKeyTxt.attr("placeholder", "按名称搜索");
                 }
 
                 //设置搜索框内容
@@ -196,6 +203,13 @@
                 _itemListTable.find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
                         location.href = "${base}/item/itemEdit.do?id=" + $(this).attr("data_id");
+                    });
+                });
+
+                //单项查看店铺分布
+                _itemListTable.find('button[id=seeBtn]').each(function () {
+                    $(this).on('click', function () {
+                        location.href = "${base}/market/marketItems.do?searchType=itemTemplateId&searchKey=" + $(this).attr("data_id");
                     });
                 });
 

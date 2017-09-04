@@ -66,10 +66,19 @@ public class ItemManagerServiceImpl implements ItemManagerService {
         return response;
     }
 
-    public JSONObject getItemTemplate(long itemTemplateId) {
+    public JSONObject getItemTemplateJson(long itemTemplateId) {
         String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/getItemTemplate?itemTemplateId=" + itemTemplateId);
         JSONObject response = JSONObject.parseObject(json);
         return response;
+    }
+
+    @Override
+    public ItemTemplate getItemTemplate(long itemTemplateId) {
+        JSONObject json = getItemTemplateJson(itemTemplateId);
+        if (json.getIntValue("code") == 0) {
+            return JSONObject.parseObject(json.getString("response"), ItemTemplate.class);
+        }
+        return null;
     }
 
     public JSONObject removeItemTemplates(String[] ids) {
@@ -108,7 +117,7 @@ public class ItemManagerServiceImpl implements ItemManagerService {
     }
 
     private List<ItemType> getSortItemTypes(long parentItemTypeId, boolean sort) {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemTypePage?parentItemTypeId=" + parentItemTypeId+(sort?"&sort=1":""));
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemTypePage?parentItemTypeId=" + parentItemTypeId + (sort ? "&sort=1" : ""));
         JSONObject response = JSONObject.parseObject(json);
         int code = response.getIntValue("code");
         if (code != 0) {

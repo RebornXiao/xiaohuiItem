@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.http.HttpRequest;
 import com.xlibao.market.data.model.MarketEntry;
+import com.xlibao.market.data.model.MarketItem;
+import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.passport.PassportArea;
 import com.xlibao.metadata.passport.PassportCity;
 import com.xlibao.metadata.passport.PassportProvince;
@@ -15,6 +17,7 @@ import com.xlibao.saas.market.manager.config.LogicConfig;
 import com.xlibao.saas.market.manager.service.itemmanager.ItemManagerService;
 import com.xlibao.saas.market.manager.service.marketmanager.MarketManagerService;
 import com.xlibao.saas.market.manager.service.passportmanager.PassportManagerService;
+import com.xlibao.saas.market.manager.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -115,13 +118,12 @@ public class MarketManagerController extends BaseController {
     //商店 编辑 页面
     @RequestMapping("/merketEdit")
     public String merketEdit(ModelMap map) {
-        long id = getLongParameter("id", 0);
+        long id = getLongParameter("marketId", 0);
         if (id != 0) {
-            JSONObject itemJson = marketManagerService.getMarket(id);
-            if (itemJson.getIntValue("code") != 0) {
-                return remoteFail(map, itemJson, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
+            MarketEntry entry = marketManagerService.getMarket(id);
+            if (entry == null) {
+                return fail(map, "远程调用异常\n无法找到店铺信息,店铺id=" + id, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
             }
-            MarketEntry entry = parseObject(itemJson.getJSONObject("response").getString("data"), MarketEntry.class);
             map.put("market", entry);
             //拿省
             String provinceName = entry.getProvince();
@@ -165,6 +167,18 @@ public class MarketManagerController extends BaseController {
         }
         return jumpPage(map, LogicConfig.FTL_MARKET_EDIT, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_LIST);
     }
+
+
+    //商店 编辑 保存
+    @ResponseBody
+    @RequestMapping("/merketEditSave")
+    public JSONObject merketEditSave() {
+        Map map = getMapParameter();
+
+        String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "market/manager/merketEditSave.do", map);
+        return JSONObject.parseObject(json);
+    }
+
 
     //提供给页面，拿到 街道列表 JSONObject 信息
     @ResponseBody
@@ -265,7 +279,7 @@ public class MarketManagerController extends BaseController {
             map.put("pageSize", String.valueOf(pageSize));
             map.put("pageStartIndex", getPageStartIndex(pageSize));
 
-            String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/unExecutorTask.do?marketId="+marketId+"&pageSize="+pageSize+"&pageStartIndex="+getPageStartIndex(pageSize));
+            String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/unExecutorTask.do?marketId=" + marketId + "&pageSize=" + pageSize + "&pageStartIndex=" + getPageStartIndex(pageSize));
             JSONObject response = JSONObject.parseObject(json);
             if (response.getIntValue("code") == 0) {
                 modelMap.put("tasks", response.getJSONObject("response").getJSONArray("datas"));
@@ -281,10 +295,12 @@ public class MarketManagerController extends BaseController {
         long marketId = getLongParameter("marketId", 0);
         String searchType = getUTF("searchType", "");
         String searchKey = getUTF("searchKey", "");
+        int pageSize = getPageSize();
+        int pageIndex = getIntParameter("pageIndex", 1);
 
-        JSONObject response = marketManagerService.getAllMarkets();
-        if (response.getIntValue("code") == 0) {
-            map.put("markets", response.getJSONObject("response").getJSONArray("datas"));
+        JSONObject marketResponse = marketManagerService.getAllMarkets();
+        if (marketResponse.getIntValue("code") == 0) {
+            map.put("markets", marketResponse.getJSONObject("response").getJSONArray("datas"));
         }
 
         map.put("marketId", marketId);
@@ -292,14 +308,34 @@ public class MarketManagerController extends BaseController {
         map.put("searchKey", searchKey);
 
         //根据搜索内容，查找数据
+        JSONObject itemResponse = marketManagerService.searchMarketItems(marketId, searchType, searchKey, pageSize, pageIndex);
+        if (itemResponse.getIntValue("code") == 0) {
+            //成功，则注入商品
+            JSONObject response = itemResponse.getJSONObject("response");
+            JSONArray array = response.getJSONArray("datas");
 
+            for (int i = 0; i < array.size(); i++) {
+                JSONObject json = array.getJSONObject(i);
+                //重置促销
+                Utils.changePrice(json, "discountPrice");
+                //重置成本
+                Utils.changePrice(json, "costPrice");
+                //重置市场价
+                Utils.changePrice(json, "marketPrice");
+                //重置销售价
+                Utils.changePrice(json, "sellPrice");
+            }
+            map.put("items", array);
+            map.put("count", response.getIntValue("count"));
+        }
 
         return jumpPage(map, LogicConfig.FTL_MARKET_ITEM_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ITEM_LIST);
     }
 
-    //新增 / 编辑 店铺商品
-    @RequestMapping("/marketItemEdit")
-    public String marketItemEdit(ModelMap map) {
+    //新增 店铺商品
+    @RequestMapping("/marketItemAdd")
+    public String marketItemAdd(ModelMap map) {
+
         long marketId = getLongParameter("marketId", 0);
 
         JSONObject response = marketManagerService.getAllMarkets();
@@ -311,26 +347,57 @@ public class MarketManagerController extends BaseController {
         map.put("itemTypes", itemManagerService.getSelectItemTypes());
         map.put("marketId", marketId);
 
+        return jumpPage(map, LogicConfig.FTL_MARKET_ITEM_ADD, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ITEM_LIST);
+    }
+
+    //新增 店铺商品 保存
+    @ResponseBody
+    @RequestMapping("/marketItemAddSave")
+    public JSONObject marketItemAddSave() {
+        Map<String, String> map = getMapParameter();
+        String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/item/manager/marketItemAddSave.do", map);
+        return parseObject(json);
+    }
+
+
+    //编辑 店铺商品
+    @RequestMapping("/marketItemEdit")
+    public String marketItemEdit(ModelMap map) {
+
+        long id = getLongParameter("id");
+
+        JSONObject itemResponse = marketManagerService.getMarketItem(id);
+        if (itemResponse.getIntValue("code") != 0) {
+            return remoteFail(map, itemResponse, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ITEM_LIST);
+        }
+        JSONObject itemJson = itemResponse.getJSONObject("response").getJSONObject("datas");
+        MarketItem marketItem = JSONObject.parseObject(itemJson.toJSONString(), MarketItem.class);
+        //取得其商店
+        MarketEntry entry = marketManagerService.getMarket(marketItem.getOwnerId());
+        if (entry == null) {
+            return fail(map, "远程调用异常\n无法找到店铺信息,店铺id=" + marketItem.getOwnerId(), LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
+        }
+        map.put("market", entry);
+        //取得其模板
+        ItemTemplate itemTemplate = itemManagerService.getItemTemplate(marketItem.getItemTemplateId());
+        if (itemTemplate == null) {
+            return fail(map, "远程调用异常\n无法找到商品模板信息,商品模板id=" + marketItem.getItemTemplateId(), LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
+        }
+        map.put("itemTemplate", itemTemplate);
+
+        map.put("marketItem", itemJson);
+
         return jumpPage(map, LogicConfig.FTL_MARKET_ITEM_EDIT, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ITEM_LIST);
     }
 
 
-    //新增 / 编辑 店铺商品
+    // 编辑 店铺商品 保存
+    @ResponseBody
     @RequestMapping("/marketItemEditSave")
-    public String marketItemEditSave(ModelMap map) {
-//        long marketId = getLongParameter("marketId", 0);
-//
-//        JSONObject response = marketManagerService.getAllMarkets();
-//        if (response.getIntValue("code") == 0) {
-//            map.put("markets", response.getJSONObject("response").getJSONArray("datas"));
-//        }
-//
-//        //所有类型
-//        map.put("itemTypes", itemManagerService.getSelectItemTypes());
-//
-//        map.put("marketId", marketId);
-
-        return jumpPage(map, LogicConfig.FTL_MARKET_ITEM_EDIT, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ITEM_LIST);
+    public JSONObject marketItemEditSave() {
+        Map<String, String> map = getMapParameter();
+        String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/item/manager/marketItemEditSave.do", map);
+        return parseObject(json);
     }
 
 
@@ -351,7 +418,7 @@ public class MarketManagerController extends BaseController {
             }
             if (marketId != 0) {
                 //拿走道
-                String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/getShelvesMarks.do?marketId=" + marketId);
+                String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/getShelvesMarks.do?marketId=" + marketId);
                 JSONObject jsonObject = JSONObject.parseObject(json);
                 if (jsonObject.getIntValue("code") == 0) {
                     List<String> groups = JSONObject.parseArray(jsonObject.getJSONObject("response").getString("datas"), String.class);
@@ -377,7 +444,7 @@ public class MarketManagerController extends BaseController {
         String unitCode = getUTF("unitCode", "");
         int shelvesType = getIntParameter("shelvesType", 0);
 
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/getShelvesMarks.do?marketId=" + marketId + "&groupCode=" + groupCode + "&unitCode=" + unitCode + "&shelvesType=" + shelvesType);
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/getShelvesMarks.do?marketId=" + marketId + "&groupCode=" + groupCode + "&unitCode=" + unitCode + "&shelvesType=" + shelvesType);
         return parseObject(json);
     }
 
@@ -393,7 +460,7 @@ public class MarketManagerController extends BaseController {
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex(pageSize);
 
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/loaderClipDatas.do?marketId=" + marketId + "&groupCode=" + groupCode + "&unitCode=" + unitCode + "&floorCode=" + floorCode + "&pageSize=" + 1000 + "&pageStartIndex=" + pageStartIndex);
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/loaderClipDatas.do?marketId=" + marketId + "&groupCode=" + groupCode + "&unitCode=" + unitCode + "&floorCode=" + floorCode + "&pageSize=" + 1000 + "&pageStartIndex=" + pageStartIndex);
         return parseObject(json);
     }
 
@@ -403,7 +470,7 @@ public class MarketManagerController extends BaseController {
     public JSONObject checkPrepareActionTask() {
         long taskId = getLongParameter("taskId");
 
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/checkPrepareActionTask.do?taskId=" + taskId);
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/checkPrepareActionTask.do?taskId=" + taskId);
         return parseObject(json);
     }
 
@@ -412,7 +479,7 @@ public class MarketManagerController extends BaseController {
     @RequestMapping("/cancelPrepareActionTask")
     public JSONObject cancelPrepareActionTask() {
         long taskId = getLongParameter("taskId");
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/cancelPrepareActionTask.do?taskId=" + taskId);
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/cancelPrepareActionTask.do?taskId=" + taskId);
         return parseObject(json);
     }
 
@@ -445,7 +512,7 @@ public class MarketManagerController extends BaseController {
             map.put("hopeExecutorDate", hopeExecutorDate);
         }
 
-        String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/prepareAction.do", map);
+        String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/prepareAction.do", map);
         JSONObject response = JSONObject.parseObject(json);
 
         return response;

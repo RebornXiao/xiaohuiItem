@@ -11,6 +11,8 @@ public interface MarketItemMapper {
 
     MarketItem getItem(@Param("marketId") long marketId, @Param("itemTemplateId") long itemTemplateId);
 
+    MarketItem getMarketItem(@Param("id") long id);
+
     List<MarketItem> specialProducts(@Param("marketId") long marketId, @Param("appointType") long appointType, @Param("timeout") long timeout, @Param("sortType") int sortType, @Param("sortValue") int sortValue,
                                      @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 
@@ -33,5 +35,8 @@ public interface MarketItemMapper {
 
     int offShelves(@Param("itemId") long itemId, @Param("quantity") int quantity, @Param("status") int status);
 
-    int updateItem(@Param("itemId") long itemId, @Param("costPrice") long costPrice, @Param("sellPrice") long sellPrice, @Param("marketPrice") long marketPrice, @Param("discountPrice") long discountPrice, byte status, String description);
+    int updateItem(@Param("itemId") long itemId, @Param("costPrice") long costPrice, @Param("sellPrice") long sellPrice, @Param("marketPrice") long marketPrice, @Param("discountPrice") long discountPrice, @Param("status") byte status, @Param("description") String description);
+
+    List<MarketItem> searchMarketItems(@Param("marketId") long marketId, @Param("searchType") String searchType, @Param("searchKey") String searchKey, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
+
 }

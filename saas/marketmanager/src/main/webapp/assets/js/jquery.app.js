@@ -370,3 +370,82 @@ function moveEnd(obj){
         obj.selectionStart = obj.selectionEnd = len;
     }
 }
+
+//policy 要经过base64编码， signature 还要进一步处理，可以查阅官方文档
+// function OssUpload(param, file, fileName, callBack) {
+//     var policyBase64 = Base64.encode(param.policy);
+//     var signature = param.signature.split(':')[1];
+//     var filePathName = param.filePath + "/" + param.fileName;
+//     var fileFullName = param.contentHostName + "/" + filePathName;
+//     var request = new FormData();
+//     request.append('OSSAccessKeyId', param.accessKeyId);
+//     request.append('policy', policyBase64);
+//     request.append('Signature', signature);
+//     request.append('key', filePathName);
+//     for (var i in param.metaDatas) {
+//         request.append(i, param.metaDatas[i]);
+//     }
+//     request.append('file', file);
+//     request.append('submit', "Upload to OSS");
+//     $.ajax({
+//         url: param.contentHostName,
+//         data: request,
+//         processData: false,
+//         cache: false,
+//         async: false,
+//         contentType: false,
+//         //关键是要设置contentType 为false，不然发出的请求头 没有boundary
+//         //该参数是让jQuery去判断contentType
+//         type: "POST",
+//         success: function (data, textStatus, request) {
+//             if (textStatus === "nocontent") {
+//                 callBack(fileFullName);
+//                 alert("success!");
+//             } else {
+//                 alert(textStatus);
+//             }
+//         }
+//     });
+// }
+
+//
+// var glo_image_data = {
+//         OSSAccessKeyId:'',//需要根据自己的bucket填写 详情请见oss api
+//         policy:'',
+//         signature:'',
+//         success_action_status:'201',
+//         key:'img/111/${filename}'
+//     },
+//     glo_image_upload_url = 'http://xxx.oss-cn-beijing.aliyuncs.com';
+//
+// function doUploadImage(url, data){
+//     var oMyForm = new FormData();
+//
+//     for(var field_name in data){
+//         oMyForm.append(field_name, data[field_name]);
+//     }
+//
+//     oMyForm.append("file", document.getElementByIdx_x('file').files[0]);
+//
+//     var oReq = new XMLHttpRequest();
+//     //上传进度监听
+//     oReq.upload.onprogress = function (e) {
+//         if(e.type=='progress'){
+//             var percent = Math.round(e.loaded/e.total*100,2)+'%';
+//             $('#progress').html(percent);//显示进度的容器 自行修改
+//         }
+//     };
+//     //上传结果
+//     oReq.onreadystatechange = function(e){
+//         if(oReq.readyState == 4){
+//             if(oReq.status==201)//这里如果成功返回的是 success_action_status设置的值
+//                 alert('成功');
+//             else
+//                 alert('失败');
+//         }
+//     };
+//     oReq.open("POST", url);
+//     oReq.send(oMyForm);
+// }
+//
+// doUploadImage(glo_image_upload_url, glo_image_data);

@@ -34,7 +34,7 @@
                 <div class="col-sm-12">
                     <div class="row m-t-30">
                         <div class="col-md-8">
-                            <form class="form-horizontal" role="form">
+                            <form class="form-horizontal" role="form" onkeypress="if(event.keyCode==13) {$('#saveBtn').click();return false;}" method="POST" action="${base}/marketmanager/" id="formDefault">
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">店铺名称：</label>
                                     <div class="col-md-8">
@@ -126,7 +126,7 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">覆盖的配送距离(米)：</label>
                                     <div class="col-md-8">
-                                        <input type="text" id="mDistance" class="form-control" <#if market?exists>
+                                        <input type="number" id="mDistance" class="form-control" <#if market?exists>
                                                value="${market.coveringDistance}" </#if> placeholder="单位：米">
                                     </div>
                                 </div>
@@ -134,7 +134,7 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">配送费(分)：</label>
                                     <div class="col-md-8">
-                                        <input type="text" id="mDeliveryCost" class="form-control" <#if market?exists>
+                                        <input type="number" id="mDeliveryCost" class="form-control" <#if market?exists>
                                                value="${market.deliveryCost}" </#if> placeholder="单位：分">
                                     </div>
                                 </div>
@@ -234,19 +234,115 @@
                     history.back(-1);
                 });
 
+
+
+
+//                var valid = $('#formDefault').Validform({
+//                    tiptype:4,
+//                    label:".help-block",
+//                    showAllError:true,
+//                    ajaxPost:true,
+//                    postonce:true,
+//                    beforeSubmit:function(curform){
+//                        var con = getContent();
+//                        $('#detail_text').val(encodeURIComponent(con));
+//                    },
+//                    callback:function(data){
+//
+//                        if (data.success == true) {
+//                            //alert(data.msg);
+//                            location.reload(true);
+//                            //window.location.href="/order/api.php?s=/home/menu/lists&merchant_id="+data.merchant_id+"";
+//                            show_notify(data.msg);
+//                        } else {
+//                            if (data.msg == null) {
+//                                data.msg = '系统错误，请重试';
+//                            }
+//                            $('#btnDefault').button('reset');
+//                            alert(data.msg);
+//                            // show_notify(data.msg);
+//                        }
+//
+//                    }
+//                }); // end validform
+//
+//                valid.addRule(
+//                        [{
+//                            ele:'#name',
+//                            datatype:'*',
+//                            nullmsg:'不能为空',
+//                            errormsg:'格式错误',
+//                            sucmsg:'√'
+//                        },
+//                            {
+//                                ele:'#price',
+//                                datatype:/^\d+(\.\d{1,2})?$/,
+//                                nullmsg:'不能为空',
+//                                errormsg:'价格为数字，且最多保留两位小数',
+//                                sucmsg:'√'
+//                            },
+//                            {
+//                                ele:'#repertory',
+//                                datatype:'n',
+//                                nullmsg:'x',
+//                                errormsg:'请输入正确的数字',
+//                                sucmsg:'√'
+//                            },
+//                            {
+//                                ele:'#today_repertory',
+//                                datatype:'n',
+//                                nullmsg:'x',
+//                                errormsg:'请输入正确的数字',
+//                                sucmsg:'√'
+//                            },
+//                            {
+//                                ele:'#menu_sort',
+//                                datatype:'n',
+//                                nullmsg:'x',
+//                                errormsg:'请输入正确的数字',
+//                                sucmsg:'√'
+//                            },
+//                            {
+//                                ele:'#menu_img',
+//                                datatype:'url',
+//                                nullmsg:'请上传菜单图片',
+//                                errormsg:'格式错误',
+//                                sucmsg:'√'
+//                            },
+//                            {
+//                                ele:'#barcode',
+//                                datatype:'*',
+//                                nullmsg:'不能为空',
+//                                errormsg:'格式错误',
+//                                sucmsg:'√',
+//                                ignore:'ignore'
+//                            },
+//                            {
+//                                ele:'#stock_price',
+//                                datatype:/^\d+(\.\d{1,2})?$/,
+//                                nullmsg:'不能为空',
+//                                errormsg:'格式错误',
+//                                sucmsg:'√',
+//                                ignore:'ignore'
+//                            }
+//                        ]
+//
+//                );
+
+
+
                 $("#saveBtn").on('click', function () {
 
                     //检测所有项
-
-                <#--$.post("${base}/item/itemUnitEditSave.do?id="+itemUnitId+"&title="+title+"&status="+status, function(data) {-->
-                <#--//重新刷新-->
-                <#--if(data.code == "0") {-->
-                <#--swal("提示", "操作成功", "success");-->
-                <#--location.reload();-->
-                <#--} else {-->
-                <#--swal(data.msg);-->
-                <#--}-->
-                <#--}, "json");-->
+                    <#--$.post("${base}/item/itemUnitEditSave.do?id="+itemUnitId+"&title="+title+"&status="+status, function(data) {-->
+                    <#--//重新刷新-->
+                    <#--if(data.code == "0") {-->
+                    <#--swal("提示", "操作成功", "success");-->
+                    <#--location.reload();-->
+                    <#--} else {-->
+                    <#--swal(data.msg);-->
+                    <#--}-->
+                    <#--}, "json");-->
                 });
             });
         </script>

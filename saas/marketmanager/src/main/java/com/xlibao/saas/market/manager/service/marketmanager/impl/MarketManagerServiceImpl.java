@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.alibaba.fastjson.JSON.parseObject;
+
 /**
  * @author chinahuangxc on 2017/7/10.
  */
@@ -23,7 +25,7 @@ import java.util.Map;
 public class MarketManagerServiceImpl implements MarketManagerService {
 
     public JSONObject getAllMarkets() {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/getAllMarkets.do");
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/getAllMarkets.do");
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
@@ -44,16 +46,34 @@ public class MarketManagerServiceImpl implements MarketManagerService {
         Utils.appendInt(sb, "pageSize", pageSize);
         Utils.appendInt(sb, "pageIndex", pageIndex);
 
-
-        String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/searchMarkets.do?" + sb.toString(), map);
+        String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/searchMarkets.do?" + sb.toString(), map);
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
 
 
-    public JSONObject getMarket(long id) {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/getMarket.do?id=" + id);
+    public MarketEntry getMarket(long id) {
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/getMarket.do?id=" + id);
+        JSONObject response = JSONObject.parseObject(json);
+        if(response.getIntValue("code") != 0) {
+            return null;
+        }
+        return JSONObject.parseObject(response.getString("response"), MarketEntry.class);
+    }
+
+
+    public JSONObject getMarketItem(long id) {
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/item/manager/getMarketItem.do?id=" + id);
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
+
+    @Override
+    public JSONObject searchMarketItems(long marketId, String searchType, String searchKey, int pageSize, int pageIndex) {
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/item/manager/searchMarketItems.do?marketId=" + marketId + "&searchType=" + searchType + "&searchKey=" + searchKey + "&pageSize=" + pageSize + "&pageIndex=" + pageIndex);
+        JSONObject response = JSONObject.parseObject(json);
+        return response;
+    }
+
+
 }

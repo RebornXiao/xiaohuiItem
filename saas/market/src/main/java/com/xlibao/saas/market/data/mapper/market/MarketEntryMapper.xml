@@ -103,4 +103,14 @@
     <update id="marketResponse">
         update market_entry set status = #{status} where id = #{marketId}
     </update>
+
+    <insert id="createMarket" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.market.data.model.MarketEntry">
+        insert into item_unit(title, status) values(#{title}, #{status})
+    </insert>
+
+    <update id="updateMarket">
+        update market_entry set name = #{market.name}, status = #{status}
+        where id = #{itemUnitId}
+    </update>
+
 </mapper>

@@ -73,7 +73,7 @@
                         </tr>
                         </#if>
 
-                        <#if (itemTypes?size > 0)>
+                        <#if itemTypes?exists && (itemTypes?size > 0)>
                             <#list itemTypes as type >
                             <tr>
                                 <td>${type.id?c}</td>

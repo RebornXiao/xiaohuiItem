@@ -210,6 +210,53 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         return success(response);
     }
 
+    @Override
+    public JSONObject merketEditSave() {
+
+        long marketId = getLongParameter("marketId", 0);
+        String marketName = getUTF("name");
+        String provinceName = getUTF("province");
+        String cityName = getUTF("city");
+        String district = getUTF("district");
+        long streetId = getLongParameter("streetId");
+        String streetName = getUTF("streetName");
+        String address = getUTF("address");
+        String location = getUTF("location");
+        int deliveryMode = getIntParameter("deliveryMode");
+        int distance = getIntParameter("distance");
+        long deliveryCost = getLongParameter("deliveryCost");
+
+        MarketEntry entry = new MarketEntry();
+        entry.setName(marketName);
+        entry.setProvince(provinceName);
+        entry.setCity(cityName);
+        entry.setDistrict(district);
+        entry.setStreetId(streetId);
+        entry.setStreet(streetName);
+        entry.setAddress(address);
+        entry.setLocation(location);
+        entry.setDeliveryMode(deliveryMode);
+        entry.setDistance(distance);
+        entry.setDeliveryCost(deliveryCost);
+
+        if(marketId == 0) {
+            // 新增
+            if (dataAccessFactory.getMarketDataAccessManager().createMarket(entry) > 0) {
+                return success("添加成功");
+            } else {
+                return fail("添加失败");
+            }
+        } else {
+            // 修改
+            if (dataAccessFactory.getMarketDataAccessManager().updateMarket(entry) > 0) {
+                return success("修改成功");
+            } else {
+                return fail("修改失败");
+            }
+        }
+    }
+
+
     private JSONArray provinceMessage(List<PassportProvince> provinces) {
         JSONArray response = new JSONArray();
         for (PassportProvince province : provinces) {

@@ -34,6 +34,12 @@ public class MarketManagerController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "merketEditSave", method = RequestMethod.POST)
+    public JSONObject merketEditSave() {
+        return marketService.merketEditSave();
+    }
+
+    @ResponseBody
     @RequestMapping(value = "getAllMarkets")
     public JSONObject getAllMarkets() {
         return marketService.getAllMarkets();
@@ -76,4 +82,5 @@ public class MarketManagerController {
     public JSONObject unExecutorTask() {
         return shelvesService.unExecutorTask();
     }
+
 }

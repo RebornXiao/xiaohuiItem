@@ -4,6 +4,7 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.market.data.model.*;
 import com.xlibao.saas.market.service.item.ItemLockTypeEnum;
 import com.xlibao.saas.market.service.item.PrepareActionStatusEnum;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,6 +38,11 @@ public class ItemDataAccessManager {
     public MarketItem getItem(long marketId, long itemTemplateId) {
         return itemMapper.getItem(marketId, itemTemplateId);
     }
+
+    public MarketItem getMarketItem(long id) {
+        return itemMapper.getMarketItem(id);
+    }
+
 
     public List<MarketItem> specialProducts(long marketId, long appointType, long timeout, int sortType, int sortValue, int pageStartIndex, int pageSize) {
         return itemMapper.specialProducts(marketId, appointType, timeout, sortType, sortValue, pageStartIndex, pageSize);
@@ -156,5 +162,9 @@ public class ItemDataAccessManager {
 
     public int modifyPrepareActionStatus(long marketId, String itemLocation, int matchStatus, int status, String time) {
         return prepareActionMapper.modifyPrepareActionStatus(marketId, itemLocation, matchStatus, status, time);
+    }
+
+    public List<MarketItem> searchMarketItems(long marketId, String searchType, String searchKey, int pageStartIndex, int pageSize) {
+        return itemMapper.searchMarketItems(marketId, searchType, searchKey, pageStartIndex, pageSize);
     }
 }

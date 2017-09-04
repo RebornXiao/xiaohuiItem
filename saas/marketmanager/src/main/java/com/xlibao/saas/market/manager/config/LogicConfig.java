@@ -51,6 +51,7 @@ public class LogicConfig {
 
     public static final String FTL_MARKET_ITEM_LIST = "market/market-item-list";
     public static final String FTL_MARKET_ITEM_EDIT = "market/market-item-edit";
+    public static final String FTL_MARKET_ITEM_ADD = "market/market-item-add";
 
     public static final String FTL_MARKET_SHELVES_LIST = "market/market-shelves-list";
 

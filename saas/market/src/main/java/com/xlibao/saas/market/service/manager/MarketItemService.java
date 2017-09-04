@@ -9,4 +9,10 @@ public interface MarketItemService {
 
     //按弹夹搜索分页的店铺商品
     JSONObject searchMarketItems();
+
+    JSONObject getMarketItem();
+
+    JSONObject marketItemEditSave();
+
+    JSONObject marketItemAddSave();
 }

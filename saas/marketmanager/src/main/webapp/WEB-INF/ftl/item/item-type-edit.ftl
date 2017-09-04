@@ -105,7 +105,7 @@
                 var _typesAlist = $("#typesAlist");
 
                 <#if itemType?exists>
-                    itemTypeId = "${itemType.id?c}"
+                    itemTypeId = ${itemType.id?c};
                     //隐藏
                     $("#sBtn").hide();
 

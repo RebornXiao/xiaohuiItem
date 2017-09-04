@@ -37,7 +37,8 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <insert id="createItem" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.market.data.model.MarketItem">
+    <insert id="createItem" useGeneratedKeys="true" keyProperty="id"
+            parameterType="com.xlibao.market.data.model.MarketItem">
         insert into market_item(item_template_id, define_name, define_image, default_sort, owner_id, product_batches, batches_code, stock, lock_stock, pending_quantity, warning_quantity, keep_quantity, oversold_quantity,
         maximum_sell_count, minimum_sell_count, allocation_quantity, purchase_quantity, status, cost_price, sell_price, market_price, discount_price, discount_type, restriction_quantity, beyond_control, delivery_delay,
         initial_sales, actual_sales, total_storage, total_out_storage, description, create_time)
@@ -50,33 +51,41 @@
         select * from market_item where market_id = #{marketId} and item_template_id = #{itemTemplateId}
     </select>
 
-    <select id="specialProducts" resultMap="BaseResultMap">
-        select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0
-            <if test="appointType == -100">and #{timeout} > timestampdiff(second, create_time, now())</if>
-            <if test="appointType == -99">and discount_type = 1</if>
-            <if test="appointType == -98">and discount_type = 2</if>
-            order by
-            <if test="sortType == 0">default_sort</if>
-            <if test="sortType == 1">sell_price</if>
-            <if test="sortType == 2">actual_sales</if>
+    <select id="getMarketItem" resultMap="BaseResultMap">
+        select * from market_item where id = #{id}
+    </select>
 
-            <if test="sortValue == 1">desc</if>, id
+    <select id="specialProducts" resultMap="BaseResultMap">
+        select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity -
+        lock_stock - pending_quantity) > 0 and restriction_quantity != 0
+        <if test="appointType == -100">and #{timeout} > timestampdiff(second, create_time, now())</if>
+        <if test="appointType == -99">and discount_type = 1</if>
+        <if test="appointType == -98">and discount_type = 2</if>
+        order by
+        <if test="sortType == 0">default_sort</if>
+        <if test="sortType == 1">sell_price</if>
+        <if test="sortType == 2">actual_sales</if>
+
+        <if test="sortValue == 1">desc</if>, id
         limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="conditionOrdering" resultMap="BaseResultMap">
-        select * from market_item where owner_id = #{marketId} and status = 1 and item_template_id in(${itemTemplateSet}) and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0 order by
-            <if test="sortType == 0">default_sort</if>
-            <if test="sortType == 1">sell_price</if>
-            <if test="sortType == 2">actual_sales</if>
+        select * from market_item where owner_id = #{marketId} and status = 1 and item_template_id
+        in(${itemTemplateSet}) and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and
+        restriction_quantity != 0 order by
+        <if test="sortType == 0">default_sort</if>
+        <if test="sortType == 1">sell_price</if>
+        <if test="sortType == 2">actual_sales</if>
 
-            <if test="sortValue == 1">desc</if>, id
+        <if test="sortValue == 1">desc</if>, id
         limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="getItemsForItemTemplateSet" resultMap="BaseResultMap">
-        select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0
-             <if test="itemTemplateSet != null"> and item_template_id in(${itemTemplateSet}) </if>
+        select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity -
+        lock_stock - pending_quantity) > 0 and restriction_quantity != 0
+        <if test="itemTemplateSet != null">and item_template_id in(${itemTemplateSet})</if>
         order by create_time desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
@@ -86,6 +95,20 @@
 
     <select id="getItems" resultMap="BaseResultMap">
         select * from market_item where id in (${itemSet})
+    </select>
+
+    <select id="searchMarketItems" resultMap="BaseResultMap">
+        select * from market_item where 1=1
+        <if test="owner_id != 0">
+            and owner_id = #{marketId}
+        </if>
+        <if test="searchType == 'item_template_id'">
+            and item_template_id = #{searchKey}
+        </if>
+        <if test="searchType == 'item_template_name'">
+            and define_name like '%'+#{searchKey}+'%'
+        </if>
+        order by create_time desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <update id="lockItemStock">
@@ -106,8 +129,8 @@
 
     <update id="offShelves">
         update market_item set stock = stock - #{quantity}, status = #{status}
-        <if test="quantity > 0"> total_storage = total_storage + #{stock} </if>
-        <if test="quantity &lt; 0"> total_out_storage = total_out_storage + #{quantity} </if>
+        <if test="quantity > 0">total_storage = total_storage + #{stock}</if>
+        <if test="quantity &lt; 0">total_out_storage = total_out_storage + #{quantity}</if>
         where id = #{itemId}
     </update>
 

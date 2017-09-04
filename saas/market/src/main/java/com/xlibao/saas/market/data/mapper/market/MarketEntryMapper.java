@@ -22,4 +22,8 @@ public interface MarketEntryMapper {
     List<MarketEntry> getAllMarkets();
 
     int marketResponse(@Param("marketId") long marketId, @Param("status") int status);
+
+    int createMarket(@Param("market") MarketEntry entry);
+
+    int updateMarket(@Param("market") MarketEntry entry);
 }

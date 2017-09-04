@@ -96,36 +96,36 @@
                         </ul>
                     </li>
 
-                    <li class="has_sub">
-                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="user"> active </#if>"><i
-                                class="fa fa-users"></i><span> 用户管理 </span>
-                            <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
-                        <ul class="list-unstyled" <#if tab=="user"> style="display: block;" </#if> >
-                            <li><a href="${base}/passport/userlist.do">用户列表</a></li>
-                            <li><a href="form-advanced.html">活跃用户</a></li>
-                            <li><a href="form-validation.html">沉默用户</a></li>
-                        </ul>
-                    </li>
+                    <#--<li class="has_sub">-->
+                        <#--<a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="user"> active </#if>"><i-->
+                                <#--class="fa fa-users"></i><span> 用户管理 </span>-->
+                            <#--<span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>-->
+                        <#--<ul class="list-unstyled" <#if tab=="user"> style="display: block;" </#if> >-->
+                            <#--<li><a href="${base}/passport/userlist.do">用户列表</a></li>-->
+                            <#--<li><a href="form-advanced.html">活跃用户</a></li>-->
+                            <#--<li><a href="form-validation.html">沉默用户</a></li>-->
+                        <#--</ul>-->
+                    <#--</li>-->
 
-                    <li class="has_sub">
-                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="table"> active </#if>"><i
-                                class="fa fa-line-chart"></i><span> 统计报表 </span>
-                            <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
-                        <ul class="list-unstyled" <#if tab=="table"> style="display: block;" </#if> >
-                            <li><a href="tables-basic.html">订单数据统计</a></li>
-                            <li><a href="tables-datatable.html">店铺数据统计</a></li>
-                            <li><a href="tables-editable.html">用户数据统计</a></li>
-                        </ul>
-                    </li>
+                    <#--<li class="has_sub">-->
+                        <#--<a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="table"> active </#if>"><i-->
+                                <#--class="fa fa-line-chart"></i><span> 统计报表 </span>-->
+                            <#--<span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>-->
+                        <#--<ul class="list-unstyled" <#if tab=="table"> style="display: block;" </#if> >-->
+                            <#--<li><a href="tables-basic.html">订单数据统计</a></li>-->
+                            <#--<li><a href="tables-datatable.html">店铺数据统计</a></li>-->
+                            <#--<li><a href="tables-editable.html">用户数据统计</a></li>-->
+                        <#--</ul>-->
+                    <#--</li>-->
 
-                    <li class="has_sub">
-                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="sys"> active subdrop </#if>"><i
-                                class="fa fa-cog"></i><span> 系统设置 </span>
-                            <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
-                        <ul class="list-unstyled" <#if tab=="sys"> style="display: block;" </#if> >
-                            <li><a href="chart-flot.html">个人信息</a></li>
-                        </ul>
-                    </li>
+                    <#--<li class="has_sub">-->
+                        <#--<a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="sys"> active subdrop </#if>"><i-->
+                                <#--class="fa fa-cog"></i><span> 系统设置 </span>-->
+                            <#--<span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>-->
+                        <#--<ul class="list-unstyled" <#if tab=="sys"> style="display: block;" </#if> >-->
+                            <#--<li><a href="chart-flot.html">个人信息</a></li>-->
+                        <#--</ul>-->
+                    <#--</li>-->
 
                 </ul>
             </div>

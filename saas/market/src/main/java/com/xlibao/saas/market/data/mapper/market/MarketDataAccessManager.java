@@ -63,6 +63,14 @@ public class MarketDataAccessManager {
         return entryMapper.getAllMarkets();
     }
 
+    public int createMarket(MarketEntry entry) {
+        return entryMapper.createMarket(entry);
+    }
+
+    public int updateMarket(MarketEntry entry) {
+        return entryMapper.updateMarket(entry);
+    }
+
     public MarketAccessLogger getLastAccessLogger(long passportId) {
         return accessLoggerMapper.getLastAccessLogger(passportId);
     }

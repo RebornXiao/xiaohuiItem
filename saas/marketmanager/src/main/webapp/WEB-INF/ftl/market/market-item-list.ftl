@@ -53,14 +53,11 @@
                                 <div class="input-group-btn">
                                     <button id="searchMenu" type="button"
                                             class="btn btn-default waves-effect waves-light dropdown-toggle"
-                                            data-toggle="dropdown">按商品模板ID搜索 <span class="caret"></span></button>
+                                            data-toggle="dropdown">按商品模板名称搜索 <span class="caret"></span></button>
                                     <ul class="dropdown-menu" id="searchType">
-                                        <li><a href="javascript:void(0)" search_name="商品模板ID" search_type="name">按商品模板ID搜索</a>
-                                        </li>
                                         <li><a href="javascript:void(0)" search_name="商品模板名称" search_type="define_code">按商品模板名称搜索</a>
                                         </li>
-                                        <li><a href="javascript:void(0)" search_name="条形码"
-                                               search_type="barcode">按条形码搜索</a>
+                                        <li><a href="javascript:void(0)" search_name="商品模板ID" search_type="name">按商品模板ID搜索</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -86,19 +83,58 @@
                             <th>ID</th>
                             <th>商品模板ID</th>
                             <th>商品名称</th>
-                            <th>成本价</th>
-                            <th>售价</th>
-                            <th>市场售价</th>
+                            <#if marketId == 0>
+                                <th>所在店铺ID</th>
+                            </#if>
+                            <th>成本价(元)</th>
+                            <th>一般销售价(元)</th>
+                            <th>一般市场售价(元)</th>
+                            <th>促销价(元)</th>
                             <th>状态</th>
                             <th>操作</th>
                         </tr>
                         </thead>
                         <tbody id="itemsTable">
+
+                        <#if items?exists && (items?size > 0)>
+                            <#list items as item >
+                            <tr>
+                                <td>${item.id?c}</td>
+                                <td>${item.itemTemplateId?c}</td>
+                                <td>${item.defineName}</td>
+                                <#if marketId == 0>
+                                    <th>${item.ownerId}</th>
+                                </#if>
+                                <td>${item.costPrice}</td>
+                                <td>${item.sellPrice}</td>
+                                <td>${item.marketPrice}</td>
+                                <td>${item.discountPrice}</td>
+                                <td>
+                                    <#if item.status == 0>
+                                        <span class="label label-success">未上架</span>
+                                    </#if>
+                                    <#if item.status == 1>
+                                        <span class="label label-success">可售</span>
+                                    </#if>
+                                    <#if item.status == 2>
+                                        <span class="label label-success">失效</span>
+                                    </#if>
+                                </td>
+                                <td>
+                                    <button id="editBtn" type="button" data_id="${item.id?c}"
+                                            class="btn waves-effect waves-light btn-warning btn-sm">编辑
+                                    </button>
+                                </td>
+                            </tr>
+                            </#list>
+                        <#else>
                         <tr id="emptyTr">
                             <td colSpan="8" height="200px">
-                                <p class="text-center" id="errorInfo">暂无任何数据</p>
+                                <p class="text-center">暂无任何数据</p>
                             </td>
                         </tr>
+                        </#if>
+
                         </tbody>
                     </table>
 
@@ -106,7 +142,7 @@
                 </div>
             </div>
 
-        <#if marketItems?exists && (marketItems?size > 0)>
+        <#if items?exists && (items?size > 0)>
             <div class="row small_page">
                 <div class="col-sm-12">
                     <#include "../common/paginate.ftl">
@@ -122,21 +158,66 @@
 
             $(document).ready(function () {
 
-                var s_marketId = ${marketId};
+                var s_marketId = ${marketId?c};
                 var s_searchType = "${searchType}";
+                //默认按名称
+                var _searchMenu = $("#searchMenu");
+                var _searchKeyTxt = $("#searchKeyTxt");
 
                 var _sMarket = $("#sMarket");
-                var _searchKeyTxt = $("#searchKeyTxt");
+
+                //根据搜索类型，设置选中项
+                if (s_searchType == null || s_searchType == "") {
+                    s_searchType = "name";
+                }
+
+                if (s_searchType == "itemTemplateName") {
+                    _searchMenu.html("按商品模板名称搜索<span class=\"caret\"></span>");
+                    _searchKeyTxt.attr("placeholder", "按商品模板名称搜索");
+                } else {
+                    s_searchType = "itemTemplateId";
+                    _searchMenu.html("按商品模板ID搜索<span class=\"caret\"></span>");
+                    _searchKeyTxt.attr("placeholder", "按商品模板ID搜索");
+                }
+
+                //设置搜索框内容
+                _searchKeyTxt.val("${searchKey}");
+
+                //搜索选择
+                $("#searchType li a").on('click', function () {
+                    var sName = $(this).attr("search_name");
+                    var txt = "按" + sName + "搜索";
+                    s_searchType = $(this).attr("search_type")
+                    _searchMenu.html(txt + "<span class=\"caret\"></span>");
+                    _searchMenu.attr("search_name", sName)
+                    _searchKeyTxt.attr("placeholder", txt);
+                });
 
                 _sMarket.select2();
                 _sMarket.change(function () {
                     var s_searchKey = _searchKeyTxt.val();
-                    location.href = "${base}/market/marketItemEdit.do?marketId=" + s_marketId+"&searchType="+s_searchType+"&searchKey="+s_searchKey;
+                    var select_obj = _sMarket.find("option:selected");
+                    s_marketId = select_obj.attr("data_id");
+
+                    location.href = "${base}/market/marketItems.do?marketId=" + s_marketId+"&searchType="+s_searchType+"&searchKey="+s_searchKey;
                 });
 
                 //添加新品
                 $("#addBtn").on('click', function () {
-                    location.href = "${base}/market/marketItemEdit.do?marketId=" + s_marketId;
+
+                    var select_obj = _sMarket.find("option:selected");
+                    s_marketId = select_obj.attr("data_id");
+
+                    location.href = "${base}/market/marketItemAdd.do?marketId="+s_marketId;
                 });
+
+                <#if items?exists && (items?size > 0) >
+                    //单项编辑
+                    $("#itemsTable").find('button[id=editBtn]').each(function () {
+                        $(this).on('click', function () {
+                            location.href = "${base}/market/marketItemEdit.do?marketId=" + s_marketId + "&id=" + $(this).attr("data_id");
+                        });
+                    });
+                </#if>
             });
         </script>

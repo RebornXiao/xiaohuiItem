@@ -8,6 +8,7 @@ import com.xlibao.passport.service.location.LocationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -82,7 +83,7 @@ public class LocationController {
     }
 
     @ResponseBody
-    @RequestMapping("streetEditSave")
+    @RequestMapping(value = "/streetEditSave", method = RequestMethod.POST)
     public JSONObject streetEditSave() {
         return locationService.streetEditSave();
     }
