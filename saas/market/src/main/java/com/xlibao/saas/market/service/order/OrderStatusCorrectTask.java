@@ -5,9 +5,11 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.common.constant.TimeTaskLockTypeEnum;
 import com.xlibao.common.constant.order.OrderStatusEnum;
 import com.xlibao.common.constant.order.OrderTypeEnum;
+import com.xlibao.market.data.model.MarketItemStockLockLogger;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketTimeTaskLock;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
+import com.xlibao.saas.market.service.item.ItemStockLockStatusEnum;
 import com.xlibao.saas.market.service.support.remote.OrderRemoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
 import java.util.Date;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -102,12 +105,15 @@ public class OrderStatusCorrectTask {
 
     private void executorUpdateTask() {
         try {
-            long timeout = XMarketTimeConfig.ITEM_STOCK_LOCK_TIME;
+            long timeout = System.currentTimeMillis() - XMarketTimeConfig.ITEM_STOCK_LOCK_TIME;
             JSONObject response = OrderRemoteService.findInvalidOrderSize(OrderTypeEnum.SALE_ORDER_TYPE.getKey(), OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey(), timeout);
             logger.info("准备执行自动修复订单状态任务，等待修复的订单数量为：" + response.getJSONObject("response").getIntValue("size"));
 
-            // response = OrderRemoteService.batchResetOverdueOrderStatus(OrderTypeEnum.SALE_ORDER_TYPE.getKey(), OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey(), OrderStatusEnum.ORDER_STATUS_CANCEL.getKey(), timeout);
+            response = OrderRemoteService.batchResetOverdueOrderStatus(OrderTypeEnum.SALE_ORDER_TYPE.getKey(), OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey(), OrderStatusEnum.ORDER_STATUS_CANCEL.getKey(), timeout);
             logger.info("完成自动修复订单状态任务，本次修复的订单数量为：" + response.getJSONObject("response").getIntValue("size"));
+
+            List<MarketItemStockLockLogger> itemStockLockLoggers = dataAccessFactory.getItemDataAccessManager().findInvalidItemStockLockLoggers(ItemStockLockStatusEnum.LOCK.getKey(), CommonUtils.dateFormat(timeout));
+
         } catch (Exception ex) {
             logger.error("准备执行自动修复订单状态任务时发生了异常", ex);
         }

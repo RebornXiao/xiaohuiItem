@@ -246,6 +246,17 @@ public class OrderRemoteService extends BasicRemoteService {
         return postOrderMsg("order/findInvalidOrderSize", parameters);
     }
 
+    public static JSONObject batchResetOverdueOrderStatus(int orderType, int matchStatus, int expectStatus, long timeout) {
+        Map<String, String> parameters = initialParameter();
+
+        parameters.put("orderType", String.valueOf(orderType));
+        parameters.put("matchStatus", String.valueOf(matchStatus));
+        parameters.put("expectStatus", String.valueOf(expectStatus));
+        parameters.put("timeout", String.valueOf(timeout));
+
+        return postOrderMsg("order/batchResetOverdueOrderStatus", parameters);
+    }
+
     public static JSONObject acceptOrder(long passportId, long orderId) {
         Map<String, String> parameters = initialParameter();
 

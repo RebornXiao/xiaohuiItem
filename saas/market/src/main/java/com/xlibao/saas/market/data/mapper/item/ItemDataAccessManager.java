@@ -4,7 +4,6 @@ import com.xlibao.common.CommonUtils;
 import com.xlibao.market.data.model.*;
 import com.xlibao.saas.market.service.item.ItemLockTypeEnum;
 import com.xlibao.saas.market.service.item.PrepareActionStatusEnum;
-import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -130,6 +129,10 @@ public class ItemDataAccessManager {
 
     public List<MarketItemStockLockLogger> getItemStockLockLoggers(String orderSequenceNumber, ItemLockTypeEnum itemLockTypeEnum, int status) {
         return itemStockLockLoggerMapper.getItemStockLockLoggers(orderSequenceNumber, itemLockTypeEnum.getKey(), status);
+    }
+
+    public List<MarketItemStockLockLogger> findInvalidItemStockLockLoggers(int status, String timeout) {
+        return itemStockLockLoggerMapper.findInvalidItemStockLockLoggers(status, timeout);
     }
 
     public int modifyStockLockStatus(long id, int status) {
