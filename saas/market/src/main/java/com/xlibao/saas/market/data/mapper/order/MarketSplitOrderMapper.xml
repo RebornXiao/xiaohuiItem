@@ -7,8 +7,6 @@
         <result column="order_sequence_number" property="orderSequenceNumber" jdbcType="VARCHAR"/>
         <result column="serial_code" property="serialCode" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
-    </resultMap>
-    <resultMap id="ResultMapWithBLOBs" type="com.xlibao.market.data.model.MarketSplitOrder" extends="BaseResultMap">
         <result column="item_set" property="itemSet" jdbcType="LONGVARCHAR"/>
     </resultMap>
 

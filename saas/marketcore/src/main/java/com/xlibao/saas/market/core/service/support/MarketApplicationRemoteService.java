@@ -75,7 +75,7 @@ public class MarketApplicationRemoteService extends BasicRemoteService {
         parameters.put("passportId", String.valueOf(passportId));
         parameters.put("orderSequenceNumber", orderSequenceNumber);
         parameters.put("statusCode", statusCode);
-        parameters.put("containerCode", containerCode);
+        parameters.put("containerCodeSet", containerCode);
 
         String url = ConfigFactory.getDomainName().marketRemoteURL + "market/message/callback/notifyOrderData.do";
         JSONObject response = executor(url, parameters);

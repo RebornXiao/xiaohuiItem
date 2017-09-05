@@ -78,9 +78,20 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
     @Override
     public void notifyOrderPayment(OrderEntry orderEntry) {
         List<MarketItemStockLockLogger> itemStockLockLoggers = dataAccessFactory.getItemDataAccessManager().getItemStockLockLoggers(orderEntry.getOrderSequenceNumber(), ItemLockTypeEnum.CREATE_ORDER, ItemStockLockStatusEnum.LOCK.getKey());
-        // 推送给硬件进行拣货操作(缓存)
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
 
+        sendRemoteMessage(orderEntry);
+
+        if (CommonUtils.isEmpty(itemStockLockLoggers)) {
+            return;
+        }
+        // 原来存在锁定的记录 进行解锁
+        for (MarketItemStockLockLogger itemStockLockLogger : itemStockLockLoggers) {
+            // 设定锁定记录为：出货状态
+            dataAccessFactory.getItemDataAccessManager().modifyStockLockStatus(itemStockLockLogger.getId(), ItemStockLockStatusEnum.SHIPMENT.getKey());
+        }
+    }
+
+    private void sendRemoteMessage(OrderEntry orderEntry) {
         List<MarketSplitOrder> splitOrders = dataAccessFactory.getOrderDataAccessManager().getSplitOrders(orderEntry.getId());
         Map<String, String> messages = new HashMap<>();
         for (MarketSplitOrder splitOrder : splitOrders) {
@@ -105,24 +116,11 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
             message.append(CommonUtils.toHexString(locationCount, 4, "0"));
             messages.put(orderEntry.getOrderSequenceNumber() + CommonUtils.SPLIT_UNDER_LINE + splitOrder.getSerialCode(), message.toString());
         }
+        // 推送给硬件进行拣货操作(缓存)
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
         for (Map.Entry<String, String> entry : messages.entrySet()) {
             // 发送消息给硬件做出货操作
             marketShopRemoteService.shipmentMessage(marketEntry.getPassportId(), entry.getKey(), entry.getValue());
-        }
-        if (!CommonUtils.isEmpty(itemStockLockLoggers)) { // 原来存在锁定的记录 进行解锁同时新增挂起数量
-            for (MarketItemStockLockLogger itemStockLockLogger : itemStockLockLoggers) {
-                // 这里已修改为不减少挂起数量
-                dataAccessFactory.getItemDataAccessManager().decrementItemStock(itemStockLockLogger.getItemId(), itemStockLockLogger.getLockQuantity());
-                // 设定锁定记录为：出货状态
-                dataAccessFactory.getItemDataAccessManager().modifyStockLockStatus(itemStockLockLogger.getId(), ItemStockLockStatusEnum.SHIPMENT.getKey());
-            }
-            return;
-        }
-        // 如果本来没有锁定的记录 那么则只需要进行挂起
-        List<OrderItemSnapshot> itemSnapshots = orderEntry.getItemSnapshots();
-        for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
-            // 这里已修改为不减少挂起数量
-            dataAccessFactory.getItemDataAccessManager().decrementItemStock(itemSnapshot.getItemId(), itemSnapshot.totalQuantity());
         }
     }
 

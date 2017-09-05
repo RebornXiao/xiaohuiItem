@@ -23,7 +23,7 @@ public class RBPSMSMessageService {
     static {
         RBP_ERROR_CODE.put(0, "提交成功");
         RBP_ERROR_CODE.put(101, "无此用户");
-        RBP_ERROR_CODE.put(102, "密码错");
+        RBP_ERROR_CODE.put(102, "密码错误");
         RBP_ERROR_CODE.put(103, "提交过快（提交速度超过流速限制）");
         RBP_ERROR_CODE.put(104, "系统忙（因平台侧原因，暂时无法处理提交的短信）");
         RBP_ERROR_CODE.put(105, "敏感短信（短信内容包含敏感词）");

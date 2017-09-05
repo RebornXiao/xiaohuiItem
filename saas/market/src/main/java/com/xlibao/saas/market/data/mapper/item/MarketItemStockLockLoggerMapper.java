@@ -14,4 +14,6 @@ public interface MarketItemStockLockLoggerMapper {
     List<MarketItemStockLockLogger> findInvalidItemStockLockLoggers(@Param("status") int status, @Param("timeout") String timeout);
 
     int modifyStockLockStatus(@Param("id") long id, @Param("status") int status);
+
+    int releaseTimeoutItemLockStock(@Param("status") int status, @Param("timeout") String timeout, @Param("matchStatus") int matchStatus);
 }

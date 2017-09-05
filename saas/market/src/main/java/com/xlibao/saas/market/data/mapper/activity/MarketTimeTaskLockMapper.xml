@@ -13,7 +13,7 @@
         insert into market_time_task_lock(title, type, happen_time, winner_address) values(#{title}, #{type}, #{happenTime}, #{winnerAddress})
     </insert>
 
-    <select id="hasExecutor" resultMap="BaseResultMap">
+    <select id="hasExecutor" resultType="int">
         select count(*) from market_time_task_lock where type = #{type} and happen_time = #{happenTime}
     </select>
 </mapper>
