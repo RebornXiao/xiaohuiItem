@@ -9,19 +9,19 @@ import java.util.Map;
 public enum SmsCodeTypeEnum {
 
     /** 1 -- 登录验证码 */
-    LOGIN(1, "(登录验证码，五分钟内有效)", ""),
+    LOGIN(1, "(登录验证码，5分钟内有效)", ""),
     /** 2 -- 注册验证码 */
-    REGISTER(2, "(注册验证码，五分钟内有效)", "SMS_67176279"),
+    REGISTER(2, "(注册验证码，5分钟内有效)", "SMS_67176279"),
     /** 3 -- 重置密码验证码 */
-    MODIFY_PASSWORD(3, "(修改密码验证码，五分钟内有效)", "SMS_67141076"),
+    MODIFY_PASSWORD(3, "(修改密码验证码，5分钟内有效)", "SMS_67141076"),
     /** 4 -- 支付验证码 */
-    PAYMENT_WORKS(4, "(支付验证码，五分钟内有效)", "SMS_67216227"),
+    PAYMENT_WORKS(4, "(支付验证码，5分钟内有效)", "SMS_67216227"),
     /** 5 -- 提现验证码 */
-    DRAW_CASH(5, "(提现验证码，五分钟内有效)", "SMS_67151232"),
+    DRAW_CASH(5, "(提现验证码，5分钟内有效)", "SMS_67151232"),
     /** 6 -- 重置手机号 */
-    RESET_MOBILE_NUMBER(6, "(重置手机验证码，五分钟内有效)", "SMS_67286220"),
+    RESET_MOBILE_NUMBER(6, "(重置手机验证码，5分钟内有效)", "SMS_67286220"),
     /** 7 -- 绑定手机号 */
-    BINDING_MOBILE_NUMBER(7, "(绑定手机号，验证码5分钟有效)", ""),
+    BINDING_MOBILE_NUMBER(7, "(绑定手机号，验证码5分钟内有效)", ""),
     ;
 
     private int key;

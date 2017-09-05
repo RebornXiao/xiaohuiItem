@@ -17,10 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.InetAddress;
-import java.util.Date;
-import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -45,14 +42,14 @@ public class OrderStatusCorrectTask {
         Timer timer = new Timer();
 
         int minute = CommonUtils.currentMinute();
-        int remain = minute % 10;
+        int remain = minute % 5;
         if (remain > 0) {
-            remain = 10 - remain;
+            remain = 5 - remain;
         }
         minute += remain;
         long firstTime = CommonUtils.getTimeMillisecond(CommonUtils.currentHours(), minute);
         // 0 点的任务 -- 直接延迟
-        timer.schedule(new Executor(), new Date(firstTime), TimeUnit.MINUTES.toMillis(10));
+        timer.schedule(new Executor(), new Date(firstTime), TimeUnit.MINUTES.toMillis(5));
         logger.info("修复订单状态任务触发时间：" + CommonUtils.dateFormat(firstTime));
     }
 
@@ -61,9 +58,9 @@ public class OrderStatusCorrectTask {
         @Override
         public void run() {
             int minute = CommonUtils.currentMinute();
-            int remain = minute % 10;
+            int remain = minute % 5;
             if (remain > 0) {
-                logger.info("系统发起修复订单状态任务，但当前未到系统设定时间点，任务的下一个更新时间点为：" + CommonUtils.getTimeMillisecond(CommonUtils.currentHours(), minute + 10 - remain));
+                logger.info("系统发起修复订单状态任务，但当前未到系统设定时间点，任务的下一个更新时间点为：" + CommonUtils.getTimeMillisecond(CommonUtils.currentHours(), minute + 5 - remain));
                 return;
             }
             try {
@@ -113,7 +110,26 @@ public class OrderStatusCorrectTask {
             logger.info("完成自动修复订单状态任务，本次修复的订单数量为：" + response.getJSONObject("response").getIntValue("size"));
 
             List<MarketItemStockLockLogger> itemStockLockLoggers = dataAccessFactory.getItemDataAccessManager().findInvalidItemStockLockLoggers(ItemStockLockStatusEnum.LOCK.getKey(), CommonUtils.dateFormat(timeout));
+            if (CommonUtils.isEmpty(itemStockLockLoggers)) {
+                return;
+            }
+            dataAccessFactory.getItemDataAccessManager().releaseTimeoutItemLockStock(ItemStockLockStatusEnum.RELEASE.getKey(), CommonUtils.dateFormat(timeout), ItemStockLockStatusEnum.LOCK.getKey());
 
+            Map<Long, Integer> releaseItemQuantity = new HashMap<>();
+            long totalQuantity = 0;
+            for (MarketItemStockLockLogger itemStockLockLogger : itemStockLockLoggers) {
+                Integer quantity = releaseItemQuantity.get(itemStockLockLogger.getItemId());
+                if (quantity == null) {
+                    quantity = 0;
+                }
+                quantity += itemStockLockLogger.getLockQuantity();
+                releaseItemQuantity.put(itemStockLockLogger.getItemId(), quantity);
+                totalQuantity += itemStockLockLogger.getLockQuantity();
+            }
+            logger.info("准备释放被锁定的商品记录，本次释放的商品记录数：" + releaseItemQuantity.size() + "；释放的商品总数量：" + totalQuantity);
+            for (Map.Entry<Long, Integer> entry : releaseItemQuantity.entrySet()) {
+                dataAccessFactory.getItemDataAccessManager().releaseItemLockQuantity(entry.getKey(), entry.getValue());
+            }
         } catch (Exception ex) {
             logger.error("准备执行自动修复订单状态任务时发生了异常", ex);
         }

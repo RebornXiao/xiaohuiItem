@@ -79,6 +79,14 @@ public class ItemDataAccessManager {
         return itemMapper.incrementPending(itemId, quantity);
     }
 
+    public List<MarketItem> searchMarketItems(long marketId, String searchType, String searchKey, int pageStartIndex, int pageSize) {
+        return itemMapper.searchMarketItems(marketId, searchType, searchKey, pageStartIndex, pageSize);
+    }
+
+    public int releaseItemLockQuantity(long itemId, int releaseLockQuantity) {
+        return itemMapper.releaseItemLockQuantity(itemId, releaseLockQuantity);
+    }
+
     public int decrementItemStock(long itemId, int quantity) {
         return itemMapper.decrementItemStock(itemId, quantity);
     }
@@ -135,6 +143,10 @@ public class ItemDataAccessManager {
         return itemStockLockLoggerMapper.findInvalidItemStockLockLoggers(status, timeout);
     }
 
+    public int releaseTimeoutItemLockStock(int status, String timeout, int matchStatus) {
+        return itemStockLockLoggerMapper.releaseTimeoutItemLockStock(status, timeout, matchStatus);
+    }
+
     public int modifyStockLockStatus(long id, int status) {
         return itemStockLockLoggerMapper.modifyStockLockStatus(id, status);
     }
@@ -165,9 +177,5 @@ public class ItemDataAccessManager {
 
     public int modifyPrepareActionStatus(long marketId, String itemLocation, int matchStatus, int status, String time) {
         return prepareActionMapper.modifyPrepareActionStatus(marketId, itemLocation, matchStatus, status, time);
-    }
-
-    public List<MarketItem> searchMarketItems(long marketId, String searchType, String searchKey, int pageStartIndex, int pageSize) {
-        return itemMapper.searchMarketItems(marketId, searchType, searchKey, pageStartIndex, pageSize);
     }
 }

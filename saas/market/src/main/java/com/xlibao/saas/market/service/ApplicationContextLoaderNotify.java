@@ -23,6 +23,9 @@ public class ApplicationContextLoaderNotify {
     @Autowired
     private OrderApplicationContextNotify orderApplicationContextNotify;
 
+    @Autowired
+    private TimeTaskLockScheduledService timeTaskLockScheduledService;
+
     /**
      * <pre>
      * 该方法作为系统加载的全局入口
@@ -41,5 +44,7 @@ public class ApplicationContextLoaderNotify {
         marketApplicationContextNotify.loaderNotify();
         itemApplicationContextNotify.loaderNotify();
         orderApplicationContextNotify.loaderNotify();
+
+        timeTaskLockScheduledService.executorTask();
     }
 }

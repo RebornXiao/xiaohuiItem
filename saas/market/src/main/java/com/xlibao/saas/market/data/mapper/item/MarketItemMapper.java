@@ -39,4 +39,5 @@ public interface MarketItemMapper {
 
     List<MarketItem> searchMarketItems(@Param("marketId") long marketId, @Param("searchType") String searchType, @Param("searchKey") String searchKey, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 
+    int releaseItemLockQuantity(@Param("itemId") long itemId, @Param("releaseLockQuantity") int releaseLockQuantity);
 }
