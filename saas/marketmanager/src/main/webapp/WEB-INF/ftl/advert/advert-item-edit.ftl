@@ -114,17 +114,26 @@
                 swal("包括了特殊符号，无法搜索!");
                 return;
             }
-            var actionUrl = "${base}/advert/adverts.do?title=" + s_title + "&timeType=" + s_time;
+            var actionUrl = "$.{base}/advert/adverts.do?title=" + s_title + "&timeType=" + s_time;
             location.href = actionUrl;
         });*/
         //上传广告
-        $("#uploadAdvertButton").on('click', function () {
-            var up_title = $("modalAdvertTitle").val();
-            var up_time = $("modalAdvertTime").val();
-            var up_remark = $("modalAdvertRemark").val();
-            var up_fileUrl = $("modalAdvertFile").val();
+       /* $("#uploadAdvertButton").on('click', function () {
+            var up_title = $("#modalAdvertTitle").val();
+            var up_time = $("#modalAdvertTime").val();
+            var up_remark = $("#modalAdvertRemark").val();
+            var up_fileUrl = $("#modalAdvertFile").val();
             alert(up_fileUrl);
-        });
+//                path = path.substring(path.lastIndexOf("\\")+1,path.length);//文件名
+            $.post("${base}/advert/addAdvert.do?title=" +up_title+ "&timeSize=" +up_time+ "&remark=" +up_remark+ "&url=1&videoName=2", function(data) {
+                //等待上传
+
+
+
+
+            }, "json");
+        });*/
+
         //删除广告
     <#if (advertList?size > 0)>
         $("#advertInfoTable").find('button[id=deleBtn]').each(function () {
@@ -136,7 +145,7 @@
                     $("#deleteButton").modal('hide');
                 });
                 $("#deleOkBtn").on('click',function () {
-                    $.get("${base}/advert/delAdvert.do?advertID=" + $(that).attr("data_id"), function(data) {
+                    $.post("${base}/advert/delAdvert.do?advertID=" + $(that).attr("data_id"), function(data) {
                         //重新刷新
                         if(data.code == "0") {
                             swal("提示", "删除成功", "success");
@@ -147,12 +156,13 @@
                             swal(data.msg);
                         }
                     }, "json");
-                })
+                });
             });
         });
     </#if>
     });
 </script>
+
 <!--上传弹窗-->
 <div class="modal fade" id="uploadButton" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
@@ -161,82 +171,31 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">上传广告</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" role="form">
                 <div class="modalAdvertStyle">
-                    <form class="form-inline">
+                    <form class="form-inline" action="${base}/advert/addAdvert.do" method="post" enctype="multipart/form-data">
                         <div class="form-group" style="width: 100%">
                             <label for="modalAdvertTitle">广告标题：</label>
-                            <input type="text" style="width: 80%" class="form-control" id="modalAdvertTitle" placeholder="输入广告标题"/>
+                            <input type="text" style="width: 80%" class="form-control" id="modalAdvertTitle" placeholder="输入广告标题" name="title"/>
                         </div>
-                    </form>
-                    <form class="form-inline">
                         <div class="form-group">
                             <label for="modalAdvertTime">广告时长：</label>
-                            <input type="text" class="form-control" id="modalAdvertTime" placeholder="输入广告时长"/>&nbsp;&nbsp;&nbsp;s (以秒为计算单位)
+                            <input type="text" class="form-control" id="modalAdvertTime" placeholder="输入广告时长" name="timeSize"/>&nbsp;&nbsp;&nbsp;s (以秒为计算单位)
                         </div>
-                    </form>
-                    <form class="form-inline">
                         <div class="form-group" style="width: 100%">
                             <label for="modalAdvertRemark">广告备注：</label>
-                            <input type="text" style="width: 80%" class="form-control" id="modalAdvertRemark" placeholder="输入广告备注"/>
+                            <input type="text" style="width: 80%" class="form-control" id="modalAdvertRemark" placeholder="输入广告备注" name="remark"/>
                         </div>
-                    </form>
-                    <form class="form-inline">
                         <div class="form-group" style="width: 100%">
                             <label for="modalAdvertFile">附&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件：</label>
                             <input id="modalAdvertFile" type="file" multiple="multiple" name="file"/>
-                        <#--<button class="btn btn-primary" id="uploadAdvertButton" type="button" style="padding-left: 25px;padding-right: 25px">上传</button>-->
                         </div>
-                    </form>
-                <#--<form class="form-inline">-->
-                <#--<div class="form-group style="width: 80%">-->
-                <#--<div class="progress progress-striped active">-->
-                <#--<div class="bar" style="width: 40%;"></div>-->
-                <#--</div>-->
-                <#--</div>-->
-                <#--</form>-->
-                </div>
-            </div>
-            <div class="modal-footer" style="text-align: center">
-                <button type="button" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" style="padding:10px 80px " id="uploadAdvertButton">确定</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!--编辑弹窗-->
-<div class="modal fade" id="editButton" tabindex="-1" role="dialog">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">编辑广告</h4>
-            </div>
-            <div class="modal-body">
-                <div class="modalAdvertStyle">
-                    <form class="form-inline">
-                        <div class="form-group" style="width: 100%">
-                            <label for="modalAdvertTitle">广告标题：</label>
-                            <input type="text" style="width: 80%" class="form-control" id="modalAdvertTitle" placeholder="输入广告标题"/>
-                        </div>
-                    </form>
-                    <form class="form-inline">
-                        <div class="form-group">
-                            <label for="modalAdvertTime">广告时长：</label>
-                            <input type="text" class="form-control" id="modalAdvertTitle" placeholder="输入广告时长"/>&nbsp;&nbsp;&nbsp;s (以秒为计算单位)
-                        </div>
-                    </form>
-                    <form class="form-inline">
-                        <div class="form-group" style="width: 100%">
-                            <label for="modalAdvertRemark">广告备注：</label>
-                            <input type="text" style="width: 80%" class="form-control" id="modalAdvertTitle" placeholder="输入广告备注"/>
+                        <div class="modal-footer" style="text-align: center">
+                            <button type="button" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
+                            <button type="submit" class="btn btn-primary" style="padding:10px 80px " id="uploadAdvertButton">确定</button>
                         </div>
                     </form>
                 </div>
-            </div>
-            <div class="modal-footer" style="text-align: center">
-                <button type="button" class="btn btn-primary" style="padding:10px 80px">确定</button>
             </div>
         </div>
     </div>
