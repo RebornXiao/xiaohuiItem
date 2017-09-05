@@ -8,6 +8,28 @@
 <script src="${res}/assets/plugins/bootstrap-select2/zh-CN.js"></script>
 
 
+<script type="text/javascript">
+    function clearNoNum(obj) {
+//先把非数字的都替换掉，除了数字和.   
+        obj.value = obj.value.replace(/[^\d.]/g, "");
+//必须保证第一个为数字而不是.   
+        obj.value = obj.value.replace(/^\./g, "");
+//保证只有出现一个.而没有多个.   
+        obj.value = obj.value.replace(/\.{2,}/g, ".");
+//保证.只出现一次，而不能出现两次以上   
+        obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
+
+        //最后保证是正确的数字
+        var str = obj.value;
+        if (str.length > 1) {
+            //第一个是否为0
+            if(str.charAt(0) == '0' && str.charAt(1) != '.') {
+                obj.value = "0";
+            }
+        }
+    }
+</script>
+
 <div class="content-page">
     <!-- Start content -->
     <div class="content">
@@ -105,7 +127,7 @@
                             <label class="col-md-4 control-label">成本价：</label>
                             <div class="col-md-8">
                                 <input type="text" id="costPrice" class="form-control" <#if item?exists>
-                                       value="${item.costPrice}" </#if>>
+                                       value="${item.costPrice}" </#if> onkeyup="clearNoNum(this)">
                             </div>
                         </div>
 
@@ -113,7 +135,26 @@
                             <label class="col-md-4 control-label">零售价：</label>
                             <div class="col-md-8">
                                 <input type="text" id="defaultPrice" class="form-control" <#if item?exists>
-                                       value="${item.defaultPrice}" </#if>>
+                                       value="${item.defaultPrice}" </#if> onkeyup="clearNoNum(this)">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">商品主图：</label>
+                            <div class="col-md-4">
+                                <div id="itemMainImgDiv" style="background: white; width:150px; height:150px;">
+                                    <img id="upImg" <#if item?exists && item.imageUrl??>
+                                         src="${item.imageUrl}"
+                                         style="width: 150px; height: 150px"</#if>/>
+                                </div>
+                                <p class="m-t-10">
+                                    <button id="selectFileBtn" type="button"
+                                            class="btn waves-effect waves-light btn-default">
+                                        选择主图
+                                    </button>
+                                <#--<input type="file" class="btn waves-effect waves-light btn-default"-->
+                                <#--onchange="previewImage('itemMainImgDiv', 'itemMainImg', this)"></input>-->
+                                </p>
                             </div>
                         </div>
 
@@ -121,45 +162,6 @@
                             <label class="col-md-4 control-label">商品描述：</label>
                             <div class="col-md-8">
                                 <textarea class="form-control" id="itemInfo" rows="5"></textarea>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-md-4 control-label">商品主图：</label>
-                            <div class="col-md-4">
-                                <div id="itemMainImgDiv">
-                                    <img id="itemMainImg" <#if item?exists && item.imageUrl??>
-                                         src="${item.imageUrl}" </#if>
-                                         width="150px" height="150px"/>
-                                </div>
-                                <p class="m-t-10">
-                                <#--<button id="selectFileBtn" type="button" class="btn waves-effect waves-light btn-default">-->
-                                <#--上传主图-->
-                                <#--</button>-->
-                                    <input type="file" class="btn waves-effect waves-light btn-default"
-                                           onchange="previewImage('itemMainImgDiv', 'itemMainImg', this)"></input>
-                                </p>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label class="col-md-4 control-label">商品banner图：</label>
-                            <div class="col-md-4">
-
-                                <div id="itemBannerImgDiv">
-                                    <img id="itemBannerImg" <#if item?exists && item.bannerUrl??>
-                                         src="${item.bannerUrl}" </#if>
-                                         width="150px" height="150px"/>
-                                </div>
-                                <p class="m-t-10">
-                                <#--<button id="selectFileBtn" type="button" class="btn waves-effect waves-light btn-default">-->
-                                <#--上传主图-->
-                                <#--</button>-->
-                                    <input type="file" class="btn waves-effect waves-light btn-default"
-                                           onchange="previewImage('itemBannerImgDiv', 'itemBannerImg', this)"></input>
-                                </p>
-
-
                             </div>
                         </div>
 
@@ -182,7 +184,7 @@
             <!-- end container -->
         </div>
 
-        <script src="${res}/assets/plugins/alioss/plupload-2.1.2/js/plupload.dev.js"></script>
+        <script src="${res}/assets/plugins/alioss/plupload-2.1.2/js/plupload.full.min.js"></script>
 
         <script type="text/javascript">
             $(document).ready(function () {
@@ -208,7 +210,8 @@
                 //添加商品
                 $("#saveBtn").on('click', function () {
 
-                    //检测所有项
+                    //如果有图片，先执行上传图片操作
+                    $(this).button("loading");
 
                 <#--$.post("${base}/item/itemUnitEditSave.do?id="+itemUnitId+"&title="+title+"&status="+status, function(data) {-->
                 <#--//重新刷新-->
@@ -225,107 +228,201 @@
 
         <script type="text/javascript">
 
+            var haveUpImg = false;
 
-                var uploader = new plupload.Uploader({
-                    url: "http://oss.aliyun.com",//服务器端的上传页面地址
-                    max_file_size: '2mb',//限制为2MB
-                    filters: [{title: "Image files", extensions: "jpg,gif,png"}]//图片限制
-                });
-                //在实例对象上调用init()方法进行初始化
-                uploader.init();
-                //绑定各种事件，并在事件监听函数中做你想做的事
-                uploader.bind('FilesAdded', function (uploader, files) {
-                    //uploader.start();
-                    alert("原有：" + uploader.files.length + ", 新增：" + files.length);
-                });
-                uploader.bind('FileUploaded', function (uploader, files, data) {
-//                    var imgUrl = "http://cdn.sojson.com/";
-//                    //这里得到图片的id
-//                    var id = self.search("-img") == -1 ? self + "-img" : self;
-//                    console.log("现在在上传的身份证是：", self.search('cardzmbtn') == 0 ? '正' : '反', "面");
-//                    //成功判断
-//                    if (data.status == 200) {
-//                        data = $.parseJSON(data.response);
-//                        var imagePath = imgUrl + data.file
-//                        //图片赋值
-//                        document.getElementById(id).src = imagePath;
-//                        //正面
-//                        if (self.search('cardzmbtn') === 0) {
-//                            $("#cardzmbtn-input").val(imagePath).attr('src-data', data.file);
-//                        } else {//反面
-//                            $("#cardbmbtn-input").val(imagePath).attr('src-data', data.file);
-//                        }
-//                    }
-                });
-
-                var changeFile = {};
-
-                //图片上传预览    IE是用了滤镜。
-                function previewImage(divname, imgname, file) {
-
-                    //如果原来存在，则先删除
-                    var old_file = changeFile[imgname];
-                    if (old_file != null) {
-                        //先删除
-                        uploader.removeFile(file);
-                    }
-
-                    changeFile[imgname] = file;
-                    //添加回去
-                    uploader.addFile(file);
-
-                    var MAXWIDTH = 260;
-                    var MAXHEIGHT = 180;
-                    var div = document.getElementById(divname);
-                    if (file.files && file.files[0]) {
-                        div.innerHTML = "<img id=\"" + imgname + "\">";
-                        var img = document.getElementById(imgname);
-                        img.onload = function () {
-                            var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
-                            img.width = rect.width;
-                            img.height = rect.height;
-                            img.style.marginTop = rect.top + 'px';
-                        }
-                        var reader = new FileReader();
-                        reader.onload = function (evt) {
-                            img.src = evt.target.result;
-                        }
-                        reader.readAsDataURL(file.files[0]);
-                    }
-                    else //兼容IE
-                    {
-                        var sFilter = 'filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src="';
-                        file.select();
-                        var src = document.selection.createRange().text;
-                        div.innerHTML = "<img id=\"" + imgname + "\">";
-                        var img = document.getElementById(imgname);
-                        img.filters.item('DXImageTransform.Microsoft.AlphaImageLoader').src = src;
-                        var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
-                        status = ('rect:' + rect.top + ',' + rect.left + ',' + rect.width + ',' + rect.height);
-                        div.innerHTML = "<div id=divhead style='width:" + rect.width + "px;height:" + rect.height + "px;margin-top:" + rect.top + "px;" + sFilter + src + "\"'></div>";
-                    }
-                    //添加到 puload
+            function send_request()
+            {
+                var xmlhttp = null;
+                if (window.XMLHttpRequest)
+                {
+                    xmlhttp=new XMLHttpRequest();
+                }
+                else if (window.ActiveXObject)
+                {
+                    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
                 }
 
-                function clacImgZoomParam(maxWidth, maxHeight, width, height) {
-                    var param = {top: 0, left: 0, width: width, height: height};
-                    if (width > maxWidth || height > maxHeight) {
-                        rateWidth = width / maxWidth;
-                        rateHeight = height / maxHeight;
+                if (xmlhttp!=null)
+                {
+                    serverUrl = './php/get.php';
+                    xmlhttp.open( "GET", serverUrl, false );
+                    xmlhttp.send( null );
+                    return xmlhttp.responseText
+                }
+                else
+                {
+                    alert("Your browser does not support XMLHTTP.");
+                }
+            };
 
-                        if (rateWidth > rateHeight) {
-                            param.width = maxWidth;
-                            param.height = Math.round(height / rateWidth);
-                        } else {
-                            param.width = Math.round(width / rateHeight);
-                            param.height = maxHeight;
-                        }
+            function get_signature()
+            {
+                //可以判断当前expire是否超过了当前时间,如果超过了当前时间,就重新取一下.3s 做为缓冲
+                now = timestamp = Date.parse(new Date()) / 1000;
+                if (expire < now + 3)
+                {
+                    body = send_request()
+                    var obj = eval ("(" + body + ")");
+                    host = obj['host'];
+                    policyBase64 = obj['policy'];
+                    accessid = obj['accessid'];
+                    signature = obj['signature'];
+                    expire = parseInt(obj['expire']);
+                    callbackbody = obj['callback'];
+                    key = obj['dir'];
+                    return true;
+                }
+                return false;
+            };
+
+            function random_string(len) {
+                len = len || 32;
+                var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+                var maxPos = chars.length;
+                var pwd = '';
+                for (i = 0; i < len; i++) {
+                    pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+                }
+                return pwd;
+            }
+
+            function get_suffix(filename) {
+                pos = filename.lastIndexOf('.')
+                suffix = ''
+                if (pos != -1) {
+                    suffix = filename.substring(pos)
+                }
+                return suffix;
+            }
+
+            function clacImgZoomParam(maxWidth, maxHeight, width, height) {
+
+                var param = {top: 0, left: 0, width: width, height: height};
+                if (width > maxWidth || height > maxHeight) {
+                    rateWidth = width / maxWidth;
+                    rateHeight = height / maxHeight;
+
+                    if (rateWidth > rateHeight) {
+                        param.width = maxWidth;
+                        param.height = Math.round(height / rateWidth);
+                    } else {
+                        param.width = Math.round(width / rateHeight);
+                        param.height = maxHeight;
                     }
-
-                    param.left = Math.round((maxWidth - param.width) / 2);
-                    param.top = Math.round((maxHeight - param.height) / 2);
-                    return param;
                 }
 
+                param.left = Math.round((maxWidth - param.width) / 2);
+                param.top = Math.round((maxHeight - param.height) / 2);
+                return param;
+            }
+
+            var uploader = new plupload.Uploader({
+                browse_button : 'selectFileBtn',
+                url : 'http://oss.aliyuncs.com',
+                multi_selection: false,//设置只能单选文件
+
+                filters: {
+                    mime_types : [ //只允许上传图片和zip,rar文件
+                        { title : "Image files", extensions : "jpg,png" },
+                    ],
+                    max_file_size : '1mb', //最大只能上传1mb的文件
+                    prevent_duplicates : false //不允许选取重复文件
+                },
+
+                init: {
+                    // PostInit: function() {
+                    // document.getElementById('ossfile').innerHTML = '';
+                    // document.getElementById('postfiles').onclick = function() {
+                    //     set_upload_param(uploader, '', false);
+                    //     return false;
+                    // };
+                    // },
+
+                    FilesAdded: function(up, files) {
+                        haveUpImg = true;
+                        //保证只上传1张图片，这个方法的意思是删除旧的图片
+                        $.each(up.files, function (i, file) {
+                            if (up.files.length <= 1) {
+                                return;
+                            }
+                            up.removeFile(file);
+                        });
+                        var file = files[0];
+
+                        var preloader = new mOxie.Image();
+                        preloader.onload = function () {
+                            var imgsrc = preloader.type == 'image/jpeg' ? preloader.getAsDataURL('image/jpeg', 80) : preloader.getAsDataURL(); //得到图片src,实质为一个base64编码的数据
+                            file.imgsrc = imgsrc;
+                            var targetImg = $("#upImg");
+                            targetImg.attr("src", imgsrc);
+                            var rect = clacImgZoomParam(150, 150, preloader.width, preloader.height);
+                            targetImg.css({
+                                "width": rect.width + "px",
+                                "height": rect.height + "px",
+                                "marginTop": rect.top + "px",
+                                "marginLeft": rect.left + "px"
+                            });
+                            preloader.destroy();
+                            preloader = null;
+                        };
+                        preloader.load(file.getSource());
+                    },
+
+                    BeforeUpload: function(up, file) {
+                        //check_object_radio();
+                        //set_upload_param(up, file.name, true);
+                    },
+
+                    UploadProgress: function(up, file) {
+                        //var d = document.getElementById(file.id);
+                        //d.getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
+                        //var prog = d.getElementsByTagName('div')[0];
+                        //var progBar = prog.getElementsByTagName('div')[0]
+                        //progBar.style.width= 2*file.percent+'px';
+                        //progBar.setAttribute('aria-valuenow', file.percent);
+                    },
+
+                    FileUploaded: function(up, file, info) {
+                        if (info.status == 200)
+                        {
+                            //document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = 'upload to oss success, object name:' + get_uploaded_object_name(file.name);
+                        }
+                        else
+                        {
+                            //document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = info.response;
+                        }
+                    },
+
+                    Error: function(up, err) {
+                        if (err.code == -600) {
+                            //document.getElementById('console').appendChild(document.createTextNode("\n选择的文件太大了,可以根据应用情况，在upload.js 设置一下上传的最大大小"));
+                        }
+                        else if (err.code == -601) {
+                            //document.getElementById('console').appendChild(document.createTextNode("\n选择的文件后缀不对,可以根据应用情况，在upload.js进行设置可允许的上传文件类型"));
+                        }
+                        else if (err.code == -602) {
+                            //document.getElementById('console').appendChild(document.createTextNode("\n这个文件已经上传过一遍了"));
+                        }
+                        else
+                        {
+                            //document.getElementById('console').appendChild(document.createTextNode("\nError xml:" + err.response));
+                        }
+                    }
+                }
+            });
+
+            uploader.init();
+
+            function startUp(callback) {
+                //如果没有图片
+                if(!haveUpImg) {
+                    callback(0);
+                    return;
+                }
+                //开始上传
+                callback(1);
+                //执行上传操作
+                uploader
+            }
 
         </script>

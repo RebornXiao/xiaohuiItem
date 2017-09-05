@@ -371,6 +371,10 @@ function moveEnd(obj){
     }
 }
 
+
+
+
+
 //policy 要经过base64编码， signature 还要进一步处理，可以查阅官方文档
 // function OssUpload(param, file, fileName, callBack) {
 //     var policyBase64 = Base64.encode(param.policy);
