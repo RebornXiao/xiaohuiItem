@@ -19,4 +19,12 @@
         <module>order</module>
         <module>item</module>
     </modules>
+
+    <dependencies>
+        <dependency>
+            <groupId>xlibao</groupId>
+            <artifactId>common</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
 </project>
