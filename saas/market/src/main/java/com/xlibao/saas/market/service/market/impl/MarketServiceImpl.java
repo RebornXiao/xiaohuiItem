@@ -211,7 +211,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
     }
 
     @Override
-    public JSONObject merketEditSave() {
+    public JSONObject marketEditSave() {
 
         long marketId = getLongParameter("marketId", 0);
         String marketName = getUTF("name");
@@ -220,6 +220,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         String district = getUTF("district");
         long streetId = getLongParameter("streetId");
         String streetName = getUTF("streetName");
+        String streetNumber = getUTF("streetNumber");
         String address = getUTF("address");
         String location = getUTF("location");
         int deliveryMode = getIntParameter("deliveryMode");
@@ -233,6 +234,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         entry.setDistrict(district);
         entry.setStreetId(streetId);
         entry.setStreet(streetName);
+        entry.setStreetNumber(streetNumber);
         entry.setAddress(address);
         entry.setLocation(location);
         entry.setDeliveryMode(deliveryMode);
@@ -240,7 +242,11 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         entry.setDeliveryCost(deliveryCost);
 
         if(marketId == 0) {
-            // 新增
+
+            //如果是新增
+            entry.setType(0);//默认是自动化的类型店铺
+            entry.setStatus(2);//默认是关店状态
+
             if (dataAccessFactory.getMarketDataAccessManager().createMarket(entry) > 0) {
                 return success("添加成功");
             } else {

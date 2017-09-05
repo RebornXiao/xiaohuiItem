@@ -103,7 +103,7 @@
                                 <td>${item.itemTemplateId?c}</td>
                                 <td>${item.defineName}</td>
                                 <#if marketId == 0>
-                                    <td>${item.ownerId?c}</td>
+                                    <td><a href="${base}/market/marketItems.do?marketId=${item.ownerId?c}" alt="点击查看该店铺的商品列表">${item.ownerId?c}</a></td>
                                 </#if>
                                 <td>${item.costPrice}</td>
                                 <td>${item.sellPrice}</td>

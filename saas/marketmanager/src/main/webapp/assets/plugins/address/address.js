@@ -3639,10 +3639,10 @@ XAddress.prototype.find = function (items, id) {
 XAddress.prototype.setData = function (ui, json, selected_id) {
     $.each(json, function (k, v) {
         if (k == selected_id) {
-            var option = '<option value="' + k + '" selected="selected">' + v + '</option>';
+            var option = '<option value="' + k + '" data_id="' + k + '" data_v="' + v + '" selected="selected">' + v + '</option>';
             ui.append(option);
-        } else {
-            var option = '<option value="' + k + '" >' + v + '</option>';
+        } else {            
+            var option = '<option value="' + k + '" data_id="' + k + '" data_v="' + v + '" >' + v + '</option>';
             ui.append(option);
         }
     });
@@ -3671,7 +3671,7 @@ function showLocation(province_id, city_id, district_id, street_id, street_list,
 
     var title = ['省份', '地级市', '区、县、镇', '街道'];
     $.each(title, function (k, v) {
-        title[k] = '<option value=\"k\">' + v + '</option>';
+        title[k] = '<option data_id="' + k + '" data_v="' + v + '" value="' + k + '">' + v + '</option>';
     });
 
     if (street_list != null && street_list != "" && district_id != 0) {

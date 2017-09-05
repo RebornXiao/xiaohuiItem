@@ -38,6 +38,10 @@ public class MarketItemServiceImpl extends BasicWebService implements MarketItem
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex(pageSize);
 
+        if(searchKey == null) {
+            searchType = null;
+        }
+
         List<MarketItem> items = dataAccessFactory.getItemDataAccessManager().searchMarketItems(marketId, searchType, searchKey, pageStartIndex, pageSize);
         if (items != null && items.size() > 0) {
             JSONObject response = new JSONObject();

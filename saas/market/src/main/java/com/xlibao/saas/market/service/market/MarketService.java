@@ -25,5 +25,5 @@ public interface MarketService {
 
     JSONObject myFocusMarkets();
 
-    JSONObject merketEditSave();
+    JSONObject marketEditSave();
 }

@@ -116,8 +116,8 @@ public class MarketManagerController extends BaseController {
     }
 
     //商店 编辑 页面
-    @RequestMapping("/merketEdit")
-    public String merketEdit(ModelMap map) {
+    @RequestMapping("/marketEdit")
+    public String marketEdit(ModelMap map) {
         long id = getLongParameter("marketId", 0);
         if (id != 0) {
             MarketEntry entry = marketManagerService.getMarket(id);
@@ -171,11 +171,11 @@ public class MarketManagerController extends BaseController {
 
     //商店 编辑 保存
     @ResponseBody
-    @RequestMapping("/merketEditSave")
-    public JSONObject merketEditSave() {
+    @RequestMapping("/marketEditSave")
+    public JSONObject marketEditSave() {
         Map map = getMapParameter();
-
-        String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "market/manager/merketEditSave.do", map);
+        String url = ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/marketEditSave.do";
+        String json = HttpRequest.post(url, map);
         return JSONObject.parseObject(json);
     }
 

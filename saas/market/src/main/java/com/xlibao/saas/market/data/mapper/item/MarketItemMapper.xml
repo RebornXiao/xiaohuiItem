@@ -102,7 +102,7 @@
         <if test="marketId != 0">
             and owner_id = #{marketId}
         </if>
-        <if test="searchType == 'itemTemplateId'">
+        <if test="searchType == 'itemTemplateId'" >
             and item_template_id = #{searchKey}
         </if>
         <if test="searchType == 'itemTemplateName'">

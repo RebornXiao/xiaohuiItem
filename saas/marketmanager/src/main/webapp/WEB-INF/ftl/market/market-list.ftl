@@ -248,7 +248,7 @@
                 //单项编辑
                 _marketListTable.find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/merketEdit.do?marketId=" + $(this).attr("data_id");
+                        location.href = "${base}/market/marketEdit.do?marketId=" + $(this).attr("data_id");
                     });
                 });
 

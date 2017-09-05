@@ -60,4 +60,6 @@ public class LogicConfig {
     public static final String FTL_MARKET_STREET_EDIT = "market/street-edit";
     public static final String FTL_MARKET_STREET_LIST = "market/street-list";
 
+    public static final String FTL_SYS_OSS = "sys/oss";
+
 }

@@ -34,9 +34,9 @@ public class MarketManagerController {
     }
 
     @ResponseBody
-    @RequestMapping(value = "merketEditSave", method = RequestMethod.POST)
-    public JSONObject merketEditSave() {
-        return marketService.merketEditSave();
+    @RequestMapping(value = "marketEditSave", method = RequestMethod.POST)
+    public JSONObject marketEditSave() {
+        return marketService.marketEditSave();
     }
 
     @ResponseBody

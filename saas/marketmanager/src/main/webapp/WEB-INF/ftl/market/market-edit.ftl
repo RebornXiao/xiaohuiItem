@@ -127,7 +127,7 @@
                                     <label class="col-md-4 control-label">覆盖的配送距离(米)：</label>
                                     <div class="col-md-8">
                                         <input type="number" id="mDistance" class="form-control" <#if market?exists>
-                                               value="${market.coveringDistance}" </#if>>
+                                               value="${market.coveringDistance?c}" </#if>>
                                     </div>
                                 </div>
 
@@ -135,7 +135,7 @@
                                     <label class="col-md-4 control-label">配送费(分)：</label>
                                     <div class="col-md-8">
                                         <input type="number" id="mDeliveryCost" class="form-control" <#if market?exists>
-                                               value="${market.deliveryCost}" </#if>>
+                                               value="${market.deliveryCost?c}" </#if>>
                                     </div>
                                 </div>
 
@@ -163,6 +163,9 @@
 
         <script type="text/javascript">
             $(document).ready(function () {
+
+                //临时内容
+                var _marketId = <#if market?exists> ${market.id?c};<#else> 0;</#if>
 
                 // 百度地图API功能
                 var map = new BMap.Map("allmap");
@@ -204,11 +207,10 @@
                     location.href = "${base}/market/streetEdit.do";
                 });
 
-                var _streets = null;
+                var _streets = {};
             <#if streets?exists && (streets?size > 0) >
-                _streets = {}
                 <#list streets as street>
-                    _streets[${street.id}] = "${street.name}";
+                    _streets[${street.id?c}] = "${street.name}";
                 </#list>
             </#if>
 
@@ -329,20 +331,66 @@
 //
 //                );
 
+                function getV(ui_name, info) {
+                    var obj = $("#"+ui_name).find("option:selected");
+                    var id = obj.attr("data_id");
+                    if(id == 0) {
+                        swal(info);
+                        return null;
+                    }
+                    return obj.attr("data_v");
+                }
 
+                function getVs(ui_name, info) {
+                    var obj = $("#"+ui_name).find("option:selected");
+                    var id = obj.attr("data_id");
+                    if(id == 0) {
+                        swal(info);
+                        return null;
+                    }
+                    return {id:id,name:obj.attr("data_v")};
+                }
 
                 $("#saveBtn").on('click', function () {
 
-                    //检测所有项
-                    <#--$.post("${base}/item/itemUnitEditSave.do?id="+itemUnitId+"&title="+title+"&status="+status, function(data) {-->
-                    <#--//重新刷新-->
-                    <#--if(data.code == "0") {-->
-                    <#--swal("提示", "操作成功", "success");-->
-                    <#--location.reload();-->
-                    <#--} else {-->
-                    <#--swal(data.msg);-->
-                    <#--}-->
-                    <#--}, "json");-->
+                    var _province = getV("loc_province", "请选择省份");
+                    if(_province == null) return;
+
+                    var _city = getV("loc_city", "请选择城市");
+                    if(_city == null) return;
+
+                    var _district = getV("loc_district", "请选择区");
+                    if(_district == null) return;
+
+                    var _street = getVs("loc_street", "请选择镇");
+                    if(_street == null) return;
+
+                    var post_data = {
+                        marketId:_marketId,
+                        name: $("#mName").val(),
+                        province:_province,
+                        city:_city,
+                        district:_district,
+                        streetId:_street.id,
+                        streetName:_street.name,
+                        streetNumber:$("#mStreetNumber").val(),
+                        address:$("#mStreetNumber").val(),
+                        location:$("#mLocation").val(),
+                        deliveryMode:$("#mDeliveryMode").find("option:selected").attr("data_id"),
+                        distance:$("#mDistance").val(),
+                        deliveryCost:$("#mDeliveryCost").val(),
+                    };
+
+                    $.post("${base}/market/marketEditSave.do", post_data, function (data) {
+
+                        //重新刷新
+                        if(data.code == "0") {
+                            swal("提示", data.msg, "success");
+                        } else {
+                            swal(data.msg);
+                        }
+
+                    }, "json");
                 });
             });
         </script>
