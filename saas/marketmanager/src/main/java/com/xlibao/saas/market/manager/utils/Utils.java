@@ -25,7 +25,11 @@ public class Utils {
             //取2位
             java.text.DecimalFormat df = new java.text.DecimalFormat("#.00");
             String v = df.format(price2);
-            json.put(key, v);
+            if(v.charAt(0) == '.') {
+                json.put(key, "0" + v);
+            } else {
+                json.put(key, v);
+            }
         } else {
             json.put(key, "0");
         }
@@ -48,17 +52,26 @@ public class Utils {
 
     public static void appendStr(StringBuilder sb, String key, String value) {
         if (value != null && value.length() > 0) {
-            sb.append("&").append(key).append("=").append(value);
+            if(sb.length() > 0) {
+                sb.append("&");
+            }
+            sb.append(key).append("=").append(value);
         }
     }
     public static void appendInt(StringBuilder sb, String key, int value) {
         if (value != -1) {
-            sb.append("&").append(key).append("=").append(value);
+            if(sb.length() > 0) {
+                sb.append("&");
+            }
+            sb.append(key).append("=").append(value);
         }
     }
     public static void appendLong(StringBuilder sb, String key, long value) {
         if (value != -1) {
-            sb.append("&").append(key).append("=").append(value);
+            if(sb.length() > 0) {
+                sb.append("&");
+            }
+            sb.append(key).append("=").append(value);
         }
     }
 }

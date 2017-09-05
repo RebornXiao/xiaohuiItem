@@ -127,7 +127,7 @@
                                     <label class="col-md-4 control-label">覆盖的配送距离(米)：</label>
                                     <div class="col-md-8">
                                         <input type="number" id="mDistance" class="form-control" <#if market?exists>
-                                               value="${market.coveringDistance}" </#if> placeholder="单位：米">
+                                               value="${market.coveringDistance}" </#if>>
                                     </div>
                                 </div>
 
@@ -135,7 +135,7 @@
                                     <label class="col-md-4 control-label">配送费(分)：</label>
                                     <div class="col-md-8">
                                         <input type="number" id="mDeliveryCost" class="form-control" <#if market?exists>
-                                               value="${market.deliveryCost}" </#if> placeholder="单位：分">
+                                               value="${market.deliveryCost}" </#if>>
                                     </div>
                                 </div>
 

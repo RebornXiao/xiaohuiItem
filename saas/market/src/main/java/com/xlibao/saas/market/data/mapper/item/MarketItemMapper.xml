@@ -99,13 +99,13 @@
 
     <select id="searchMarketItems" resultMap="BaseResultMap">
         select * from market_item where 1=1
-        <if test="owner_id != 0">
+        <if test="marketId != 0">
             and owner_id = #{marketId}
         </if>
-        <if test="searchType == 'item_template_id'">
+        <if test="searchType == 'itemTemplateId'">
             and item_template_id = #{searchKey}
         </if>
-        <if test="searchType == 'item_template_name'">
+        <if test="searchType == 'itemTemplateName'">
             and define_name like '%'+#{searchKey}+'%'
         </if>
         order by create_time desc limit #{pageStartIndex}, #{pageSize}
