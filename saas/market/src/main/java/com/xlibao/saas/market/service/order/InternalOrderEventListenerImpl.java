@@ -2,6 +2,7 @@ package com.xlibao.saas.market.service.order;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.CommonUtils;
 import com.xlibao.common.constant.order.DeliverTypeEnum;
 import com.xlibao.common.constant.order.OrderPermissionTypeEnum;
 import com.xlibao.common.constant.order.OrderStatusEnum;
@@ -37,12 +38,12 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
     private ItemLengthComparator itemLengthComparator = new ItemLengthComparator();
 
     @Override
-    public void notifyCreatedOrder(OrderEntry entry) {
-        List<OrderItemSnapshot> itemSnapshots = entry.getItemSnapshots();
+    public void notifyCreatedOrder(OrderEntry orderEntry) {
+        List<OrderItemSnapshot> itemSnapshots = orderEntry.getItemSnapshots();
         // 按最短的进行排序
         Collections.sort(itemSnapshots, itemLengthComparator);
         // 分组
-        Map<Integer, List<OrderItemSnapshot>> groupOrders = new HashMap<>();
+        Map<Integer, JSONArray> groupOrders = new HashMap<>();
         // 计数器
         int counter = 1;
 
@@ -74,24 +75,20 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
         }
         logger.info("对本次购买商品进行分组，分组结果数量：" + counter);
 
+        for (Map.Entry<Integer, JSONArray> entry : groupOrders.entrySet()) {
+            int code = entry.getKey();
+            JSONArray value = entry.getValue();
+
+            String serialCode = CommonUtils.toHexString(code, 4, "0");
+
+            dataAccessFactory.getOrderDataAccessManager().createSplitOrder(orderEntry.getId(), orderEntry.getOrderSequenceNumber(), serialCode, value.toString());
+        }
+
         JSONObject containerData = new JSONObject();
         containerData.put("containerCount", counter);
         containerData.put("containers", new JSONArray());
 
-        dataAccessFactory.getOrderDataAccessManager().createOrderProperties(entry.getId(), entry.getOrderSequenceNumber(), PropertiesKeyEnum.CONTAINER_DATA.getTypeEnum().getKey(), PropertiesKeyEnum.CONTAINER_DATA.getKey(), containerData.toJSONString());
-    }
-
-    private void groupItemSnapshot(Map<Integer, List<OrderItemSnapshot>> groupOrders, int counter, OrderItemSnapshot itemSnapshot, int productNumber) {
-        List<OrderItemSnapshot> groupOrder = groupOrders.get(counter);
-        if (groupOrder == null) {
-            groupOrder = new ArrayList<>();
-            groupOrders.put(counter, groupOrder);
-        }
-        OrderItemSnapshot copyItemSnapshot = new OrderItemSnapshot();
-        copyItemSnapshot.setItemId(itemSnapshot.getItemId());
-        copyItemSnapshot.setNormalQuantity(productNumber);
-
-        groupOrder.add(copyItemSnapshot);
+        dataAccessFactory.getOrderDataAccessManager().createOrderProperties(orderEntry.getId(), orderEntry.getOrderSequenceNumber(), PropertiesKeyEnum.CONTAINER_DATA.getTypeEnum().getKey(), PropertiesKeyEnum.CONTAINER_DATA.getKey(), containerData.toJSONString());
     }
 
     @Override
@@ -111,6 +108,21 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
 
     @Override
     public void notifyCanceledOrderEntry(OrderEntry orderEntry) {
+    }
+
+    private void groupItemSnapshot(Map<Integer, JSONArray> groupOrders, int counter, OrderItemSnapshot itemSnapshot, int productNumber) {
+        JSONArray groupOrder = groupOrders.get(counter);
+        if (groupOrder == null) {
+            groupOrder = new JSONArray();
+        }
+        JSONObject data = new JSONObject();
+
+        data.put("itemId", itemSnapshot.getItemId());
+        data.put("itemTemplateId", itemSnapshot.getItemTemplateId());
+        data.put("quantity", productNumber);
+
+        groupOrder.add(data);
+        groupOrders.put(counter, groupOrder);
     }
 
     private class ItemLengthComparator implements Comparator<OrderItemSnapshot> {

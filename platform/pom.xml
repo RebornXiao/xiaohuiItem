@@ -12,24 +12,11 @@
     <artifactId>platform</artifactId>
     <packaging>pom</packaging>
     <name>xlibao平台应用系统</name>
+
     <modules>
         <module>passport</module>
         <module>payment</module>
         <module>order</module>
         <module>item</module>
     </modules>
-
-    <dependencies>
-        <dependency>
-            <groupId>xlibao</groupId>
-            <artifactId>common</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-
-        <dependency>
-            <groupId>xlibao</groupId>
-            <artifactId>datamodel</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
 </project>

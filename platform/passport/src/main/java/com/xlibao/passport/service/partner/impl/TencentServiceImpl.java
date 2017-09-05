@@ -159,6 +159,8 @@ public class TencentServiceImpl extends BasicWebService implements TencentServic
         response.put("headImageUrl", CommonUtils.nullToEmpty(passport.getHeadImage()));
         response.put("sex", passport.getSex() == null ? GlobalAppointmentOptEnum.FEMALE.getKey() : passport.getSex());
         response.put("status", passport.getStatus());
+        response.put("hasBinding", CommonUtils.isNotNullString(passport.getPhoneNumber()) ? GlobalAppointmentOptEnum.LOGIC_TRUE.getKey() : GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
+        response.put("bindingPhoneNumber", CommonUtils.hideChar(passport.getPhoneNumber(), 3, 8));
 
         return response;
     }

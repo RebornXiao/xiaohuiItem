@@ -24,4 +24,7 @@ public class XMarketTimeConfig {
 
     public static final long WAIT_LOCK_TIME_OUT = 2;
     public static final TimeUnit WAIT_LOCK_TIME_UNIT = TimeUnit.SECONDS;
+
+    public static final long ORDER_STATUS_RECOVER_DELAY = 10;
+    public static final TimeUnit ORDER_STATUS_RECOVER_TIME_UNIT = TimeUnit.MINUTES;
 }

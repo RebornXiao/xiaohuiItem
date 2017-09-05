@@ -1,12 +1,14 @@
 package com.xlibao.saas.market.data.mapper.order;
 
 import com.xlibao.common.constant.order.OrderStatusEnum;
+import com.xlibao.market.data.model.MarketSplitOrder;
 import com.xlibao.saas.market.data.model.MarketOrderProperties;
 import com.xlibao.saas.market.data.model.MarketOrderStatusLogger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * @author chinahuangxc on 2017/7/15.
@@ -18,6 +20,8 @@ public class OrderDataAccessManager {
     private MarketOrderStatusLoggerMapper orderStatusLoggerMapper;
     @Autowired
     private MarketOrderPropertiesMapper orderPropertiesMapper;
+    @Autowired
+    private MarketSplitOrderMapper splitOrderMapper;
 
     public int createOrderStatusLogger(String orderSequenceNumber, int notifyType, OrderStatusEnum localStatus, int remoteStatus, long remoteCompleteTime) {
         MarketOrderStatusLogger orderStatusLogger = new MarketOrderStatusLogger();
@@ -56,5 +60,19 @@ public class OrderDataAccessManager {
 
     public int updateOrderProperties(long id, String propertiesValue) {
         return orderPropertiesMapper.updateOrderProperties(id, propertiesValue);
+    }
+
+    public int createSplitOrder(long orderId, String orderSequenceNumber, String serialCode, String itemSet) {
+        MarketSplitOrder splitOrder = new MarketSplitOrder();
+        splitOrder.setOrderId(orderId);
+        splitOrder.setOrderSequenceNumber(orderSequenceNumber);
+        splitOrder.setSerialCode(serialCode);
+        splitOrder.setItemSet(itemSet);
+
+        return splitOrderMapper.createSplitOrder(splitOrder);
+    }
+
+    public List<MarketSplitOrder> getSplitOrders(long orderId) {
+        return splitOrderMapper.getSplitOrders(orderId);
     }
 }
