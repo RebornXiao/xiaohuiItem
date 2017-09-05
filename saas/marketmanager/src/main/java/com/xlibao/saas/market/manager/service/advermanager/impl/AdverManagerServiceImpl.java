@@ -1,6 +1,7 @@
 package com.xlibao.saas.market.manager.service.advermanager.impl;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.support.BasicRemoteService;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
@@ -24,8 +25,8 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
     @Override
     public JSONObject searchAdvertTemplatesPage() {
         String title = getUTF("title","");
-        int timeType = getIntParameter("timeType",1);
-        int isUsed = getIntParameter("isUsed",1);
+        int timeType = getIntParameter("timeType",-1);
+        int isUsed = getIntParameter("isUsed",-1);
         int pageSize = getPageSize();
         int pageIndex = getIntParameter("pageIndex", 1);
 
@@ -43,18 +44,12 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
     }
 
     @Override
-    public JSONObject addAdvert(String path) {
-        String title =  getUTF("title","");
-        int timeSize =  getIntParameter("timeSize",0);
-        String remark = getUTF("remark","");
-        // String urlStr =   getUTF("url","");
-        String videoName =  getUTF("videoName","");
-
+    public JSONObject addAdvert(String path,String title,String timeSize,String remark,String videoName) {
         Map<String, String> parameters = new HashMap<>();
         parameters.put("title",title);
-        parameters.put("timeSize",String.valueOf(timeSize));
+        parameters.put("timeSize", timeSize);
         parameters.put("remark",remark);
-        parameters.put("urlStr",path);
+        parameters.put("url",path);
         parameters.put("videoName",videoName);
 
         String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/uploadAdvertInfo.do";
@@ -110,7 +105,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
     @Override
     public JSONObject searchScreenTemplatePage(){
         String code = getUTF("code","");
-        int marketID = getIntParameter("marketID",0);
+        int marketID = getIntParameter("marketID",-1);
         String size = getUTF("size","");
         int pageSize = getPageSize();
         int pageIndex = getIntParameter("pageIndex", 1);
@@ -170,13 +165,13 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
     @Override
     public JSONObject searchScreenAdvertTemplatePage(){
 
-        int marketID = getIntParameter("marketID",0);
+        int marketID = getIntParameter("marketID",-1);
         String title = getUTF("title","");
         String code = getUTF("code","");
         String beginTime = getUTF("beginTime","");
         String endTime = getUTF("endTime","");
-        int isDown = getIntParameter("isDown",0);
-        int playStatus = getIntParameter("playStatus",0);
+        int isDown = getIntParameter("isDown",-1);
+        int playStatus = getIntParameter("playStatus",-1);
         int pageSize = getPageSize();
         int pageIndex = getIntParameter("pageIndex", 1);
 
@@ -200,33 +195,32 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
 
     @Override
     public JSONObject addScreenAdvert() {
-        /**String [] screenID= getHttpServletRequest().getParameterValues("screenID");
-         String [] advertID= getHttpServletRequest().getParameterValues("advertID");
-         String [] beginTime= getHttpServletRequest().getParameterValues("beginTime");
-         String [] endTime= getHttpServletRequest().getParameterValues("endTime");
-         String [] playOrder= getHttpServletRequest().getParameterValues("playOrder");
-         String [] remark= getHttpServletRequest().getParameterValues("remark");**/
+         JSONObject rest = new JSONObject();
+         int screenID =  getIntParameter("screenID",0);
+         String [] titles = getHttpServletRequest().getParameterValues("title");
+         String [] advertIDs= getHttpServletRequest().getParameterValues("advertID");
+         String [] beginTimes= getHttpServletRequest().getParameterValues("beginTime");
+         String [] endTimes= getHttpServletRequest().getParameterValues("endTime");
+         String [] playOrders= getHttpServletRequest().getParameterValues("playOrder");
+         String [] remarks= getHttpServletRequest().getParameterValues("remark");
+        String resStr ="";
+        for (int i=0;i<advertIDs.length;i++){
+            Map<String, String> parameters = new HashMap<>();
+            parameters.put("screenID",String.valueOf(screenID));
+            parameters.put("advertID",advertIDs[i]);
+            parameters.put("beginTime",beginTimes[i]);
+            parameters.put("endTime",endTimes[i]);
+            parameters.put("playOrder",playOrders[i]);
+            parameters.put("remark",remarks[i]);
 
-        int screenID =  getIntParameter("screenID",0);
-        int advertID =  getIntParameter("advertID",0);
-        String beginTime =  getUTF("beginTime","");
-        String endTime =  getUTF("endTime","");
-        int playOrder =  getIntParameter("playOrder",0);
-        String remark =  getUTF("remark","");
-
-
-        Map<String, String> parameters = new HashMap<>();
-        parameters.put("screenID",String.valueOf(screenID));
-        parameters.put("advertID",String.valueOf(advertID));
-        parameters.put("beginTime",beginTime);
-        parameters.put("endTime",endTime);
-        parameters.put("playOrder",String.valueOf(playOrder));
-        parameters.put("remark",remark);
-
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/addAdvertInfoForScreen.do";
-        JSONObject response = executor(url, parameters);
-
-        return response;
+            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/addAdvertInfoForScreen.do";
+            JSONObject response = executor(url, parameters);
+            if(response.getInteger("code")!=0){
+                resStr += "广告："+titles[i]+"。添加失败!";
+            }
+        }
+        rest.put("msg",resStr);
+        return rest;
     }
 
     @Override
@@ -235,7 +229,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         int advertID =  getIntParameter("advertID",0);
         String beginTime =  getUTF("beginTime","");
         String endTime =  getUTF("endTime","");
-        int playOrder =  getIntParameter("playOrder",0);
+        int playOrder =  getIntParameter("playOrder",-1);
         String remark =  getUTF("remark","");
 
 

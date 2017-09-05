@@ -53,21 +53,21 @@ public class QiniuFileUtil {
 
                     Response response = uploadManager.put(byteArrayInputStream, key, upToken, null, null);
                     DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
-                    System.out.println(putRet.key);
-                    System.out.println(putRet.hash);
                     path = path+putRet.key;
-                    System.out.println("path:"+path);
                     json.put("status", STATUS_SUCCESS);
                     json.put("path",path);
+                    json.put("videoName",putRet.key);
                 } catch (QiniuException e) {
                     Response r = e.response;
                     json.put("status", STATUS_ERROR);
                     json.put("error", r.toString());
                     json.put("path","");
+                    json.put("videoName","");
                 } catch (IOException e) {
                     json.put("status", STATUS_ERROR);
                     json.put("error", "IO Exception,请重试");
                     json.put("path","");
+                    json.put("videoName","");
                 }
             } else {
                 json.put("status", STATUS_ERROR);

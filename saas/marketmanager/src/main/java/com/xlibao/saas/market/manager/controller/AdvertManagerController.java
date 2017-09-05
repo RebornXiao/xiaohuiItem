@@ -5,15 +5,15 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.saas.market.manager.BaseController;
 import com.xlibao.saas.market.manager.config.LogicConfig;
 import com.xlibao.saas.market.manager.service.advermanager.AdverManagerService;
+import com.xlibao.saas.market.manager.service.marketmanager.MarketManagerService;
 import com.xlibao.saas.market.manager.utils.QiniuFileUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -28,6 +28,9 @@ public class AdvertManagerController extends BaseController {
     private AdverManagerService adverManagerService;
     @Autowired
     private QiniuFileUtil qiniuFileUtil;
+
+    @Autowired
+    private MarketManagerService marketManagerService;
     /**
      *获取视频列表
      * @param map
@@ -41,8 +44,8 @@ public class AdvertManagerController extends BaseController {
 
         int pageIndex = getIntParameter("pageIndex", 1);
         map.put("title", getUTF("title",""));
-        map.put("timeType", getIntParameter("timeType",0));
-        map.put("isUsed", getIntParameter("isUsed",1));
+        map.put("timeType", getIntParameter("timeType",-1));
+        map.put("isUsed", getIntParameter("isUsed",-1));
         map.put("pageIndex", pageIndex);
         map.put("advertList", adverts);
         return jumpPage(map, LogicConfig.FTL_ADVERT_EDIT, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
@@ -54,12 +57,19 @@ public class AdvertManagerController extends BaseController {
      * @param map
      * @return
      */
+    @ModelAttribute
     @RequestMapping(value = "/addAdvert",method = RequestMethod.POST,produces = "text/html;charset=UTF-8")
     @ResponseBody
-    public JSONObject addAdvert(@RequestParam("file") MultipartFile file,ModelMap map){
+    public ModelAndView addAdvert(@RequestParam("file") MultipartFile file,ModelMap map,HttpServletRequest request){
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        String title = multipartRequest.getParameter("title");
+        String timeSize = multipartRequest.getParameter("timeSize");
+        String remark = multipartRequest.getParameter("remark");
         JSONObject jsonObject = qiniuFileUtil.uploadToQiniu(file);
         String path = jsonObject.getString("path");
-        return  adverManagerService.addAdvert(path);
+        String videoName = jsonObject.getString("videoName");
+        adverManagerService.addAdvert(path,title,timeSize,remark,videoName);
+        return new ModelAndView("redirect:/marketmanager/advert/adverts.do");
     }
 
     /**
@@ -70,8 +80,10 @@ public class AdvertManagerController extends BaseController {
     @RequestMapping("/detail")
     public String advertDetail(ModelMap map){
         JSONObject json =  adverManagerService.getAdvertByID();
-        JSONObject  adverJson= JSONObject.parseObject(json.getJSONObject("response").getString("data"));
-        map.put("adver",adverJson);
+        JSONObject response = json.getJSONObject("response");
+        JSONArray adverts = response.getJSONArray("data");
+        if(adverts.size()>0)
+            map.put("adver",adverts.get(0));
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_DETAIL, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
 
@@ -80,6 +92,7 @@ public class AdvertManagerController extends BaseController {
      * @param map
      * @return
      */
+    @ResponseBody
     @RequestMapping("/updateAdvert")
     public JSONObject updateAdvert(ModelMap map){
         return adverManagerService.updateAdvert();
@@ -91,7 +104,7 @@ public class AdvertManagerController extends BaseController {
      * @return
      */
     @ResponseBody
-    @RequestMapping(value = "/delAdvert", method = RequestMethod.POST)
+    @RequestMapping(value = "/delAdvert")
     public JSONObject delAdvert(ModelMap map){
         return adverManagerService.delAdvertByID();
     }
@@ -105,6 +118,11 @@ public class AdvertManagerController extends BaseController {
         JSONObject adverJson =  adverManagerService.searchScreenTemplatePage();
         JSONObject response = adverJson.getJSONObject("response");
         JSONArray screens = response.getJSONArray("data");
+
+        JSONObject marketResponse = marketManagerService.getAllMarkets();
+        if (marketResponse.getIntValue("code") == 0) {
+            map.put("markets", marketResponse.getJSONObject("response").getJSONArray("datas"));
+        }
 
         int pageIndex = getIntParameter("pageIndex", 1);
         map.put("code", getUTF("code",""));
@@ -120,6 +138,7 @@ public class AdvertManagerController extends BaseController {
      * @param map
      * @return
      */
+    @ResponseBody
     @RequestMapping("/addScreen")
     public JSONObject addScreen(ModelMap map){
         return adverManagerService.addScreen();
@@ -143,9 +162,14 @@ public class AdvertManagerController extends BaseController {
      */
     @RequestMapping("/advertScreens")
     public String getadvertScreenList(ModelMap map){
-        /** JSONObject adverJson =  adverManagerService.searchScreenAdvertTemplatePage();
+        JSONObject adverJson =  adverManagerService.searchScreenAdvertTemplatePage();
          JSONObject response = adverJson.getJSONObject("response");
          JSONArray advertScreens = response.getJSONArray("data");
+
+        JSONObject marketResponse = marketManagerService.getAllMarkets();
+        if (marketResponse.getIntValue("code") == 0) {
+            map.put("markets", marketResponse.getJSONObject("response").getJSONArray("datas"));
+        }
 
          int pageIndex = getIntParameter("pageIndex", 1);
          map.put("marketID", getIntParameter("marketID",0));
@@ -153,10 +177,10 @@ public class AdvertManagerController extends BaseController {
          map.put("title", getUTF("title",""));
          map.put("beginTime", getUTF("beginTime",""));
          map.put("endTime", getUTF("endTime",""));
-         map.put("isDown", getIntParameter("isDown",0));
+         map.put("isDown", getIntParameter("isDown",-1));
          map.put("playStatus", getIntParameter("playStatus",0));
          map.put("pageIndex", pageIndex);
-         map.put("advertScreens", advertScreens);*/
+         map.put("advertScreens", advertScreens);
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGER, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
     /**
@@ -164,6 +188,7 @@ public class AdvertManagerController extends BaseController {
      * @param map
      * @return
      */
+    @ResponseBody
     @RequestMapping("/addScreenAdvert")
     public JSONObject addScreenAdvert(ModelMap map){
         return adverManagerService.addScreenAdvert();
@@ -173,6 +198,7 @@ public class AdvertManagerController extends BaseController {
      * @param map
      * @return
      */
+    @ResponseBody
     @RequestMapping("/updateScreenAdvert")
     public JSONObject updateScreenAdvert(ModelMap map){
         return adverManagerService.updateScreenAdvert();
@@ -187,5 +213,16 @@ public class AdvertManagerController extends BaseController {
     @RequestMapping(value = "/delScreenAdvert", method = RequestMethod.POST)
     public JSONObject delScreenAdvert(ModelMap map){
         return adverManagerService.delAdvertScreenByID();
+    }
+
+    /**
+     * 获取店铺json
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getAllMarkets")
+    public JSONObject getAllMarkets(ModelMap map) {
+        return  marketManagerService.getAllMarkets();
     }
 }

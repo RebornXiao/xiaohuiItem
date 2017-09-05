@@ -17,7 +17,7 @@ public interface AdverManagerService {
      * 添加广告
      * @return
      */
-    JSONObject addAdvert(String path);
+    JSONObject addAdvert(String path,String title,String timeSize,String remark,String videoName);
 
     /**
      * 编辑广告
