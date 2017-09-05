@@ -8,4 +8,12 @@
         <result column="happen_time" property="happenTime" jdbcType="VARCHAR"/>
         <result column="winner_address" property="winnerAddress" jdbcType="VARCHAR"/>
     </resultMap>
+
+    <insert id="createTimeTaskLock">
+        insert into market_time_task_lock(title, type, happen_time, winner_address) values(#{title}, #{type}, #{happenTime}, #{winnerAddress})
+    </insert>
+
+    <select id="hasExecutor" resultMap="BaseResultMap">
+        select count(*) from market_time_task_lock where type = #{type} and happen_time = #{happenTime}
+    </select>
 </mapper>

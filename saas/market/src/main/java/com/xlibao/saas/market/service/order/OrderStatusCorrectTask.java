@@ -106,7 +106,7 @@ public class OrderStatusCorrectTask {
             JSONObject response = OrderRemoteService.findInvalidOrderSize(OrderTypeEnum.SALE_ORDER_TYPE.getKey(), OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey(), timeout);
             logger.info("准备执行自动修复订单状态任务，等待修复的订单数量为：" + response.getJSONObject("response").getIntValue("size"));
 
-            response = OrderRemoteService.batchResetOverdueOrderStatus(OrderTypeEnum.SALE_ORDER_TYPE.getKey(), OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey(), OrderStatusEnum.ORDER_STATUS_CANCEL.getKey(), timeout);
+            // response = OrderRemoteService.batchResetOverdueOrderStatus(OrderTypeEnum.SALE_ORDER_TYPE.getKey(), OrderStatusEnum.ORDER_STATUS_DEFAULT.getKey(), OrderStatusEnum.ORDER_STATUS_CANCEL.getKey(), timeout);
             logger.info("完成自动修复订单状态任务，本次修复的订单数量为：" + response.getJSONObject("response").getIntValue("size"));
         } catch (Exception ex) {
             logger.error("准备执行自动修复订单状态任务时发生了异常", ex);
