@@ -107,21 +107,21 @@
     <insert id="createMarket" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.market.data.model.MarketEntry">
         insert into market_entry(name, province, city, district, streetId,
         street, street_number, address, location, delivery_mode, distance, delivery_cost, status, type)
-        values(#{market.name}, #{market.province}, #{market.city}, #{market.district}, #{market.streetId},
-        #{market.street}, #{market.streetNumber}, #{market.address}, #{market.location}, #{market.deliveryMode},
-        #{market.distance}, #{market.deliveryCost}, #{market.status}, #{market.type})
+        values(#{name}, #{province}, #{city}, #{district}, #{streetId},
+        #{street}, #{streetNumber}, #{address}, #{location}, #{deliveryMode},
+        #{distance}, #{deliveryCost}, #{status}, #{type})
     </insert>
 
     <update id="updateMarket">
-        update market_entry set name = #{market.name}, province = #{market.province}, city = #{market.city},
-        district = #{market.district}, streetId = #{market.streetId},
-        street = #{market.street}, street_number = #{market.streetNumber},
-        address = #{market.address},
-        location = #{market.location},
-        delivery_mode = #{market.deliveryMode},
-        distance = #{market.distance},
-        delivery_cost = #{market.deliveryCost}
-        where id = #{market.id}
+        update market_entry set name = #{name}, province = #{province}, city = #{city},
+        district = #{district}, streetId = #{streetId},
+        street = #{street}, street_number = #{streetNumber},
+        address = #{address},
+        location = #{location},
+        delivery_mode = #{deliveryMode},
+        distance = #{distance},
+        delivery_cost = #{deliveryCost}
+        where id = #{id}
     </update>
 
 </mapper>

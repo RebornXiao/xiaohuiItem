@@ -43,11 +43,11 @@ public class AliyunConfig {
         return OSS_INTERNAL_END_POINT;
     }
 
-    static String getAccessKeyId() {
+    public static String getAccessKeyId() {
         return ACCESS_KEY_ID;
     }
 
-    static String getAccessKeySecret() {
+    public static String getAccessKeySecret() {
         return ACCESS_KEY_SECRET;
     }
 }

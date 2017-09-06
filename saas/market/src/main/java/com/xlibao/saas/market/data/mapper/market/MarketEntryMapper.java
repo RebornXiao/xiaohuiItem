@@ -23,7 +23,7 @@ public interface MarketEntryMapper {
 
     int marketResponse(@Param("marketId") long marketId, @Param("status") int status);
 
-    int createMarket(@Param("market") MarketEntry entry);
+    int createMarket(MarketEntry entry);
 
-    int updateMarket(@Param("market") MarketEntry entry);
+    int updateMarket(MarketEntry entry);
 }

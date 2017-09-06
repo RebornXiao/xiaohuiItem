@@ -7,6 +7,22 @@
 <script src="${res}/assets/plugins/bootstrap-select2/select2.min.js"></script>
 <script src="${res}/assets/plugins/bootstrap-select2/zh-CN.js"></script>
 
+<div class="modal" tabindex="-1" role="dialog" id="upImgDialog" >
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="mySmallModalLabel">Small modal</h4>
+            </div>
+            <div class="modal-body">
+                <div class="progress">
+                    <div id="upImgBar" class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                        <span class="sr-only"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script type="text/javascript">
     function clearNoNum(obj) {
@@ -52,6 +68,14 @@
             <div class="row m-t-30">
                 <div class="col-md-8">
                     <form class="form-horizontal" role="form">
+
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">商品名称：</label>
+                            <div class="col-md-8">
+                                <input type="text" id="errorInfo" class="form-control" >
+                            </div>
+                        </div>
+
                         <div class="form-group">
                             <label class="col-md-4 control-label">商品名称：</label>
                             <div class="col-md-8">
@@ -82,7 +106,7 @@
                                 <select class="form-control" id="typeSelect">
                                 <#if (itemTypes?size > 0)>
                                     <#list itemTypes as iType>
-                                        <option data_id="${iType.id}" <#if item?exists && iType.id == item.typeId>
+                                        <option data_id="${iType.id?c}" <#if item?exists && iType.id == item.typeId>
                                                 selected </#if>>
 
                                             <#if iType.parentId == 0>
@@ -109,7 +133,7 @@
                                 <select class="form-control" id="unitSelect">
                                 <#if (itemUnits?size > 0)>
                                     <#list itemUnits as unit>
-                                        <option data_id="${unit.id}" <#if item?exists && unit.id == item.unitId>
+                                        <option data_id="${unit.id?c}" <#if item?exists && unit.id == item.unitId>
                                                 selected </#if>>${unit.title}</option>
                                     </#list>
                                 <#else>
@@ -140,6 +164,23 @@
                         </div>
 
                         <div class="form-group">
+                            <label class="col-md-4 control-label">规格：</label>
+                            <div class="col-md-8">
+                                <div class="input-group">
+                                    <span class="input-group-addon">长：</span>
+                                    <input type="text" id="iLength" class="form-control" <#if item?exists>
+                                           value="${item.length?c}" </#if>>
+                                    <span class="input-group-addon">宽：</span>
+                                    <input type="text" id="iWidth" class="form-control" <#if item?exists>
+                                           value="${item.width?c}" </#if>>
+                                    <span class="input-group-addon">高：</span>
+                                    <input type="text" id="iHeight" class="form-control" <#if item?exists>
+                                           value="${item.height?c}" </#if>>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
                             <label class="col-md-4 control-label">商品主图：</label>
                             <div class="col-md-4">
                                 <div id="itemMainImgDiv" style="background: white; width:150px; height:150px;">
@@ -152,8 +193,6 @@
                                             class="btn waves-effect waves-light btn-default">
                                         选择主图
                                     </button>
-                                <#--<input type="file" class="btn waves-effect waves-light btn-default"-->
-                                <#--onchange="previewImage('itemMainImgDiv', 'itemMainImg', this)"></input>-->
                                 </p>
                             </div>
                         </div>
@@ -185,9 +224,13 @@
         </div>
 
         <script src="${res}/assets/plugins/alioss/plupload-2.1.2/js/plupload.full.min.js"></script>
+        <script src="${res}/assets/plugins/alioss/plupload-2.1.2/my_upload.js"></script>
 
         <script type="text/javascript">
             $(document).ready(function () {
+
+                var itemId = <#if item?exists >${item.id?c};<#else>0;</#if>
+                var itemImgBarcode = "";
 
                 moveEnd($("#itemName").get(0));
 
@@ -207,222 +250,81 @@
 
                 $("#typeSelect").select2();
 
-                //添加商品
+                function updateImgUrl(itemId, itemImgUrl) {
+                    $.get("${base}/item/itemUpdateImgUrl.do?itemId="+itemId+"&itemImgUrl="+itemImgUrl, function(data) {
+                        //重新刷新
+                        swal(data.msg);
+                    }, "json");
+                }
+
+                upImgName = "upImg";
+                serverUrl = "${base}/oss/uploadImg.do?targetDir=item";
+
+                function upImgFunc(itemId, itemImgBarcode) {
+                    upCallback = function (hType, obj) {
+                        if(hType == 0) {
+                            //没有图片提交
+                            alert("没有图片需要提交");
+                        } else if(hType == 1) {
+                            //开始提交
+                        } else if(hType == 2) {
+                            //进度监听
+                        } else if(hType == 100) {
+                            //完成，更新回对应的图片
+                            updateImgUrl(itemId, obj);
+                        } else {
+                            //有错误
+                        }
+                    };
+
+                    set_upload_param(uploader, itemImgBarcode);
+                }
+
+                //添加/修改 商品
                 $("#saveBtn").on('click', function () {
 
-                    //如果有图片，先执行上传图片操作
                     $(this).button("loading");
 
-                <#--$.post("${base}/item/itemUnitEditSave.do?id="+itemUnitId+"&title="+title+"&status="+status, function(data) {-->
-                <#--//重新刷新-->
-                <#--if(data.code == "0") {-->
-                <#--swal("提示", "操作成功", "success");-->
-                <#--location.reload();-->
-                <#--} else {-->
-                <#--swal(data.msg);-->
-                <#--}-->
-                <#--}, "json");-->
+                    var _typeId = $("#typeSelect").find("option:selected").attr("data_id");
+                    if(_typeId == 0) {
+                        swal("请选择分类");
+                        return;
+                    }
+
+                    var _unitId = $("#unitSelect").find("option:selected").attr("data_id");
+                    if(_unitId == 0) {
+                        swal("请选择单位");
+                        return;
+                    }
+
+                    itemImgBarcode = $("#barcode").val();
+
+                    //先提交
+                    var post_data = {
+                        itemId:itemId,
+                        name: $("#itemName").val(),
+                        defineCode:$("#defineCode").val(),
+                        barcode:itemImgBarcode,
+                        typeId:_typeId,
+                        unitId:_unitId,
+                        costPrice:$("#costPrice").val(),
+                        defaultPrice:$("#defaultPrice").val(),
+                        passportId:0,
+                        iLength:$("#iLength").val(),
+                        iWidth:$("#iWidth").val(),
+                        iHeight:$("#iHeight").val(),
+                    };
+
+                    $.post("${base}/item/itemEditSave.do", post_data, function(data) {
+                        //重新刷新
+                        if(data.code == "0") {
+                            //提交成功，这里重新包装一个商品ID
+                            var item = data.response.datas
+                            upImgFunc(item.id, item.barcode);
+                        } else {
+                            swal(data.msg);
+                        }
+                    }, "json");
                 });
             });
-        </script>
-
-        <script type="text/javascript">
-
-            var haveUpImg = false;
-
-            function send_request()
-            {
-                var xmlhttp = null;
-                if (window.XMLHttpRequest)
-                {
-                    xmlhttp=new XMLHttpRequest();
-                }
-                else if (window.ActiveXObject)
-                {
-                    xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
-                }
-
-                if (xmlhttp!=null)
-                {
-                    serverUrl = './php/get.php';
-                    xmlhttp.open( "GET", serverUrl, false );
-                    xmlhttp.send( null );
-                    return xmlhttp.responseText
-                }
-                else
-                {
-                    alert("Your browser does not support XMLHTTP.");
-                }
-            };
-
-            function get_signature()
-            {
-                //可以判断当前expire是否超过了当前时间,如果超过了当前时间,就重新取一下.3s 做为缓冲
-                now = timestamp = Date.parse(new Date()) / 1000;
-                if (expire < now + 3)
-                {
-                    body = send_request()
-                    var obj = eval ("(" + body + ")");
-                    host = obj['host'];
-                    policyBase64 = obj['policy'];
-                    accessid = obj['accessid'];
-                    signature = obj['signature'];
-                    expire = parseInt(obj['expire']);
-                    callbackbody = obj['callback'];
-                    key = obj['dir'];
-                    return true;
-                }
-                return false;
-            };
-
-            function random_string(len) {
-                len = len || 32;
-                var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
-                var maxPos = chars.length;
-                var pwd = '';
-                for (i = 0; i < len; i++) {
-                    pwd += chars.charAt(Math.floor(Math.random() * maxPos));
-                }
-                return pwd;
-            }
-
-            function get_suffix(filename) {
-                pos = filename.lastIndexOf('.')
-                suffix = ''
-                if (pos != -1) {
-                    suffix = filename.substring(pos)
-                }
-                return suffix;
-            }
-
-            function clacImgZoomParam(maxWidth, maxHeight, width, height) {
-
-                var param = {top: 0, left: 0, width: width, height: height};
-                if (width > maxWidth || height > maxHeight) {
-                    rateWidth = width / maxWidth;
-                    rateHeight = height / maxHeight;
-
-                    if (rateWidth > rateHeight) {
-                        param.width = maxWidth;
-                        param.height = Math.round(height / rateWidth);
-                    } else {
-                        param.width = Math.round(width / rateHeight);
-                        param.height = maxHeight;
-                    }
-                }
-
-                param.left = Math.round((maxWidth - param.width) / 2);
-                param.top = Math.round((maxHeight - param.height) / 2);
-                return param;
-            }
-
-            var uploader = new plupload.Uploader({
-                browse_button : 'selectFileBtn',
-                url : 'http://oss.aliyuncs.com',
-                multi_selection: false,//设置只能单选文件
-
-                filters: {
-                    mime_types : [ //只允许上传图片和zip,rar文件
-                        { title : "Image files", extensions : "jpg,png" },
-                    ],
-                    max_file_size : '1mb', //最大只能上传1mb的文件
-                    prevent_duplicates : false //不允许选取重复文件
-                },
-
-                init: {
-                    // PostInit: function() {
-                    // document.getElementById('ossfile').innerHTML = '';
-                    // document.getElementById('postfiles').onclick = function() {
-                    //     set_upload_param(uploader, '', false);
-                    //     return false;
-                    // };
-                    // },
-
-                    FilesAdded: function(up, files) {
-                        haveUpImg = true;
-                        //保证只上传1张图片，这个方法的意思是删除旧的图片
-                        $.each(up.files, function (i, file) {
-                            if (up.files.length <= 1) {
-                                return;
-                            }
-                            up.removeFile(file);
-                        });
-                        var file = files[0];
-
-                        var preloader = new mOxie.Image();
-                        preloader.onload = function () {
-                            var imgsrc = preloader.type == 'image/jpeg' ? preloader.getAsDataURL('image/jpeg', 80) : preloader.getAsDataURL(); //得到图片src,实质为一个base64编码的数据
-                            file.imgsrc = imgsrc;
-                            var targetImg = $("#upImg");
-                            targetImg.attr("src", imgsrc);
-                            var rect = clacImgZoomParam(150, 150, preloader.width, preloader.height);
-                            targetImg.css({
-                                "width": rect.width + "px",
-                                "height": rect.height + "px",
-                                "marginTop": rect.top + "px",
-                                "marginLeft": rect.left + "px"
-                            });
-                            preloader.destroy();
-                            preloader = null;
-                        };
-                        preloader.load(file.getSource());
-                    },
-
-                    BeforeUpload: function(up, file) {
-                        //check_object_radio();
-                        //set_upload_param(up, file.name, true);
-                    },
-
-                    UploadProgress: function(up, file) {
-                        //var d = document.getElementById(file.id);
-                        //d.getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + "%</span>";
-                        //var prog = d.getElementsByTagName('div')[0];
-                        //var progBar = prog.getElementsByTagName('div')[0]
-                        //progBar.style.width= 2*file.percent+'px';
-                        //progBar.setAttribute('aria-valuenow', file.percent);
-                    },
-
-                    FileUploaded: function(up, file, info) {
-                        if (info.status == 200)
-                        {
-                            //document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = 'upload to oss success, object name:' + get_uploaded_object_name(file.name);
-                        }
-                        else
-                        {
-                            //document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = info.response;
-                        }
-                    },
-
-                    Error: function(up, err) {
-                        if (err.code == -600) {
-                            //document.getElementById('console').appendChild(document.createTextNode("\n选择的文件太大了,可以根据应用情况，在upload.js 设置一下上传的最大大小"));
-                        }
-                        else if (err.code == -601) {
-                            //document.getElementById('console').appendChild(document.createTextNode("\n选择的文件后缀不对,可以根据应用情况，在upload.js进行设置可允许的上传文件类型"));
-                        }
-                        else if (err.code == -602) {
-                            //document.getElementById('console').appendChild(document.createTextNode("\n这个文件已经上传过一遍了"));
-                        }
-                        else
-                        {
-                            //document.getElementById('console').appendChild(document.createTextNode("\nError xml:" + err.response));
-                        }
-                    }
-                }
-            });
-
-            uploader.init();
-
-            function startUp(callback) {
-                //如果没有图片
-                if(!haveUpImg) {
-                    callback(0);
-                    return;
-                }
-                //开始上传
-                callback(1);
-                //执行上传操作
-                uploader
-            }
-
         </script>

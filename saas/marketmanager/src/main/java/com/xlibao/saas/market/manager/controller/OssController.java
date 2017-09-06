@@ -37,10 +37,10 @@ public class OssController extends BaseController {
         //店铺market, 商品item, 分类图标itemtype
         String targetDir = getUTF("targetDir");
 
-        String accessId = "*";
-        String accessKey = "*";
+        String accessId = AliyunConfig.getAccessKeyId();
+        String accessKey = AliyunConfig.getAccessKeySecret();
         String bucket = "xmarket";
-        String dir = "market/" + targetDir;
+        String dir = "market/" + targetDir + "/";
         String endpoint = AliyunConfig.getOssPublicEndPoint();
         String host = "http://" + bucket + "." + endpoint;
 
@@ -60,7 +60,6 @@ public class OssController extends BaseController {
 
             JSONObject result = new JSONObject();
 
-//            Map<String, String> respMap = new LinkedHashMap<String, String>();
             result.put("accessid", accessId);
             result.put("policy", encodedPolicy);
             result.put("signature", postSignature);
@@ -68,11 +67,9 @@ public class OssController extends BaseController {
             result.put("dir", dir);
             result.put("host", host);
             result.put("expire", String.valueOf(expireEndTime / 1000));
-//            JSONObject ja1 = JSONObject.fromObject(respMap);
-//            System.out.println(ja1.toString());
-//            response.setHeader("Access-Control-Allow-Origin", "*");
-//            response.setHeader("Access-Control-Allow-Methods", "GET, POST");
-//            response(request, response, ja1.toString());
+
+            getHttpServletResponse().setHeader("Access-Control-Allow-Origin", "*");
+            getHttpServletResponse().setHeader("Access-Control-Allow-Methods", "GET, POST");
 
             return result;
 
@@ -83,4 +80,5 @@ public class OssController extends BaseController {
 
         return null;
     }
+
 }

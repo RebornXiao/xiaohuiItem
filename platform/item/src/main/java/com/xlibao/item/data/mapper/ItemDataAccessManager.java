@@ -185,4 +185,16 @@ public class ItemDataAccessManager {
     public void updateItemTypeSort(long id, int sort) {
         typeMapper.updateItemTypeSort(id, sort);
     }
+
+    public int createTemplate(ItemTemplate itemTemplate) {
+        return templateMapper.createTemplate(itemTemplate);
+    }
+
+    public int updateTemplate(ItemTemplate itemTemplate) {
+        return templateMapper.updateTemplate(itemTemplate);
+    }
+
+    public int updateTemplateImgUrl(long itemId, String itemImgUrl) {
+        return templateMapper.updateTemplateImgUrl(itemId, itemImgUrl);
+    }
 }

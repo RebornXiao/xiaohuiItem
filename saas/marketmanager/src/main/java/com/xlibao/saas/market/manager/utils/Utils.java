@@ -23,7 +23,7 @@ public class Utils {
             long price = Long.parseLong(obj.toString());
             double price2 = (double) price / (double) 100;
             //取2位
-            java.text.DecimalFormat df = new java.text.DecimalFormat("#.00");
+            java.text.DecimalFormat df = new java.text.DecimalFormat("0.00");
             String v = df.format(price2);
             if(v.charAt(0) == '.') {
                 json.put(key, "0" + v);
@@ -42,7 +42,7 @@ public class Utils {
         Object obj = json.remove(key);
         String str = obj != null ? obj.toString() : null;
         if (obj != null && str.length() > 0) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-dd-MM HH:mm:ss");
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             String date = sdf.format(new Date(Long.parseLong(str)));
             json.put(key, date);
         } else {

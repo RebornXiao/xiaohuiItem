@@ -1047,6 +1047,15 @@ public class CommonUtils {
         return builder.toString();
     }
 
+    public static long changeMoney(String yuan) {
+        try {
+            return (long)(Double.parseDouble(yuan) * 100);
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+
     public static void main(String[] args) {
 //        System.out.println("今天是星期" + dayOfWeekForCh() + "(中国)");
 //        System.out.println("今天是星期" + dayOfWeek() + "(国际)");

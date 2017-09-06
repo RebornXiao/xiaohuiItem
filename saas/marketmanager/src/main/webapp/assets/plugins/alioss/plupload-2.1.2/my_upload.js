@@ -1,4 +1,177 @@
 
+accessid = '';
+accesskey = '';
+host = '';
+policyBase64 = '';
+signature = '';
+callbackbody = '';
+filename = '';
+key = '';
+sffix = '';
+expire = 0;
+g_object_name = '';
+g_object_name_type = '';
+now = timestamp = Date.parse(new Date()) / 1000;
+
+//可以更改的内容
+var upImgName = "upimg";//图片预览控件
+var serverUrl = './php/get.php';//拿key上传路径
+var upCallback = null;//回调方法
+
+// function send_request()
+// {
+//     var xmlhttp = null;
+//     if (window.XMLHttpRequest)
+//     {
+//         xmlhttp=new XMLHttpRequest();
+//     }
+//     else if (window.ActiveXObject)
+//     {
+//         xmlhttp=new ActiveXObject("Microsoft.XMLHTTP");
+//     }
+//
+//     if (xmlhttp!=null)
+//     {
+//         xmlhttp.open( "GET", serverUrl, false );
+//         xmlhttp.send( null );
+//         return xmlhttp.responseText
+//     }
+//     else
+//     {
+//         alert("Your browser does not support XMLHTTP.");
+//     }
+// };
+
+// function check_object_radio() {
+//     var tt = document.getElementsByName('myradio');
+//     for (var i = 0; i < tt.length ; i++ )
+//     {
+//         if(tt[i].checked)
+//         {
+//             g_object_name_type = tt[i].value;
+//             break;
+//         }
+//     }
+// }
+
+// function get_signature()
+// {
+//     //可以判断当前expire是否超过了当前时间,如果超过了当前时间,就重新取一下.3s 做为缓冲
+//     now = timestamp = Date.parse(new Date()) / 1000;
+//     if (expire < now + 3)
+//     {
+//         body = send_request()
+//         var obj = eval ("(" + body + ")");
+//         host = obj['host'];
+//         policyBase64 = obj['policy'];
+//         accessid = obj['accessid'];
+//         signature = obj['signature'];
+//         expire = parseInt(obj['expire']);
+//         callbackbody = obj['callback'];
+//         key = obj['dir'];
+//         return true;
+//     }
+//     return false;
+// };
+
+function handler_signature(body) {
+    //var obj = eval ("(" + body + ")");
+    host = body.host;//obj['host'];
+    policyBase64 = body.policy;//obj['policy'];
+    accessid = body.accessid;//obj['accessid'];
+    signature = body.signature;//obj['signature'];
+    expire = parseInt(body.expire);//parseInt(obj['expire']);
+    callbackbody = body.callback;//obj['callback'];
+    key = body.dir;//obj['dir'];
+}
+
+// function random_string(len) {
+//     len = len || 32;
+//     var chars = 'ABCDEFGHJKMNPQRSTWXYZabcdefhijkmnprstwxyz2345678';
+//     var maxPos = chars.length;
+//     var pwd = '';
+//     for (i = 0; i < len; i++) {
+//         pwd += chars.charAt(Math.floor(Math.random() * maxPos));
+//     }
+//     return pwd;
+// }
+//
+// function get_suffix(filename) {
+//     pos = filename.lastIndexOf('.')
+//     suffix = '';
+//     if (pos != -1) {
+//         suffix = filename.substring(pos)
+//     }
+//     return suffix;
+// }
+
+// function calculate_object_name(filename)
+// {
+//     if (g_object_name_type == 'local_name')
+//     {
+//         g_object_name += "${filename}"
+//     }
+//     else if (g_object_name_type == 'random_name')
+//     {
+//         suffix = get_suffix(filename)
+//         g_object_name = key + random_string(10) + suffix
+//     }
+//     return ''
+// }
+//
+// function get_uploaded_object_name(filename)
+// {
+//     if (g_object_name_type == 'local_name')
+//     {
+//         tmp_name = g_object_name
+//         tmp_name = tmp_name.replace("${filename}", filename);
+//         return tmp_name
+//     }
+//     else if(g_object_name_type == 'random_name')
+//     {
+//         return g_object_name
+//     }
+// }
+
+function handler_start(up, filename) {
+    g_object_name = key + filename;
+
+    new_multipart_params = {
+        'key' : g_object_name,
+        'policy': policyBase64,
+        'OSSAccessKeyId': accessid,
+        'success_action_status' : '200', //让服务端返回200,不然，默认会返回204
+        'callback' : callbackbody,
+        'signature': signature,
+    };
+
+    up.setOption({
+        'url': host,
+        'multipart_params': new_multipart_params
+    });
+
+    if(upCallback != null){
+        upCallback(1);
+    }
+
+    up.start();
+}
+
+function set_upload_param(up, filename)
+{
+    //3 S内
+    now = timestamp = Date.parse(new Date()) / 1000;
+    if (expire < now + 3) {
+        //重新获取
+        $.post(serverUrl, function (data) {
+            handler_signature(data);
+            handler_start(up, filename);
+        });
+    } else {
+        handler_start(up, filename);
+    }
+
+}
 
 function clacImgZoomParam(maxWidth, maxHeight, width, height) {
 
@@ -23,7 +196,7 @@ function clacImgZoomParam(maxWidth, maxHeight, width, height) {
 
 var uploader = new plupload.Uploader({
     browse_button : 'selectFileBtn',
-    url : 'http://oss.aliyuncs.com',
+    url: 'http://oss.aliyuncs.com',
     multi_selection: false,//设置只能单选文件
 
     filters: {
@@ -57,7 +230,7 @@ var uploader = new plupload.Uploader({
             preloader.onload = function () {
                 var imgsrc = preloader.type == 'image/jpeg' ? preloader.getAsDataURL('image/jpeg', 80) : preloader.getAsDataURL(); //得到图片src,实质为一个base64编码的数据
                 file.imgsrc = imgsrc;
-                var targetImg = $("#upImg");
+                var targetImg = $("#" + upImgName);
                 targetImg.attr("src", imgsrc);
                 var rect = clacImgZoomParam(150, 150, preloader.width, preloader.height);
                 targetImg.css({
@@ -84,11 +257,17 @@ var uploader = new plupload.Uploader({
             //var progBar = prog.getElementsByTagName('div')[0]
             //progBar.style.width= 2*file.percent+'px';
             //progBar.setAttribute('aria-valuenow', file.percent);
+            if(upCallback!=null){
+                upCallback(2, file.percent);
+            }
         },
 
         FileUploaded: function(up, file, info) {
             if (info.status == 200)
             {
+                if(upCallback != null){
+                    upCallback(100, host + "/" + g_object_name);
+                }
                 //document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = 'upload to oss success, object name:' + get_uploaded_object_name(file.name);
             }
             else
@@ -115,77 +294,4 @@ var uploader = new plupload.Uploader({
     }
 });
 
-
 uploader.init();
-
-
-
-
-//                var changeFile = {};
-//
-//                //图片上传预览    IE是用了滤镜。
-//                function previewImage(divname, imgname, file) {
-//
-////                    //如果原来存在，则先删除
-////                    var old_file = changeFile[imgname];
-////                    if (old_file != null) {
-////                        //先删除
-////                        uploader.removeFile(file);
-////                    }
-////
-////                    changeFile[imgname] = file;
-////                    //添加回去
-////                    uploader.addFile(file);
-//
-//                    var MAXWIDTH = 260;
-//                    var MAXHEIGHT = 180;
-//                    var div = document.getElementById(divname);
-//                    if (file.files && file.files[0]) {
-//                        div.innerHTML = "<img id=\"" + imgname + "\">";
-//                        var img = document.getElementById(imgname);
-//                        img.onload = function () {
-//                            var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
-//                            img.width = rect.width;
-//                            img.height = rect.height;
-//                            img.style.marginTop = rect.top + 'px';
-//                        }
-//                        var reader = new FileReader();
-//                        reader.onload = function (evt) {
-//                            img.src = evt.target.result;
-//                        }
-//                        reader.readAsDataURL(file.files[0]);
-//                    }
-//                    else //兼容IE
-//                    {
-//                        var sFilter = 'filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(sizingMethod=scale,src="';
-//                        //file.select();
-//                        var src = document.selection.createRange().text;
-//                        div.innerHTML = "<img id=\"" + imgname + "\">";
-//                        var img = document.getElementById(imgname);
-//                        img.filters.item('DXImageTransform.Microsoft.AlphaImageLoader').src = src;
-//                        var rect = clacImgZoomParam(MAXWIDTH, MAXHEIGHT, img.offsetWidth, img.offsetHeight);
-//                        status = ('rect:' + rect.top + ',' + rect.left + ',' + rect.width + ',' + rect.height);
-//                        div.innerHTML = "<div id=divhead style='width:" + rect.width + "px;height:" + rect.height + "px;margin-top:" + rect.top + "px;" + sFilter + src + "\"'></div>";
-//                    }
-//                    //添加到 puload
-//                }
-//
-//                function clacImgZoomParam(maxWidth, maxHeight, width, height) {
-//                    var param = {top: 0, left: 0, width: width, height: height};
-//                    if (width > maxWidth || height > maxHeight) {
-//                        rateWidth = width / maxWidth;
-//                        rateHeight = height / maxHeight;
-//
-//                        if (rateWidth > rateHeight) {
-//                            param.width = maxWidth;
-//                            param.height = Math.round(height / rateWidth);
-//                        } else {
-//                            param.width = Math.round(width / rateHeight);
-//                            param.height = maxHeight;
-//                        }
-//                    }
-//
-//                    param.left = Math.round((maxWidth - param.width) / 2);
-//                    param.top = Math.round((maxHeight - param.height) / 2);
-//                    return param;
-//                }

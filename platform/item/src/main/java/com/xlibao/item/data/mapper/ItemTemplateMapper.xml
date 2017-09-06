@@ -138,4 +138,32 @@
             </if>
         </if>
     </select>
+
+
+    <insert id="createTemplate" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.metadata.item.ItemTemplate">
+        insert into item_template(name, define_code, barcode, type_id, unit_id,
+        cost_price, default_price, length, width, height, status, description, uploader_passport_id)
+        values(#{name}, #{defineCode}, #{barcode}, #{typeId}, #{unitId},
+        #{costPrice}, #{defaultPrice}, #{length}, #{width}, #{height},
+        #{status}, #{description}, #{uploaderPassportId})
+    </insert>
+
+    <update id="updateTemplate">
+        update item_template set name = #{name}, define_code = #{defineCode}, barcode = #{barcode},
+        type_id = #{typeId}, unit_id = #{unitId},
+        cost_price = #{costPrice}, default_price = #{defaultPrice},
+        length = #{length},
+        width = #{width},
+        height = #{height},
+        status = #{status},
+        description = #{description},
+        uploader_passport_id = #{uploaderPassportId}
+        where id = #{id}
+    </update>
+
+    <update id="updateTemplateImgUrl">
+        update item_template set image_url = #{itemImgUrl}  where id = #{itemId}
+    </update>
+
+
 </mapper>

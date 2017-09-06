@@ -1,12 +1,15 @@
 package com.xlibao.item.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.http.HttpRequest;
 import com.xlibao.item.service.item.ItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Map;
 
 /**
  * @author chinahuangxc on 2017/2/26.
@@ -184,4 +187,19 @@ public class ItemController {
     public JSONObject updateItemTypesSort() {
         return itemService.updateItemTypesSort();
     }
+
+
+
+    @ResponseBody
+    @RequestMapping(value = "/itemEditSave", method = RequestMethod.POST)
+    public JSONObject itemEditSave() {
+        return itemService.itemEditSave();
+    }
+
+    @ResponseBody
+    @RequestMapping("/itemUpdateImgUrl")
+    public JSONObject itemUpdateImgUrl() {
+        return itemService.itemUpdateImgUrl();
+    }
+
 }

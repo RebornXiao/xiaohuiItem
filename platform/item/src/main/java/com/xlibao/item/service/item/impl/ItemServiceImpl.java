@@ -397,4 +397,62 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         }
         return success("操作成功");
     }
+
+    @Override
+    public JSONObject itemEditSave() {
+
+        long itemId = getLongParameter("itemId", 0);
+        String name = getUTF("name");
+        String defineCode = getUTF("defineCode");
+        String barcode = getUTF("barcode");
+        long typeId = getLongParameter("typeId");
+        long unitId = getLongParameter("unitId");
+        long costPrice = CommonUtils.changeMoney(getUTF("costPrice"));
+        long defaultPrice = CommonUtils.changeMoney(getUTF("defaultPrice"));
+        long passportId = getLongParameter("passportId");
+
+        int ilength = getIntParameter("iLength");
+        int iwidth = getIntParameter("iWidth");
+        int iheight = getIntParameter("iHeight");
+
+        ItemTemplate itemTemplate = new ItemTemplate();
+        itemTemplate.setName(name);
+        itemTemplate.setDefineCode(defineCode);
+        itemTemplate.setBarcode(barcode);
+        itemTemplate.setTypeId(typeId);
+        itemTemplate.setUnitId(unitId);
+        itemTemplate.setCostPrice(costPrice);
+        itemTemplate.setDefaultPrice(defaultPrice);
+        itemTemplate.setLength(ilength);
+        itemTemplate.setWidth(iwidth);
+        itemTemplate.setHeight(iheight);
+        itemTemplate.setStatus((byte)0);//直接可用
+        itemTemplate.setUploaderPassportId(passportId);
+
+        if(itemId == 0) {
+            if (itemDataAccessManager.createTemplate(itemTemplate) > 0) {
+                return success(itemTemplate);
+            } else {
+                return fail("添加失败");
+            }
+        } else {
+            // 修改
+            if (itemDataAccessManager.updateTemplate(itemTemplate) > 0) {
+                return success(itemTemplate);
+            } else {
+                return fail("修改失败");
+            }
+        }
+    }
+
+    @Override
+    public JSONObject itemUpdateImgUrl() {
+        long itemId = getLongParameter("itemId");
+        String itemImgUrl = getUTF("itemImgUrl");
+        //更新图片
+        if(itemDataAccessManager.updateTemplateImgUrl(itemId, itemImgUrl) > 0) {
+            return success("更新图片成功");
+        }
+        return fail("更新失败");
+    }
 }

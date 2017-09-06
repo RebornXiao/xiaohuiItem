@@ -125,9 +125,23 @@ public class ItemManagerController extends BaseController {
         return jumpPage(map, LogicConfig.FTL_ITEM_EDIT, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
     }
 
+    //商店 编辑 保存
+    @ResponseBody
     @RequestMapping("/itemEditSave")
-    public String itemEditSave(ModelMap map) {
-        return jumpPage(map, LogicConfig.FTL_ITEM_EDIT, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
+    public JSONObject itemEditSave() {
+        Map map = getMapParameter();
+        String url = ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/itemEditSave.do";
+        String json = HttpRequest.post(url, map);
+        return JSONObject.parseObject(json);
+    }
+
+    @ResponseBody
+    @RequestMapping("/itemUpdateImgUrl")
+    public JSONObject itemUpdateImgUrl() {
+        Map map = getMapParameter();
+        String url = ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/itemUpdateImgUrl.do";
+        String json = HttpRequest.post(url, map);
+        return JSONObject.parseObject(json);
     }
 
     @RequestMapping("/itemTypes")
