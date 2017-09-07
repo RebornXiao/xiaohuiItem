@@ -16,6 +16,8 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 
 /**
  * Created by admin on 2017/8/25.
@@ -26,6 +28,7 @@ public class AdvertManagerController extends BaseController {
 
     @Autowired
     private AdverManagerService adverManagerService;
+
     @Autowired
     private QiniuFileUtil qiniuFileUtil;
 
@@ -41,12 +44,15 @@ public class AdvertManagerController extends BaseController {
         JSONObject adverJson =  adverManagerService.searchAdvertTemplatesPage();
         JSONObject response = adverJson.getJSONObject("response");
         JSONArray adverts = response.getJSONArray("data");
+        map.put("count", response.getIntValue("count"));
 
         int pageIndex = getIntParameter("pageIndex", 1);
         map.put("title", getUTF("title",""));
         map.put("timeType", getIntParameter("timeType",-1));
         map.put("isUsed", getIntParameter("isUsed",-1));
         map.put("pageIndex", pageIndex);
+
+        map.put("pageSize", getPageSize());
         map.put("advertList", adverts);
         return jumpPage(map, LogicConfig.FTL_ADVERT_EDIT, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
@@ -57,19 +63,22 @@ public class AdvertManagerController extends BaseController {
      * @param map
      * @return
      */
-    @ModelAttribute
-    @RequestMapping(value = "/addAdvert",method = RequestMethod.POST,produces = "text/html;charset=UTF-8")
     @ResponseBody
-    public ModelAndView addAdvert(@RequestParam("file") MultipartFile file,ModelMap map,HttpServletRequest request){
-        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
-        String title = multipartRequest.getParameter("title");
-        String timeSize = multipartRequest.getParameter("timeSize");
-        String remark = multipartRequest.getParameter("remark");
-        JSONObject jsonObject = qiniuFileUtil.uploadToQiniu(file);
-        String path = jsonObject.getString("path");
-        String videoName = jsonObject.getString("videoName");
-        adverManagerService.addAdvert(path,title,timeSize,remark,videoName);
-        return new ModelAndView("redirect:/marketmanager/advert/adverts.do");
+    @RequestMapping(value = "/addAdvert",method = RequestMethod.POST,produces = "text/html;charset=UTF-8")
+    public void addAdvert(@RequestParam("file") MultipartFile file,ModelMap map,HttpServletRequest request,HttpServletResponse response) throws IOException {
+       JSONObject jsonObject = qiniuFileUtil.uploadToQiniu(file);
+       String result="no";
+        if("1".equals(jsonObject.getString("status"))){
+            String path = jsonObject.getString("path");
+            String videoName = jsonObject.getString("videoName");
+            JSONObject resJson = adverManagerService.addAdvert(path,videoName, (MultipartHttpServletRequest) request);
+            if(resJson.getIntValue("code") == 0){
+                result="yes";
+            }
+        }else{
+            result="no";
+        }
+        response.getWriter().print(result);
     }
 
     /**
@@ -118,6 +127,7 @@ public class AdvertManagerController extends BaseController {
         JSONObject adverJson =  adverManagerService.searchScreenTemplatePage();
         JSONObject response = adverJson.getJSONObject("response");
         JSONArray screens = response.getJSONArray("data");
+        map.put("count", response.getIntValue("count"));
 
         JSONObject marketResponse = marketManagerService.getAllMarkets();
         if (marketResponse.getIntValue("code") == 0) {
@@ -163,8 +173,9 @@ public class AdvertManagerController extends BaseController {
     @RequestMapping("/advertScreens")
     public String getadvertScreenList(ModelMap map){
         JSONObject adverJson =  adverManagerService.searchScreenAdvertTemplatePage();
-         JSONObject response = adverJson.getJSONObject("response");
-         JSONArray advertScreens = response.getJSONArray("data");
+        JSONObject response = adverJson.getJSONObject("response");
+        JSONArray advertScreens = response.getJSONArray("data");
+        map.put("count", response.getIntValue("count"));
 
         JSONObject marketResponse = marketManagerService.getAllMarkets();
         if (marketResponse.getIntValue("code") == 0) {
