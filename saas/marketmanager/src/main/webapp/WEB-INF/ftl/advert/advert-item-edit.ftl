@@ -60,8 +60,16 @@
                                 <td>${advert.timeSize}</td>
                                 <td>${advert.createTime}</td>
                                 <td>
-                                    <button id="deleBtn" type="button" data-target="#deleteButton"
-                                            class="btn waves-effect waves-light btn-danger btn-sm"
+                                    <button id="lookBtn" type="button"
+                                            class="btn btn-primary btn-sm"
+                                            data_id="${advert.advertID?c}">查看
+                                    </button>
+                                    <button id="editBtn" data-toggle="model" type="button" data-target="#editModel"
+                                            class="btn btn-primary btn-sm"
+                                            data_id="${advert.advertID?c}">编辑
+                                    </button>
+                                    <button id="deleBtn" type="button" data-target="#deleModel"
+                                            class="btn btn-danger btn-sm"
                                             data_id="${advert.advertID?c}">删除
                                     </button>
                                 </td>
@@ -177,23 +185,21 @@
         });
 
 
-        //删除广告
+        //删除
     <#if (advertList?size > 0)>
         $("#advertInfoTable").find('button[id=deleBtn]').each(function () {
             var that = this;
             $(this).on('click', function () {
                 console.log($(that).attr("data_id"));
-                $("#deleteButton").modal('show');
+                $("#deleModel").modal('show');
                 $("#deleNoBtn").on('click',function () {
-                    $("#deleteButton").modal('hide');
+                    $("#deleModel").modal('hide');
                 });
                 $("#deleOkBtn").on('click',function () {
                     $.post("${base}/advert/delAdvert.do?advertID=" + $(that).attr("data_id"), function(data) {
                         //重新刷新
                         if(data.code == "0") {
                             swal("提示", "删除成功", "success");
-//                            $("#deleteButton").modal('hide');
-//                                location.reload();
                         } else {
                             swal(data.msg);
                         }
@@ -202,6 +208,35 @@
             });
         });
     </#if>
+        //编辑
+    <#if (advertList?size > 0)>
+        $("#advertInfoTable").find('button[id=editBtn]').each(function () {
+            var that = this;
+            $(this).on('click', function () {
+                console.log($(that).attr("data_id"));
+                $("#editModel").modal('show');
+                $("#noButton").on('click',function () {
+                    $("#editModel").modal('hide');
+                });
+                $("#yesButton").on('click',function () {
+                    var e_title = $("#editTitle").val();
+                    var e_time = $("#editTime").val();
+                    var e_remark = $("#editRemark").val();
+                    $.post("${base}/advert/updateAdvert.do?title="+e_title+"&timeSize="+e_time+"&remark="+e_remark+"&advertID=" + $(that).attr("data_id"), function(data) {
+                        //重新刷新
+                        if(data.code == "0") {
+                            swal("提示", "编辑成功", "success");
+                        } else {
+                            swal(data.msg);
+                        }
+                    }, "json");
+                });
+            });
+        });
+    </#if>
+        $("#lookBtn").on('click', function () {//广告详情
+            location.href = "${base}/advert/detail.do";
+        });
     });
 </script>
 
@@ -217,19 +252,19 @@
                 <div class="modalAdvertStyle">
                     <form class="form-inline" id="updateForm" name="updateForm" enctype="multipart/form-data" action="${base}/advert/addAdvert.do" method="post" target="hidden_frame">
                         <div class="form-group" style="width: 100%">
-                            <label for="modalAdvertTitle">广告标题：</label>
+                            <label>广告标题：</label>
                             <input type="text" style="width: 80%" class="form-control" id="modalAdvertTitle" placeholder="输入广告标题" name="title"/>
                         </div>
                         <div class="form-group">
-                            <label for="modalAdvertTime">广告时长：</label>
+                            <label>广告时长：</label>
                             <input type="text" class="form-control" id="modalAdvertTime" placeholder="输入广告时长" name="timeSize"/>&nbsp;&nbsp;&nbsp;s (以秒为计算单位)
                         </div>
                         <div class="form-group" style="width: 100%">
-                            <label for="modalAdvertRemark">广告备注：</label>
+                            <label>广告备注：</label>
                             <input type="text" style="width: 80%" class="form-control" id="modalAdvertRemark" placeholder="输入广告备注" name="remark"/>
                         </div>
                         <div class="form-group" style="width: 100%">
-                            <label for="modalAdvertFile">附&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件：</label>
+                            <label>附&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件：</label>
                             <input id="modalAdvertFile" type="file" multiple="multiple" name="file"/>
                         </div>
                         <div class="progress" style="display: block;">
@@ -250,8 +285,45 @@
     </div>
 </div>
 
+<!--编辑弹窗-->
+<div class="modal fade" id="editModel" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">编辑广告</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modalAdvertStyle">
+                    <form class="form-inline">
+                        <div class="form-group" style="width: 100%">
+                            <label>广告标题：</label>
+                            <input type="text" style="width: 80%" class="form-control" id="editTitle" placeholder="输入广告标题"/>
+                        </div>
+                    </form>
+                    <form class="form-inline">
+                        <div class="form-group">
+                            <label>广告时长：</label>
+                            <input type="text" class="form-control" id="editTime" placeholder="输入广告时长"/>&nbsp;&nbsp;&nbsp;s (以秒为计算单位)
+                        </div>
+                    </form>
+                    <form class="form-inline">
+                        <div class="form-group" style="width: 100%">
+                            <label>广告备注：</label>
+                            <input type="text" style="width: 80%" class="form-control" id="editRemark" placeholder="输入广告备注"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" style="text-align: center">
+                <button id="noButton" type="Button" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
+                <button id="yesButton" type="Button" class="btn btn-primary" style="padding:10px 80px">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!--删除弹窗-->
-<div class="modal fade" id="deleteButton" tabindex="-1" role="dialog">
+<div class="modal fade" id="deleModel" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
