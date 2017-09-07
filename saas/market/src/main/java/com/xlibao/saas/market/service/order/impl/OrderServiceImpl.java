@@ -285,6 +285,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
             data.put("deliverType", deliverType);
             data.put("deliverTitle", deliverType == DeliverTypeEnum.PICKED_UP.getKey() ? "到店自提" : "小惠配送");
+            data.put("paymentTime", orderEntry.getPaymentTime().getTime());
 
             fillItemSnapshotMsg(data, orderEntry);
             response.add(data);
@@ -299,7 +300,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                 case ORDER_STATUS_PAYMENT:
                     return "待出货";
                 case ORDER_STATUS_DELIVER:
-                    return "出货中";
+                    // return "出货中";
                 case ORDER_STATUS_DISTRIBUTION:
                     return "待取货";
                 case ORDER_STATUS_ARRIVE:
@@ -317,6 +318,9 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                 case ORDER_STATUS_ARRIVE:
                     return "已签收";
             }
+        }
+        if (orderStatusEnum == OrderStatusEnum.ORDER_STATUS_APPLY_REFUND || orderStatusEnum == OrderStatusEnum.ORDER_STATUS_REFUND) {
+            return "退款中";
         }
         return orderStatusEnum.getValue();
     }

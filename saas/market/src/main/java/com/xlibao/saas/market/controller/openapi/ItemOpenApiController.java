@@ -152,6 +152,12 @@ public class ItemOpenApiController {
         return itemService.findItemLocation();
     }
 
+    @ResponseBody
+    @RequestMapping(value = "loaderHotSearch")
+    public JSONObject loaderHotSearch() {
+        return itemService.loaderHotSearch();
+    }
+
     /**
      * <pre>
      *     <b>模糊匹配完整的商品名字</b>

@@ -352,12 +352,28 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     }
 
     @Override
+    public JSONObject loaderHotSearch() {
+        long marketId = getLongParameter("marketId");
+        int pageSize = getPageSize();
+        int pageStartIndex = getPageStartIndex(pageSize);
+
+        List<String> searchHistories = dataAccessFactory.getItemDataAccessManager().loaderHotSearch(marketId, pageStartIndex, pageSize);
+        if (CommonUtils.isEmpty(searchHistories)) {
+            return PlatformErrorCodeEnum.NO_MORE_DATA.response();
+        }
+
+        return null;
+    }
+
+    @Override
     public JSONObject fuzzyMatchItemName() {
+        long marketId = getLongParameter("marketId");
         String itemName = getUTF("fuzzyItemName");
         List<ItemTemplate> itemTemplates = ItemDataCacheService.fuzzyQueryItemTemplates(itemName);
         if (CommonUtils.isEmpty(itemTemplates)) {
             return PlatformErrorCodeEnum.NO_MORE_DATA.response();
         }
+        String itemTemplateSet = ItemDataCacheService.assembleItemTemplateSet(itemTemplates);
         JSONArray itemNameSet = itemTemplates.stream().map(ItemTemplate::getName).collect(Collectors.toCollection(JSONArray::new));
         return success(itemNameSet);
     }

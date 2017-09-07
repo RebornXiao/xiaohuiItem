@@ -29,6 +29,8 @@ public class ItemDataAccessManager {
     private MarketSpecialButtonMapper specialButtonMapper;
     @Autowired
     private MarketPrepareActionMapper prepareActionMapper;
+    @Autowired
+    private MarketSearchHistoryMapper searchHistoryMapper;
 
     public int createItem(MarketItem item) {
         return itemMapper.createItem(item);
@@ -177,5 +179,9 @@ public class ItemDataAccessManager {
 
     public int modifyPrepareActionStatus(long marketId, String itemLocation, int matchStatus, int status, String time) {
         return prepareActionMapper.modifyPrepareActionStatus(marketId, itemLocation, matchStatus, status, time);
+    }
+
+    public List<String> loaderHotSearch(long marketId, int pageStartIndex, int pageSize) {
+        return searchHistoryMapper.loaderHotSearch(marketId, pageStartIndex, pageSize);
     }
 }

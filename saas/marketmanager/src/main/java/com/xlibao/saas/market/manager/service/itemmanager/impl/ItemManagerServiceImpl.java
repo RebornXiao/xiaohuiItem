@@ -3,10 +3,8 @@ package com.xlibao.saas.market.manager.service.itemmanager.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.xlibao.common.BasicWebService;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.http.HttpRequest;
-import com.xlibao.common.http.HttpUtils;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
@@ -61,13 +59,13 @@ public class ItemManagerServiceImpl implements ItemManagerService {
     }
 
     public JSONObject searchItemTemplatesPage(String searchType, String searchKey, int pageSize, int pageIndex) {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemTemplatesPage?searchType=" + searchType + "&searchKey=" + searchKey + "&pageSize=" + pageSize + "&pageIndex=" + pageIndex);
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/searchItemTemplatesPage?searchType=" + searchType + "&searchKey=" + searchKey + "&pageSize=" + pageSize + "&pageIndex=" + pageIndex);
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
 
     public JSONObject getItemTemplateJson(long itemTemplateId) {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/getItemTemplate?itemTemplateId=" + itemTemplateId);
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/getItemTemplate?itemTemplateId=" + itemTemplateId);
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
@@ -82,7 +80,7 @@ public class ItemManagerServiceImpl implements ItemManagerService {
     }
 
     public JSONObject removeItemTemplates(String[] ids) {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/removeItemTemplates?ids=");
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/removeItemTemplates?ids=");
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }

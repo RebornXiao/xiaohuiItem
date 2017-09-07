@@ -37,5 +37,7 @@ public interface ItemService {
 
     JSONObject findItemLocation();
 
+    JSONObject loaderHotSearch();
+
     JSONObject fuzzyMatchItemName();
 }

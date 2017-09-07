@@ -158,7 +158,7 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
     public JSONObject loginPassport() {
         String username = getUTF("username");
         String password = getUTF("password");
-        int deviceType = getIntParameter("versionType", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey());
+        int deviceType = getIntParameter("deviceType", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey());
         int clientType = getIntParameter("clientType", ClientTypeEnum.CONSUMER.getKey());
         // 当前版本号
         int versionIndex = getIntParameter("versionIndex");
