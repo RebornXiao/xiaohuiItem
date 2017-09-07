@@ -10,6 +10,7 @@ import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.exception.code.ItemErrorCodeEnum;
 import com.xlibao.common.lbs.baidu.AddressComponent;
 import com.xlibao.common.lbs.baidu.BaiduWebAPI;
+import com.xlibao.common.thread.AsyncScheduledService;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.market.data.model.*;
 import com.xlibao.metadata.item.ItemTemplate;
@@ -124,6 +125,9 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
         List<MarketItem> items;
         if (CommonUtils.isNotNullString(searchKeyValue)) {
+            // 记录搜索次数
+            incrementSearchTimes(marketId, searchKeyValue);
+
             items = conditionPageItems(marketId, ItemDataCacheService.fuzzyQueryItemTemplates(searchKeyValue), sortType, sortValue, pageStartIndex, pageSize);
         } else {
             ItemSpecialTypeEnum itemSpecialTypeEnum = ItemSpecialTypeEnum.getItemSpecialTypeEnum(itemTypeId);
@@ -361,8 +365,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         if (CommonUtils.isEmpty(searchHistories)) {
             return PlatformErrorCodeEnum.NO_MORE_DATA.response();
         }
-
-        return null;
+        return success(searchHistories);
     }
 
     @Override
@@ -374,7 +377,16 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             return PlatformErrorCodeEnum.NO_MORE_DATA.response();
         }
         String itemTemplateSet = ItemDataCacheService.assembleItemTemplateSet(itemTemplates);
+
+        List<Long> itemTemplateIdSet = dataAccessFactory.getItemDataAccessManager().existItemTemplates(marketId, itemTemplateSet);
+
         JSONArray itemNameSet = itemTemplates.stream().map(ItemTemplate::getName).collect(Collectors.toCollection(JSONArray::new));
+        for (ItemTemplate itemTemplate : itemTemplates) {
+            if (!itemTemplateIdSet.contains(itemTemplate.getId())) {
+                continue;
+            }
+            itemNameSet.add(itemTemplate.getName());
+        }
         return success(itemNameSet);
     }
 
@@ -659,5 +671,19 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         DiscountTypeEnum discountTypeEnum = DiscountTypeEnum.getDiscountTypeEnum(item.getDiscountType());
         String limit = (item.getRestrictionQuantity() == -1 ? "无限购" : "每天限购" + item.getRestrictionQuantity() + itemUnit.getTitle());
         return (discountTypeEnum == null ? "" : discountTypeEnum.getValue()) + CommonUtils.formatNumber(discount * 10, "0.00") + "折" + "(" + limit + ")";
+    }
+
+    private void incrementSearchTimes(long marketId, String searchKey) {
+        Runnable runnable = () -> {
+            int result = dataAccessFactory.getItemDataAccessManager().incrementSearchTimes(marketId, searchKey);
+            if (result <= 0) {
+                try {
+                    dataAccessFactory.getItemDataAccessManager().createHistorySearch(marketId, searchKey);
+                } catch (Exception ex) {
+                    dataAccessFactory.getItemDataAccessManager().incrementSearchTimes(marketId, searchKey);
+                }
+            }
+        };
+        AsyncScheduledService.submitImmediateCommonTask(runnable);
     }
 }
