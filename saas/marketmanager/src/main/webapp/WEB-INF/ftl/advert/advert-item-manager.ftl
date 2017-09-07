@@ -21,19 +21,19 @@
             <div class="card-box">
                 <form class="form-inline" role="form">
                     <div class="form-group m-l-15">
-                        <label for="storeInfo">门店信息:</label>
-                        <select id="storeInfo_select" class="form-control">
+                        <label for="l_storeInfo">门店信息:</label>
+                        <select id="storeInfo" class="form-control">
                             <option>选择门店</option>
                             <option>杨琪店杨琪店杨琪店</option>
                             <option>淘金店</option>
                         </select>
                     </div>
                     <div class="form-group m-l-15">
-                        <label for="advertNavTitle">屏幕编号:</label>
-                        <input type="text" class="form-control" id="advertNavTitle" placeholder="输入编号">
+                        <label for="l_screenNum">屏幕编号:</label>
+                        <input type="text" class="form-control" id="screenNum" placeholder="输入编号">
                     </div>
                     <div class="form-group m-l-15">
-                        <label for="advertNavTitle">广告标题:</label>
+                        <label for="l_advertNavTitle">广告标题:</label>
                         <input type="text" class="form-control" id="advertNavTitle" placeholder="输入广告标题关键字">
                     </div>
                     <div class="form-group m-l-15">
@@ -53,13 +53,13 @@
                         </div>
                     </div>
                     <div class="form-group pull-right m-l-15">
-                        <label for="advertNavStatus">是否下载：</label>
+                        <label>是否下载：</label>
                         <button type="button" class="btn btn-primary">全部</button>
                         <button type="button" class="btn btn-default">是</button>
                         <button type="button" class="btn btn-default">否</button>
                     </div>
                     <div class="form-group m-l-15 m-t-20">
-                        <label for="advertNavStatus">播放状态：</label>
+                        <label>播放状态：</label>
                         <button type="button" class="btn btn-primary">全部</button>
                         <button type="button" class="btn btn-default">待播放</button>
                         <button type="button" class="btn btn-default">播放中</button>
@@ -67,7 +67,7 @@
                         <button type="button" class="btn btn-default">已移除</button>
                     </div>
                     <div class="form-group  m-l-25 m-t-20">
-                        <button type="button" class="btn btn-primary"><i class="fa fa-search"></i> 搜索</button>
+                        <button type="button" class="btn btn-primary" id="searchBtn"><i class="fa fa-search"></i> 搜索</button>
                     </div>
                 </form>
             </div>
@@ -90,6 +90,28 @@
                         </tr>
                         </thead>
                         <tbody id="storeInfoListTable">
+                        <#--<#if (advertScreens?size > 0)>-->
+                            <#--<#list advertScreens as advert>-->
+                            <#--<tr>-->
+                                <#--<td>${advert_index +1}</td>-->
+                                <#--<td>${advert.title}</td>-->
+                                <#--<td>${advert.timeSize}</td>-->
+                                <#--<td>${advert.createTime}</td>-->
+                                <#--<td>-->
+                                    <#--<button id="deleBtn" type="button" data-target="#deleteButton"-->
+                                            <#--class="btn waves-effect waves-light btn-danger btn-sm"-->
+                                            <#--a_id="${advert.advertID?c}" s_id="${advert.screenID?c}">删除-->
+                                    <#--</button>-->
+                                <#--</td>-->
+                            <#--</tr>-->
+                            <#--</#list>-->
+                        <#--<#else>-->
+                        <#--<tr>-->
+                            <#--<td colSpan="11" height="200px">-->
+                                <#--<p class="text-center" style="line-height: 200px">暂无任何数据</p>-->
+                            <#--</td>-->
+                        <#--</tr>-->
+                        <#--</#if>-->
                         <tr>
                             <td style="text-align: center">2</td>
                             <td style="text-align: center">杨琪店</td>
@@ -100,84 +122,9 @@
                             <td style="text-align: center" class="text-danger">否</td>
                             <td style="text-align: center"><span class="label label-warning">待播放</span></td>
                             <td style="text-align: center">
-                                <a href="${base}/advert/adverts/playDetail.do">查看</a>
-                                <a data-toggle="modal" data-target="#editButton">编辑</a>
-                                <a data-toggle="modal" data-target="#deleteButton">移除</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center">1</td>
-                            <td style="text-align: center">淘金店</td>
-                            <td style="text-align: center">10001-01</td>
-                            <td style="text-align: center">xxx的广告</td>
-                            <td style="text-align: center">2017-08-24 00:00:00</td>
-                            <td style="text-align: center">2017-08-27 00:00:00</td>
-                            <td style="text-align: center" class="text-primary">是</td>
-                            <td style="text-align: center"><span class="label label-danger">已停止</span></td>
-                            <td style="text-align: center">
-                                <a href="${base}/advert/adverts/playDetail.do">查看</a>
-                                <a data-toggle="modal" data-target="#editButton">编辑</a>
-                                <a data-toggle="modal" data-target="#deleteButton">停止</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center">2</td>
-                            <td style="text-align: center">杨琪店</td>
-                            <td style="text-align: center">10002-02</td>
-                            <td style="text-align: center">xxx的广告</td>
-                            <td style="text-align: center">2017-08-26 00:00:00</td>
-                            <td style="text-align: center">2017-08-28 00:00:00</td>
-                            <td style="text-align: center" class="text-danger">否</td>
-                            <td style="text-align: center"><span class="label label-primary">播放中</span></td>
-                            <td style="text-align: center">
-                                <a href="${base}/advert/adverts/playDetail.do">查看</a>
-                                <a data-toggle="modal" data-target="#editButton">编辑</a>
-                                <a data-toggle="modal" data-target="#deleteButton">移除</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center">1</td>
-                            <td style="text-align: center">淘金店</td>
-                            <td style="text-align: center">10001-01</td>
-                            <td style="text-align: center">xxx的广告</td>
-                            <td style="text-align: center">2017-08-24 00:00:00</td>
-                            <td style="text-align: center">2017-08-27 00:00:00</td>
-                            <td style="text-align: center" class="text-primary">是</td>
-                            <td style="text-align: center"><span class="label label-danger">已停止</span></td>
-                            <td style="text-align: center">
-                                <a href="${base}/advert/adverts/playDetail.do">查看</a>
-                                <a data-toggle="modal" data-target="#editButton">编辑</a>
-                                <a data-toggle="modal" data-target="#deleteButton">停止</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center">1</td>
-                            <td style="text-align: center">淘金店</td>
-                            <td style="text-align: center">10001-01</td>
-                            <td style="text-align: center">xxx的广告</td>
-                            <td style="text-align: center">2017-08-24 00:00:00</td>
-                            <td style="text-align: center">2017-08-27 00:00:00</td>
-                            <td style="text-align: center" class="text-primary">是</td>
-                            <td style="text-align: center"><span class="label label-danger">已停止</span></td>
-                            <td style="text-align: center">
-                                <a href="${base}/advert/adverts/playDetail.do">查看</a>
-                                <a data-toggle="modal" data-target="#editButton">编辑</a>
-                                <a data-toggle="modal" data-target="#deleteButton">停止</a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td style="text-align: center">1</td>
-                            <td style="text-align: center">淘金店</td>
-                            <td style="text-align: center">10001-01</td>
-                            <td style="text-align: center">xxx的广告</td>
-                            <td style="text-align: center">2017-08-24 00:00:00</td>
-                            <td style="text-align: center">2017-08-27 00:00:00</td>
-                            <td style="text-align: center" class="text-primary">是</td>
-                            <td style="text-align: center"><span class="label label-danger">已停止</span></td>
-                            <td style="text-align: center">
-                                <a href="${base}/advert/adverts/playDetail.do">查看</a>
-                                <a data-toggle="modal" data-target="#editButton">编辑</a>
-                                <a data-toggle="modal" data-target="#deleteButton">停止</a>
+                                <button id="linkBtn" type="button" data-target="#deleteButton" class="btn btn-primary btn-sm" data_id="}">查看</button>
+                                <button id="editBtn" type="button" data-toggle="model" data-target="#editBtn" class="btn btn-primary btn-sm" data_id="}">编辑</button>
+                                <button id="deleBtn" type="button" data-toggle="model" data-target="#deleBtn" class="btn btn-primary btn-sm" data_id="}">移除</button>
                             </td>
                         </tr>
                         </tbody>
@@ -190,31 +137,6 @@
                 <div class="col-sm-12">
                 <#--<#include "../common/paginate.ftl">-->
                 <#--<@paginate nowPage=pageIndex itemCount=count action="${base}/item/itemList.do?searchType=${searchType}&searchKey=${searchKey}" />-->
-
-                    <form class="form-inline pull-right">
-                        <ul class="pagination">
-                            <li class="paginate_button previous">
-                                <a href="javascript:void(0);" onclick="clickGoto(0)">上一页</a>
-                            </li>
-                            <li class="paginate_button active"><a href="#">1</a></li>
-                            <li class="paginate_button"><a href="#">2</a></li>
-                            <li class="paginate_button"><a href="#">3</a></li>
-                            <li class="paginate_button next">
-                                <a href="javascript:void(0);" onclick="clickGoto(4})">下一页</a>
-                            </li>
-                            <li>
-                                <div class="input-group">
-                                    <span class="input-group-addon">共5页</span>
-                                    <input type="text" class="form-control" id="pageNum" style="width: 60px;">
-                                    <span class="input-group-addon">页</span>
-                                    <span class="input-group-btn">
-			                            <button type="button" class="btn btn-primary waves-effect waves-light" onclick="clickGoto(0)">跳转</button>
-			                        </span>
-                                </div>
-                            </li>
-                        </ul>
-                    </form>
-
                 </div>
             </div>
             <!--/分页-->
@@ -225,17 +147,77 @@
 <script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
-        $("#adScreenEditBtn").on('click', function () {
+        //取url参数给表单赋值
+        function GetQueryString(name) {
+            var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if(r!=null)return  unescape(r[2]); return null;
+        }
+        var add_title = GetQueryString("title");
+        var add_timeType = GetQueryString("timeType");
+        document.getElementById("advertNavTitle").value=add_title;
+
+        //搜索功能
+        $("#searchBtn").on('click', function () {
+            var str = " 00:00:00";
+            var s_store = $("#storeInfo").get(0).selectedIndex;//选中index
+            var s_number = $("#screenNum").val();//屏幕编号
+            var s_title = $("#advertNavTitle").val();//广告标题
+            var stime = $("#startTime").val();//开始时间
+                stime = stime.substring(0, 10);
+                stime = stime + str;
+            var etime = $("#endTime").val();//结束时间
+                etime = etime.substring(0, 10);
+                etime = etime + str;
+            var s_isDown = '';//下载状态
+            var s_playStatus = '';//播放状态
+            alert(stime);
+            var url ="${base}/advert/advertScreens.do?marketID="+s_store+"&code="+s_number+"&title="+s_title+"&beginTime="+stime+"&endTime="+etime+"&isDown="+s_isDown+"&playStatus="+s_playStatus;
+            $.get(url, function(data) {
+                if(data.code == "0") {
+                    location.reload();
+                } else {
+                    swal(data.msg);
+                }
+            }, "json");
+        });
+
+        //移除功能
+        <#if (advertScreens?size > 0)>
+            $("#advertInfoTable").find('button[id=deleBtn]').each(function () {
+                var that = this;
+                $(this).on('click', function () {
+                    console.log($(that).attr("a_id"));
+                    $("#deleBtn").modal('show');
+                    $("#deleNoBtn").on('click',function () {
+                        $("#deleBtn").modal('hide');
+                    });
+                    $("#deleOkBtn").on('click',function () {
+                        $.post("${base}/advert/delScreenAdvert.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id"), function(data) {
+                            //重新刷新
+                            if(data.code == "0") {
+                                swal("提示", "删除成功", "success");
+                                $("#deleBtn").modal('hide');
+                                    location.reload();
+                            } else {
+                                swal(data.msg);
+                            }
+                        }, "json");
+                    });
+                });
+            });
+        </#if>
+        $("#adScreenEditBtn").on('click', function () {//屏幕配置
             location.href = "${base}/advert/adverts/screen.do";
         });
-        $("#addPlayButton").on('click', function () {
+        $("#addPlayButton").on('click', function () {//添加广告播放
             location.href = "${base}/advert/adverts/addPlay.do";
         });
     });
 </script>
 
 <!--编辑弹窗-->
-<div class="modal fade" id="editButton" tabindex="-1" role="dialog">
+<div class="modal fade" id="editBtn" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -317,7 +299,7 @@
 </div>
 
 <!--删除弹窗-->
-<div class="modal fade" id="deleteButton" tabindex="-1" role="dialog">
+<div class="modal fade" id="deleBtn" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">

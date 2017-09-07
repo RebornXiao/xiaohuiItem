@@ -106,31 +106,6 @@
                 <div class="col-sm-12">
                 <#--<#include "../common/paginate.ftl">-->
                 <#--<@paginate nowPage=pageIndex itemCount=count action="${base}/item/itemList.do?searchType=${searchType}&searchKey=${searchKey}" />-->
-
-                    <form class="form-inline pull-right">
-                        <ul class="pagination">
-                            <li class="paginate_button previous">
-                                <a href="javascript:void(0);" onclick="clickGoto(0)">上一页</a>
-                            </li>
-                            <li class="paginate_button active"><a href="#">1</a></li>
-                            <li class="paginate_button"><a href="#">2</a></li>
-                            <li class="paginate_button"><a href="#">3</a></li>
-                            <li class="paginate_button next">
-                                <a href="javascript:void(0);" onclick="clickGoto(4})">下一页</a>
-                            </li>
-                            <li>
-                                <div class="input-group">
-                                    <span class="input-group-addon">共5页</span>
-                                    <input type="text" class="form-control" id="pageNum" style="width: 60px;">
-                                    <span class="input-group-addon">页</span>
-                                    <span class="input-group-btn">
-			                            <button type="button" class="btn btn-primary waves-effect waves-light" onclick="clickGoto(0)">跳转</button>
-			                        </span>
-                                </div>
-                            </li>
-                        </ul>
-                    </form>
-
                 </div>
             </div>
             <!--/分页-->

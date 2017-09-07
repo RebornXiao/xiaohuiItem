@@ -23,13 +23,13 @@
                     <div class="form-group m-l-15">
                         <label for="advertNavTime">广告时长：</label>
                         <select id="advertNavTime" class="form-control" name="timeType">
-                            <option value="-1">选择广告时长</option>
-                            <option value="0">15以内</option>
-                            <option value="1">16s-30s</option>
-                            <option value="2">31s-60s</option>
-                            <option value="3">61s-90s</option>
-                            <option value="4">91s-120s</option>
-                            <option value="5">121s以上</option>
+                            <option class="optionTime" value="-1">选择广告时长</option>
+                            <option class="optionTime" value="0">15以内</option>
+                            <option class="optionTime" value="1">16s-30s</option>
+                            <option class="optionTime" value="2">31s-60s</option>
+                            <option class="optionTime" value="3">61s-90s</option>
+                            <option class="optionTime" value="4">91s-120s</option>
+                            <option class="optionTime" value="5">121s以上</option>
                         </select>
                     </div>
                     <div class="form-group m-l-15">
@@ -60,7 +60,6 @@
                                 <td>${advert.timeSize}</td>
                                 <td>${advert.createTime}</td>
                                 <td>
-                                <#--<a id="deleteButton" data-toggle="modal" data-target="#deleteButton" data-id="${advert.advertID}">删除</a>-->
                                     <button id="deleBtn" type="button" data-target="#deleteButton"
                                             class="btn waves-effect waves-light btn-danger btn-sm"
                                             data_id="${advert.advertID?c}">删除
@@ -93,46 +92,90 @@
 </div>
 <script>
     $(document).ready(function () {
-
+         //取url参数给表单赋值
         function GetQueryString(name) {
             var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
             var r = window.location.search.substr(1).match(reg);
             if(r!=null)return  unescape(r[2]); return null;
         }
-        console.log(GetQueryString("advertID"));
-        var add_title = GetQueryString("advertID");
-        $("#advertNavTitle").value=add_title;
+        var add_title = GetQueryString("title");
+        var add_timeType = GetQueryString("timeType");
+        document.getElementById("advertNavTitle").value=add_title;
+
         //搜索功能
         /*$("#searchButton").on('click', function () {
             var s_title = $("#advertNavTitle").val();
             var s_time = $("#advertNavTime").get(0).selectedIndex;//选中index
-            if (s_title == "") {
-                swal("请输入广告标题进行搜索!");
-                return;
-            }
-            if (containSpecial.test(s_title)) {
-                swal("包括了特殊符号，无法搜索!");
-                return;
-            }
-            var actionUrl = "$.{base}/advert/adverts.do?title=" + s_title + "&timeType=" + s_time;
-            location.href = actionUrl;
-        });*/
-        //上传广告
-       /* $("#uploadAdvertButton").on('click', function () {
-            var up_title = $("#modalAdvertTitle").val();
-            var up_time = $("#modalAdvertTime").val();
-            var up_remark = $("#modalAdvertRemark").val();
-            var up_fileUrl = $("#modalAdvertFile").val();
-            alert(up_fileUrl);
-//                path = path.substring(path.lastIndexOf("\\")+1,path.length);//文件名
-            $.post("${base}/advert/addAdvert.do?title=" +up_title+ "&timeSize=" +up_time+ "&remark=" +up_remark+ "&url=1&videoName=2", function(data) {
-                //等待上传
-
-
-
-
+            $.get("${base}/advert/adverts.do?title=" + s_title + "&timeType=" + s_time, function(data) {
+                if(data.code == "0") {
+                    location.reload();
+                } else {
+                    swal(data.msg);
+                }
             }, "json");
         });*/
+
+        //上传广告
+        $("#uploadAdvertButton").on('click', function () {
+//             var up_title = $("#modalAdvertTitle").val();
+//             var up_time = $("#modalAdvertTime").val();
+//             var up_remark = $("#modalAdvertRemark").val();
+//             var path = $("#modalAdvertFile").val();
+//                 path = path.substring(path.lastIndexOf("\\")+1,path.length);//文件名
+            var form = new FormData(document.getElementById("updateForm"));
+            console.log(form);
+           $.ajax({
+               type: "POST",
+               <#--url:"${base}/advert/addAdvert.do?title=" +up_title+ "&timeSize=" +up_time+ "&remark=" +up_remark+ "&file=" +path,-->
+               url:"${base}/advert/addAdvert.do",
+               async:false,
+               data:form,
+               cache: false,
+               processData: false,
+               contentType: false,
+               success:function(date){
+                   alert('222');
+                   var obj = eval("("+data+")");
+                   alert(obj);
+                   if(obj.code=0){
+
+                   }
+               },
+               error:function(date){
+               }
+           });
+
+            //测试回调值
+//           $("#hidden_frame").load(function(){
+//               var text=$(this).contents().find("body").text();
+//               var j=$.parseJSON(text);
+//               alert(j);
+//               if(j.code!=0){
+//                   alert(j.msg);
+//               }else{
+//                   alert("上传成功");
+//               }
+//           });
+
+            //测试ajax submit.
+//            $("#updateForm").submit(function() {
+//                $(this).ajaxSubmit({
+//                    success: function(data) { // data 保存提交后返回的数据，一般为 json 数据
+//                        var obj = eval("("+data+")");
+//                        alert(obj);
+//                        if(obj.code==0) {
+//
+//                        }
+//                        else {
+//                            alert("上传失败,请重试!");
+//                        }
+//                    }
+//                });
+//                return false;
+//            });
+
+        });
+
 
         //删除广告
     <#if (advertList?size > 0)>
@@ -149,9 +192,8 @@
                         //重新刷新
                         if(data.code == "0") {
                             swal("提示", "删除成功", "success");
-                            $("#deleteButton").modal('hide');
+//                            $("#deleteButton").modal('hide');
 //                                location.reload();
-                            location.href = "${base}/advert/adverts.do"
                         } else {
                             swal(data.msg);
                         }
@@ -173,7 +215,7 @@
             </div>
             <div class="modal-body" role="form">
                 <div class="modalAdvertStyle">
-                    <form class="form-inline" action="${base}/advert/addAdvert.do" method="post" enctype="multipart/form-data">
+                    <form class="form-inline" id="updateForm" name="updateForm" enctype="multipart/form-data" action="${base}/advert/addAdvert.do" method="post" target="hidden_frame">
                         <div class="form-group" style="width: 100%">
                             <label for="modalAdvertTitle">广告标题：</label>
                             <input type="text" style="width: 80%" class="form-control" id="modalAdvertTitle" placeholder="输入广告标题" name="title"/>
@@ -190,10 +232,17 @@
                             <label for="modalAdvertFile">附&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件：</label>
                             <input id="modalAdvertFile" type="file" multiple="multiple" name="file"/>
                         </div>
+                        <div class="progress" style="display: block;">
+                            <div class="progress-bar" role="progressbar" aria-valuenow="60"
+                                 aria-valuemin="0" aria-valuemax="100" style="width: 20%;">
+                                <span class="sr-only">40% 完成</span>
+                            </div>
+                        </div>
                         <div class="modal-footer" style="text-align: center">
                             <button type="button" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
-                            <button type="submit" class="btn btn-primary" style="padding:10px 80px " id="uploadAdvertButton">确定</button>
+                            <button type="button" class="btn btn-primary" style="padding:10px 80px " id="uploadAdvertButton">确定</button>
                         </div>
+                        <iframe name="hidden_frame" id="hidden_frame" style="display: none"></iframe>
                     </form>
                 </div>
             </div>
