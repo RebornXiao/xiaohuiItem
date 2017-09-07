@@ -111,6 +111,10 @@
         order by create_time desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
+    <select id="existItemTemplates" resultType="Long">
+        select item_template_id from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0 and item_template_id in(${itemTemplateSet})
+    </select>
+
     <update id="lockItemStock">
         update market_item set lock_stock = lock_stock + #{lockQuantity} where id = #{itemId} and (stock + oversold_quantity - lock_stock - pending_quantity - #{lockQuantity}) > 0
     </update>

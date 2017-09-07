@@ -187,6 +187,7 @@ public class OrderController {
      *                  <b>orderStatusTitle</b> - String 订单状态标题
      *                  <b>deliverType</b> - int 配送类型，参考：{@link com.xlibao.common.constant.order.DeliverTypeEnum}
      *                  <b>deliverTitle</b> - String 配送标题
+     *                  <b>paymentTime</b> - long 支付时间，为0时表示未支付
      *                  <b>items</b> - JSONArray 商品信息，每个元素为JSONObject结构
      *                      <b>itemSnapshotId</b> - long 商品快照ID
      *                      <b>itemId</b> - long 商品ID

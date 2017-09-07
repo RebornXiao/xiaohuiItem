@@ -5,9 +5,10 @@ import java.util.Date;
 public class MarketSearchHistory {
 
     private Long id;
+    private Long marketId;
     private String k;
-    private Integer totalSearchTimes;
-    private Date lastSearchTime;
+    private Integer totalSearchTimes = 1;
+    private Date lastSearchTime = new Date();
 
     public Long getId() {
         return id;
@@ -15,6 +16,14 @@ public class MarketSearchHistory {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getMarketId() {
+        return marketId;
+    }
+
+    public void setMarketId(Long marketId) {
+        this.marketId = marketId;
     }
 
     public String getK() {

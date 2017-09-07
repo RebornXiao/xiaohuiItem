@@ -102,6 +102,26 @@ public class PassportController extends BasicWebService {
 
     /**
      * <pre>
+     *     <b>退出登录</b>
+     *
+     *     <b>访问地址：</b>http://domainName/passport/logoutPassport
+     *     <b>访问方式：</b>GET/POST，推荐使用POST
+     *
+     *     <b>访问参数：</b>
+     *          <b>passportId</b> - long 用户通行证ID，必填参数。
+     *          <b>accessToken</b> - String 访问令牌，必填参数。
+     *
+     *     <b>返回：</b>仅返回退出成功或失败
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "logoutPassport")
+    public JSONObject logoutPassport() {
+        return passportService.logoutPassport();
+    }
+
+    /**
+     * <pre>
      *     <b>修改密码</b>
      *
      *     <b>访问地址：</b>http://domainName/passport/modifyPassword

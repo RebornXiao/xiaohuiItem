@@ -74,6 +74,7 @@ public class AliyunOSSUtils {
         InputStream input = new FileInputStream(file);
 
         String key = remoteDirectory + "/" + file.getName();
+        key = key.replaceAll(" ", "");
 
         ObjectMetadata objectMeta = new ObjectMetadata();
         objectMeta.setContentType("image/jpeg");
@@ -96,12 +97,21 @@ public class AliyunOSSUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        File file = new File("C:\\06-assets");
+//        File file = new File("D:\\item_image");
 //        for (File f : file.listFiles()) {
-//            String address = uploadImageFile("xmarket", "market/app/icon", f.getAbsolutePath());
+//            String address = uploadImageFile("xmarket", "item", f.getAbsolutePath());
 //            System.out.println(address);
 //        }
-        String address = uploadImageFile("xmarket", "market/app/icon", "C:\\06-assets\\W-locationIcon@3x.png");
+        String address = uploadImageFile("xmarket", "item", "D:\\item_image\\6921168593033.jpg");
+        System.out.println(address);
+
+        address = uploadImageFile("xmarket", "item", "D:\\item_image\\6923644242961.jpg");
+        System.out.println(address);
+
+        address = uploadImageFile("xmarket", "item", "D:\\item_image\\6932512600369.jpg");
+        System.out.println(address);
+
+        address = uploadImageFile("xmarket", "item", "D:\\item_image\\6949352201434.jpg");
         System.out.println(address);
     }
 }

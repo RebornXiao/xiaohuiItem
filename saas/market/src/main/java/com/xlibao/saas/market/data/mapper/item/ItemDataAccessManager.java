@@ -2,6 +2,7 @@ package com.xlibao.saas.market.data.mapper.item;
 
 import com.xlibao.common.CommonUtils;
 import com.xlibao.market.data.model.*;
+import com.xlibao.saas.market.data.model.MarketSearchHistory;
 import com.xlibao.saas.market.service.item.ItemLockTypeEnum;
 import com.xlibao.saas.market.service.item.PrepareActionStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,6 +98,10 @@ public class ItemDataAccessManager {
         return itemMapper.offShelves(itemId, quantity, status);
     }
 
+    public List<Long> existItemTemplates(long marketId, String itemTemplateSet) {
+        return itemMapper.existItemTemplates(marketId, itemTemplateSet);
+    }
+
     public int createItemLocation(MarketItemLocation itemLocation) {
         return itemLocationMapper.createItemLocation(itemLocation);
     }
@@ -183,5 +188,17 @@ public class ItemDataAccessManager {
 
     public List<String> loaderHotSearch(long marketId, int pageStartIndex, int pageSize) {
         return searchHistoryMapper.loaderHotSearch(marketId, pageStartIndex, pageSize);
+    }
+
+    public int incrementSearchTimes(long marketId, String searchKey) {
+        return searchHistoryMapper.incrementSearchTimes(marketId, searchKey);
+    }
+
+    public void createHistorySearch(long marketId, String searchKey) {
+        MarketSearchHistory searchHistory = new MarketSearchHistory();
+
+        searchHistory.setMarketId(marketId);
+        searchHistory.setK(searchKey);
+        searchHistoryMapper.createHistorySearch(searchHistory);
     }
 }

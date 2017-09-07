@@ -25,6 +25,10 @@ public interface MarketItemMapper {
 
     List<MarketItem> getItems(@Param("itemSet") String itemSet);
 
+    List<Long> existItemTemplates(@Param("marketId") long marketId, @Param("itemTemplateSet") String itemTemplateSet);
+
+    List<MarketItem> searchMarketItems(@Param("marketId") long marketId, @Param("searchType") String searchType, @Param("searchKey") String searchKey, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
+
     int lockItemStock(@Param("itemId") long itemId, @Param("lockQuantity") int lockQuantity);
 
     int itemPending(@Param("itemId") long itemId, @Param("quantity") int quantity);
@@ -36,8 +40,6 @@ public interface MarketItemMapper {
     int offShelves(@Param("itemId") long itemId, @Param("quantity") int quantity, @Param("status") int status);
 
     int updateItem(@Param("itemId") long itemId, @Param("costPrice") long costPrice, @Param("sellPrice") long sellPrice, @Param("marketPrice") long marketPrice, @Param("discountPrice") long discountPrice, @Param("status") byte status, @Param("description") String description);
-
-    List<MarketItem> searchMarketItems(@Param("marketId") long marketId, @Param("searchType") String searchType, @Param("searchKey") String searchKey, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 
     int releaseItemLockQuantity(@Param("itemId") long itemId, @Param("releaseLockQuantity") int releaseLockQuantity);
 }

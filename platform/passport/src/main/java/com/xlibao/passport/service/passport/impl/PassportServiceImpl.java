@@ -199,6 +199,22 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
     }
 
     @Override
+    public JSONObject logoutPassport() {
+        long passportId = getLongParameter("passportId");
+        String accessToken = getUTF("accessToken");
+        Passport passport = getPassport(passportId);
+        if (!accessToken.equals(passport.getAccessToken())) {
+            throw PlatformErrorCodeEnum.INVALID_ACCESS.throwException();
+        }
+        int result = passportDataManager.modifyAccessToken(passport.getId(), "");
+        if (result >= 1) {
+            passport.setAccessToken(accessToken);
+        }
+        setAccessToken(passport.getAccessToken());
+        return null;
+    }
+
+    @Override
     public JSONObject modifyPassword() {
         String username = getUTF("username");
         String oldPassword = getUTF("oldPassword");
