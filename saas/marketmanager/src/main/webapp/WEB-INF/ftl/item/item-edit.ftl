@@ -24,27 +24,7 @@
     </div>
 </div>
 
-<script type="text/javascript">
-    function clearNoNum(obj) {
-//先把非数字的都替换掉，除了数字和.   
-        obj.value = obj.value.replace(/[^\d.]/g, "");
-//必须保证第一个为数字而不是.   
-        obj.value = obj.value.replace(/^\./g, "");
-//保证只有出现一个.而没有多个.   
-        obj.value = obj.value.replace(/\.{2,}/g, ".");
-//保证.只出现一次，而不能出现两次以上   
-        obj.value = obj.value.replace(".", "$#$").replace(/\./g, "").replace("$#$", ".");
 
-        //最后保证是正确的数字
-        var str = obj.value;
-        if (str.length > 1) {
-            //第一个是否为0
-            if(str.charAt(0) == '0' && str.charAt(1) != '.') {
-                obj.value = "0";
-            }
-        }
-    }
-</script>
 
 <div class="content-page">
     <!-- Start content -->
@@ -68,13 +48,6 @@
             <div class="row m-t-30">
                 <div class="col-md-8">
                     <form class="form-horizontal" role="form">
-
-                        <div class="form-group">
-                            <label class="col-md-4 control-label">商品名称：</label>
-                            <div class="col-md-8">
-                                <input type="text" id="errorInfo" class="form-control" >
-                            </div>
-                        </div>
 
                         <div class="form-group">
                             <label class="col-md-4 control-label">商品名称：</label>
@@ -236,12 +209,14 @@
 
                 //添加类型
                 $("#addTypeBtn").on('click', function () {
-                    location.href = "${base}/item/itemTypeEdit.do";
+                    //location.href = "${base}/item/itemTypeEdit.do";
+                    open({url:"${base}/item/itemTypeEdit.do"});
                 });
 
                 //添加单位
                 $("#addUnitBtn").on('click', function () {
-                    location.href = "${base}/item/itemUnitEdit.do";
+                    //location.href = "${base}/item/itemUnitEdit.do";
+                    open({url:"${base}/item/itemUnitEdit.do"});
                 });
 
                 $("#backBtn").on('click', function () {
@@ -251,7 +226,7 @@
                 $("#typeSelect").select2();
 
                 function updateImgUrl(itemId, itemImgUrl) {
-                    $.get("${base}/item/itemUpdateImgUrl.do?itemId="+itemId+"&itemImgUrl="+itemImgUrl, function(data) {
+                    $.post("${base}/item/itemUpdateImgUrl.do?itemId="+itemId+"&itemImgUrl="+itemImgUrl, function(data) {
                         //重新刷新
                         swal(data.msg);
                     }, "json");

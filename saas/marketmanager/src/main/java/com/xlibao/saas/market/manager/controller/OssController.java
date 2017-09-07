@@ -40,7 +40,7 @@ public class OssController extends BaseController {
         String accessId = AliyunConfig.getAccessKeyId();
         String accessKey = AliyunConfig.getAccessKeySecret();
         String bucket = "xmarket";
-        String dir = "market/" + targetDir + "/";
+        String dir = targetDir + "/";
         String endpoint = AliyunConfig.getOssPublicEndPoint();
         String host = "http://" + bucket + "." + endpoint;
 

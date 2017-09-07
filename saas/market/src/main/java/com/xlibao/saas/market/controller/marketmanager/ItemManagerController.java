@@ -41,4 +41,22 @@ public class ItemManagerController {
         return marketItemService.marketItemAddSave();
     }
 
+    /**
+     * <pre>
+     *     <b>是否存在商品</b>
+     *
+     *     <b>访问方式：</b>GET/POST；推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>marketId</b> - long 商店ID，必填参数。
+     *          <b>itemTemplateId</b> - long 商品模版ID，必填参数。
+     *
+     *     <b>返回：</b>仅返回成功或失败的提示
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "existItemTemplate")
+    public JSONObject existItemTemplate() {
+        return marketItemService.existItemTemplate();
+    }
 }

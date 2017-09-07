@@ -30,8 +30,9 @@ public class LogicConfig {
     public static final String RIGHT_FTL_PAGE_URL = "page";
 
     public static final String FTL_PAGE = "page";
+    public static final String FTL_LOGIN = "user/login";
     public static final String FTL_ERROR = "error";
-    public static final String FTL_INDEX = "index";
+    public static final String FTL_MAIN = "main";
 
     //商品相关页面
     public static final String FTL_ITEM_LIST = "item/item-list";

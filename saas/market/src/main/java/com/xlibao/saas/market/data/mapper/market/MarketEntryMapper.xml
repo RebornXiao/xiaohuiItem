@@ -54,7 +54,7 @@
         <if test="searchModel.street != null">
             and street = #{searchModel.street}
         </if>
-        <if test="searchModel.streetId != -1">
+        <if test="searchModel.streetId != 0">
             and street_id = #{searchModel.streetId}
         </if>
         <if test="searchModel.type != -1">

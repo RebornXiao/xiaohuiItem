@@ -85,7 +85,8 @@
 
                 $("#sortlist").on("change", function () {
                     var obj = $(this).children('option:selected');
-                    location.href = "${base}/item/itemTypeSort.do?id=" + obj.attr("data_id");
+                    open({url:"${base}/item/itemTypeSort.do?id=" + obj.attr("data_id")});
+                    //location.href = "${base}/item/itemTypeSort.do?id=" + obj.attr("data_id");
                 });
 
                 $("#saveBtn").on("click", function () {

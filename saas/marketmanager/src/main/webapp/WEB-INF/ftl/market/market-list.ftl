@@ -34,7 +34,8 @@
                         <form class="form-inline" role="form">
 
                             <button id="addBtn" type="button"
-                                    class="btn waves-effect waves-light btn-primary">添加店铺</button>
+                                    class="btn waves-effect waves-light btn-primary">添加店铺
+                            </button>
 
                             <div class="form-group">
                                 <label for="exampleInputName2">地区选择：</label>
@@ -46,7 +47,7 @@
 
                             <div class="form-group m-l-15">
                                 <label for="exampleInputName2">店铺状态：</label>
-                                <select class="form-control" id="itSelect" style="width:150px">
+                                <select class="form-control" id="statusSelect" style="width:150px">
                                     <option data_id="1">正常</option>
                                     <option data_id="3">维护</option>
                                     <option data_id="2">关店</option>
@@ -56,7 +57,7 @@
 
                             <div class="form-group m-l-15">
                                 <label for="exampleInputName2">店铺配送方式：</label>
-                                <select class="form-control" id="itSelect" style="width:150px">
+                                <select class="form-control" id="deliveryModeSelect" style="width:150px">
                                     <option data_id="1">仅自提</option>
                                     <option data_id="2">仅送货</option>
                                     <option data_id="3">可自提也可送货</option>
@@ -212,7 +213,13 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                     <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/markets.do" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/markets.do?"
+                + "province=${province}&provinceId=${provinceId}"
+                + "&city=${city}&cityId=${cityId}"
+                + "&district=${district}&districtId=${districtId}"
+                + "&street=${street}&streetId=${streetId}"
+                + "&status=${status}&deliveryMode=${deliveryMode}"
+                />
                 </div>
             </div>
         </#if>
@@ -226,21 +233,70 @@
 
                 var _marketListTable = $("#marketListTable");
 
-                <#if streets?? >
-                    <#assign streets_assign = streets >
-                <#else>
-                    <#assign streets_assign = "null" >
-                </#if>
+                var _streets = {};
+            <#if streets?exists && (streets?size > 0) >
+                <#list streets as street>
+                    _streets[${street.id?c}] = "${street.name}";
+                </#list>
+            </#if>
 
-                showLocation(${provinceId}, ${cityId}, ${districtId}, ${streetId}, ${streets_assign}, function (id, func) {
-                    $.get("${base}/market/getStreets.do?districtId=" + id, function (data) {
-                        func(id, data);
-                    }, "json");
-                });
+                showLocation(
+                        <#if provinceId?exists >${provinceId?c}<#else>0</#if>,
+                        <#if cityId?exists >${cityId?c}<#else>0</#if> ,
+                        <#if districtId?exists >${districtId?c}<#else>0</#if> ,
+                        <#if streetId?exists >${streetId?c}<#else>0</#if> ,
+                        _streets, function (id, func) {
+                            $.post("${base}/market/getStreets.do?districtId=" + id, function (data) {
+                                func(id, data);
+                            }, "json");
+                        });
+
+                function getVs(ui_name, info) {
+                    var obj = $("#" + ui_name).find("option:selected");
+                    var id = obj.attr("data_id");
+                    if (id == 0 && info != null) {
+                        swal(info);
+                        return null;
+                    }
+                    return {id: id, name: obj.attr("data_v")};
+                }
 
                 //添加
                 $("#addBtn").on('click', function () {
-                    location.href = "${base}/market/merketEdit.do";
+
+                    //直接跳转
+                    var provinceId = $('#loc_province').val();
+                    var cityId = $('#loc_city').val();
+                    var districtId = $('#loc_district').val();
+                    var streetId = $('#loc_street').val();
+
+                    open({url: "${base}/market/marketEdit.do?provinceId=" + provinceId + "&cityId=" + cityId + "&districtId=" + districtId + "&streetId=" + streetId});
+                });
+
+                //搜索
+                $("#searchBtn").on('click', function () {
+
+                    //直接跳转
+                    var province = getVs("loc_province", null);
+                    var city = getVs("loc_city", null);
+                    var area = getVs("loc_district", null);
+                    var street = getVs("loc_street", null);
+
+                    //店铺状态
+                    var _status_obj = $("#statusSelect").find("option:selected");
+                    var _status = _status_obj.attr("data_id");
+
+                    //配送方式
+                    var _deliveryMode_obj = $("#deliveryModeSelect").find("option:selected");
+                    var _deliveryMode = _deliveryMode_obj.attr("data_id");
+
+                    var url = "${base}/market/markets.do?province=" + province.name + "&provinceId=" + province.id
+                            + "&city=" + city.name + "&cityId=" + city.id
+                            + "&district=" + area.name + "&districtId=" + area.id
+                            + "&street=" + street.name + "&streetId=" + street.id
+                            + "&status=" + _status + "&deliveryMode="+_deliveryMode;
+
+                    open({ url: url });
                 });
 
             <#if (markets?size > 0)>
@@ -248,14 +304,18 @@
                 //单项编辑
                 _marketListTable.find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/marketEdit.do?marketId=" + $(this).attr("data_id");
+                        open({url: "${base}/market/marketEdit.do?marketId=" + $(this).attr("data_id")});
+                        //location.href = "${base}
+                        //market/marketEdit.do?marketId=" + $(this).attr("data_id");
                     });
                 });
 
                 //单项查看商品
                 _marketListTable.find('button[id=seeBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/marketItems.do?marketId=" + $(this).attr("data_id");
+                        open({url: "${base}/market/marketItems.do?marketId=" + $(this).attr("data_id")});
+                        //location.href = "${base}
+                        //market/marketItems.do?marketId=" + $(this).attr("data_id");
                     });
                 });
 

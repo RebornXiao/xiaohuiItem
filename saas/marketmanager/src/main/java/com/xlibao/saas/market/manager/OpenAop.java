@@ -1,27 +1,24 @@
 package com.xlibao.saas.market.manager;
 
-import com.xlibao.common.BasicWebService;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.support.PassportRemoteService;
 import com.xlibao.saas.market.manager.config.LogicConfig;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * @author chinahuangxc on 2017/7/21.
+ * Created by zhumg on 9/7.
  */
 @Service
 @Aspect
-public class ModelAndViewAop extends BaseController {
+public class OpenAop extends BaseController {
 
-    @Around(value = "execution(* com.xlibao.saas.market.manager.controller.*.*(..))")
+    @Around(value = "execution(* com.xlibao.saas.market.manager.controller.open.*.*(..))")
     public Object around(ProceedingJoinPoint point) throws Throwable {
         Object[] args = point.getArgs();
         getHttpServletResponse().setHeader("content-type", "text/html");

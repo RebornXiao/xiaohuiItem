@@ -400,7 +400,7 @@
                         });
                     } else {
                         //从网络获取
-                        $.get("${base}/item/idNameItems.do?itemTypeId=" + data_id, function (json) {
+                        $.post("${base}/item/idNameItems.do?itemTypeId=" + data_id, function (json) {
                             if (json.code != 0) {
                                 swal(json.msg);
                             } else {
@@ -508,7 +508,7 @@
                 _taskListTable.on("click", "button[id=delTaskBtn]", function () {
                     var obj = $(this);
                     var code = obj.attr("data_code");
-                    showTi("确定要删除该任务吗?", function (isConfirm) {
+                    showWarning("确定要删除该任务吗?", function (isConfirm) {
                         if (!isConfirm) {
                             return;
                         }
@@ -540,7 +540,7 @@
                     var data_id = td.attr("data_id");
                     var data_code = td.attr("data_code");
                     //取得任务数据
-                    $.get("${base}/market/checkPrepareActionTask.do?taskId=" + data_id, function (json) {
+                    $.post("${base}/market/checkPrepareActionTask.do?taskId=" + data_id, function (json) {
                         if (json.code != 0) {
                             swal(json.msg);
                         } else {
@@ -637,12 +637,12 @@
                     var data_id = $(this).attr("data_id");
                     var data_code = $(this).attr("data_code");
                     //2次确定
-                    showTi("确定要取消这个任务吗？", function (isConfirm) {
+                    showWarning("确定要取消这个任务吗？", function (isConfirm) {
                         if(!isConfirm) {
                             return;
                         }
                         //去取消
-                        $.get("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
+                        $.post("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
                             if (json.code != 0) {
                                 swal(json.msg);
                             } else {
@@ -672,6 +672,7 @@
                         swal("当前没有任务可提交");
                         return;
                     }
+                    $(this).button("loading");
                     //将 task 拼成 map;
                     var txt = "";
                     var hDate = "";
@@ -681,10 +682,12 @@
                     $.post("${base}/market/prepareAction.do?marketId=" + s_MarketId + "&actionDatas=" + txt + "&hopeExecutorDate=" + hDate, function (data) {
                         //重新刷新
                         if (data.code == 0) {
-                            showMsg("操作成功", function () {
-                                location.href = "${base}/market/marketItems.do?id=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer;
+                            showSuccess(data.msg, function () {
+                                open({url:"${base}/market/marketTasks.do?marketId=" + s_MarketId});
+                                //location.href = "${base}/market/marketItems.do?id=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer;
                             })
                         } else {
+                            $(this).button("reset");
                             swal(data.msg);
                         }
                     }, "json");
@@ -802,7 +805,8 @@
                         }, function (isConfirm) {
                             if (isConfirm) {
                                 //直接切换
-                                location.href = "${base}/market/marketShelves.do?id=" + s_MarketId;
+                                open({url:"${base}/market/marketShelves.do?id=" + s_MarketId});
+                                //location.href = "${base}/market/marketShelves.do?id=" + s_MarketId;
                             } else {
                                 //弹出任务列表
                                 showTaskDailog();
@@ -810,7 +814,8 @@
                         });
                     } else {
                         //直接切换
-                        location.href = "${base}/market/marketShelves.do?id=" + s_MarketId;
+                        open({url:"${base}/market/marketShelves.do?id=" + s_MarketId});
+                        //location.href = "${base}/market/marketShelves.do?id=" + s_MarketId;
                     }
                 });
 
@@ -828,7 +833,7 @@
                     s_Group = select_obj.val();
 
                     if (unit_list[s_Group] == null) {
-                        $.get("${base}/market/getShelvesMarks.do?marketId=" + s_MarketId + "&shelvesType=2&groupCode=" + s_Group, function (json) {
+                        $.post("${base}/market/getShelvesMarks.do?marketId=" + s_MarketId + "&shelvesType=2&groupCode=" + s_Group, function (json) {
                             if (json.code != 0) {
                                 swal("无法找到该店铺的 单元 信息");
                             } else {
@@ -858,7 +863,7 @@
                     s_Unit = select_obj.val();
 
                     if (level_list[s_Unit] == null) {
-                        $.get("${base}/market/getShelvesMarks.do?marketId=" + s_MarketId + "&shelvesType=3&groupCode=" + s_Group + "&unitCode=" + s_Unit, function (json) {
+                        $.post("${base}/market/getShelvesMarks.do?marketId=" + s_MarketId + "&shelvesType=3&groupCode=" + s_Group + "&unitCode=" + s_Unit, function (json) {
                             if (json.code != 0) {
                                 swal("无法找到该店铺的 层 信息");
                             } else {
@@ -880,12 +885,12 @@
                     var data_id = select_obj.attr("data_id");
 
                     if (data_id == "0") {
-                        hibeDatas("暂无数据");
+                        hibeDatas("暂无任何数据");
                         return;
                     }
                     s_Layer = select_obj.val();
 
-                    $.get("${base}/market/loaderClipDatas.do?marketId=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer, function (json) {
+                    $.post("${base}/market/loaderClipDatas.do?marketId=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer, function (json) {
 
                         if (json.code != 0) {
                             hibeDatas(json.msg);

@@ -141,25 +141,30 @@
                         swal("包括了特殊符号，无法搜索!");
                         return;
                     }
-                    location.href = "${base}/item/itemTypes.do?searchKey=" + sValue;
+                    open({url:"${base}/item/itemTypes.do?searchKey=" + sValue});
+                    //location.href = "${base}/item/itemTypes.do?searchKey=" + sValue;
                 });
 
                 //添加分类
                 $("#addBtn").on('click', function () {
-                    location.href = "${base}/item/itemTypeEdit.do";
+                    open({url:"${base}/item/itemTypeEdit.do"});
+                    //location.href = "${base}/item/itemTypeEdit.do";
                 });
 
                 //添加分类
                 $("#sortBtn").on('click', function () {
-                    location.href = "${base}/item/itemTypeSort.do";
+                    open({url:"${base}/item/itemTypeSort.do"});
+                    //location.href = "${base}/item/itemTypeSort.do";
                 });
 
             <#if itemType?exists >
                 $("#pEditBtn").on('click', function () {
-                    location.href = "${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
+                    open({url:"${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id")});
+                    //location.href = "${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
                 });
                 $("#pAddChildBtn").on('click', function () {
-                    location.href = "${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
+                    open({url:"${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id")});
+                    //location.href = "${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
                 });
             </#if>
 
@@ -168,21 +173,24 @@
                 //单项编辑
                 $("#itemTypeTable").find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
+                        open({url:"${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id")});
+                        //location.href = "${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
                     });
                 });
 
                 //单项添加子类
                 $("#itemTypeTable").find('button[id=addChildBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
+                        open({url:"${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id")});
+                        //location.href = "${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
                     });
                 });
 
                 //单项查看子类
                 $("#itemTypeTable").find('button[id=seeChildBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/item/itemTypes.do?id=" + $(this).attr("data_id");
+                        open({url:"${base}/item/itemTypes.do?id=" + $(this).attr("data_id")});
+                        //location.href = "${base}/item/itemTypes.do?id=" + $(this).attr("data_id");
                     });
                 });
 

@@ -56,11 +56,11 @@ public class MarketManagerController extends BaseController {
         String district = getUTF("district", "");
 
         long provinceId = getLongParameter("provinceId", 0);
-        long cityId = getLongParameter("city", 0);
-        long districtId = getLongParameter("district", 0);
+        long cityId = getLongParameter("cityId", 0);
+        long districtId = getLongParameter("districtId", 0);
 
         String street = getUTF("street", "");
-        long streetId = getLongParameter("streetId", -1);
+        long streetId = getLongParameter("streetId", 0);
 
         int type = getIntParameter("type", -1);
         int status = getIntParameter("status", -1);
@@ -91,9 +91,13 @@ public class MarketManagerController extends BaseController {
         map.put("count", response.getIntValue("count"));
 
         //////////////////
+        map.put("province", province);
         map.put("provinceId", provinceId);
+        map.put("city", city);
         map.put("cityId", cityId);
+        map.put("district", district);
         map.put("districtId", districtId);
+        map.put("street", street);
         map.put("streetId", streetId);
 
         JSONObject streetJson = null;
@@ -119,6 +123,7 @@ public class MarketManagerController extends BaseController {
     @RequestMapping("/marketEdit")
     public String marketEdit(ModelMap map) {
         long id = getLongParameter("marketId", 0);
+
         if (id != 0) {
             MarketEntry entry = marketManagerService.getMarket(id);
             if (entry == null) {
@@ -142,11 +147,11 @@ public class MarketManagerController extends BaseController {
                 }
             }
             //拿区
-            String areaName = entry.getDistrict();
-            if (CommonUtils.isNotNullString(areaName)) {
-                PassportArea area = passportManagerService.searchAreaByName(areaName);
+            String districtName = entry.getDistrict();
+            if (CommonUtils.isNotNullString(districtName)) {
+                PassportArea area = passportManagerService.searchAreaByName(districtName);
                 if (area != null) {
-                    map.put("areaId", area.getId());
+                    map.put("districtId", area.getId());
                 }
             }
             //拿街道
@@ -161,6 +166,32 @@ public class MarketManagerController extends BaseController {
                         JSONArray array = streetsJson.getJSONObject("response").getJSONArray("datas");
                         map.put("streets", array);
                         map.put("streetId", street.getId());
+                    }
+                }
+            }
+        } else {
+            //直接拿到所有数据
+            long provinceId = getLongParameter("provinceId", 0);
+            long cityId = getLongParameter("cityId", 0);
+            long districtId = getLongParameter("districtId", 0);
+            long streetId = getLongParameter("streetId", 0);
+
+            map.put("provinceId", provinceId);
+            map.put("cityId", cityId);
+            map.put("districtId", districtId);
+            map.put("streetId", streetId);
+
+            if (provinceId != 0 && cityId != 0 && districtId != 0 && streetId != 0) {
+                //拿到这个街道
+                JSONObject streetJson = passportManagerService.getStreetJson(streetId);
+
+                if (streetJson.getIntValue("code") == 0) {
+                    PassportStreet street = parseObject(streetJson.getJSONObject("response").getString("data"), PassportStreet.class);
+                    //拿所有数据
+                    JSONObject streetsJson = passportManagerService.getStreets(street.getAreaId());
+                    if (streetsJson.getIntValue("code") == 0) {
+                        JSONArray array = streetsJson.getJSONObject("response").getJSONArray("datas");
+                        map.put("streets", array);
                     }
                 }
             }
@@ -230,6 +261,7 @@ public class MarketManagerController extends BaseController {
     //街道编辑页面
     @RequestMapping("/streetEdit")
     public String streetEdit(ModelMap map) {
+
         //如果没有选区域，则默认为0
         long provinceId = getLongParameter("provinceId", 10018);//默认广东省
         long cityId = getLongParameter("cityId", 10212);//默认广州市
@@ -265,6 +297,9 @@ public class MarketManagerController extends BaseController {
     @RequestMapping("/marketTasks")
     public String marketTasks(ModelMap modelMap) {
         long marketId = getLongParameter("marketId", 0);
+        int pageSize = getPageSize();
+        int pageIndex = getIntParameter("pageIndex", 1);
+
         modelMap.put("marketId", marketId);
         //拿到所有店铺
         JSONObject marketResponse = marketManagerService.getAllMarkets();
@@ -273,7 +308,6 @@ public class MarketManagerController extends BaseController {
         }
         if (marketId != 0) {
             //填充店铺数据
-            int pageSize = getPageSize();
             Map map = new HashMap();
             map.put("marketId", marketId);
             map.put("pageSize", String.valueOf(pageSize));
@@ -285,6 +319,10 @@ public class MarketManagerController extends BaseController {
                 modelMap.put("tasks", response.getJSONObject("response").getJSONArray("datas"));
             }
         }
+
+        modelMap.put("pageSize", pageSize);
+        modelMap.put("pageIndex", pageIndex);
+
         return jumpPage(modelMap, LogicConfig.FTL_MARKET_TASK_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_TASK_LIST);
     }
 
@@ -306,6 +344,8 @@ public class MarketManagerController extends BaseController {
         map.put("marketId", marketId);
         map.put("searchType", searchType);
         map.put("searchKey", searchKey);
+        map.put("pageSize", pageSize);
+        map.put("pageIndex", pageIndex);
 
         //根据搜索内容，查找数据
         JSONObject itemResponse = marketManagerService.searchMarketItems(marketId, searchType, searchKey, pageSize, pageIndex);
@@ -328,6 +368,9 @@ public class MarketManagerController extends BaseController {
             map.put("items", array);
             map.put("count", response.getIntValue("count"));
         }
+
+        map.put("pageSize", pageSize);
+        map.put("pageIndex", pageIndex);
 
         return jumpPage(map, LogicConfig.FTL_MARKET_ITEM_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ITEM_LIST);
     }
@@ -365,6 +408,15 @@ public class MarketManagerController extends BaseController {
     public String marketItemEdit(ModelMap map) {
 
         long id = getLongParameter("id");
+        String searchType = getUTF("searchType", "");
+        String searchKey = getUTF("searchKey", "");
+        int pageSize = getPageSize();
+        int pageIndex = getIntParameter("pageIndex", 1);
+
+        map.put("searchType", searchType);
+        map.put("searchKey", searchKey);
+        map.put("pageSize", pageSize);
+        map.put("pageIndex", pageIndex);
 
         JSONObject itemResponse = marketManagerService.getMarketItem(id);
         if (itemResponse.getIntValue("code") != 0) {
@@ -384,6 +436,16 @@ public class MarketManagerController extends BaseController {
             return fail(map, "远程调用异常\n无法找到商品模板信息,商品模板id=" + marketItem.getItemTemplateId(), LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
         }
         map.put("itemTemplate", itemTemplate);
+
+        //替换价格
+        //重置促销
+        Utils.changePrice(itemJson, "discountPrice");
+        //重置成本
+        Utils.changePrice(itemJson, "costPrice");
+        //重置市场价
+        Utils.changePrice(itemJson, "marketPrice");
+        //重置销售价
+        Utils.changePrice(itemJson, "sellPrice");
 
         map.put("marketItem", itemJson);
 

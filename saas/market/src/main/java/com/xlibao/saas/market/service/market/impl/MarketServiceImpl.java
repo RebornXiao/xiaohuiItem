@@ -130,7 +130,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         String city = getUTF("city", null);
         String district = getUTF("district", null);
         String street = getUTF("street", null);
-        long streetId = getIntParameter("streetId", -1);
+        long streetId = getIntParameter("streetId", 0);
 
         int type = getIntParameter("type", -1);
         int status = getIntParameter("status", -1);
@@ -225,7 +225,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         String location = getUTF("location");
         int deliveryMode = getIntParameter("deliveryMode");
         int distance = getIntParameter("distance");
-        long deliveryCost = getLongParameter("deliveryCost");
+        long deliveryCost = CommonUtils.changeMoney(getUTF("deliveryCost"));
 
         MarketEntry entry = new MarketEntry();
         entry.setName(marketName);

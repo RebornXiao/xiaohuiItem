@@ -71,30 +71,30 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">成本价(分)：</label>
+                            <label class="col-md-4 control-label">成本价(元)：</label>
                             <div class="col-md-6">
-                                <input id="ipCostPrice" type="number" class="form-control" >
+                                <input id="ipCostPrice" type="text" class="form-control" onkeyup="clearNoNum(this)">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">销售价(分)：</label>
+                            <label class="col-md-4 control-label">销售价(元)：</label>
                             <div class="col-md-6">
-                                <input id="ipSellPrice" type="number" class="form-control" >
+                                <input id="ipSellPrice" type="text" class="form-control" onkeyup="clearNoNum(this)">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">市场售价(分)：</label>
+                            <label class="col-md-4 control-label">市场售价(元)：</label>
                             <div class="col-md-6">
-                                <input id="ipMarketPrice" type="number" class="form-control" >
+                                <input id="ipMarketPrice" type="text" class="form-control" onkeyup="clearNoNum(this)">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">促销价(分)：</label>
+                            <label class="col-md-4 control-label">促销价(元)：</label>
                             <div class="col-md-6">
-                                <input id="ipDiscountPrice" type="number" class="form-control" >
+                                <input id="ipDiscountPrice" type="text" class="form-control" onkeyup="clearNoNum(this)">
                             </div>
                         </div>
 
@@ -155,7 +155,7 @@
                         });
                     } else {
                         //从网络获取
-                        $.get("${base}/item/idNameItems.do?itemTypeId=" + data_id, function (json) {
+                        $.post("${base}/item/idNameItems.do?itemTypeId=" + data_id, function (json) {
                             if (json.code != 0) {
                                 swal(json.msg);
                             } else {
@@ -178,6 +178,8 @@
 
                 //保存商品单位
                 $("#saveBtn").on('click', function () {
+
+                    $(this).button("loading");
 
                     var market_obj = $("#sMarket").find("option:selected");
                     var marketId = market_obj.attr("data_id");
@@ -213,8 +215,12 @@
 
                         //重新刷新
                         if(data.code == "0") {
-                            swal("提示", data.msg, "success");
+                            showSuccess(data.msg, function () {
+                                open({url:"${base}/market/marketItems.do?marketId=" + marketId
+                                });
+                            });
                         } else {
+                            $(this).button("reset");
                             swal(data.msg);
                         }
 

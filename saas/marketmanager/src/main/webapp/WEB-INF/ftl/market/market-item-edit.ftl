@@ -43,30 +43,30 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">成本价(分)：</label>
+                            <label class="col-md-4 control-label">成本价(元)：</label>
                             <div class="col-md-8">
-                                <input id="ipCostPrice" type="number" class="form-control"  value="${marketItem.costPrice}">
+                                <input id="ipCostPrice" type="text" class="form-control" value="${marketItem.costPrice}" onkeyup="clearNoNum(this)">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">销售价(分)：</label>
+                            <label class="col-md-4 control-label">销售价(元)：</label>
                             <div class="col-md-8">
-                                <input id="ipSellPrice" type="number" class="form-control" value="${marketItem.sellPrice}">
+                                <input id="ipSellPrice" type="text" class="form-control" value="${marketItem.sellPrice}" onkeyup="clearNoNum(this)">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">市场售价(分)：</label>
+                            <label class="col-md-4 control-label">市场售价(元)：</label>
                             <div class="col-md-8">
-                                <input id="ipMarketPrice" type="number" class="form-control" value="${marketItem.marketPrice}" >
+                                <input id="ipMarketPrice" type="text" class="form-control" value="${marketItem.marketPrice}" onkeyup="clearNoNum(this)">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">促销价(分)：</label>
+                            <label class="col-md-4 control-label">促销价(元)：</label>
                             <div class="col-md-8">
-                                <input id="ipDiscountPrice" type="number" class="form-control" value="${marketItem.discountPrice}" >
+                                <input id="ipDiscountPrice" type="text" class="form-control" value="${marketItem.discountPrice}" onkeyup="clearNoNum(this)">
                             </div>
                         </div>
 
@@ -102,6 +102,7 @@
 
             $(document).ready(function () {
 
+                //该商品归属的商店ID
                 var s_itemId = ${marketItem.id?c};
 
                 $("#backBtn").on('click', function () {
@@ -111,6 +112,8 @@
                 //保存商品单位
                 $("#saveBtn").on('click', function () {
 
+                    $(this).button("loading");
+
                     var _costPrice = $("#ipCostPrice").val();
                     var _sellPrice = $("#ipSellPrice").val();
                     var _marketPrice = $("#ipMarketPrice").val();
@@ -118,6 +121,7 @@
                     var des = $("#itemInfo").val();
 
                     var post_data = {
+                        marketId:${market.id?c},
                         itemId:s_itemId,
                         costPrice:_costPrice,
                         sellPrice:_sellPrice,
@@ -130,8 +134,12 @@
 
                         //重新刷新
                         if(data.code == "0") {
-                            swal("提示", data.msg, "success");
+                            showSuccess(data.msg, function () {
+                                open({url:"${base}/market/marketItems.do?marketId=${market.id?c}&searchType=${searchType}&searchKey=${searchKey}&pageSize=${pageSize}&pageIndex=${pageIndex}"
+                                });
+                            });
                         } else {
+                            $(this).button("reset");
                             swal(data.msg);
                         }
 

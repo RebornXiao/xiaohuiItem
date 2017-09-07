@@ -55,9 +55,9 @@
                                             class="btn btn-default waves-effect waves-light dropdown-toggle"
                                             data-toggle="dropdown">按商品模板名称搜索 <span class="caret"></span></button>
                                     <ul class="dropdown-menu" id="searchType">
-                                        <li><a href="javascript:void(0)" search_name="商品模板名称" search_type="define_code">按商品模板名称搜索</a>
+                                        <li><a href="javascript:void(0)" search_name="商品模板名称" search_type="itemTemplateName">按商品模板名称搜索</a>
                                         </li>
-                                        <li><a href="javascript:void(0)" search_name="商品模板ID" search_type="name">按商品模板ID搜索</a>
+                                        <li><a href="javascript:void(0)" search_name="商品模板ID" search_type="itemTemplateId">按商品模板ID搜索</a>
                                         </li>
                                     </ul>
                                 </div>
@@ -111,13 +111,13 @@
                                 <td>${item.discountPrice}</td>
                                 <td>
                                     <#if item.status == 0>
-                                        <span class="label label-success">未上架</span>
+                                        <span class="label label-primary">未上架</span>
                                     </#if>
                                     <#if item.status == 1>
                                         <span class="label label-success">可售</span>
                                     </#if>
                                     <#if item.status == 2>
-                                        <span class="label label-success">失效</span>
+                                        <span class="label label-default">失效</span>
                                     </#if>
                                 </td>
                                 <td>
@@ -187,9 +187,9 @@
                 $("#searchType li a").on('click', function () {
                     var sName = $(this).attr("search_name");
                     var txt = "按" + sName + "搜索";
-                    s_searchType = $(this).attr("search_type")
+                    s_searchType = $(this).attr("search_type");
                     _searchMenu.html(txt + "<span class=\"caret\"></span>");
-                    _searchMenu.attr("search_name", sName)
+                    _searchMenu.attr("search_name", sName);
                     _searchKeyTxt.attr("placeholder", txt);
                 });
 
@@ -198,8 +198,10 @@
                     var s_searchKey = _searchKeyTxt.val();
                     var select_obj = _sMarket.find("option:selected");
                     s_marketId = select_obj.attr("data_id");
+                    s_searchType = _searchMenu.attr("search_type");
 
-                    location.href = "${base}/market/marketItems.do?marketId=" + s_marketId+"&searchType="+s_searchType+"&searchKey="+s_searchKey;
+                    open({url:"${base}/market/marketItems.do?marketId=" + s_marketId+"&searchType="+s_searchType+"&searchKey="+s_searchKey});
+                    //location.href = "${base}/market/marketItems.do?marketId=" + s_marketId+"&searchType="+s_searchType+"&searchKey="+s_searchKey;
                 });
 
                 //添加新品
@@ -208,14 +210,34 @@
                     var select_obj = _sMarket.find("option:selected");
                     s_marketId = select_obj.attr("data_id");
 
-                    location.href = "${base}/market/marketItemAdd.do?marketId="+s_marketId;
+                    open({url:"${base}/market/marketItemAdd.do?marketId="+s_marketId});
+                    //location.href = "${base}/market/marketItemAdd.do?marketId="+s_marketId;
+                });
+
+                //搜索
+                $("#searchBtn").on('click', function () {
+                    var s_searchKey = _searchKeyTxt.val();
+                    if (containSpecial.test(s_searchKey)) {
+                        swal("包括了特殊符号，无法搜索!");
+                        return;
+                    }
+
+                    var select_obj = _sMarket.find("option:selected");
+                    s_marketId = select_obj.attr("data_id");
+
+                    open({url:"${base}/market/marketItems.do?marketId=" + s_marketId+"&searchType="+s_searchType+"&searchKey="+s_searchKey});
                 });
 
                 <#if items?exists && (items?size > 0) >
                     //单项编辑
                     $("#itemsTable").find('button[id=editBtn]').each(function () {
                         $(this).on('click', function () {
-                            location.href = "${base}/market/marketItemEdit.do?marketId=" + s_marketId + "&id=" + $(this).attr("data_id");
+                            var s_searchKey = _searchKeyTxt.val();
+                            open({url:"${base}/market/marketItemEdit.do?id=" + $(this).attr("data_id")
+                                +"&searchType="+s_searchType+"&searchKey="+s_searchKey
+                                +"&pageSize=${pageSize}&pageIndex=${pageIndex}"
+                            });
+                            //location.href = "${base}/market/marketItemEdit.do?marketId=" + s_marketId + "&id=" + $(this).attr("data_id");
                         });
                     });
                 </#if>

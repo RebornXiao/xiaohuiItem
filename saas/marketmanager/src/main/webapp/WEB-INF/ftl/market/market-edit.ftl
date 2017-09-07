@@ -132,10 +132,10 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label">配送费(分)：</label>
+                                    <label class="col-md-4 control-label">配送费(元)：</label>
                                     <div class="col-md-8">
                                         <input type="number" id="mDeliveryCost" class="form-control" <#if market?exists>
-                                               value="${market.deliveryCost?c}" </#if>>
+                                               value="${market.deliveryCost?c}" </#if>  onkeyup="clearNoNum(this)">
                                     </div>
                                 </div>
 
@@ -204,7 +204,8 @@
 
                 //添加
                 $("#addStreeBtn").on('click', function () {
-                    location.href = "${base}/market/streetEdit.do";
+                    open({url:"${base}/market/streetEdit.do"});
+                    //location.href = "${base}/market/streetEdit.do";
                 });
 
                 var _streets = {};
@@ -218,10 +219,10 @@
                 showLocation(
                         <#if provinceId?exists >${provinceId?c}<#else>0</#if>,
                         <#if cityId?exists >${cityId?c}<#else>0</#if> ,
-                        <#if areaId?exists >${areaId?c}<#else>0</#if> ,
+                        <#if districtId?exists >${districtId?c}<#else>0</#if> ,
                         <#if streetId?exists >${streetId?c}<#else>0</#if> ,
                         _streets, function (id, func) {
-                            $.get("${base}/market/getStreets.do?districtId=" + id, function (data) {
+                            $.post("${base}/market/getStreets.do?districtId=" + id, function (data) {
                                 func(id, data);
                             }, "json");
                         });
@@ -235,101 +236,6 @@
                 $("#backBtn").on('click', function () {
                     history.back(-1);
                 });
-
-
-
-
-//                var valid = $('#formDefault').Validform({
-//                    tiptype:4,
-//                    label:".help-block",
-//                    showAllError:true,
-//                    ajaxPost:true,
-//                    postonce:true,
-//                    beforeSubmit:function(curform){
-//                        var con = getContent();
-//                        $('#detail_text').val(encodeURIComponent(con));
-//                    },
-//                    callback:function(data){
-//
-//                        if (data.success == true) {
-//                            //alert(data.msg);
-//                            location.reload(true);
-//                            //window.location.href="/order/api.php?s=/home/menu/lists&merchant_id="+data.merchant_id+"";
-//                            show_notify(data.msg);
-//                        } else {
-//                            if (data.msg == null) {
-//                                data.msg = '系统错误，请重试';
-//                            }
-//                            $('#btnDefault').button('reset');
-//                            alert(data.msg);
-//                            // show_notify(data.msg);
-//                        }
-//
-//                    }
-//                }); // end validform
-//
-//                valid.addRule(
-//                        [{
-//                            ele:'#name',
-//                            datatype:'*',
-//                            nullmsg:'不能为空',
-//                            errormsg:'格式错误',
-//                            sucmsg:'√'
-//                        },
-//                            {
-//                                ele:'#price',
-//                                datatype:/^\d+(\.\d{1,2})?$/,
-//                                nullmsg:'不能为空',
-//                                errormsg:'价格为数字，且最多保留两位小数',
-//                                sucmsg:'√'
-//                            },
-//                            {
-//                                ele:'#repertory',
-//                                datatype:'n',
-//                                nullmsg:'x',
-//                                errormsg:'请输入正确的数字',
-//                                sucmsg:'√'
-//                            },
-//                            {
-//                                ele:'#today_repertory',
-//                                datatype:'n',
-//                                nullmsg:'x',
-//                                errormsg:'请输入正确的数字',
-//                                sucmsg:'√'
-//                            },
-//                            {
-//                                ele:'#menu_sort',
-//                                datatype:'n',
-//                                nullmsg:'x',
-//                                errormsg:'请输入正确的数字',
-//                                sucmsg:'√'
-//                            },
-//                            {
-//                                ele:'#menu_img',
-//                                datatype:'url',
-//                                nullmsg:'请上传菜单图片',
-//                                errormsg:'格式错误',
-//                                sucmsg:'√'
-//                            },
-//                            {
-//                                ele:'#barcode',
-//                                datatype:'*',
-//                                nullmsg:'不能为空',
-//                                errormsg:'格式错误',
-//                                sucmsg:'√',
-//                                ignore:'ignore'
-//                            },
-//                            {
-//                                ele:'#stock_price',
-//                                datatype:/^\d+(\.\d{1,2})?$/,
-//                                nullmsg:'不能为空',
-//                                errormsg:'格式错误',
-//                                sucmsg:'√',
-//                                ignore:'ignore'
-//                            }
-//                        ]
-//
-//                );
 
                 function getV(ui_name, info) {
                     var obj = $("#"+ui_name).find("option:selected");

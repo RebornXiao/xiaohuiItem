@@ -189,7 +189,8 @@
                         swal("包括了特殊符号，无法搜索!");
                         return;
                     }
-                    location.href = "${base}/item/itemList.do?searchType=" + searchTypeValue + "&searchKey=" + sValue;
+                    open({url:"${base}/item/itemList.do?searchType=" + searchTypeValue + "&searchKey=" + sValue});
+                    //location.href = "${base}/item/itemList.do?searchType=" + searchTypeValue + "&searchKey=" + sValue;
                 });
 
                 //添加新品
@@ -202,14 +203,16 @@
                 //单项编辑
                 _itemListTable.find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/item/itemEdit.do?id=" + $(this).attr("data_id");
+                        open({url:"${base}/item/itemEdit.do?id=" + $(this).attr("data_id")});
+                        //location.href = "${base}/item/itemEdit.do?id=" + $(this).attr("data_id");
                     });
                 });
 
                 //单项查看店铺分布
                 _itemListTable.find('button[id=seeBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/marketItems.do?searchType=itemTemplateId&searchKey=" + $(this).attr("data_id");
+                        open({url:"${base}/market/marketItems.do?searchType=itemTemplateId&searchKey=" + $(this).attr("data_id")});
+                        //location.href = "${base}/market/marketItems.do?searchType=itemTemplateId&searchKey=" + $(this).attr("data_id");
                     });
                 });
 

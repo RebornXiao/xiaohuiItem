@@ -48,7 +48,7 @@
     </insert>
 
     <select id="getItem" resultMap="BaseResultMap">
-        select * from market_item where market_id = #{marketId} and item_template_id = #{itemTemplateId}
+        select * from market_item where owner_id = #{marketId} and item_template_id = #{itemTemplateId}
     </select>
 
     <select id="getMarketItem" resultMap="BaseResultMap">
@@ -106,7 +106,7 @@
             and item_template_id = #{searchKey}
         </if>
         <if test="searchType == 'itemTemplateName'">
-            and define_name like '%'+#{searchKey}+'%'
+            and define_name like "%"#{searchKey}"%"
         </if>
         order by create_time desc limit #{pageStartIndex}, #{pageSize}
     </select>
