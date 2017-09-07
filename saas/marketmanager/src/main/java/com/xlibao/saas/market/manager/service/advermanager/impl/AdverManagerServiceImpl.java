@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +45,11 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
     }
 
     @Override
-    public JSONObject addAdvert(String path,String title,String timeSize,String remark,String videoName) {
+    public JSONObject addAdvert(String path,String videoName,MultipartHttpServletRequest request) {
+        MultipartHttpServletRequest multipartRequest = (MultipartHttpServletRequest) request;
+        String title = multipartRequest.getParameter("title");
+        String timeSize = multipartRequest.getParameter("timeSize");
+        String remark = multipartRequest.getParameter("remark");
         Map<String, String> parameters = new HashMap<>();
         parameters.put("title",title);
         parameters.put("timeSize", timeSize);

@@ -1,6 +1,7 @@
 package com.xlibao.saas.market.manager.service.advermanager;
 
 import com.alibaba.fastjson.JSONObject;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 /**
  * Created by user on 2017/8/31.
@@ -17,7 +18,7 @@ public interface AdverManagerService {
      * 添加广告
      * @return
      */
-    JSONObject addAdvert(String path,String title,String timeSize,String remark,String videoName);
+    JSONObject addAdvert(String path,String videoName,MultipartHttpServletRequest request);
 
     /**
      * 编辑广告
