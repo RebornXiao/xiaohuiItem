@@ -17,18 +17,33 @@ public class QuestionOpenApiController {
     @Autowired
     private QuestionService questionService;
 
+    /**
+     * <pre>
+     *     <b>加载问题类目</b>
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "loaderProblemTypes")
     public JSONObject loaderProblemTypes() {
         return questionService.loaderProblemTypes();
     }
 
+    /**
+     * <pre>
+     *     <b>找到某个类目下的所有问题</b>
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "findProblems")
     public JSONObject findProblems() {
         return questionService.findProblems();
     }
 
+    /**
+     * <pre>
+     *     <b>加载退款标签</b>
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "loaderRefundLabel")
     public JSONObject loaderRefundLabel() {

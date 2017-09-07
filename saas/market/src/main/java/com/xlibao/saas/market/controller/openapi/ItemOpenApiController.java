@@ -152,6 +152,22 @@ public class ItemOpenApiController {
         return itemService.findItemLocation();
     }
 
+    /**
+     * <pre>
+     *     <b>加载热门搜索标签</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/item/openapi/fuzzyMatchItemName.do
+     *     <b>访问方式：</b>GET/POST；推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>marketId</b> - long 商店ID，必填参数。
+     *          <b>pageIndex</b> - int 页码，非必填参数。
+     *          <b>pageSize</b> - int 每页显示数量，非必填参数。
+     *
+     *     <b>返回：</b>
+     *          <b>datas</b> - JSONArray 每个元素为String，即：当前热门的查询内容
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "loaderHotSearch")
     public JSONObject loaderHotSearch() {
@@ -166,6 +182,7 @@ public class ItemOpenApiController {
      *     <b>访问方式：</b>GET/POST；推荐使用POST
      *
      *     <b>参数：</b>
+     *          <b>marketId</b> - long 商店ID，必填参数。
      *          <b>fuzzyItemName</b> - String 本次查询的关键字，必填参数。
      *
      *     <b>返回：</b>

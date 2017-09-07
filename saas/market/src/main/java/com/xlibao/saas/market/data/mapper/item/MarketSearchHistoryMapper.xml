@@ -14,7 +14,7 @@
     </insert>
 
     <select id="loaderHotSearch" resultType="String">
-        select k from market_search_history where market_id = #{marketId} limit #{pageStartIndex}, #{pageSize}
+        select k from market_search_history where market_id = #{marketId} order by total_search_times desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <update id="incrementSearchTimes">
