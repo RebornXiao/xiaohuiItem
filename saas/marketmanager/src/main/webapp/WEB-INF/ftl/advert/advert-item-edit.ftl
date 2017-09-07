@@ -132,26 +132,26 @@
 //                 path = path.substring(path.lastIndexOf("\\")+1,path.length);//文件名
             var form = new FormData(document.getElementById("updateForm"));
             console.log(form);
-           $.ajax({
-               type: "POST",
-               <#--url:"${base}/advert/addAdvert.do?title=" +up_title+ "&timeSize=" +up_time+ "&remark=" +up_remark+ "&file=" +path,-->
-               url:"${base}/advert/addAdvert.do",
-               async:false,
-               data:form,
-               cache: false,
-               processData: false,
-               contentType: false,
-               success:function(date){
-                   alert('222');
-                   var obj = eval("("+data+")");
-                   alert(obj);
-                   if(obj.code=0){
-
-                   }
-               },
-               error:function(date){
-               }
-           });
+            $.ajax({
+                type: "POST",
+            <#--url:"${base}/advert/addAdvert.do?title=" +up_title+ "&timeSize=" +up_time+ "&remark=" +up_remark+ "&file=" +path,-->
+                url:"${base}/advert/addAdvert.do",
+                data:form,
+                // 告诉jQuery不要去处理发送的数据
+                processData : false,
+                // 告诉jQuery不要去设置Content-Type请求头
+                contentType : false,
+                success: function(result){
+                    if('yes'==result){
+                        alert("添加成功");
+                    }else{
+                        alert("添加失败");
+                    }
+                },
+                error:function(result){
+                    alert("添加广告失败！");
+                }
+            });
 
             //测试回调值
 //           $("#hidden_frame").load(function(){
