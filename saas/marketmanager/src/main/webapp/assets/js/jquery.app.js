@@ -385,6 +385,21 @@ function getUrl(href) {
     return url;
 }
 
+function checkVal(ui_name, info) {
+    var v = $("#" + ui_name).val();
+    if(v == null || v == "") {
+        swal(info);
+        return null;
+    }
+    //去掉左右空格
+    v = v.replace(/(^\s*)|(\s*$)/g, "");
+    if(v == "") {
+        swal(info);
+        return null;
+    }
+    return v;
+}
+
 function open(option) {
     option = $.extend({
         url: '',

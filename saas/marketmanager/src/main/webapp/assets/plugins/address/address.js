@@ -3671,7 +3671,7 @@ function showLocation(province_id, city_id, district_id, street_id, street_list,
 
     var title = ['省份', '地级市', '区、县、镇', '街道'];
     $.each(title, function (k, v) {
-        title[k] = '<option data_id="' + k + '" data_v="' + v + '" value="' + k + '">' + v + '</option>';
+        title[k] = '<option data_id="0" data_v="' + v + '" value="' + k + '">' + v + '</option>';
     });
 
     if (street_list != null && street_list != "" && district_id != 0) {

@@ -58,7 +58,15 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <label class="col-md-4 control-label">门牌号：</label>
+                                    <label class="col-md-4 control-label">街道号：</label>
+                                    <div class="col-md-8">
+                                        <input type="text" id="mStreetNumber" class="form-control" <#if market?exists>
+                                               value="${market.address}" </#if>>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">详情地址：</label>
                                     <div class="col-md-8">
                                         <input type="text" id="mAddress" class="form-control" <#if market?exists>
                                                value="${market.address}" </#if>>
@@ -240,7 +248,7 @@
                 function getV(ui_name, info) {
                     var obj = $("#"+ui_name).find("option:selected");
                     var id = obj.attr("data_id");
-                    if(id == 0) {
+                    if(id == "0") {
                         swal(info);
                         return null;
                     }
@@ -250,7 +258,7 @@
                 function getVs(ui_name, info) {
                     var obj = $("#"+ui_name).find("option:selected");
                     var id = obj.attr("data_id");
-                    if(id == 0) {
+                    if(id == "0") {
                         swal(info);
                         return null;
                     }
@@ -259,29 +267,40 @@
 
                 $("#saveBtn").on('click', function () {
 
-                    var _province = getV("loc_province", "请选择省份");
+                    var _province = getVs("loc_province", "请选择省份");
                     if(_province == null) return;
 
-                    var _city = getV("loc_city", "请选择城市");
+                    var _city = getVs("loc_city", "请选择城市");
                     if(_city == null) return;
 
-                    var _district = getV("loc_district", "请选择区");
+                    var _district = getVs("loc_district", "请选择区");
                     if(_district == null) return;
 
-                    var _street = getVs("loc_street", "请选择镇");
+                    var _street = getVs("loc_street", "请选择街道");
                     if(_street == null) return;
+
+                    var _name = checkVal("mName", "请输入店铺名称");
+                    if(_name == null) return;
+
+                    var _location = checkVal("mLocation", "请设置经纬度");
+                    if(_location == null) return;
+
+                    var _location = checkVal("mAddress", "请输入详情地址");
+                    if(_location == null) return;
+
+                    $(this).button("loading");
 
                     var post_data = {
                         marketId:_marketId,
-                        name: $("#mName").val(),
-                        province:_province,
-                        city:_city,
-                        district:_district,
+                        name: _name,
+                        province:_province.name,
+                        city:_city.name,
+                        district:_district.name,
                         streetId:_street.id,
                         streetName:_street.name,
                         streetNumber:$("#mStreetNumber").val(),
-                        address:$("#mStreetNumber").val(),
-                        location:$("#mLocation").val(),
+                        address:$("#mAddress").val(),
+                        location:_location,
                         deliveryMode:$("#mDeliveryMode").find("option:selected").attr("data_id"),
                         distance:$("#mDistance").val(),
                         deliveryCost:$("#mDeliveryCost").val(),
@@ -291,8 +310,15 @@
 
                         //重新刷新
                         if(data.code == "0") {
-                            swal("提示", data.msg, "success");
+                            showSuccess(data.msg, function () {
+                                var url = "${base}/market/markets.do?province=" + _province.name + "&provinceId=" + _province.id
+                                        + "&city=" + _city.name + "&cityId=" + _city.id
+                                        + "&district=" + _district.name + "&districtId=" + _district.id
+                                        + "&street=" + _street.name + "&streetId=" + _street.id;
+                                open({ url: url });
+                            });
                         } else {
+                            $(this).button("reset");
                             swal(data.msg);
                         }
 

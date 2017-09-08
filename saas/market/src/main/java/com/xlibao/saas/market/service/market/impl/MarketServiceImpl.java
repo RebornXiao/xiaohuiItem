@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -220,12 +221,12 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         String district = getUTF("district");
         long streetId = getLongParameter("streetId");
         String streetName = getUTF("streetName");
-        String streetNumber = getUTF("streetNumber");
-        String address = getUTF("address");
-        String location = getUTF("location");
-        int deliveryMode = getIntParameter("deliveryMode");
-        int distance = getIntParameter("distance");
-        long deliveryCost = CommonUtils.changeMoney(getUTF("deliveryCost"));
+        String streetNumber = getUTF("streetNumber", "");
+        String address = getUTF("address", "");
+        String location = getUTF("location", "0");
+        int deliveryMode = getIntParameter("deliveryMode", 0);
+        int distance = getIntParameter("distance", 0);
+        long deliveryCost = CommonUtils.changeMoney(getUTF("deliveryCost", "0"));
 
         MarketEntry entry = new MarketEntry();
         entry.setName(marketName);

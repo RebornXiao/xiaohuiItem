@@ -86,8 +86,12 @@ public class MarketManagerController extends BaseController {
         }
 
         JSONObject response = marketJson.getJSONObject("response");
+        JSONArray entrys = response.getJSONArray("data");
+        for (int i = 0; i < entrys.size(); i++) {
+            Utils.changeData(entrys.getJSONObject(i), "createTime");
+        }
 
-        map.put("markets", response.getJSONArray("data"));
+        map.put("markets", entrys);
         map.put("count", response.getIntValue("count"));
 
         //////////////////

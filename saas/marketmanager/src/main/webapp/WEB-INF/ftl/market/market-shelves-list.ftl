@@ -437,7 +437,7 @@
                     } else {
                         var select_obj = _sItem.find("option:selected");
                         var data_id = select_obj.attr("data_id");
-                        if (data_id == 0) {
+                        if (data_id == "0") {
                             swal("你还没有选择商品");
                             return;
                         }
@@ -786,7 +786,7 @@
 
                     var select_obj = _sMarket.find("option:selected");
                     s_MarketId = select_obj.attr("data_id");
-                    if (s_MarketId == 0) {
+                    if (s_MarketId == "0") {
                         return;
                     }
 
@@ -826,7 +826,7 @@
                     var select_obj = _m_group_ui.find("option:selected");
                     var data_id = select_obj.attr("data_id");
 
-                    if (data_id == 0) {
+                    if (data_id == "0") {
                         return;
                     }
 

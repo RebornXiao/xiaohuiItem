@@ -144,10 +144,7 @@ public class LocationServiceImpl extends BasicWebService implements LocationServ
         long streetId = getLongParameter("streetId", 0);
         PassportStreet street = locationDataAccessManager.getStreet(streetId);
 
-        JSONObject json = new JSONObject();
-        json.put("data", street);
-
-        return success(json);
+        return result(street != null ? street : "没有该街道信息");
     }
 
     @Override

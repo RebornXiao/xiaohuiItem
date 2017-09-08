@@ -48,21 +48,23 @@
                             <div class="form-group m-l-15">
                                 <label for="exampleInputName2">店铺状态：</label>
                                 <select class="form-control" id="statusSelect" style="width:150px">
-                                    <option data_id="1">正常</option>
-                                    <option data_id="3">维护</option>
-                                    <option data_id="2">关店</option>
-                                    <option data_id="0">无效</option>
+                                    <option data_id="-1" <#if status?exists && status == -1>selected</#if> >全部</option>
+                                    <option data_id="1" <#if status?exists && status == 1>selected</#if> >正常</option>
+                                    <option data_id="3" <#if status?exists && status == 3>selected</#if> >维护</option>
+                                    <option data_id="2" <#if status?exists && status == 2>selected</#if> >关店</option>
+                                    <option data_id="0" <#if status?exists && status == 0>selected</#if> >无效</option>
                                 </select>
                             </div>
 
                             <div class="form-group m-l-15">
                                 <label for="exampleInputName2">店铺配送方式：</label>
                                 <select class="form-control" id="deliveryModeSelect" style="width:150px">
-                                    <option data_id="1">仅自提</option>
-                                    <option data_id="2">仅送货</option>
-                                    <option data_id="3">可自提也可送货</option>
-                                    <option data_id="4">AI(智能)</option>
-                                    <option data_id="5">可自提也可AI配送</option>
+                                    <option data_id="-1" <#if deliveryMode?exists && deliveryMode == -1>selected</#if> >全部</option>
+                                    <option data_id="1" <#if deliveryMode?exists && deliveryMode == 1>selected</#if> >仅自提</option>
+                                    <option data_id="2" <#if deliveryMode?exists && deliveryMode == 2>selected</#if> >仅送货</option>
+                                    <option data_id="3" <#if deliveryMode?exists && deliveryMode == 3>selected</#if> >可自提也可送货</option>
+                                    <option data_id="4" <#if deliveryMode?exists && deliveryMode == 4>selected</#if> >AI(智能)</option>
+                                    <option data_id="5" <#if deliveryMode?exists && deliveryMode == 5>selected</#if> >可自提也可AI配送</option>
                                 </select>
                             </div>
 
@@ -94,8 +96,8 @@
                             <th>所在地区</th>
                             <th>具体地址</th>
                             <th>配送方式</th>
-                            <th>配送距离</th>
-                            <th>配送费</th>
+                            <th>配送距离(米)</th>
+                            <th>配送费(元)</th>
                             <th>建店时间</th>
                             <th>操作</th>
                         </tr>
@@ -176,12 +178,12 @@
                                 <td>
                                     <#if (market.deliveryCost > 0)>
                                         <#assign dCost = market.deliveryCost/100 >
-                                    ${dCost}元
+                                        ${dCost}
+                                    <#else>
+                                        0
                                     </#if>
                                 </td>
-                                <td><#if (market.deliveryCost > 0)>
-                                    ${market.createTime}
-                                </#if></td>
+                                <td>${market.createTime}</td>
                                 <td>
                                     <button id="editBtn" type="button"
                                             class="btn waves-effect waves-light btn-warning btn-sm"
@@ -254,11 +256,15 @@
                 function getVs(ui_name, info) {
                     var obj = $("#" + ui_name).find("option:selected");
                     var id = obj.attr("data_id");
-                    if (id == 0 && info != null) {
+                    if (id == "0" && info != null) {
                         swal(info);
                         return null;
                     }
-                    return {id: id, name: obj.attr("data_v")};
+                    if(id == "0") {
+                        return {id: id, name: ""};
+                    } else {
+                        return {id: id, name: obj.attr("data_v")};
+                    }
                 }
 
                 //添加

@@ -107,7 +107,7 @@ public class BasicWebService {
 
     protected byte getByteParameter(String key, byte defaultValue) {
         String value = getParamValue(key);
-        if (value == null) {
+        if (value == null || value.length() < 1) {
             return defaultValue;
         }
         try {
@@ -131,7 +131,7 @@ public class BasicWebService {
 
     protected short getShotParameter(String key, short defaultValue) {
         String value = getParamValue(key);
-        if (value == null) {
+        if (value == null || value.length() < 1) {
             return defaultValue;
         }
         try {
@@ -155,7 +155,7 @@ public class BasicWebService {
 
     protected int getIntParameter(String key, int defaultValue) {
         String value = getParamValue(key);
-        if (value == null) {
+        if (value == null || value.length() < 1) {
             return defaultValue;
         }
         try {
@@ -179,7 +179,7 @@ public class BasicWebService {
 
     protected long getLongParameter(String key, long defaultValue) {
         String value = getParamValue(key);
-        if (value == null) {
+        if (value == null || value.length() < 1) {
             return defaultValue;
         }
         try {
@@ -203,7 +203,7 @@ public class BasicWebService {
 
     protected float getFloatParameter(String key, float defaultValue) {
         String value = getParamValue(key);
-        if (value == null) {
+        if (value == null || value.length() < 1) {
             return defaultValue;
         }
         try {
@@ -227,7 +227,7 @@ public class BasicWebService {
 
     protected double getDoubleParameter(String key, double defaultValue) {
         String value = getParamValue(key);
-        if (value == null) {
+        if (value == null || value.length() < 1) {
             return defaultValue;
         }
         try {
