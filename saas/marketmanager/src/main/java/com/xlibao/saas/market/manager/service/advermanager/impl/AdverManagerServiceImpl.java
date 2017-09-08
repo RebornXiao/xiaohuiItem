@@ -57,6 +57,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("url",path);
         parameters.put("videoName",videoName);
 
+
         String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/uploadAdvertInfo.do";
         JSONObject response = executor(url, parameters);
 
@@ -110,7 +111,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
     @Override
     public JSONObject searchScreenTemplatePage(){
         String code = getUTF("code",null);
-        String marketID = getUTF("marketID",null);
+        String marketID = getUTF("marketID","-1");
         String size = getUTF("size",null);
         int pageSize = getPageSize();
         int pageIndex = getIntParameter("pageIndex", 1);
@@ -118,7 +119,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         Map<String, String> parameters = new HashMap<>();
         parameters.put("code", code);
         parameters.put("marketID", marketID);
-        parameters.put("size", size);
+        parameters.put("screenSize", size);
         parameters.put("pageSize", String.valueOf(pageSize));
         parameters.put("pageIndex", String.valueOf(pageIndex));
 
@@ -144,7 +145,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("marketId",String.valueOf(marketId));
         parameters.put("marketName",marketName);
         parameters.put("requireTime",requireTime);
-        parameters.put("size",size);
+        parameters.put("screenSize",size);
         parameters.put("code",code);
         parameters.put("mac",mac);
         parameters.put("screenRemark",screenRemark);
@@ -297,10 +298,12 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
     public JSONObject getAdvertScreenByID(){
         String screenID =  getUTF("screenID","-1");
         String advertID =  getUTF("advertID","-1");
+        String marketID = getUTF("marketID","-1");
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("screenID", screenID);
         parameters.put("advertID", advertID);
+        parameters.put("marketID", marketID);
 
         String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAdvertInfoFromID.do";
         JSONObject response = executor(url, parameters);

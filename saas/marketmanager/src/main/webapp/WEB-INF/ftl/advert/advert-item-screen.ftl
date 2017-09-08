@@ -30,7 +30,10 @@
                             <option value="">全部店铺</option>
                         <#if markets?exists >
                             <#list markets as merket>
-                                <option value="${merket.id?c}">${merket.name}</option>
+                                <option data_id="${market.id?c}" <#if marketID == market.id>
+                                        selected </#if>>
+                                ${market.name}
+                                </option>
                             </#list>
                         </#if>
                         </select>
@@ -39,8 +42,8 @@
                         <label>屏幕分辨率：</label>
                         <select id="storeInfo_select" class="form-control" name="size">
                             <option value="">选择屏幕分辨率</option>
-                            <option value="1">100*100</option>
-                            <option value="2">200*200</option>
+                            <option value="123">100*100</option>
+                            <option value="1234">200*200</option>
                         </select>
                     </div>
                     <div class="form-group m-l-15">
