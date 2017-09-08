@@ -57,6 +57,12 @@ public interface AdverManagerService {
     JSONObject delScreenByID();
 
     /**
+     * 根据mac获取屏幕信息
+     * @return
+     */
+    JSONObject getScreenByMac();
+
+    /**
      * 获取广告播放列表
      */
     JSONObject searchScreenAdvertTemplatePage();
@@ -78,4 +84,16 @@ public interface AdverManagerService {
      * @return
      */
     JSONObject delAdvertScreenByID();
+
+    /**
+     * 获取屏幕信息
+     * @return
+     */
+    JSONObject getScreenList();
+
+    /**
+     * 获取播放信息
+     * @return
+     */
+    JSONObject getAdvertScreenByID();
 }

@@ -35,31 +35,31 @@
                                     <tbody>
                                     <tr>
                                         <td style="background-color: #f9f9f9">编号</td>
-                                        <td>10001-001</td>
+                                        <td>${screen.code}</td>
                                         <td style="background-color: #f9f9f9">屏幕分辨率</td>
-                                        <td>100*100</td>
+                                        <td>${screen.size}</td>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
                                         <td style="background-color: #f9f9f9">屏幕MAC</td>
-                                        <td>DKK-CIJ-SNA-H</td>
+                                        <td>${screen.mac}</td>
                                         <td style="background-color: #f9f9f9">屏幕请求时间</td>
-                                        <td>300s</td>
+                                        <td>${screen.requireTime}s</td>
                                     </tr>
                                     </tbody>
                                     <tbody>
                                     <tr>
                                         <td style="background-color: #f9f9f9">门店信息</td>
-                                        <td>杨箕店</td>
+                                        <td>${screen.marketName}</td>
                                         <td style="background-color: #f9f9f9">正在投放广告数</td>
-                                        <td>5</td>
+                                        <td>${screen.advertCount}</td>
                                     </tr>
                                     </tbody>
                                     <tbody>
                                     <tr>
                                         <td style="background-color: #f9f9f9">广告备注</td>
-                                        <td colspan="3"></td>
+                                        <td colspan="3">${screen.screenRemark}</td>
                                     </tr>
                                     </tbody>
                                 </table>
@@ -89,11 +89,15 @@
                                     </tr>
                                     </thead>
                                     <tbody>
+                                    <#if (advertList?size > 0)>
+                                        <#list advertList as advert>
                                     <tr>
-                                        <td>1</td>
-                                        <td>xxx的广告</td>
-                                        <td>30s</td>
+                                        <td>${advert_index +1}</td>
+                                        <td>${advert.title}</td>
+                                        <td>${advert.timeSize}</td>
                                     </tr>
+                                        </#list>
+                                    </#if>
                                     </tbody>
                                 </table>
                             </div>

@@ -86,13 +86,13 @@ public class AdvertManagerController extends BaseController {
      * @param map
      * @return
      */
-    @RequestMapping("/detail")
-    public String advertDetail(ModelMap map){
+    @RequestMapping("/godvert")
+    public String goAdvertDetail(ModelMap map){
         JSONObject json =  adverManagerService.getAdvertByID();
         JSONObject response = json.getJSONObject("response");
         JSONArray adverts = response.getJSONArray("data");
         if(adverts.size()>0)
-            map.put("adver",adverts.get(0));
+            map.put("advert",adverts.get(0));
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_DETAIL, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
 
@@ -136,11 +136,11 @@ public class AdvertManagerController extends BaseController {
 
         int pageIndex = getIntParameter("pageIndex", 1);
         map.put("code", getUTF("code",""));
-        map.put("marketID", getIntParameter("marketID",0));
+        map.put("marketID", getUTF("marketID",""));
         map.put("size", getUTF("size",""));
         map.put("pageIndex", pageIndex);
         map.put("screens", screens);
-        return jumpPage(map, LogicConfig.FTL_ADVERT_EDIT, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
+        return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_SCREEN, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
 
     /**
@@ -150,8 +150,14 @@ public class AdvertManagerController extends BaseController {
      */
     @ResponseBody
     @RequestMapping("/addScreen")
-    public JSONObject addScreen(ModelMap map){
-        return adverManagerService.addScreen();
+    public void addScreen(ModelMap map,HttpServletResponse response) throws IOException{
+        String result="no";
+
+        JSONObject resJson =  adverManagerService.addScreen();
+        if(resJson.getIntValue("code") == 0){
+            result="yes";
+        }
+       response.getWriter().print(result);
     }
 
 
@@ -165,8 +171,31 @@ public class AdvertManagerController extends BaseController {
     public JSONObject delScreen(ModelMap map){
         return adverManagerService.delScreenByID();
     }
+
     /**
-     *获取播放列表
+     * 根据MAC获取屏幕信息
+     * @param map
+     * @return
+     */
+    @RequestMapping(value = "/getScreenBy")
+    public String getScreenBy(ModelMap map){
+
+        JSONObject adverJson =  adverManagerService.getScreenByMac();
+        if (adverJson.getIntValue("code") == 0) {
+            JSONObject jsonObject = adverJson.getJSONObject("response");
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            if (jsonArray.size()>0){
+                JSONObject screenJson = jsonArray.getJSONObject(0);
+                map.put("screen",screenJson);
+            }
+        }
+
+        return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_SCREENCONFIG, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
+    }
+
+
+    /**
+     *获取投放列表
      * @param map
      * @return
      */
@@ -195,7 +224,7 @@ public class AdvertManagerController extends BaseController {
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGER, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
     /**
-     * 添加播放视频
+     * 添加投放视频
      * @param map
      * @return
      */
@@ -205,7 +234,7 @@ public class AdvertManagerController extends BaseController {
         return adverManagerService.addScreenAdvert();
     }
     /**
-     * 更新播放视频
+     * 更新投放视频
      * @param map
      * @return
      */
@@ -216,7 +245,7 @@ public class AdvertManagerController extends BaseController {
     }
 
     /**
-     * 删除播放视频
+     * 删除投放视频
      * @param map
      * @return
      */
@@ -235,5 +264,36 @@ public class AdvertManagerController extends BaseController {
     @RequestMapping("/getAllMarkets")
     public JSONObject getAllMarkets(ModelMap map) {
         return  marketManagerService.getAllMarkets();
+    }
+    /**
+     * 查看播放详情
+     * @param map
+     * @return
+     */
+    @RequestMapping("/goAdvertScreen")
+    public String goAdvertScreen(ModelMap map) {
+
+        JSONObject json =  adverManagerService.getAdvertByID();
+        JSONObject response = json.getJSONObject("response");
+        JSONArray adverts = response.getJSONArray("data");
+        if(adverts.size()>0)
+            map.put("advert",adverts.get(0));
+
+        JSONObject jsonAS =  adverManagerService.getAdvertScreenByID();
+        JSONObject responseAS = jsonAS.getJSONObject("response");
+        JSONArray advertScreen = responseAS.getJSONArray("data");
+        if(advertScreen.size()>0)
+            map.put("advert",adverts.get(0));
+        return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_PLAYDETAIL, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
+    }
+    /**
+     * 根据ID获取播放信息
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getAdvertScreen")
+    public JSONObject getAdvertScreenByID(ModelMap map) {
+        return adverManagerService.getAdvertScreenByID();
     }
 }

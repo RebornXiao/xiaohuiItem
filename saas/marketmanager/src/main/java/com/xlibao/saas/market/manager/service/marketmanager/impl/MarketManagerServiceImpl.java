@@ -23,7 +23,7 @@ import java.util.Map;
 public class MarketManagerServiceImpl implements MarketManagerService {
 
     public JSONObject getAllMarkets() {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/getAllMarkets.do");
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/getAllMarkets.do");
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
@@ -45,14 +45,14 @@ public class MarketManagerServiceImpl implements MarketManagerService {
         Utils.appendInt(sb, "pageIndex", pageIndex);
 
 
-        String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/searchMarkets.do?" + sb.toString(), map);
+        String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/searchMarkets.do?" + sb.toString(), map);
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
 
 
     public JSONObject getMarket(long id) {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/marketmanager/getMarket.do?id=" + id);
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/getMarket.do?id=" + id);
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
