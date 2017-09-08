@@ -91,8 +91,11 @@ public class AdvertManagerController extends BaseController {
         JSONObject json =  adverManagerService.getAdvertByID();
         JSONObject response = json.getJSONObject("response");
         JSONArray adverts = response.getJSONArray("data");
-        if(adverts.size()>0)
-            map.put("advert",adverts.get(0));
+        if(adverts.size()>0) {
+            map.put("advert", adverts.get(0));
+        }else {
+            map.put("advert", "");
+        }
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_DETAIL, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
 
@@ -187,6 +190,8 @@ public class AdvertManagerController extends BaseController {
             if (jsonArray.size()>0){
                 JSONObject screenJson = jsonArray.getJSONObject(0);
                 map.put("screen",screenJson);
+            }else {
+                map.put("screen","");
             }
         }
 
@@ -276,14 +281,19 @@ public class AdvertManagerController extends BaseController {
         JSONObject json =  adverManagerService.getAdvertByID();
         JSONObject response = json.getJSONObject("response");
         JSONArray adverts = response.getJSONArray("data");
-        if(adverts.size()>0)
-            map.put("advert",adverts.get(0));
-
+        if(adverts.size()>0) {
+            map.put("advert", adverts.get(0));
+        }else {
+            map.put("advert", "");
+        }
         JSONObject jsonAS =  adverManagerService.getAdvertScreenByID();
         JSONObject responseAS = jsonAS.getJSONObject("response");
         JSONArray advertScreen = responseAS.getJSONArray("data");
-        if(advertScreen.size()>0)
-            map.put("advertScreen",adverts.get(0));
+        if(advertScreen.size()>0) {
+            map.put("advertScreen", advertScreen.get(0));
+        }else {
+            map.put("advertScreen", "");
+        }
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_PLAYDETAIL, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
     /**
@@ -294,6 +304,14 @@ public class AdvertManagerController extends BaseController {
     @ResponseBody
     @RequestMapping("/getAdvertScreen")
     public JSONObject getAdvertScreenByID(ModelMap map) {
+        JSONObject jsonAS =  adverManagerService.getAdvertScreenByID();
+        JSONObject responseAS = jsonAS.getJSONObject("response");
+        JSONArray advertScreen = responseAS.getJSONArray("data");
+        if(advertScreen.size()>0) {
+            map.put("advertScreen", advertScreen.get(0));
+        }else {
+            map.put("advertScreen", "");
+        }
         return adverManagerService.getAdvertScreenByID();
     }
 }
