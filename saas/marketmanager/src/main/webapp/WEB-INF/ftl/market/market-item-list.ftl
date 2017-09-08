@@ -129,7 +129,7 @@
                             </#list>
                         <#else>
                         <tr id="emptyTr">
-                            <td colSpan="8" height="200px">
+                            <td colSpan="<#if marketId == 0>10<#else>9</#if>" height="200px">
                                 <p class="text-center">暂无任何数据</p>
                             </td>
                         </tr>
