@@ -29,11 +29,8 @@
                         <select class="form-control" id="marketID" name="marketID" style="width:150px">
                             <option value="">全部店铺</option>
                         <#if markets?exists >
-                            <#list markets as merket>
-                                <option data_id="${market.id?c}" <#if marketID == market.id>
-                                        selected </#if>>
-                                ${market.name}
-                                </option>
+                            <#list markets as market>
+                                <option value="${market.id?c}">${market.name}</option>
                             </#list>
                         </#if>
                         </select>
