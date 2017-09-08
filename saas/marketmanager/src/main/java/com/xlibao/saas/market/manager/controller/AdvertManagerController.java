@@ -316,12 +316,11 @@ public class AdvertManagerController extends BaseController {
     public JSONObject getAdvertScreenByID(ModelMap map) {
         JSONObject jsonAS =  adverManagerService.getAdvertScreenByID();
         JSONObject responseAS = jsonAS.getJSONObject("response");
-        JSONArray advertScreen = responseAS.getJSONArray("data");
-        if(advertScreen.size()>0) {
-            map.put("advertScreen", advertScreen.get(0));
-        }else {
-            map.put("advertScreen", "");
+        JSONArray arrayAS = responseAS.getJSONArray("data");
+        JSONObject response = new JSONObject();
+        if(arrayAS.size()>0) {
+            response = arrayAS.getJSONObject(0);
         }
-        return adverManagerService.getAdvertScreenByID();
+        return response;
     }
 }
