@@ -86,13 +86,13 @@ public class AdvertManagerController extends BaseController {
      * @param map
      * @return
      */
-    @RequestMapping("/godetail")
-    public String goadvertDetail(ModelMap map){
+    @RequestMapping("/godvert")
+    public String goAdvertDetail(ModelMap map){
         JSONObject json =  adverManagerService.getAdvertByID();
         JSONObject response = json.getJSONObject("response");
         JSONArray adverts = response.getJSONArray("data");
         if(adverts.size()>0)
-            map.put("adver",adverts.get(0));
+            map.put("advert",adverts.get(0));
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_DETAIL, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
 
@@ -277,13 +277,13 @@ public class AdvertManagerController extends BaseController {
         JSONObject response = json.getJSONObject("response");
         JSONArray adverts = response.getJSONArray("data");
         if(adverts.size()>0)
-            map.put("adver",adverts.get(0));
+            map.put("advert",adverts.get(0));
 
         JSONObject jsonAS =  adverManagerService.getAdvertScreenByID();
         JSONObject responseAS = jsonAS.getJSONObject("response");
         JSONArray advertScreen = responseAS.getJSONArray("data");
         if(advertScreen.size()>0)
-            map.put("adver",adverts.get(0));
+            map.put("advert",adverts.get(0));
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_PLAYDETAIL, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
     /**
