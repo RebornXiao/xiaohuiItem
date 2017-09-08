@@ -130,10 +130,10 @@
                 success: function (result) {
                     if ('yes' == result) {
                         swal("提示", "添加成功", "success");
-                        location.href = "${base}/advert/screens.do";
+                        setTimeout(function(){location.reload();},5000);
                     } else {
                         swal("提示", "添加失败", "success");
-                        location.href = "${base}/advert/screens.do";
+                        setTimeout(function(){location.reload();},5000);
                     }
                 },
                 error: function (result) {
@@ -156,7 +156,7 @@
                         //重新刷新
                         if(data.code == "0") {
                             swal("提示", "删除成功", "success");
-                            location.href = "${base}/advert/screens.do";
+                            setTimeout(function(){location.reload();},5000);
                         } else {
                             swal(data.msg);
                         }
