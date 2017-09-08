@@ -92,6 +92,9 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
     }
 
     private void sendRemoteMessage(OrderEntry orderEntry) {
+        // 推送给硬件进行拣货操作(缓存)
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
+
         List<MarketSplitOrder> splitOrders = dataAccessFactory.getOrderDataAccessManager().getSplitOrders(orderEntry.getId());
         Map<String, String> messages = new HashMap<>();
         for (MarketSplitOrder splitOrder : splitOrders) {
@@ -108,7 +111,7 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
 
                 dataAccessFactory.getItemDataAccessManager().decrementItemStock(itemId, quantity);
 
-                String[] msg = decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemId, itemTemplateId, quantity);
+                String[] msg = decrementItemLocationStock(marketEntry, orderEntry.getOrderSequenceNumber(), itemId, itemTemplateId, quantity);
                 message.append(msg[0]);
 
                 locationCount += Integer.parseInt(msg[1]);
@@ -116,15 +119,13 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
             message.append(CommonUtils.toHexString(locationCount, 4, "0"));
             messages.put(orderEntry.getOrderSequenceNumber() + CommonUtils.SPLIT_UNDER_LINE + splitOrder.getSerialCode(), message.toString());
         }
-        // 推送给硬件进行拣货操作(缓存)
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
         for (Map.Entry<String, String> entry : messages.entrySet()) {
             // 发送消息给硬件做出货操作
             marketShopRemoteService.shipmentMessage(marketEntry.getPassportId(), entry.getKey(), entry.getValue());
         }
     }
 
-    private String[] decrementItemLocationStock(String orderSequenceNumber, long itemId, long itemTemplateId, int quantity) {
+    private String[] decrementItemLocationStock(MarketEntry marketEntry, String orderSequenceNumber, long itemId, long itemTemplateId, int quantity) {
         List<MarketItemLocation> itemLocations = dataAccessFactory.getItemDataAccessManager().getItemLocations(itemId);
 
         ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemTemplateId);
@@ -136,7 +137,7 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
             if (itemLocation.getStock() < quantity) { // 库存不足时 将库存清空
                 decrementStock = itemLocation.getStock();
             }
-            int result = dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation.getId(), decrementStock);
+            int result = dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation, decrementStock, ItemStockOffsetTypeEnum.BUY.getKey(), marketEntry.getPassportId(), marketEntry.getName());
             if (result <= 0) {
                 continue;
             }

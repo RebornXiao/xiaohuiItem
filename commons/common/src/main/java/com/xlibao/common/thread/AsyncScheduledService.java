@@ -44,8 +44,6 @@ public class AsyncScheduledService {
      *     远程通知的专用调度任务池 -- 即时执行
      *     <b>注意：</b>严禁重复执行同一个任务，逻辑使用时绝对不允许在任务执行方法中发起任务的重新加载
      * </pre>
-     *
-     * @param command
      */
     public static void submitImmediateRemoteNotifyTask(Runnable command) {
         submitRemoteNotifyTask(command, 0, TimeUnit.MILLISECONDS);
@@ -56,10 +54,6 @@ public class AsyncScheduledService {
      *     远程通知的专用调度任务池 -- 延迟执行
      *     <b>注意：</b>严禁重复执行同一个任务，逻辑使用时绝对不允许在任务执行方法中发起任务的重新加载
      * </pre>
-     *
-     * @param command
-     * @param delay
-     * @param timeUnit
      */
     public static void submitRemoteNotifyTask(Runnable command, long delay, TimeUnit timeUnit) {
         remoteThreadPoolExecutor.schedule(command, delay, timeUnit);

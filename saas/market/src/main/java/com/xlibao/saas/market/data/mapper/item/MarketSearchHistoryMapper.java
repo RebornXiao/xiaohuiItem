@@ -11,5 +11,5 @@ public interface MarketSearchHistoryMapper {
 
     List<String> loaderHotSearch(@Param("marketId") long marketId, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 
-    int incrementSearchTimes(@Param("marketId") long marketId, @Param("searchKey") String searchKey);
+    int incrementSearchTimes(@Param("marketId") long marketId, @Param("searchKey") String searchKey, @Param("lastSearchTime") String lastSearchTime);
 }

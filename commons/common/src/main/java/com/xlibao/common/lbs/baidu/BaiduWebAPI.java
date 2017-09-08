@@ -195,4 +195,8 @@ public class BaiduWebAPI {
 
         return HttpRequest.readBytes(requestURI.toString());
     }
+
+    public static void main(String[] args) {
+        System.out.println(geocoding("广东省广州市越秀区杨箕村"));
+    }
 }

@@ -1,6 +1,7 @@
 package com.xlibao.saas.market.data.mapper.item;
 
 import com.xlibao.common.CommonUtils;
+import com.xlibao.common.thread.AsyncScheduledService;
 import com.xlibao.market.data.model.*;
 import com.xlibao.saas.market.data.model.MarketSearchHistory;
 import com.xlibao.saas.market.service.item.ItemLockTypeEnum;
@@ -32,6 +33,8 @@ public class ItemDataAccessManager {
     private MarketPrepareActionMapper prepareActionMapper;
     @Autowired
     private MarketSearchHistoryMapper searchHistoryMapper;
+    @Autowired
+    private MarketItemLocationStockLoggerMapper itemLocationStockLoggerMapper;
 
     public int createItem(MarketItem item) {
         return itemMapper.createItem(item);
@@ -122,8 +125,21 @@ public class ItemDataAccessManager {
         return itemLocationMapper.getItemLocations(itemId);
     }
 
-    public int offsetItemLocationStock(long locationId, int decrementStock) {
-        return itemLocationMapper.offsetItemLocationStock(locationId, decrementStock);
+    public int offsetItemLocationStock(MarketItemLocation itemLocation, int decrementStock, int offsetType, long operatorPassportId, String operatorPassportName) {
+        MarketItemLocationStockLogger itemLocationStockLogger = new MarketItemLocationStockLogger();
+
+        itemLocationStockLogger.setItemId(itemLocation.getItemId());
+        itemLocationStockLogger.setLocationCode(itemLocation.getLocationCode());
+        itemLocationStockLogger.setBeforeStock(itemLocation.getStock());
+        itemLocationStockLogger.setOffsetStock(-decrementStock);
+        itemLocationStockLogger.setAfterStock(itemLocation.getStock() - decrementStock);
+        itemLocationStockLogger.setOperationType(offsetType);
+        itemLocationStockLogger.setOperatorPassportId(operatorPassportId);
+        itemLocationStockLogger.setOperatorPassportName(operatorPassportName);
+
+        createItemLocationStockLogger(itemLocationStockLogger);
+
+        return itemLocationMapper.offsetItemLocationStock(itemLocation.getId(), decrementStock);
     }
 
     public int removeItemLocation(long id) {
@@ -191,7 +207,7 @@ public class ItemDataAccessManager {
     }
 
     public int incrementSearchTimes(long marketId, String searchKey) {
-        return searchHistoryMapper.incrementSearchTimes(marketId, searchKey);
+        return searchHistoryMapper.incrementSearchTimes(marketId, searchKey, CommonUtils.nowFormat());
     }
 
     public void createHistorySearch(long marketId, String searchKey) {
@@ -200,5 +216,10 @@ public class ItemDataAccessManager {
         searchHistory.setMarketId(marketId);
         searchHistory.setK(searchKey);
         searchHistoryMapper.createHistorySearch(searchHistory);
+    }
+
+    private void createItemLocationStockLogger(MarketItemLocationStockLogger itemLocationStockLogger) {
+        Runnable runnable = () -> itemLocationStockLoggerMapper.createLocationStockLogger(itemLocationStockLogger);
+        AsyncScheduledService.submitImmediateSaveTask(runnable);
     }
 }

@@ -37,7 +37,7 @@ public class OrderOpenApiController {
      *     每个序号有效期为5分钟，5分钟如果未完成下单操作，那么多次请求均为同一序号；
      *     若5分钟内下单后重新请求，则生成新的序号，该过程主要保护用户不会进行重复下单。
      *
-     *     <b>访问地址：</b>http://domainName/market/order/openapi/prepareCreateOrder
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/prepareCreateOrder.do
      *     <b>访问方式：</b>GET/POST 推荐使用POST
      *
      *     <b>参数：</b>
@@ -58,7 +58,7 @@ public class OrderOpenApiController {
      * <pre>
      *     <b>生成订单</b>
      *
-     *     <b>访问地址：</b>http://domainName/market/order/openapi/generateOrder
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/generateOrder.do
      *     <b>访问方式：</b>GET/POST 推荐使用POST
      *
      *     <b>参数：</b>
@@ -94,7 +94,7 @@ public class OrderOpenApiController {
      *
      *     该方法仅作为供应链的支付入口，具体的支付过程实际由支付中心进行。
      *
-     *     <b>访问地址：</b>http://domainName/market/order/openapi/paymentOrder
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/paymentOrder.do
      *     <b>访问方式：</b>GET/POST 推荐使用POST
      *
      *     <b>参数：</b>
@@ -156,7 +156,7 @@ public class OrderOpenApiController {
      * <pre>
      *     <b>修改收货数据</b>
      *
-     *     <b>访问地址：</b>http://domainName/market/order/modifyReceivingData
+     *     <b>访问地址：</b>http://domainName/market/order/modifyReceivingData.do
      *     <b>访问方式：</b>GET/POST 推荐使用POST
      *
      *     <b>参数：</b>
@@ -183,7 +183,7 @@ public class OrderOpenApiController {
      * <pre>
      *     <b>接单</b>
      *
-     *     <b>访问地址：</b>http://domainName/market/order/openapi/acceptOrder
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/acceptOrder.do
      *     <b>访问方式：</b>GET/POST 推荐使用POST
      * </pre>
      */
@@ -197,7 +197,7 @@ public class OrderOpenApiController {
      * <pre>
      *     <b>退款</b>
      *
-     *     <b>访问地址：</b>http://domainName/market/order/openapi/refundOrder
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/refundOrder.do
      *     <b>访问方式：</b>GET/POST 推荐使用POST
      *
      *     <b>参数：</b>
@@ -213,5 +213,27 @@ public class OrderOpenApiController {
     @RequestMapping(value = "refundOrder")
     public JSONObject refundOrder() {
         return orderService.refundOrder();
+    }
+
+    /**
+     * <pre>
+     *     <b>寻找订单的容器数据</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/findContainerData.do
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>passportId</b> - long 通行证ID，必填参数。
+     *          <b>orderSequenceNumber</b> - String 订单序号
+     *
+     *     <b>返回：</b>
+     *          <b>mark</b> - String 文字提示描述内容
+     *          <b>containerData</b> - JSONArray 货柜数据，每个元素为String；即：货柜编号
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "findContainerData")
+    public JSONObject findContainerData() {
+        return orderService.findContainerData();
     }
 }

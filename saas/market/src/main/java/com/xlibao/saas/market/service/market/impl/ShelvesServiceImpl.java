@@ -14,6 +14,7 @@ import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemUnit;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.service.item.ItemStatusEnum;
+import com.xlibao.saas.market.service.item.ItemStockOffsetTypeEnum;
 import com.xlibao.saas.market.service.item.MarketItemErrorCodeEnum;
 import com.xlibao.saas.market.service.item.PrepareActionStatusEnum;
 import com.xlibao.saas.market.service.market.*;
@@ -293,7 +294,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             throw PlatformErrorCodeEnum.DB_ERROR.throwException("[0001]更新商品库存失败");
         }
         // 需减少位置上的数量
-        result = dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation.getId(), offShelvesQuantity);
+        result = dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation, offShelvesQuantity, ItemStockOffsetTypeEnum.OFF_SHELVES.getKey(), passportId, "");
         if (result <= 0) {
             throw PlatformErrorCodeEnum.DB_ERROR.throwException("[0002]更新商品库存失败");
         }
@@ -348,7 +349,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
                     throw MarketItemErrorCodeEnum.ITEM_LOCATION_ERROR.throwException("位置[" + location + "]上存在条码为[" + itemTemplate.getBarcode() + "]的商品[" + itemTemplate.getName() + "]");
                 }
                 // 需增加位置上的数量
-                dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation.getId(), -onShelvesQuantity);
+                dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation, -onShelvesQuantity, ItemStockOffsetTypeEnum.ON_SHELVES.getKey(), passportId, "");
                 // 完成了预操作行为
                 completePrepareActionTask(marketId, location, passportId, itemTemplate.getId(), onShelvesQuantity);
                 return success();

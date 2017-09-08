@@ -918,7 +918,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         String refundReason = getUTF("refundReason", "");
 
         OrderEntry orderEntry = getOrder(orderSequenceNumber);
-        if (matchStatusSet.contains(String.valueOf(orderEntry.getStatus()))) {
+        if (!matchStatusSet.contains(String.valueOf(orderEntry.getStatus()))) {
             // 必须处于支付状态才能进行退款
             return OrderErrorCodeEnum.CANNOT_REFUND.response("当前状态不能执行退款操作，状态值：" + orderEntry.getStatus());
         }
