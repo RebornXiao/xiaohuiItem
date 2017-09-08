@@ -12,15 +12,15 @@
                         <h4 class="page-title "><b>屏幕配置详情</b></h4>
                     </div>
                 </div>
-                <button type="button" id="advertReturnBtn" class="btn btn-primary" style="padding-right: 20px;padding-left: 20px" onclick="window.location='${base}/advert/adverts/screen.do'"><i class="fa fa-backward"></i> 返回列表</button>
+                <button type="button" id="advertReturnBtn" class="btn btn-primary" style="padding-right: 20px;padding-left: 20px" onclick="window.location='${base}/advert/screens.do'"><i class="fa fa-backward"></i> 返回列表</button>
             </div>
             <div class="row">
                 <div class="col-sm-12">
                     <div class="advert_container">
                         <div>
                             <ol class="breadcrumb pull-right">
-                                <li><a href="#" data-toggle="modal" data-target="#editButton">编辑</a></li>
-                                <li><a href="#" data-toggle="modal" data-target="#deleteButton">删除</a></li>
+                                <#--<li><a href="#" data-toggle="modal" data-target="#editButton">编辑</a></li>-->
+                                <#--<li><a href="#" data-toggle="modal" data-target="#deleteButton">删除</a></li>-->
                             </ol>
                             <h5 class="page-title" style="padding-top: 20px"><b>屏幕信息</b></h5>
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
@@ -89,10 +89,10 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <#if (advertList?size > 0)>
-                                        <#list advertList as advert>
+                                    <#if (adverts?size > 0)>
+                                        <#list adverts as advert>
                                     <tr>
-                                        <td>${advert_index +1}</td>
+                                        <td>${advert.playOrder}</td>
                                         <td>${advert.title}</td>
                                         <td>${advert.timeSize}</td>
                                     </tr>

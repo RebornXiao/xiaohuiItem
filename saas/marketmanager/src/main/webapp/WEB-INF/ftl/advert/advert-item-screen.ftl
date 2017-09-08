@@ -22,7 +22,7 @@
                 <form class="form-inline" role="form" action="${base}/advert/screens.do">
                     <div class="form-group m-l-15">
                         <label for="screenNumber">屏幕编号：</label>
-                        <input type="text" class="form-control" id="code" name="code" placeholder="输入编号">
+                        <input type="text" class="form-control" id="code" name="code" value="${code}" placeholder="输入编号">
                     </div>
                     <div class="form-group m-l-15">
                         <label for="storeInfo">门店信息：</label>
@@ -116,12 +116,11 @@
                 "marketID":$("#marketID2").val(),
                 "marketName":$("#marketID2").find("option:selected").text(),
                 "size":$("#size").val(),
-                "code":$("#code").val(),
+                "code":$("#aCode").val(),
                 "mac":$("#mac").val(),
                 "requireTime":$("#requireTime").val(),
                 "screenRemark":$("#screenRemark").val(),
             };
-
 
             $.ajax({
                 type: "POST",
@@ -130,9 +129,11 @@
                 data: screen,
                 success: function (result) {
                     if ('yes' == result) {
-                        alert("添加成功");
+                        swal("提示", "添加成功", "success");
+                        location.href = "${base}/advert/screens.do";
                     } else {
-                        alert("添加失败");
+                        swal("提示", "添加失败", "success");
+                        location.href = "${base}/advert/screens.do";
                     }
                 },
                 error: function (result) {
@@ -155,6 +156,7 @@
                         //重新刷新
                         if(data.code == "0") {
                             swal("提示", "删除成功", "success");
+                            location.href = "${base}/advert/screens.do";
                         } else {
                             swal(data.msg);
                         }
@@ -196,6 +198,10 @@
                                 </#list>
                             </#if>
                             </select>
+                        </div>
+                        <div class="form-group" style="width: 100%">
+                            <label for="modalScreenLv">屏幕编号：</label>
+                            <input type="text" class="form-control" id="aCode" name="aCode" placeholder="屏幕编号">
                         </div>
                         <div class="form-group" style="width: 100%">
                             <label for="modalScreenLv">屏幕分辨率：</label>
