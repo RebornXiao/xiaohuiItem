@@ -86,8 +86,8 @@ public class AdvertManagerController extends BaseController {
      * @param map
      * @return
      */
-    @RequestMapping("/godvert")
-    public String goAdvertDetail(ModelMap map){
+    @RequestMapping("/goAdvert")
+    public String getAdvertDetail(ModelMap map){
         JSONObject json =  adverManagerService.getAdvertByID();
         JSONObject response = json.getJSONObject("response");
         JSONArray adverts = response.getJSONArray("data");
