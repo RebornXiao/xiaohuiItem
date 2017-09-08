@@ -101,8 +101,8 @@ public class ItemDataAccessManager {
         return typeMapper.add(type);
     }
 
-    public void updateItemType(ItemType type) {
-        typeMapper.update(type);
+    public int updateItemType(ItemType type) {
+        return typeMapper.updateItemType(type);
     }
 
     public List<ItemUnit> loaderItemUnits(ItemStatusEnum statusEnum) {
@@ -196,5 +196,9 @@ public class ItemDataAccessManager {
 
     public int updateTemplateImgUrl(long itemId, String itemImgUrl) {
         return templateMapper.updateTemplateImgUrl(itemId, itemImgUrl);
+    }
+
+    public int updateItemTypeIconUrl(long itemTypeId, String itemTypeIconUrl) {
+        return typeMapper.updateItemTypeIconUrl(itemTypeId, itemTypeIconUrl);
     }
 }

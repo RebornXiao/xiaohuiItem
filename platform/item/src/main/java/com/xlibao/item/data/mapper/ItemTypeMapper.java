@@ -22,10 +22,6 @@ public interface ItemTypeMapper {
     @SelectKey(before=false,keyProperty="type.id",resultType=Long.class,statementType= StatementType.STATEMENT,statement="SELECT LAST_INSERT_ID() AS id")
     Long add(@Param("type") ItemType type);
 
-    @Update("update item_type SET title = #{type.title}, parent_id = #{type.parentId}, status = #{type.status}, sort = #{type.sort}, top = #{type.top}, icon = #{type.icon}, image = #{type.image}  where id = #{type.id}")
-    void update(@Param("type") ItemType type);
-
-
 
     /** 根据 父分类 ID 获取数量 */
     Integer itemTypesCount(@Param("parentItemTypeId") long parentItemTypeId);
@@ -44,4 +40,7 @@ public interface ItemTypeMapper {
 
     void updateItemTypeSort(@Param("id") long id, @Param("sort") int sort);
 
+    int updateItemTypeIconUrl(@Param("id") long id, @Param("icon") String iconUrl);
+
+    int updateItemType(@Param("type") ItemType type);
 }

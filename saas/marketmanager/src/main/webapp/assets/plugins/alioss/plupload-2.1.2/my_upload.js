@@ -17,6 +17,12 @@ now = timestamp = Date.parse(new Date()) / 1000;
 var upImgName = "upimg";//图片预览控件
 var serverUrl = './php/get.php';//拿key上传路径
 var upCallback = null;//回调方法
+//是否有上传图片，默认没有，如果有选择过图片，则为true
+var upImgBool = false;
+//原来是否有图片
+var srcImgBool = false;
+//是否执行过清除图片
+var clearImgBool = false;
 
 // function send_request()
 // {
@@ -173,6 +179,18 @@ function set_upload_param(up, filename)
 
 }
 
+//清除图片
+function clear_img() {
+    //是传过
+    upImgBool = false;
+    //删除过
+    if(srcImgBool) {
+        clearImgBool = true;
+    }
+    //清空图片
+    $("#" + upImgName).attr("src", "");
+}
+
 function clacImgZoomParam(maxWidth, maxHeight, width, height) {
 
     var param = {top: 0, left: 0, width: width, height: height};
@@ -226,6 +244,9 @@ var uploader = new plupload.Uploader({
             });
             var file = files[0];
 
+            //上传过图片
+            upImgBool = true;
+
             var preloader = new mOxie.Image();
             preloader.onload = function () {
                 var imgsrc = preloader.type == 'image/jpeg' ? preloader.getAsDataURL('image/jpeg', 80) : preloader.getAsDataURL(); //得到图片src,实质为一个base64编码的数据
@@ -237,7 +258,8 @@ var uploader = new plupload.Uploader({
                     "width": rect.width + "px",
                     "height": rect.height + "px",
                     "marginTop": rect.top + "px",
-                    "marginLeft": rect.left + "px"
+                    "marginLeft": rect.left + "px",
+                    "border": 0,
                 });
                 preloader.destroy();
                 preloader = null;

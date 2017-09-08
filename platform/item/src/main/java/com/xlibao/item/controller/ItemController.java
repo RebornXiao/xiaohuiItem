@@ -202,4 +202,16 @@ public class ItemController {
         return itemService.itemUpdateImgUrl();
     }
 
+
+    @ResponseBody
+    @RequestMapping(value = "/itemTypeEditSave", method = RequestMethod.POST)
+    public JSONObject itemTypeEditSave() {
+        return itemService.itemTypeEditSave();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "/itemTypeUpdateIconUrl", method = RequestMethod.POST)
+    public JSONObject itemTypeUpdateIconUrl() {
+        return itemService.itemTypeUpdateIconUrl();
+    }
 }

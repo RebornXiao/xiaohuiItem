@@ -130,7 +130,7 @@ public class ItemManagerController extends BaseController {
     @RequestMapping("/itemEditSave")
     public JSONObject itemEditSave() {
         Map map = getMapParameter();
-        String url = ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/itemEditSave.do";
+        String url = ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/itemEditSave.do";
         String json = HttpRequest.post(url, map);
         return JSONObject.parseObject(json);
     }
@@ -139,7 +139,7 @@ public class ItemManagerController extends BaseController {
     @RequestMapping("/itemUpdateImgUrl")
     public JSONObject itemUpdateImgUrl() {
         Map map = getMapParameter();
-        String url = ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/itemUpdateImgUrl.do";
+        String url = ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/itemUpdateImgUrl.do";
         String json = HttpRequest.post(url, map);
         return JSONObject.parseObject(json);
     }
@@ -211,6 +211,25 @@ public class ItemManagerController extends BaseController {
         }
 
         return jumpPage(map, LogicConfig.FTL_ITEM_TYPE_EDIT, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/itemTypeEditSave")
+    public JSONObject itemTypeEditSave() {
+        Map map = getMapParameter();
+        String url = ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/itemTypeEditSave.do";
+        String json = HttpRequest.post(url, map);
+        return JSONObject.parseObject(json);
+    }
+
+    @ResponseBody
+    @RequestMapping("/itemTypeUpdateIconUrl")
+    public JSONObject itemTypeUpdateIconUrl() {
+        Map map = getMapParameter();
+        String url = ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/itemTypeUpdateIconUrl.do";
+        String json = HttpRequest.post(url, map);
+        return JSONObject.parseObject(json);
     }
 
     @RequestMapping("/itemTypeSort")
@@ -295,7 +314,7 @@ public class ItemManagerController extends BaseController {
         if(itemTypeId == 0) {
             return fail("该分类下没有商品");
         }
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/getItemTemplateIdAndNames.do?itemTypeId=" + itemTypeId);
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/getItemTemplateIdAndNames.do?itemTypeId=" + itemTypeId);
         JSONObject response = parseObject(json);
 
         if(response.getIntValue("code") == 0) {

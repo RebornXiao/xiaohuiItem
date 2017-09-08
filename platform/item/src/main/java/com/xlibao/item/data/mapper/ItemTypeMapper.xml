@@ -54,4 +54,12 @@
     <update id="updateItemTypeSort">
         update item_type set sort = #{sort} where id = #{id}
     </update>
+
+    <update id="updateItemTypeIconUrl">
+        update item_type set icon = #{icon}  where id = #{id}
+    </update>
+
+    <update id="updateItemType">
+        update item_type set icon = #{type.icon} , parent_id = #{type.parentId} , title = #{type.title} where id = #{type.id}
+    </update>
 </mapper>
