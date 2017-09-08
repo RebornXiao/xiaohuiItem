@@ -243,7 +243,7 @@
         $("#advertInfoTable").find('button[id=lookBtn]').each(function () {
             var that = this;
             $(this).on('click', function () {
-                location.href = "${base}/advert/detail.do?advertID="+$(that).attr("data_id");
+                location.href = "${base}/advert/goAdvert.do?advertID="+$(that).attr("data_id");
             });
         });
     </#if>
@@ -294,7 +294,6 @@
         </div>
     </div>
 </div>
-
 <!--编辑弹窗-->
 <div class="modal fade" id="editModel" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
