@@ -283,7 +283,7 @@ public class AdvertManagerController extends BaseController {
         JSONObject responseAS = jsonAS.getJSONObject("response");
         JSONArray advertScreen = responseAS.getJSONArray("data");
         if(advertScreen.size()>0)
-            map.put("advert",adverts.get(0));
+            map.put("advertScreen",adverts.get(0));
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_PLAYDETAIL, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
     /**
