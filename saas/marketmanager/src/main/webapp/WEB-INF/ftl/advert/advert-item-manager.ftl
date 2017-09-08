@@ -257,7 +257,6 @@
         });
     });
 </script>
-
 <!--编辑弹窗-->
 <div class="modal fade" id="editModel" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
