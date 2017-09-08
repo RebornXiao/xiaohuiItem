@@ -110,14 +110,14 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
     @Override
     public JSONObject searchScreenTemplatePage(){
         String code = getUTF("code","");
-        int marketID = getIntParameter("marketID",-1);
+        String marketID = getUTF("marketID","");
         String size = getUTF("size","");
         int pageSize = getPageSize();
         int pageIndex = getIntParameter("pageIndex", 1);
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("code", code);
-        parameters.put("marketID", String.valueOf(marketID));
+        parameters.put("marketID", marketID);
         parameters.put("size", size);
         parameters.put("pageSize", String.valueOf(pageSize));
         parameters.put("pageIndex", String.valueOf(pageIndex));
@@ -131,7 +131,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
     @Override
     public JSONObject addScreen() {
 
-        int marketId =  getIntParameter("marketId",0);
+        String marketId =  getUTF("marketID","");
         String marketName =  getUTF("marketName","");
         String requireTime =  getUTF("requireTime","");
         String size =  getUTF("size","");
@@ -156,6 +156,18 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
     }
 
     @Override
+    public JSONObject getScreenByMac() {
+        String  mac =  getUTF("mac","");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("mac", mac);
+
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getScreenInfoFromMAC.do";
+        JSONObject response = executor(url, parameters);
+
+        return response;
+    }
+
+    @Override
     public JSONObject delScreenByID() {
         int screenID =  getIntParameter("screenID",0);
         Map<String, String> parameters = new HashMap<>();
@@ -166,6 +178,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
 
         return response;
     }
+
 
     @Override
     public JSONObject searchScreenAdvertTemplatePage(){
@@ -262,6 +275,34 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("advertID", String.valueOf(advertID));
 
         String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/deleteAdvertInfoFromID.do";
+        JSONObject response = executor(url, parameters);
+
+        return response;
+    }
+    @Override
+    public JSONObject getScreenList(){
+        int marketId =  getIntParameter("marketId",-1);
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("marketId", String.valueOf(marketId));
+
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAllScreenInfo.do";
+        JSONObject response = executor(url, parameters);
+
+        return response;
+    }
+
+
+    @Override
+    public JSONObject getAdvertScreenByID(){
+        String screenID =  getUTF("screenID","-1");
+        String advertID =  getUTF("advertID","-1");
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("screenID", screenID);
+        parameters.put("advertID", advertID);
+
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAdvertInfoFromID.do";
         JSONObject response = executor(url, parameters);
 
         return response;
