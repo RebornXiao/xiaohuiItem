@@ -124,7 +124,7 @@
     </update>
 
     <update id="correctOrderPrice">
-        update order_entry set actual_price = #{actualPrice}, total_price = #{totalPrice}, discount_price = #{discountPrice}, distribution_fee = #{distributionFee}, deliver_type = #{deliveyType} where id = #{orderId}
+        update order_entry set actual_price = #{actualPrice}, total_price = #{totalPrice}, discount_price = #{discountPrice}, distribution_fee = #{distributionFee}, deliver_type = #{deliverType} where id = #{orderId}
     </update>
 
     <update id="fillDailyRowSort">
@@ -172,6 +172,6 @@
     </update>
 
     <update id="applyRefund">
-        update order_entry set status = #{targetStatus}, detail = #{refundReason} where id = #{orderId} and status in (${matchStatusSet})
+        update order_entry set status = #{refundStatus}, detail = #{refundReason} where id = #{orderId} and status in (${matchStatusSet})
     </update>
 </mapper>

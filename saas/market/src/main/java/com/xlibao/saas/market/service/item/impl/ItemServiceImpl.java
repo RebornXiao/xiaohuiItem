@@ -675,15 +675,16 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
     private void incrementSearchTimes(long marketId, String searchKey) {
         Runnable runnable = () -> {
-            int result = dataAccessFactory.getItemDataAccessManager().incrementSearchTimes(marketId, searchKey);
-            if (result <= 0) {
-                try {
+            try {
+                int result = dataAccessFactory.getItemDataAccessManager().incrementSearchTimes(marketId, searchKey);
+                if (result <= 0) {
                     dataAccessFactory.getItemDataAccessManager().createHistorySearch(marketId, searchKey);
-                } catch (Exception ex) {
-                    dataAccessFactory.getItemDataAccessManager().incrementSearchTimes(marketId, searchKey);
                 }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                dataAccessFactory.getItemDataAccessManager().incrementSearchTimes(marketId, searchKey);
             }
         };
-        AsyncScheduledService.submitImmediateCommonTask(runnable);
+        AsyncScheduledService.submitImmediateSaveTask(runnable);
     }
 }

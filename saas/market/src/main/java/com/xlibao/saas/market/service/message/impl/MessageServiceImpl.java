@@ -9,6 +9,7 @@ import com.xlibao.common.constant.order.DeliverTypeEnum;
 import com.xlibao.common.constant.order.OrderStatusEnum;
 import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.exception.code.OrderErrorCodeEnum;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.saas.market.data.DataAccessFactory;
@@ -179,7 +180,9 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         String orderSequenceNumber = getUTF("orderSequenceNumber");
 
         OrderEntry orderEntry = checkOrderAdministrators(orderSequenceNumber, passportId);
-
+        if (orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() && orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() && orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
+            throw OrderErrorCodeEnum.REFUND_FAIL.throwException("当前状态不能进行退款操作");
+        }
         MarketOrderStatusLogger orderStatusLogger = dataAccessFactory.getOrderDataAccessManager().getOrderStatusLogger(orderSequenceNumber, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_ARRIVE);
         if (orderStatusLogger == null) { // 记录请求取货状态
             dataAccessFactory.getOrderDataAccessManager().createOrderStatusLogger(orderSequenceNumber, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_ARRIVE, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), System.currentTimeMillis());

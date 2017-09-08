@@ -24,12 +24,14 @@ import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import com.xlibao.metadata.passport.Passport;
 import com.xlibao.saas.market.data.DataAccessFactory;
+import com.xlibao.saas.market.data.model.MarketOrderProperties;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.item.MarketItemErrorCodeEnum;
 import com.xlibao.saas.market.service.order.MarketOrderErrorCodeEnum;
 import com.xlibao.saas.market.service.order.OrderEventListenerManager;
 import com.xlibao.saas.market.service.order.OrderService;
 import com.xlibao.saas.market.service.order.StatusEnterEnum;
+import com.xlibao.saas.market.service.order.properties.PropertiesKeyEnum;
 import com.xlibao.saas.market.service.support.ItemSupport;
 import com.xlibao.saas.market.service.support.remote.MarketShopRemoteService;
 import com.xlibao.saas.market.service.support.remote.OrderRemoteService;
@@ -226,7 +228,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if (orderEntry == null) {
             return OrderErrorCodeEnum.NOT_FOUND_ORDER.response();
         }
-        String matchStatusSet = OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DELIVER + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey();
+        String matchStatusSet = OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey();
         // 申请退款
         PaymentRemoteService.applyRefund(passportId, orderSequenceNumber, matchStatusSet, title, content);
 
@@ -235,6 +237,40 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         marketShopRemoteService.refundMessage(marketEntry.getPassportId(), orderSequenceNumber);
         // 执行退款业务
         return success("已发起退货申请，请稍后刷新订单状态");
+    }
+
+    @Override
+    public JSONObject findContainerData() {
+        long passportId = getPassportId();
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+        if (orderEntry == null) {
+            return OrderErrorCodeEnum.NOT_FOUND_ORDER.response();
+        }
+        if (Long.parseLong(orderEntry.getPartnerUserId()) != passportId) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+        }
+
+        JSONObject response = new JSONObject();
+        MarketOrderProperties orderContainerSetProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.CONTAINER_SET.getKey());
+        if (orderContainerSetProperties == null) {
+            orderContainerSetProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getKey());
+        }
+        if (orderContainerSetProperties == null) {
+            // return MarketOrderErrorCodeEnum.ORDER_STATUS_ERROR.response();
+        }
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
+        // TODO 模拟数据
+        response.put("mark", "请从" + marketEntry.getName() + "以下出货口取走商品");
+
+        JSONArray containerData = new JSONArray();
+        containerData.add("A106");
+        containerData.add("A108");
+        containerData.add("A206");
+
+        response.put("containerData", containerData);
+        return success(response);
     }
 
     private String orderStatusSet(int roleType, int statusEnter) {
@@ -335,7 +371,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         JSONObject orderMsg = new JSONObject();
 
         int orderStatus = orderEntry.getStatus();
-        String statusValue = OrderStatusEnum.getOrderStatusEnum(orderStatus).getValue();
+        String statusValue = orderStatus == OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey() ? "用户退款" : OrderStatusEnum.getOrderStatusEnum(orderStatus).getValue();
 
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
         orderMsg.put("marketId", marketEntry.getId());
@@ -351,7 +387,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         orderMsg.put("orderStatus", orderStatus);
         orderMsg.put("statusValue", statusValue);
 
-        orderMsg.put("deliverTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "配送进度" : "自提进度");
+        String deliverTitle = (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_REFUND.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM_REFUND.getKey())
+                ? "退款进度" : (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "配送进度" : "自提进度");
+
+        orderMsg.put("deliverTitle", deliverTitle);
         orderMsg.put("deliverResult", orderStatusTitle(orderEntry.getDeliverType(), orderEntry.getStatus()));
 
         // 实收费用
