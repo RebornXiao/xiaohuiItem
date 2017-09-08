@@ -182,18 +182,28 @@ public class AdvertManagerController extends BaseController {
      */
     @RequestMapping(value = "/getScreenBy")
     public String getScreenBy(ModelMap map){
+        String screenID ="-1";
+        JSONObject screenJson =  adverManagerService.getScreenByMac();
 
-        JSONObject adverJson =  adverManagerService.getScreenByMac();
-        if (adverJson.getIntValue("code") == 0) {
-            JSONObject jsonObject = adverJson.getJSONObject("response");
+        if (screenJson.getIntValue("code") == 0) {
+            JSONObject jsonObject = screenJson.getJSONObject("response");
             JSONArray jsonArray = jsonObject.getJSONArray("data");
             if (jsonArray.size()>0){
-                JSONObject screenJson = jsonArray.getJSONObject(0);
-                map.put("screen",screenJson);
+                JSONObject screen = jsonArray.getJSONObject(0);
+                screenID = screen.getString("screenID");
+                map.put("screen",screen);
             }else {
                 map.put("screen","");
             }
         }
+
+        JSONObject adverJson =  adverManagerService.getAdvertByscreenID(screenID);
+        if (adverJson.getIntValue("code") == 0) {
+            JSONObject jsonObject = adverJson.getJSONObject("response");
+            JSONArray jsonArray = jsonObject.getJSONArray("data");
+            map.put("adverts",jsonArray);
+        }
+        //
 
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_SCREENCONFIG, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }

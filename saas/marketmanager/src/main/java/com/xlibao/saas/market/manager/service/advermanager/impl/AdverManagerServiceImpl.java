@@ -109,9 +109,9 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
 
     @Override
     public JSONObject searchScreenTemplatePage(){
-        String code = getUTF("code","");
-        String marketID = getUTF("marketID","");
-        String size = getUTF("size","");
+        String code = getUTF("code",null);
+        String marketID = getUTF("marketID",null);
+        String size = getUTF("size",null);
         int pageSize = getPageSize();
         int pageIndex = getIntParameter("pageIndex", 1);
 
@@ -303,6 +303,19 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("advertID", advertID);
 
         String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAdvertInfoFromID.do";
+        JSONObject response = executor(url, parameters);
+
+        return response;
+    }
+
+
+    @Override
+    public JSONObject getAdvertByscreenID(String screenID){
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("screenID", screenID);
+
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAdvertInfoFromScreenID.do";
         JSONObject response = executor(url, parameters);
 
         return response;

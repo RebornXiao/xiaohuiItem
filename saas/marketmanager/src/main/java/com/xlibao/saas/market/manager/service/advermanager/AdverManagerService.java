@@ -96,4 +96,10 @@ public interface AdverManagerService {
      * @return
      */
     JSONObject getAdvertScreenByID();
+
+    /**
+     * 根据屏幕ID获取广告
+     * @return
+     */
+    JSONObject getAdvertByscreenID(String screenID);
 }
