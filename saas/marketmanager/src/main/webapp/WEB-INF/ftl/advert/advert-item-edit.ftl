@@ -130,11 +130,11 @@
 //             var up_remark = $("#modalAdvertRemark").val();
 //             var path = $("#modalAdvertFile").val();
 //                 path = path.substring(path.lastIndexOf("\\")+1,path.length);//文件名
-            var form = new FormData(document.getElementById("updateForm"));
+            var form = new FormData(document.getElementById("updateForm"));//表数据
             console.log(form);
             $.ajax({
                 type: "POST",
-            <#--url:"${base}/advert/addAdvert.do?title=" +up_title+ "&timeSize=" +up_time+ "&remark=" +up_remark+ "&file=" +path,-->
+                //url:"${base}/advert/addAdvert.do?title=" +up_title+ "&timeSize=" +up_time+ "&remark=" +up_remark+ "&file=" +path,
                 url:"${base}/advert/addAdvert.do",
                 data:form,
                 // 告诉jQuery不要去处理发送的数据
@@ -199,7 +199,9 @@
                     $.post("${base}/advert/delAdvert.do?advertID=" + $(that).attr("data_id"), function(data) {
                         //重新刷新
                         if(data.code == "0") {
+                            $("#deleModel").modal('hide');
                             swal("提示", "删除成功", "success");
+                            setTimeout(function(){location.reload();},5000);
                         } else {
                             swal(data.msg);
                         }
@@ -225,7 +227,9 @@
                     $.post("${base}/advert/updateAdvert.do?title="+e_title+"&timeSize="+e_time+"&remark="+e_remark+"&advertID=" + $(that).attr("data_id"), function(data) {
                         //重新刷新
                         if(data.code == "0") {
+                            $("#editModel").modal('hide');
                             swal("提示", "编辑成功", "success");
+                            setTimeout(function(){location.reload();},5000);
                         } else {
                             swal(data.msg);
                         }
@@ -234,9 +238,15 @@
             });
         });
     </#if>
-        $("#lookBtn").on('click', function () {//广告详情
-            location.href = "${base}/advert/detail.do";
+        //查看
+    <#if (advertList?size > 0)>
+        $("#advertInfoTable").find('button[id=lookBtn]').each(function () {
+            var that = this;
+            $(this).on('click', function () {
+                location.href = "${base}/advert/detail.do?advertID="+$(that).attr("data_id");
+            });
         });
+    </#if>
     });
 </script>
 

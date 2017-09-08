@@ -32,28 +32,30 @@
                                         <col class="col-xs-3">
                                         <col class="col-xs-3">
                                     </colgroup>
-                                    <tbody>
-                                    <tr>
-                                        <td style="background-color: #f9f9f9">广告标题</td>
-                                        <td>xxx的广告</td>
-                                        <td style="background-color: #f9f9f9">广告状态</td>
-                                        <td>待投放</td>
-                                    </tr>
-                                    </tbody>
-                                    <tbody>
-                                    <tr>
-                                        <td style="background-color: #f9f9f9">广告时长</td>
-                                        <td>30s</td>
-                                        <td style="background-color: #f9f9f9">更新时间</td>
-                                        <td>2017-08-22 10:47:22</td>
-                                    </tr>
-                                    </tbody>
-                                    <tbody>
-                                    <tr>
-                                        <td style="background-color: #f9f9f9">广告备注</td>
-                                        <td colspan="3"></td>
-                                    </tr>
-                                    </tbody>
+                                    <#if adver?exists>
+                                        <tbody>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">广告标题</td>
+                                            <td>${adver.title}</td>
+                                            <td style="background-color: #f9f9f9">广告状态</td>
+                                            <td>${adver.isDelete}</td>
+                                        </tr>
+                                        </tbody>
+                                        <tbody>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">广告时长</td>
+                                            <td>${adver.timeSize}</td>
+                                            <td style="background-color: #f9f9f9">更新时间</td>
+                                            <td>${adver.createTime}</td>
+                                        </tr>
+                                        </tbody>
+                                        <tbody>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">广告备注</td>
+                                            <td colspan="3">${adver.remark}</td>
+                                        </tr>
+                                        </tbody>
+                                    </#if>
                                 </table>
                             </div>
                         </div>
