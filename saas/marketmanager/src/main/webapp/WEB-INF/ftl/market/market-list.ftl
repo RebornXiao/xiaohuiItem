@@ -10,6 +10,47 @@
 <script src="${res}/assets/plugins/bootstrap-select2/zh-CN.js"></script>
 
 
+<div class="modal fade" id="statusDialog" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="upItemTitle">店铺状态修改</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-10">
+                        <p id="statusMarketName"></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                <div class="col-sm-10">
+                    <select class="form-control" id="updateStatusSelect">
+                        <option data_id="1">正常</option>
+                        <option data_id="3">维护</option>
+                        <option data_id="2">关店</option>
+                        <option data_id="0">无效</option>
+                    </select>
+                </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <button id="statusOkBtn" type="button" class="btn btn-primary"
+                                data-dismiss="modal">确定
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="content-page">
     <!-- Start content -->
     <div class="content">
@@ -48,23 +89,35 @@
                             <div class="form-group m-l-15">
                                 <label for="exampleInputName2">店铺状态：</label>
                                 <select class="form-control" id="statusSelect" style="width:150px">
-                                    <option data_id="-1" <#if status?exists && status == -1>selected</#if> >全部</option>
-                                    <option data_id="1" <#if status?exists && status == 1>selected</#if> >正常</option>
-                                    <option data_id="3" <#if status?exists && status == 3>selected</#if> >维护</option>
-                                    <option data_id="2" <#if status?exists && status == 2>selected</#if> >关店</option>
-                                    <option data_id="0" <#if status?exists && status == 0>selected</#if> >无效</option>
+                                    <option data_id="-1" <#if status?exists && status == -1>selected</#if>>全部</option>
+                                    <option data_id="1" <#if status?exists && status == 1>selected</#if>>正常</option>
+                                    <option data_id="3" <#if status?exists && status == 3>selected</#if>>维护</option>
+                                    <option data_id="2" <#if status?exists && status == 2>selected</#if>>关店</option>
+                                    <option data_id="0" <#if status?exists && status == 0>selected</#if>>无效</option>
                                 </select>
                             </div>
 
                             <div class="form-group m-l-15">
                                 <label for="exampleInputName2">店铺配送方式：</label>
                                 <select class="form-control" id="deliveryModeSelect" style="width:150px">
-                                    <option data_id="-1" <#if deliveryMode?exists && deliveryMode == -1>selected</#if> >全部</option>
-                                    <option data_id="1" <#if deliveryMode?exists && deliveryMode == 1>selected</#if> >仅自提</option>
-                                    <option data_id="2" <#if deliveryMode?exists && deliveryMode == 2>selected</#if> >仅送货</option>
-                                    <option data_id="3" <#if deliveryMode?exists && deliveryMode == 3>selected</#if> >可自提也可送货</option>
-                                    <option data_id="4" <#if deliveryMode?exists && deliveryMode == 4>selected</#if> >AI(智能)</option>
-                                    <option data_id="5" <#if deliveryMode?exists && deliveryMode == 5>selected</#if> >可自提也可AI配送</option>
+                                    <option data_id="-1" <#if deliveryMode?exists && deliveryMode == -1>selected</#if>>
+                                        全部
+                                    </option>
+                                    <option data_id="1" <#if deliveryMode?exists && deliveryMode == 1>selected</#if>>
+                                        仅自提
+                                    </option>
+                                    <option data_id="2" <#if deliveryMode?exists && deliveryMode == 2>selected</#if>>
+                                        仅送货
+                                    </option>
+                                    <option data_id="3" <#if deliveryMode?exists && deliveryMode == 3>selected</#if>>
+                                        可自提也可送货
+                                    </option>
+                                    <option data_id="4" <#if deliveryMode?exists && deliveryMode == 4>selected</#if>>
+                                        AI(智能)
+                                    </option>
+                                    <option data_id="5" <#if deliveryMode?exists && deliveryMode == 5>selected</#if>>
+                                        可自提也可AI配送
+                                    </option>
                                 </select>
                             </div>
 
@@ -112,16 +165,28 @@
                                 <td>自营</td>
                                 <td>
                                     <#if market.status == 0>
-                                        <span class="label label-default">无效</span>
+                                        <button id="statusBtn" type="button"
+                                                class="btn waves-effect waves-light btn-inverse btn-xs"
+                                                data_id="${market.id?c}" data_v="${market.name}">无效
+                                        </button>
                                     </#if>
                                     <#if market.status == 1>
-                                        <span class="label label-success">正常</span>
+                                        <button id="statusBtn" type="button"
+                                                class="btn waves-effect waves-light btn-success btn-xs"
+                                                data_id="${market.id?c}" data_v="${market.name}">正常
+                                        </button>
                                     </#if>
                                     <#if market.status == 2>
-                                        <span class="label label-default">关店</span>
+                                        <button id="statusBtn" type="button"
+                                                class="btn waves-effect waves-light btn-danger btn-xs"
+                                                data_id="${market.id?c}" data_v="${market.name}">关店
+                                        </button>
                                     </#if>
                                     <#if market.status == 3>
-                                        <span class="label label-danger">维护</span>
+                                        <button id="statusBtn" type="button"
+                                                class="btn waves-effect waves-light btn-inverse btn-xs"
+                                                data_id="${market.id?c}" data_v="${market.name}">维护
+                                        </button>
                                     </#if>
                                 </td>
                                 <td>
@@ -172,13 +237,13 @@
                                         不对外
                                     </#if>
                                     <#if (market.coveringDistance > 0)>
-                                    ${market.coveringDistance?c}米
+                                    ${market.coveringDistance?c}
                                     </#if>
                                 </td>
                                 <td>
                                     <#if (market.deliveryCost > 0)>
                                         <#assign dCost = market.deliveryCost/100 >
-                                        ${dCost}
+                                    ${dCost}
                                     <#else>
                                         0
                                     </#if>
@@ -233,6 +298,9 @@
 
             $(document).ready(function () {
 
+                //弹出状态修改的窗体前，设置该值，指向目标
+                var showStatusBtn = null;
+
                 var _marketListTable = $("#marketListTable");
 
                 var _streets = {};
@@ -260,7 +328,7 @@
                         swal(info);
                         return null;
                     }
-                    if(id == "0") {
+                    if (id == "0") {
                         return {id: id, name: ""};
                     } else {
                         return {id: id, name: obj.attr("data_v")};
@@ -300,9 +368,20 @@
                             + "&city=" + city.name + "&cityId=" + city.id
                             + "&district=" + area.name + "&districtId=" + area.id
                             + "&street=" + street.name + "&streetId=" + street.id
-                            + "&status=" + _status + "&deliveryMode="+_deliveryMode;
+                            + "&status=" + _status + "&deliveryMode=" + _deliveryMode;
 
-                    open({ url: url });
+                    open({url: url});
+                });
+
+                //状态修改确定
+                $("#statusOkBtn").on('click', function () {
+
+                    //获得当前想修改的值
+                    var _status_obj = $("#updateStatusSelect").find("option:selected");
+                    var _status = _status_obj.attr("data_id");
+
+                    //提交到服务器
+
                 });
 
             <#if (markets?size > 0)>
@@ -322,6 +401,16 @@
                         open({url: "${base}/market/marketItems.do?marketId=" + $(this).attr("data_id")});
                         //location.href = "${base}
                         //market/marketItems.do?marketId=" + $(this).attr("data_id");
+                    });
+                });
+
+                //单项状态改变
+                _marketListTable.find('button[id=statusBtn]').each(function () {
+                    $(this).on('click', function () {
+                        showStatusBtn = $(this);
+                        $("#statusMarketName").html(showStatusBtn.attr("data_v"));
+                        $("#statusMarketName").attr("data_id", showStatusBtn.attr("data_id"));
+                        $("#statusDialog").modal('show');
                     });
                 });
 

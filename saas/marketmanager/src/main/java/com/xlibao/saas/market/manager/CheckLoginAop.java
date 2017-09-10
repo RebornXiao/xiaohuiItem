@@ -11,6 +11,7 @@ import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.security.auth.login.LoginContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,12 +29,25 @@ public class CheckLoginAop extends BaseController {
         getHttpServletResponse().setHeader("content-type", "text/html");
         try {
 
-//            long passportId = getLongParameter("passportId");
+//            long passportId = getLongParameter("passportId", 0);
+//
+//            if(passportId == 0) {
+//                //需要登录
+//                //fali("请重新登录");
+//                return LogicConfig.FTL_LOGIN;
+//            }
+//
 //            String accessToken = getUTF("accessToken");
 //
-//            accessToken = PassportRemoteService.changeAccessToken(passportId, accessToken);
+//            //检测 accessToken 有效期
+//            try {
+//                accessToken = PassportRemoteService.changeAccessToken(passportId, accessToken);
+//            } catch (Exception ex) {
+//                fali("登录有效期已过，请重新登录");
+//                return LogicConfig.FTL_LOGIN;
+//            }
+//
 //            setAccessToken(accessToken);
-
             return point.proceed(args);
 
         } catch (XlibaoIllegalArgumentException ex) {

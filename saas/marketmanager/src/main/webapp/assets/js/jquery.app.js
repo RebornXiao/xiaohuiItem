@@ -368,7 +368,6 @@ function moveEnd(obj) {
     }
 }
 
-
 function getUrl(href) {
     if (href == null || href == '') return {url: '', data: {}}
     var url = {}

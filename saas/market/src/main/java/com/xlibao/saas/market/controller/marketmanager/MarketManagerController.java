@@ -40,6 +40,12 @@ public class MarketManagerController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "marketUpdateStatus", method = RequestMethod.POST)
+    public JSONObject marketUpdateStatus() {
+        return marketService.marketUpdateStatus();
+    }
+
+    @ResponseBody
     @RequestMapping(value = "getAllMarkets")
     public JSONObject getAllMarkets() {
         return marketService.getAllMarkets();

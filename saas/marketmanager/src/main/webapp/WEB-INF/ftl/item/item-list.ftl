@@ -94,7 +94,7 @@
                             <tr>
                                 <td>${item.id?c}</td>
                                 <td>${item.name}</td>
-                                <td>${item.defineCode}</td>
+                                <td>${(item.defineCode)!}</td>
                                 <td>${item.barcode}</td>
                                 <td>${item.typeName}</td>
                                 <td>${item.unitName}</td>

@@ -59,7 +59,7 @@
                 <ul>
 
                     <li>
-                        <a href="${base}/passport/index.do"
+                        <a href="${base}/passport/main.do"
                            class="waves-effect waves-primary <#if tab=="index"> active </#if> "><i
                                 class="fa fa-home"></i><span> 首  页 </span></a>
                     </li>
@@ -134,14 +134,15 @@
                 <#--</ul>-->
                 <#--</li>-->
 
-                <#--<li class="has_sub">-->
-                <#--<a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="sys"> active subdrop </#if>"><i-->
-                <#--class="fa fa-cog"></i><span> 系统设置 </span>-->
-                <#--<span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>-->
-                <#--<ul class="list-unstyled" <#if tab=="sys"> style="display: block;" </#if> >-->
-                <#--<li><a href="chart-flot.html">个人信息</a></li>-->
-                <#--</ul>-->
-                <#--</li>-->
+                    <li class="has_sub">
+                        <a href="javascript:void(0);"
+                           class="waves-effect waves-primary <#if tab=="sys"> active subdrop </#if>"><i
+                                class="fa fa-cog"></i><span> 系统设置 </span>
+                            <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
+                        <ul class="list-unstyled" <#if tab=="sys"> style="display: block;" </#if>>
+                            <li><a href="chart-flot.html">个人信息</a></li>
+                        </ul>
+                    </li>
 
                 </ul>
             </div>

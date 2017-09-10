@@ -134,45 +134,66 @@ public class MarketManagerController extends BaseController {
                 return fail(map, "远程调用异常\n无法找到店铺信息,店铺id=" + id, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
             }
             map.put("market", entry);
-            //拿省
-            String provinceName = entry.getProvince();
-            if (CommonUtils.isNotNullString(provinceName)) {
-                PassportProvince province = passportManagerService.searchProvinceByName(provinceName);
-                if (province != null) {
-                    map.put("provinceId", province.getId());
-                }
-            }
-            //拿市
-            String cityName = entry.getCity();
-            if (CommonUtils.isNotNullString(cityName)) {
-                PassportCity city = passportManagerService.searchCityByName(cityName);
-                if (city != null) {
-                    map.put("cityId", city.getId());
-                }
-            }
-            //拿区
-            String districtName = entry.getDistrict();
-            if (CommonUtils.isNotNullString(districtName)) {
-                PassportArea area = passportManagerService.searchAreaByName(districtName);
-                if (area != null) {
-                    map.put("districtId", area.getId());
-                }
-            }
             //拿街道
             if (entry.getStreetId() != 0) {
                 //拿到这个街道
                 JSONObject streetJson = passportManagerService.getStreetJson(entry.getStreetId());
                 if (streetJson.getIntValue("code") == 0) {
                     PassportStreet street = parseObject(streetJson.getJSONObject("response").getString("data"), PassportStreet.class);
-                    //拿所有数据
-                    JSONObject streetsJson = passportManagerService.getStreets(street.getAreaId());
-                    if (streetsJson.getIntValue("code") == 0) {
-                        JSONArray array = streetsJson.getJSONObject("response").getJSONArray("datas");
-                        map.put("streets", array);
-                        map.put("streetId", street.getId());
+                    if(street != null) {
+                        //拿所有数据
+                        JSONObject streetsJson = passportManagerService.getStreets(street.getAreaId());
+                        if (streetsJson.getIntValue("code") == 0) {
+                            JSONArray array = streetsJson.getJSONObject("response").getJSONArray("datas");
+                            map.put("streets", array);
+                            map.put("streetId", street.getId());
+                        }
+                        //拿街道对应的区
+                        PassportArea area = passportManagerService.getAreaById(street.getAreaId());
+                        if(area != null) {
+                            map.put("districtId", area.getId());
+
+                            //拿区对应的市
+                            PassportCity city = passportManagerService.getCityById(area.getCityId());
+                            if(city != null) {
+                                map.put("cityId", city.getId());
+
+                                //拿市对应的省
+                                PassportProvince province = passportManagerService.getProvinceById(city.getProvinceId());
+                                if(province != null) {
+                                    map.put("provinceId", province.getId());
+                                }
+                            }
+
+                        }
                     }
                 }
             }
+//           +++++++++++++++++++
+// 拿省
+//            String provinceName = entry.getProvince();
+//            if (CommonUtils.isNotNullString(provinceName)) {
+//                PassportProvince province = passportManagerService.searchProvinceByName(provinceName);
+//                if (province != null) {
+//                    map.put("provinceId", province.getId());
+//                }
+//            }
+//            //拿市
+//            String cityName = entry.getCity();
+//            if (CommonUtils.isNotNullString(cityName)) {
+//                PassportCity city = passportManagerService.searchCityByName(cityName);
+//                if (city != null) {
+//                    map.put("cityId", city.getId());
+//                }
+//            }
+//            //拿区
+//            String districtName = entry.getDistrict();
+//            if (CommonUtils.isNotNullString(districtName)) {
+//                PassportArea area = passportManagerService.searchAreaByName(districtName);
+//                if (area != null) {
+//                    map.put("districtId", area.getId());
+//                }
+//            }
         } else {
             //直接拿到所有数据
             long provinceId = getLongParameter("provinceId", 0);
@@ -214,6 +235,15 @@ public class MarketManagerController extends BaseController {
         return JSONObject.parseObject(json);
     }
 
+    //商店 编辑 保存
+    @ResponseBody
+    @RequestMapping("/marketUpdateStatus")
+    public JSONObject marketUpdateStatus() {
+        Map map = getMapParameter();
+        String url = ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/marketUpdateStatus.do";
+        String json = HttpRequest.post(url, map);
+        return JSONObject.parseObject(json);
+    }
 
     //提供给页面，拿到 街道列表 JSONObject 信息
     @ResponseBody

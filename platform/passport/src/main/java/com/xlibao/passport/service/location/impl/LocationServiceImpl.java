@@ -205,6 +205,24 @@ public class LocationServiceImpl extends BasicWebService implements LocationServ
         }
     }
 
+    public JSONObject getProvinceById() {
+        long provinceId = getLongParameter("id");
+        PassportProvince province = locationDataAccessManager.getProvinceById(provinceId);
+        return result(province != null ? province : "没有该省份");
+    }
+
+    public JSONObject getCityById() {
+        long cityId = getLongParameter("id");
+        PassportCity city = locationDataAccessManager.getCityById(cityId);
+        return result(city != null ? city : "没有该城市");
+    }
+
+    public JSONObject getAreaById() {
+        long areaId = getLongParameter("id");
+        PassportArea area = locationDataAccessManager.getAreaById(areaId);
+        return result(area != null ? area : "没有该区域");
+    }
+
     private JSONObject result(Object obj) {
         if (obj instanceof String) {
             return fail((String) obj);

@@ -88,5 +88,21 @@ public class LocationController {
         return locationService.streetEditSave();
     }
 
+    @ResponseBody
+    @RequestMapping("getProvinceById")
+    public JSONObject getProvinceById() {
+        return locationService.getProvinceById();
+    }
 
+    @ResponseBody
+    @RequestMapping("getCityById")
+    public JSONObject getCityById() {
+        return locationService.getCityById();
+    }
+
+    @ResponseBody
+    @RequestMapping("getAreaById")
+    public JSONObject getAreaById() {
+        return locationService.getAreaById();
+    }
 }

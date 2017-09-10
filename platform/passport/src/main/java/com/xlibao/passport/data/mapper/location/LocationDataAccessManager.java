@@ -69,4 +69,16 @@ public class LocationDataAccessManager {
     public int createStreet(PassportStreet street) {
         return streetMapper.createStreet(street);
     }
+
+    public PassportProvince getProvinceById(long provinceId) {
+        return provinceMapper.getProvinceById(provinceId);
+    }
+
+    public PassportCity getCityById(long cityId) {
+        return cityMapper.getCityById(cityId);
+    }
+
+    public PassportArea getAreaById(long areaId) {
+        return areaMapper.getAreaById(areaId);
+    }
 }
