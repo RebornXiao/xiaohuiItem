@@ -31,4 +31,10 @@ public interface LocationService {
     JSONObject searchStreetByName();
 
     JSONObject streetEditSave();
+
+    JSONObject getProvinceById();
+
+    JSONObject getCityById();
+
+    JSONObject getAreaById();
 }

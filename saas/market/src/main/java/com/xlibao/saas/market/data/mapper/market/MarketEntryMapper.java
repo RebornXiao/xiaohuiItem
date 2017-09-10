@@ -26,4 +26,5 @@ public interface MarketEntryMapper {
     int createMarket(MarketEntry entry);
 
     int updateMarket(MarketEntry entry);
+
 }

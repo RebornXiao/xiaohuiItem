@@ -62,4 +62,8 @@ public interface ItemService {
     JSONObject itemEditSave();
 
     JSONObject itemUpdateImgUrl();
+
+    JSONObject itemTypeEditSave();
+
+    JSONObject itemTypeUpdateIconUrl();
 }

@@ -56,6 +56,35 @@ public class PassportManagerServiceImpl extends BasicWebService implements Passp
         return response;
     }
 
+
+    public PassportProvince getProvinceById(long provinceId) {
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().passportRemoteURL + "/passport/location/getProvinceById.do?id=" + provinceId);
+        JSONObject response = JSONObject.parseObject(json);
+        if (response.getInteger("code") == 0) {
+            return JSONObject.parseObject(response.getJSONObject("response").getString("data"), PassportProvince.class);
+        }
+        return null;
+    }
+
+    public PassportCity getCityById(long cityId) {
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().passportRemoteURL + "/passport/location/getCityById.do?id=" + cityId);
+        JSONObject response = JSONObject.parseObject(json);
+        if (response.getInteger("code") == 0) {
+            return JSONObject.parseObject(response.getJSONObject("response").getString("data"), PassportCity.class);
+        }
+        return null;
+    }
+
+    public PassportArea getAreaById(long areaId) {
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().passportRemoteURL + "/passport/location/getAreaById.do?id=" + areaId);
+        JSONObject response = JSONObject.parseObject(json);
+        if (response.getInteger("code") == 0) {
+            return JSONObject.parseObject(response.getJSONObject("response").getString("data"), PassportArea.class);
+        }
+        return null;
+    }
+
+
     public JSONObject getStreetJson(long streetId) {
         String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().passportRemoteURL + "/passport/location/getStreet.do?streetId=" + streetId);
         JSONObject response = JSONObject.parseObject(json);

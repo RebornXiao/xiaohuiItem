@@ -405,17 +405,19 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         String name = getUTF("name");
         String defineCode = getUTF("defineCode");
         String barcode = getUTF("barcode");
+        String imgUrl = getUTF("imgUrl", "");
         long typeId = getLongParameter("typeId");
         long unitId = getLongParameter("unitId");
         long costPrice = CommonUtils.changeMoney(getUTF("costPrice"));
         long defaultPrice = CommonUtils.changeMoney(getUTF("defaultPrice"));
         long passportId = getLongParameter("passportId");
 
-        int ilength = getIntParameter("iLength");
-        int iwidth = getIntParameter("iWidth");
-        int iheight = getIntParameter("iHeight");
+        int ilength = getIntParameter("iLength", 0);
+        int iwidth = getIntParameter("iWidth", 0);
+        int iheight = getIntParameter("iHeight", 0);
 
         ItemTemplate itemTemplate = new ItemTemplate();
+        itemTemplate.setId(itemId);
         itemTemplate.setName(name);
         itemTemplate.setDefineCode(defineCode);
         itemTemplate.setBarcode(barcode);
@@ -426,21 +428,31 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         itemTemplate.setLength(ilength);
         itemTemplate.setWidth(iwidth);
         itemTemplate.setHeight(iheight);
-        itemTemplate.setStatus((byte)0);//直接可用
+        itemTemplate.setStatus((byte) 0);//直接可用
         itemTemplate.setUploaderPassportId(passportId);
+        itemTemplate.setImageUrl(imgUrl);
 
-        if(itemId == 0) {
-            if (itemDataAccessManager.createTemplate(itemTemplate) > 0) {
-                return success(itemTemplate);
+        try {
+            if (itemId == 0) {
+                if (itemDataAccessManager.createTemplate(itemTemplate) > 0) {
+                    return success(itemTemplate);
+                } else {
+                    return fail("添加失败");
+                }
             } else {
-                return fail("添加失败");
+                // 修改
+                if (itemDataAccessManager.updateTemplate(itemTemplate) > 0) {
+                    return success(itemTemplate);
+                } else {
+                    return fail("修改失败");
+                }
             }
-        } else {
-            // 修改
-            if (itemDataAccessManager.updateTemplate(itemTemplate) > 0) {
-                return success(itemTemplate);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            if (itemId == 0) {
+                return fail("数据库异常，添加失败");
             } else {
-                return fail("修改失败");
+                return fail("数据库异常，修改失败");
             }
         }
     }
@@ -450,7 +462,57 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         long itemId = getLongParameter("itemId");
         String itemImgUrl = getUTF("itemImgUrl");
         //更新图片
-        if(itemDataAccessManager.updateTemplateImgUrl(itemId, itemImgUrl) > 0) {
+        if (itemDataAccessManager.updateTemplateImgUrl(itemId, itemImgUrl) > 0) {
+            return success("更新图片成功");
+        }
+        return fail("更新失败");
+    }
+
+    @Override
+    public JSONObject itemTypeEditSave() {
+
+        long itemTypeId = getLongParameter("itemTypeId", 0);
+        long pid = getLongParameter("parentId", 0);
+        String title = getUTF("title");
+        String icon = getUTF("icon", "");
+
+        ItemType itemType = new ItemType();
+        itemType.setId(itemTypeId);
+        itemType.setParentId(pid);
+        itemType.setTitle(title);
+        itemType.setIcon(icon);
+
+        try {
+            if (itemTypeId == 0) {
+
+                itemType.setStatus((byte) 0);//默认可用
+                itemType.setSort(0);
+                itemType.setImage("");
+                itemType.setTop((byte)0);
+
+                itemDataAccessManager.addItemType(itemType);
+
+            } else {
+                int v = itemDataAccessManager.updateItemType(itemType);
+                System.err.println("v= " + v);
+            }
+            return success(itemType);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            if (itemTypeId == 0) {
+                return fail("数据库异常，添加失败");
+            } else {
+                return fail("数据库异常，修改失败");
+            }
+        }
+    }
+
+    @Override
+    public JSONObject itemTypeUpdateIconUrl() {
+        long itemTypeId = getLongParameter("itemTypeId");
+        String itemTypeIconUrl = getUTF("itemTypeIconUrl");
+        //更新图片
+        if (itemDataAccessManager.updateItemTypeIconUrl(itemTypeId, itemTypeIconUrl) > 0) {
             return success("更新图片成功");
         }
         return fail("更新失败");

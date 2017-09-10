@@ -8,8 +8,7 @@
 <script src="${res}/assets/plugins/bootstrap-select2/zh-CN.js"></script>
 
 <!-- 商品更改库存界面 -->
-<div class="modal fade" id="upItemDialog" tabindex="-1"
-     role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="upItemDialog" tabindex="-1" role="dialog" >
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -92,8 +91,7 @@
 
 
 <!-- 任务详情 -->
-<div class="modal fade" id="taskDialog" tabindex="-1"
-     role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="taskDialog" tabindex="-1" role="dialog" >
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -160,8 +158,7 @@
 
 
 <!-- 任务列表 -->
-<div class="modal fade" id="taskListDialog" tabindex="-1"
-     role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="taskListDialog" tabindex="-1" role="dialog" >
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">

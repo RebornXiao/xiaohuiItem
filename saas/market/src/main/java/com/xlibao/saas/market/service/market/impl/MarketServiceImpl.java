@@ -228,6 +228,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         long deliveryCost = CommonUtils.changeMoney(getUTF("deliveryCost", "0"));
 
         MarketEntry entry = new MarketEntry();
+        entry.setId(marketId);
         entry.setName(marketName);
         entry.setProvince(provinceName);
         entry.setCity(cityName);
@@ -260,6 +261,19 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
                 return fail("修改失败");
             }
         }
+    }
+
+
+    @Override
+    public JSONObject marketUpdateStatus() {
+        long marketId = getLongParameter("marketId");
+        byte status = getByteParameter("status");
+        //TODO
+//        if(dataAccessFactory.getMarketDataAccessManager().marketUpdateStatus(marketId, status)>0) {
+//            return success("修改成功");
+//        } else {
+            return fail("修改失败");
+//        }
     }
 
 

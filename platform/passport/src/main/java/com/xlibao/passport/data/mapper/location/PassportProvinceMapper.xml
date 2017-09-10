@@ -13,4 +13,9 @@
     <select id="searchProvinceByName" resultMap="BaseResultMap">
         select * from passport_province where name = #{name}
     </select>
+
+    <select id="getProvinceById" resultMap="BaseResultMap">
+        select * from passport_province where id = #{id}
+    </select>
+
 </mapper>

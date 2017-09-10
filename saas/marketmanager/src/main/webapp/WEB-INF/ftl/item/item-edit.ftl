@@ -61,7 +61,7 @@
                             <label class="col-md-4 control-label" for="example-email">自定义编码：</label>
                             <div class="col-md-8">
                                 <input type="text" id="defineCode" class="form-control" <#if item?exists>
-                                       value="${item.defineCode}" </#if>>
+                                       value="${(item.defineCode)!}" </#if>>
                             </div>
                         </div>
 
@@ -121,7 +121,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">成本价：</label>
+                            <label class="col-md-4 control-label">成本价(元)：</label>
                             <div class="col-md-8">
                                 <input type="text" id="costPrice" class="form-control" <#if item?exists>
                                        value="${item.costPrice}" </#if> onkeyup="clearNoNum(this)">
@@ -129,7 +129,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">零售价：</label>
+                            <label class="col-md-4 control-label">零售价(元)：</label>
                             <div class="col-md-8">
                                 <input type="text" id="defaultPrice" class="form-control" <#if item?exists>
                                        value="${item.defaultPrice}" </#if> onkeyup="clearNoNum(this)">
@@ -137,17 +137,17 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">规格：</label>
+                            <label class="col-md-4 control-label">规格(毫米)：</label>
                             <div class="col-md-8">
                                 <div class="input-group">
                                     <span class="input-group-addon">长：</span>
-                                    <input type="text" id="iLength" class="form-control" <#if item?exists>
+                                    <input type="number" id="iLength" class="form-control" <#if item?exists>
                                            value="${item.length?c}" </#if>>
                                     <span class="input-group-addon">宽：</span>
-                                    <input type="text" id="iWidth" class="form-control" <#if item?exists>
+                                    <input type="number" id="iWidth" class="form-control" <#if item?exists>
                                            value="${item.width?c}" </#if>>
                                     <span class="input-group-addon">高：</span>
-                                    <input type="text" id="iHeight" class="form-control" <#if item?exists>
+                                    <input type="number" id="iHeight" class="form-control" <#if item?exists>
                                            value="${item.height?c}" </#if>>
                                 </div>
                             </div>
@@ -158,13 +158,16 @@
                             <div class="col-md-4">
                                 <div id="itemMainImgDiv" style="background: white; width:150px; height:150px;">
                                     <img id="upImg" <#if item?exists && item.imageUrl??>
-                                         src="${item.imageUrl}"
-                                         style="width: 150px; height: 150px"</#if>/>
+                                         src="${item.imageUrl}" </#if> width="150px" height="150px"/>
                                 </div>
                                 <p class="m-t-10">
                                     <button id="selectFileBtn" type="button"
                                             class="btn waves-effect waves-light btn-default">
                                         选择主图
+                                    </button>
+                                    <button id="removeFileBtn" type="button"
+                                            class="btn waves-effect waves-light btn-default">
+                                        删除图片
                                     </button>
                                 </p>
                             </div>
@@ -204,18 +207,43 @@
 
                 var itemId = <#if item?exists >${item.id?c};<#else>0;</#if>
                 var itemImgBarcode = "";
+                var _imgUrl = <#if item?exists >"${item.imageUrl}";<#else>"";</#if>
+
+                //如果原来有图片
+                if(_imgUrl != "") {
+                    srcImgBool = true;
+                }
+                //添加/更新 成功
+                function postSuccess() {
+                    var msg = "添加成功";
+                    if(itemId != 0) {
+                        msg = "修改成功";
+                    }
+                    showSuccess(msg, function () {
+                        open({url:"${base}/item/itemUnitEdit.do"});
+                    });
+                }
+                //上传图片
+                function updateImgUrl(itemId, itemImgUrl) {
+                    $.post("${base}/item/itemUpdateImgUrl.do?itemId="+itemId+"&itemImgUrl="+itemImgUrl, function(data) {
+                        //重新刷新
+                        postSuccess();
+                    }, "json");
+                }
+                //删除图片
+                $("#removeFileBtn").on('click', function () {
+                    clear_img();
+                });
 
                 moveEnd($("#itemName").get(0));
 
                 //添加类型
                 $("#addTypeBtn").on('click', function () {
-                    //location.href = "${base}/item/itemTypeEdit.do";
                     open({url:"${base}/item/itemTypeEdit.do"});
                 });
 
                 //添加单位
                 $("#addUnitBtn").on('click', function () {
-                    //location.href = "${base}/item/itemUnitEdit.do";
                     open({url:"${base}/item/itemUnitEdit.do"});
                 });
 
@@ -225,13 +253,6 @@
 
                 $("#typeSelect").select2();
 
-                function updateImgUrl(itemId, itemImgUrl) {
-                    $.post("${base}/item/itemUpdateImgUrl.do?itemId="+itemId+"&itemImgUrl="+itemImgUrl, function(data) {
-                        //重新刷新
-                        swal(data.msg);
-                    }, "json");
-                }
-
                 upImgName = "upImg";
                 serverUrl = "${base}/oss/uploadImg.do?targetDir=item";
 
@@ -239,7 +260,6 @@
                     upCallback = function (hType, obj) {
                         if(hType == 0) {
                             //没有图片提交
-                            alert("没有图片需要提交");
                         } else if(hType == 1) {
                             //开始提交
                         } else if(hType == 2) {
@@ -274,6 +294,11 @@
 
                     itemImgBarcode = $("#barcode").val();
 
+                    //如果有清除过图片
+                    if(clearImgBool) {
+                        _imgUrl = "";
+                    }
+
                     //先提交
                     var post_data = {
                         itemId:itemId,
@@ -288,15 +313,22 @@
                         iLength:$("#iLength").val(),
                         iWidth:$("#iWidth").val(),
                         iHeight:$("#iHeight").val(),
+                        imgUrl:_imgUrl,
                     };
 
                     $.post("${base}/item/itemEditSave.do", post_data, function(data) {
                         //重新刷新
                         if(data.code == "0") {
                             //提交成功，这里重新包装一个商品ID
-                            var item = data.response.datas
-                            upImgFunc(item.id, item.barcode);
+                            var item = data.response.datas;
+                            //如果需要更新图片路径
+                            if(upImgBool) {
+                                upImgFunc(item.id, item.barcode);
+                            } else {
+                                postSuccess();
+                            }
                         } else {
+                            $(this).button("reset");
                             swal(data.msg);
                         }
                     }, "json");

@@ -107,8 +107,16 @@
 
                 var loginName = $.cookie("loginName");
                 if(loginName != null) {
+                    $("#checkbox-signup").attr("checked", true);
                     $("#ipUserName").val(loginName);
+                    $("#ipPassWord").focus();
+                } else {
+                    $("#ipUserName").focus();
                 }
+
+                <#if error?? >
+                    swal("${error}");
+                </#if>
 
                 //保存商品单位
                 $("#loginBtn").on('click', function () {
@@ -136,17 +144,18 @@
                         return;
                     }
 
+                    //如果需要记住用户名，将信息存储到cookie
+                    if ($("#checkbox-signup").is(':checked')) {
+                        $.cookie("loginName", name, { expires: 365 });
+                    } else {
+                        $.cookie("loginName", '', { expires: -1 });
+                    }
+
                     $(this).button("loading");
 
                     $.post("${base}/passportopen/login.do?userName=" + name + "&passWord=" + pass, function (data) {
                         //重新刷新
                         if (data.code == "0") {
-                            //如果需要记住用户名，将信息存储到cookie
-                            if ($("#checkbox-signup").is(':checked')) {
-                                $.cookie("loginName", name, { expires: 365 });
-                            } else {
-                                $.cookie("loginName", '', { expires: -1 });
-                            }
                             //登录成功，记录登录的用户ID，显示名称
                             var passport = data.response;
                             open({url:"${base}/passport/main.do?passportId="+passport.id})
