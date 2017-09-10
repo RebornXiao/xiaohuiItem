@@ -35,6 +35,8 @@ public class ItemDataAccessManager {
     private MarketSearchHistoryMapper searchHistoryMapper;
     @Autowired
     private MarketItemLocationStockLoggerMapper itemLocationStockLoggerMapper;
+    @Autowired
+    private MarketItemLadderPriceMapper itemLadderPriceMapper;
 
     public int createItem(MarketItem item) {
         return itemMapper.createItem(item);
@@ -216,6 +218,10 @@ public class ItemDataAccessManager {
         searchHistory.setMarketId(marketId);
         searchHistory.setK(searchKey);
         searchHistoryMapper.createHistorySearch(searchHistory);
+    }
+
+    public List<MarketItemLadderPrice> loadItemLadderPrices(String itemSet) {
+        return itemLadderPriceMapper.loadItemLadderPrices(itemSet);
     }
 
     private void createItemLocationStockLogger(MarketItemLocationStockLogger itemLocationStockLogger) {

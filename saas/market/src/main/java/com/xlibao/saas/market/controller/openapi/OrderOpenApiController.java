@@ -106,7 +106,6 @@ public class OrderOpenApiController {
      *              当为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_APPLET}、{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#WEIXIN_JS}时填充openId
      *
      *     <b>返回结果：</b>
-     *
      *          当<b>paymentType</b>为{@linkplain com.xlibao.common.constant.payment.PaymentTypeEnum#BALANCE}时，返回：
      *              <b>partnerId</b> - String 合作商户ID(供应链基于平台的合作商户号)，以xlb908开头。
      *              <b>appId</b> - String 应用ID(平台分配给供应链系统的支付应用ID)，以908开头。

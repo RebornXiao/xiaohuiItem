@@ -19,6 +19,7 @@ import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketItem;
 import com.xlibao.market.data.model.MarketItemDailyPurchaseLogger;
+import com.xlibao.market.data.model.MarketItemLadderPrice;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
@@ -445,6 +446,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
         List<MarketItem> items = dataAccessFactory.getItemDataAccessManager().getItemForItemTemplates(marketId, itemTemplateSet);
 
+        Map<Long, List<MarketItemLadderPrice>> itemLadderPriceMap = itemSupport.loadItemLadderPrices(items);
 
         String itemSet = processItemSet(items);
         List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers = dataAccessFactory.getItemDataAccessManager().passportDailyBuyLoggers(passportId, itemSet);
@@ -460,7 +462,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                 throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.BUY_QUANTITY_ERROR.getKey(), "商品" + (itemTemplate == null ? "" : "[" + itemTemplate.getName() + "]") + "的购买数量必须大于0");
             }
             MarketItemDailyPurchaseLogger itemDailyPurchaseLogger = itemDailyPurchaseLoggerMap.get(item.getItemTemplateId());
-            itemSnapshots.add(fillOrderItemSnapshot(passportId, item, itemDailyPurchaseLogger, buyCount));
+            itemSnapshots.add(fillOrderItemSnapshot(passportId, item, itemDailyPurchaseLogger, buyCount, itemLadderPriceMap.get(item.getId())));
         }
         return itemSnapshots;
     }
@@ -571,8 +573,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         }
     }
 
-    private OrderItemSnapshot fillOrderItemSnapshot(long passportId, MarketItem item, MarketItemDailyPurchaseLogger roleDailyBuyLogger, int thisBuyCount) {
-        OrderItemSnapshot orderItemSnapshot = itemSupport.fillOrderItemSnapshot(item, roleDailyBuyLogger, thisBuyCount);
+    private OrderItemSnapshot fillOrderItemSnapshot(long passportId, MarketItem item, MarketItemDailyPurchaseLogger roleDailyBuyLogger, int thisBuyCount, List<MarketItemLadderPrice> itemLadderPrices) {
+        OrderItemSnapshot orderItemSnapshot = itemSupport.fillOrderItemSnapshot(item, roleDailyBuyLogger, thisBuyCount, itemLadderPrices);
 
         orderItemSnapshot.setUserMark(String.valueOf(passportId));
         return orderItemSnapshot;

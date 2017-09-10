@@ -22,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -111,7 +110,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         if (CommonUtils.isEmpty(marketEntries)) {
             return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response();
         }
-        JSONArray response = marketEntries.stream().map(marketEntry -> marketEntry.message(0, 0)).collect(Collectors.toCollection(JSONArray::new));
+        JSONArray response = marketEntries.stream().map(marketEntry -> marketEntry.message(latitude, longitude)).collect(Collectors.toCollection(JSONArray::new));
         return success(response);
     }
 
