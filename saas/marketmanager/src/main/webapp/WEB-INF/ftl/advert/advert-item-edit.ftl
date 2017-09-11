@@ -54,23 +54,23 @@
                         <tbody id="advertInfoTable">
                         <#if (advertList?size > 0)>
                             <#list advertList as advert>
-                            <tr>
+                            <tr id="tr_${advert_index}">
                                 <td>${advert_index +1}</td>
                                 <td>${advert.title}</td>
                                 <td>${advert.timeSize}</td>
                                 <td>${advert.createTime}</td>
                                 <td>
-                                    <button id="lookBtn" type="button"
-                                            class="btn btn-primary btn-sm"
-                                            data_id="${advert.advertID?c}">查看
+                                    <button id="lookBtn" type="button" class="btn btn-primary btn-sm"
+                                            data_title="${advert.title}" data_remark="${advert.remark}"
+                                             data_time="${advert.timeSize}" data_id="${advert.advertID?c}">查看
                                     </button>
-                                    <button id="editBtn" data-toggle="model" type="button" data-target="#editModel"
-                                            class="btn btn-primary btn-sm"
-                                            data_id="${advert.advertID?c}">编辑
+                                    <button id="editBtn" type="button" data-target="#editModel" class="btn btn-primary btn-sm"
+                                            data_title="${advert.title}" data_remark="${advert.remark}"
+                                            data_time="${advert.timeSize}" data_id="${advert.advertID?c}">编辑
                                     </button>
-                                    <button id="deleBtn" type="button" data-target="#deleModel"
-                                            class="btn btn-danger btn-sm"
-                                            data_id="${advert.advertID?c}">删除
+                                    <button id="deleBtn" type="button" data-target="#deleModel" class="btn btn-danger btn-sm"
+                                            data_title="${advert.title}" data_remark="${advert.remark}"
+                                            data_time="${advert.timeSize}" data_id="${advert.advertID?c}">删除
                                     </button>
                                 </td>
                             </tr>
@@ -109,6 +109,22 @@
         var add_title = GetQueryString("title");
         var add_timeType = GetQueryString("timeType");
         document.getElementById("advertNavTitle").value=add_title;
+        if(add_timeType='-1'){
+            document.getElementById("advertNavTime").text="选择广告时长";
+        }else if(add_timeType='0'){document.getElementById("advertNavTime").text="15秒以内";}
+
+        //鼠标经过效果
+        $("tr[id^='tr_']").hover(
+                function(){ // onmouseover
+                    $(this).css("background-color", "#FFFFBF"); // 设置背景颜色
+                },
+                function(){ // onmouseout
+                    // 代表当前行对应的checkbox没有选中
+                    if (!$(this.id.replace("tr_", "")).attr("checked")){
+                        $(this).css("background-color", "#FFFFFF"); // 还原背景颜色
+                    }
+                }
+        );
 
         //搜索功能
         /*$("#searchButton").on('click', function () {
@@ -215,8 +231,10 @@
         $("#advertInfoTable").find('button[id=editBtn]').each(function () {
             var that = this;
             $(this).on('click', function () {
-                console.log($(that).attr("data_id"));
                 $("#editModel").modal('show');
+                $("#editTitle").val($(that).attr("data_title"));
+                $("#editTime").val($(that).attr("data_time"));
+                $("#editRemark").val($(that).attr("data_remark"));
                 $("#noButton").on('click',function () {
                     $("#editModel").modal('hide');
                 });

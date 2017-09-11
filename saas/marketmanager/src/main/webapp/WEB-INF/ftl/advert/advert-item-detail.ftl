@@ -13,7 +13,7 @@
                     </div>
                 </div>
             </div>
-            <button type="button" id="advertReturnBtn" class="btn btn-primary" style="padding-right:0px 20px;" onclick="window.location='${base}/advert/adverts.do'"><i class="fa fa-backward"></i> 返回列表</button>
+            <button type="button" id="advertReturnBtn" class="btn btn-primary" style="padding-right:0px 20px;" onclick="javascript:history.go(-1);"><i class="fa fa-backward"></i> 返回列表</button>
             <div class="row">
                 <div class="col-sm-12">
                     <div class="advert_container">
@@ -32,27 +32,27 @@
                                         <col class="col-xs-3">
                                         <col class="col-xs-3">
                                     </colgroup>
-                                    <#if adver?exists>
+                                    <#if advert?exists>
                                         <tbody>
                                         <tr>
                                             <td style="background-color: #f9f9f9">广告标题</td>
-                                            <td>${adver.title}</td>
+                                            <td>${advert.title}</td>
                                             <td style="background-color: #f9f9f9">广告状态</td>
-                                            <td>${adver.isDelete}</td>
+                                            <td>${advert.isDelete}</td>
                                         </tr>
                                         </tbody>
                                         <tbody>
                                         <tr>
                                             <td style="background-color: #f9f9f9">广告时长</td>
-                                            <td>${adver.timeSize}</td>
+                                            <td>${advert.timeSize}</td>
                                             <td style="background-color: #f9f9f9">更新时间</td>
-                                            <td>${adver.createTime}</td>
+                                            <td>${advert.createTime}</td>
                                         </tr>
                                         </tbody>
                                         <tbody>
                                         <tr>
                                             <td style="background-color: #f9f9f9">广告备注</td>
-                                            <td colspan="3">${adver.remark}</td>
+                                            <td colspan="3">${advert.remark}</td>
                                         </tr>
                                         </tbody>
                                     </#if>
