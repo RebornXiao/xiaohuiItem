@@ -37,7 +37,7 @@
                                         <td style="background-color: #f9f9f9">编号</td>
                                         <td>${screen.code}</td>
                                         <td style="background-color: #f9f9f9">屏幕分辨率</td>
-                                        <td>${screen.size}</td>
+                                        <td>${screen.screenSize}</td>
                                     </tr>
                                     </thead>
                                     <tbody>

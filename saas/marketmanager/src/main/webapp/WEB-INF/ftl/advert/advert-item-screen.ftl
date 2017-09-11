@@ -39,8 +39,22 @@
                         <label>屏幕分辨率：</label>
                         <select id="storeInfo_select" class="form-control" name="size">
                             <option value="">选择屏幕分辨率</option>
-                            <option value="123">100*100</option>
-                            <option value="1234">200*200</option>
+                            <option value="1920*1080">1920*1080</option>
+                            <option value="1680*1050">1680*1050</option>
+                            <option value="1600*900">1600*900</option>
+                            <option value="1440*900">1440*900</option>
+                            <option value="1400*1050">1400*1050</option>
+                            <option value="1366*768">1366*768</option>
+                            <option value="1360*768">1360*768</option>
+                            <option value="1280*1024">1280*1024</option>
+                            <option value="1280*960">1280*960</option>
+                            <option value="1280*800">1280*800</option>
+                            <option value="1280*768">1280*768</option>
+                            <option value="1280*720">1280*720</option>
+                            <option value="1280*600">1280*600</option>
+                            <option value="1152*864">1152*864</option>
+                            <option value="1024*768">1024*768</option>
+                            <option value="800*600">800*600</option>
                         </select>
                     </div>
                     <div class="form-group m-l-15">
@@ -68,7 +82,7 @@
                             <#list screens as screen>
                             <tr>
                                 <td>${screen.code}</td>
-                                <td>${screen.size}</td>
+                                <td>${screen.screenSize}</td>
                                 <td>${screen.marketName}</td>
                                 <td>${screen.advertCount}</td>
                                 <td>
