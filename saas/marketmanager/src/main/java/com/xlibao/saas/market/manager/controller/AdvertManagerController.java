@@ -336,8 +336,12 @@ public class AdvertManagerController extends BaseController {
             map.put("markets", marketResponse.getJSONObject("response").getJSONArray("datas"));
         }
         JSONObject screenResponse = adverManagerService.getScreenListBy();
-        if (marketResponse.getIntValue("code") == 0) {
-            map.put("screens", marketResponse.getJSONObject("response").getJSONArray("data"));
+        if (screenResponse.getIntValue("code") == 0) {
+            map.put("screens", screenResponse.getJSONObject("response").getJSONArray("data"));
+        }
+        JSONObject advertResponse = adverManagerService.getAdvertByID();
+        if (advertResponse.getIntValue("code") == 0) {
+            map.put("adverts", advertResponse.getJSONObject("response").getJSONArray("data"));
         }
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_ADDPLAY, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
