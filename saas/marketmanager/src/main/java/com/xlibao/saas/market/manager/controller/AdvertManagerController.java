@@ -343,6 +343,7 @@ public class AdvertManagerController extends BaseController {
         if (advertResponse.getIntValue("code") == 0) {
             map.put("adverts", advertResponse.getJSONObject("response").getJSONArray("data"));
         }
+
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_ADDPLAY, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
 
