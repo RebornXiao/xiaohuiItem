@@ -85,6 +85,8 @@
                 //保存商品单位
                 $("#saveBtn").on('click', function () {
 
+                    $(this).button("loading");
+
                     //检测
                     var title = _itemUnitTitle.val();
                     var status = 0;
@@ -107,7 +109,9 @@
 
                         //重新刷新
                         if (data.code == "0") {
-                            swal("提示", "操作成功", "success");
+                            showSuccess(data.msg, function () {
+                                open({url:"${base}/item/itemUnits.do"});
+                            });
                         } else {
                             swal(data.msg);
                         }

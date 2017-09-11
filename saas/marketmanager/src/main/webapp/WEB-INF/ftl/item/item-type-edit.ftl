@@ -128,7 +128,7 @@
                         msg = "修改成功";
                     }
                     showSuccess(msg, function () {
-                        open({url:"${base}/item/itemUnitEdit.do"});
+                        open({url:"${base}/item/itemTypes.do"});
                     });
                 }
                 //上传图片
