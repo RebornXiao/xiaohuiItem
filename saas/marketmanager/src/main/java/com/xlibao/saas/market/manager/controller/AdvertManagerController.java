@@ -325,7 +325,7 @@ public class AdvertManagerController extends BaseController {
     }
 
     /**
-     * t跳转至添加播放页
+     * 跳转至添加播放页
      * @param map
      * @return
      */
@@ -335,7 +335,11 @@ public class AdvertManagerController extends BaseController {
         if (marketResponse.getIntValue("code") == 0) {
             map.put("markets", marketResponse.getJSONObject("response").getJSONArray("datas"));
         }
-
+        JSONObject screenResponse = adverManagerService.getScreenListBy();
+        if (marketResponse.getIntValue("code") == 0) {
+            map.put("screens", marketResponse.getJSONObject("response").getJSONArray("data"));
+        }
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_ADDPLAY, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
+
 }

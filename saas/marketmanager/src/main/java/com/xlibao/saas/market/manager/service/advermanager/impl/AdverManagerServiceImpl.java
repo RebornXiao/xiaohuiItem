@@ -281,7 +281,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         return response;
     }
     @Override
-    public JSONObject getScreenList(){
+    public JSONObject getScreenListBy(){
         int marketId =  getIntParameter("marketId",-1);
 
         Map<String, String> parameters = new HashMap<>();

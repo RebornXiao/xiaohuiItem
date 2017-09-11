@@ -89,7 +89,7 @@ public interface AdverManagerService {
      * 获取屏幕信息
      * @return
      */
-    JSONObject getScreenList();
+    JSONObject getScreenListBy();
 
     /**
      * 获取播放信息
