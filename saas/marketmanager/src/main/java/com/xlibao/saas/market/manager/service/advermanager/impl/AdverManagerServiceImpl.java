@@ -14,6 +14,7 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.StringJoiner;
 
 /**
  * Created by user on 2017/8/31.
@@ -323,4 +324,19 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
 
         return response;
     }
+
+    @Override
+    public JSONObject getScreensByAdvertID(){
+
+        String advertID =  getUTF("advertID","0");
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("advertID", advertID);
+
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getScreenInfoFromAdvertID.do";
+        JSONObject response = executor(url, parameters);
+
+        return response;
+    }
+
+
 }

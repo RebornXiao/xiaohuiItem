@@ -102,4 +102,10 @@ public interface AdverManagerService {
      * @return
      */
     JSONObject getAdvertByscreenID(String screenID);
+
+    /**
+     * 根据广告ID获取播放屏幕
+     * @return
+     */
+    JSONObject getScreensByAdvertID();
 }
