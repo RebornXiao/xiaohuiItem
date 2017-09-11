@@ -80,7 +80,7 @@
                         <tbody id="screenInfoListTable">
                         <#if (screens?size > 0)>
                             <#list screens as screen>
-                            <tr>
+                            <tr id="tr_${screen_index}">
                                 <td>${screen.code}</td>
                                 <td>${screen.screenSize}</td>
                                 <td>${screen.marketName}</td>
@@ -124,6 +124,18 @@
 
 <script>
     $(document).ready(function () {
+        //鼠标经过效果
+        $("tr[id^='tr_']").hover(
+            function(){ // onmouseover
+                $(this).css("background-color", "#FFFFBF"); // 设置背景颜色
+            },
+            function(){ // onmouseout
+                // 代表当前行对应的checkbox没有选中
+                if (!$(this.id.replace("tr_", "")).attr("checked")){
+                    $(this).css("background-color", "#FFFFFF"); // 还原背景颜色
+                }
+            }
+        );
         //添加屏幕
         $("#addButton").on('click', function () {
             var screen = {

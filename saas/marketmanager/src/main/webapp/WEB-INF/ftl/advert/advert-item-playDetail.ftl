@@ -12,7 +12,7 @@
                         <h4 class="page-title "><b>广告播放详情</b></h4>
                     </div>
                 </div>
-                <button type="button" id="advertReturnBtn" class="btn btn-primary" style="padding-right: 20px;padding-left: 20px" onclick="window.location='${base}/advert/admanager.do'"><i class="fa fa-backward"></i> 返回列表</button>
+                <button type="button" id="advertReturnBtn" class="btn btn-primary" style="padding-right: 20px;padding-left: 20px" onclick="javascript:history.go(-1);"><i class="fa fa-backward"></i> 返回列表</button>
             </div>
             <div class="row">
                 <div class="col-sm-12">
@@ -32,38 +32,40 @@
                                         <col class="col-xs-3">
                                         <col class="col-xs-3">
                                     </colgroup>
-                                    <tbody>
-                                    <tr>
-                                        <td style="background-color: #f9f9f9">门店信息</td>
-                                        <td>杨箕店</td>
-                                        <td style="background-color: #f9f9f9">屏幕编号</td>
-                                        <td>1000-01</td>
-                                    </tr>
-                                    </tbody>
-                                    <tbody>
-                                    <tr>
-                                        <td style="background-color: #f9f9f9">开始时间</td>
-                                        <td>2017-08-24 00:00:00</td>
-                                        <td style="background-color: #f9f9f9">结束时间</td>
-                                        <td>2017-08-22 10:47:22</td>
-                                    </tr>
-                                    </tbody>
-                                    <tbody>
-                                    <tr>
-                                        <td style="background-color: #f9f9f9">是否下载</td>
-                                        <td>是</td>
-                                        <td style="background-color: #f9f9f9">播放状态</td>
-                                        <td>待播放</td>
-                                    </tr>
-                                    </tbody>
-                                    <tbody>
-                                    <tr>
-                                        <td style="background-color: #f9f9f9">播放排序</td>
-                                        <td>1</td>
-                                        <td style="background-color: #f9f9f9">播放备注</td>
-                                        <td></td>
-                                    </tr>
-                                    </tbody>
+                                    <#if advertScreen?exists >
+                                        <tbody>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">门店信息</td>
+                                            <td>${advertScreen.marketName}</td>
+                                            <td style="background-color: #f9f9f9">屏幕编号</td>
+                                            <td>${advertScreen.sCode}</td>
+                                        </tr>
+                                        </tbody>
+                                        <tbody>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">开始时间</td>
+                                            <td>${advertScreen.beginTime}</td>
+                                            <td style="background-color: #f9f9f9">结束时间</td>
+                                            <td>${advertScreen.endTime}</td>
+                                        </tr>
+                                        </tbody>
+                                        <tbody>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">是否下载</td>
+                                            <td>${advertScreen.isDown}</td>
+                                            <td style="background-color: #f9f9f9">播放状态</td>
+                                            <td>${advertScreen.playStatus}</td>
+                                        </tr>
+                                        </tbody>
+                                        <tbody>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">播放排序</td>
+                                            <td>${advertScreen.playOrder}</td>
+                                            <td style="background-color: #f9f9f9">播放备注</td>
+                                            <td>${advertScreen.remark}</td>
+                                        </tr>
+                                        </tbody>
+                                    </#if>
                                 </table>
                             </div>
                         </div>
@@ -83,20 +85,22 @@
                                         <col class="col-xs-3">
                                         <col class="col-xs-3">
                                     </colgroup>
-                                    <tbody>
-                                    <tr>
-                                        <td style="background-color: #f9f9f9">广告标题</td>
-                                        <td>xxx的广告</td>
-                                        <td style="background-color: #f9f9f9">广告时长</td>
-                                        <td>30s</td>
-                                    </tr>
-                                    </tbody>
-                                    <tbody>
-                                    <tr>
-                                        <td style="background-color: #f9f9f9">广告备注</td>
-                                        <td colspan="3">****************</td>
-                                    </tr>
-                                    </tbody>
+                                    <#if advert?exists >
+                                        <tbody>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">广告标题</td>
+                                            <td>${advert.title}</td>
+                                            <td style="background-color: #f9f9f9">广告时长</td>
+                                            <td>${advert.timeSize} s</td>
+                                        </tr>
+                                        </tbody>
+                                        <tbody>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">广告备注</td>
+                                            <td colspan="3">${advert.remark}</td>
+                                        </tr>
+                                        </tbody>
+                                    </#if>
                                 </table>
                             </div>
                         </div>

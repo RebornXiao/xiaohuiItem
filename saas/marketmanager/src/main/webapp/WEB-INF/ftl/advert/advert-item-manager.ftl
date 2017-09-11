@@ -95,7 +95,7 @@
                         <tbody id="storeInfoListTable">
                         <#if (advertScreens?size > 0)>
                             <#list advertScreens as advert>
-                            <tr>
+                            <tr id="tr_${advert_index}">
                                 <td>${advert_index +1}</td>
                                 <td>${advert.marketName}</td>
                                 <td>${advert.sCode}</td>
@@ -113,15 +113,15 @@
                                 <td>
                                     <button id="lookBtn" type="button"
                                             class="btn btn-primary btn-sm"
-                                            a_id="${advert.advertID?c}" s_id="${advert.screenID?c}">查看
+                                            a_id="${advert.advertID?c}" m_id="${advert.screenID}" s_id="${advert.screenID?c}">查看
                                     </button>
                                     <button id="editBtn" type="button" data-target="#editModel"
                                         class="btn btn-primary btn-sm" data-toggle="model"
-                                        a_id="${advert.advertID?c}" s_id="${advert.screenID?c}">编辑
+                                        a_id="${advert.advertID?c}" m_id="${advert.screenID}" s_id="${advert.screenID?c}">编辑
                                     </button>
                                     <button id="deleBtn" type="button" data-target="#deleModel"
                                             class="btn btn-danger btn-sm" data-toggle="model"
-                                            a_id="${advert.advertID?c}" s_id="${advert.screenID?c}">删除
+                                            a_id="${advert.advertID?c}" m_id="${advert.screenID}" s_id="${advert.screenID?c}">删除
                                     </button>
                                 </td>
                             </tr>
@@ -164,6 +164,18 @@
         document.getElementById("advertNavTitle").value=add_title;
         document.getElementById("screenNum").value=add_code;
 
+        //鼠标经过效果
+        $("tr[id^='tr_']").hover(
+            function(){ // onmouseover
+                $(this).css("background-color", "#FFFFBF"); // 设置背景颜色
+            },
+            function(){ // onmouseout
+                // 代表当前行对应的checkbox没有选中
+                if (!$(this.id.replace("tr_", "")).attr("checked")){
+                    $(this).css("background-color", "#FFFFFF"); // 还原背景颜色
+                }
+            }
+        );
         //搜索功能
         $("#searchBtn").on('click', function () {
             var str = " 00:00:00";
@@ -195,32 +207,47 @@
                 var that = this;
                 $(this).on('click', function () {
                     $("#editModel").modal('show');
-                    $("#editNoBtn").on('click',function () {
-                        $("#editModel").modal('hide');
-                    });
-                    $("#editYesBtn").on('click',function () {
-                        var arr ={
-                            "title":$("#editTitle").val(),
-                            "time":$("#editTime").val(),
-                            "remark":$("#editRemark").val(),
-                            "storeInfo":$("#editStoreInfo").val(),
-                            "editScreenNum":$("#editScreenNum").val(),
-                            "e_stime":$("#editStartTime").val(),
-                            "e_etime":$("#editEndTime").val(),
-                            "e_sort":$("#editPlaySort").val(),
-                            "e_pRemark":$("#editPlayRemark").val(),
-                        };
-                        $.post("${base}/advert/updateScreenAdvert.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id"), function(data) {
-                            //重新刷新
-                            if(data.code == "0") {
-                                $("#editBtn").modal('hide');
-                                swal("提示", "更新成功", "success");
-                                setTimeout(function(){location.reload();},5000);
-                            } else {
-                                swal(data.msg);
-                            }
-                        }, "json");
-                    });
+                    $.get("${base}/advert/getAdvertScreen.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id"),function(object){//取该行列表全部信息
+                        console.log(object);
+                        $("#editNoBtn").on('click',function () {
+                            $("#editModel").modal('hide');
+                        });
+                        $("#editTitle").val(object.title);
+                        $("#editTime").val(object.timeSize);
+                        $("#editStartTime").val(object.beginTime);
+                        $("#editEndTime").val(object.endTime);
+                        $("#editPlaySort").val(object.playOrder);
+                        $("#editYesBtn").on('click',function () {
+                            var arr ={
+                                "title":$("#editTitle").val(),//标题
+                                "time":$("#editTime").val(),//时长
+                                "remark":$("#editRemark").val(),//广告备注
+                                "storeInfo":$("#editStoreInfo").val(),//门店
+                                "storeIndex":$("#editStoreInfo").get(0).selectedIndex,//门店index
+                                "editScreenNum":$("#editScreenNum").val(),//屏幕编号
+                                "screenNumIndex":$("#editScreenNum").get(0).selectedIndex,//屏幕编号index
+                                "e_stime":$("#editStartTime").val(),//开始时间
+                                "e_etime":$("#editEndTime").val(),//结束时间
+                                "e_sort":$("#editPlaySort").val(),//播放排序
+                                "e_pRemark":$("#editPlayRemark").val(),//播放备注
+                            };
+                            alert(arr.storeIndex);
+                            var url="${base}/advert/updateScreenAdvert.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id")+
+                                    "&beginTime="+arr.e_stime+"&endTime="+arr.e_etime+"&playOrder="+arr.e_sort+"&remark="+arr.e_pRemark;
+                                console.log('提交url====='+url)
+                            $.post(url, function(data) {
+                                //重新刷新
+                                console.log('提交返回值===='+data)
+                                if(data.code == "0") {
+                                    $("#editBtn").modal('hide');
+                                    swal("提示", "更新成功", "success");
+                                    setTimeout(function(){location.reload();},5000);
+                                } else {
+                                    swal(data.msg);
+                                }
+                            }, "json");
+                        });
+                    },"json");
                 });
             });
         </#if>
@@ -249,11 +276,22 @@
                 });
             });
         </#if>
+        //查看
+        <#if (advertScreens?size > 0)>
+            $("#storeInfoListTable").find('button[id=lookBtn]').each(function () {
+                var that = this;
+                $(this).on('click', function () {
+                    alert($(that).attr("a_id"));
+                    alert($(that).attr("m_id"));
+                    location.href = "${base}/advert/goAdvertScreen.do?advertID="+$(that).attr("a_id")+"&screenID="+$(that).attr("s_id")+"&marketID="+$(that).attr("m_id");
+                });
+            });
+        </#if>
         $("#adScreenEditBtn").on('click', function () {//屏幕配置
             location.href = "${base}/advert/screens.do";
         });
         $("#addPlayButton").on('click', function () {//添加广告播放
-            location.href = "${base}/advert/addScreenAdvert.do";
+            location.href = "${base}/advert/goAddAdvertScreen.do";
         });
     });
 </script>
@@ -269,29 +307,37 @@
                 <div class="modalAdvertStyle">
                     <form class="form-inline">
                         <div class="form-group" style="width: 100%">
+                            <fieldset disabled>
                             <label>广告标题：</label>
-                            <input type="text" style="width: 80%" class="form-control" id="editTitle" placeholder="输入广告标题"/>
+                            <input type="text" style="width: 80%" class="form-control" id="editTitle"/>
+                            </fieldset>
                         </div>
                     </form>
                     <form class="form-inline">
                         <div class="form-group" style="width: 100%">
+                            <fieldset disabled>
                             <label>广告时长：</label>
-                            <input type="text" style="width: 20%" class="form-control" id="editTime" placeholder="输入广告时长"/>&nbsp;&nbsp;&nbsp;s (以秒为计算单位)
+                            <input type="text" style="width: 20%" class="form-control" id="editTime"/>&nbsp;&nbsp;&nbsp;s (以秒为计算单位)
+                            </fieldset>
                         </div>
                     </form>
                     <form class="form-inline">
                         <div class="form-group" style="width: 100%">
+                            <fieldset disabled>
                             <label>广告备注：</label>
-                            <input type="text" style="width: 80%" class="form-control" id="editRemark" placeholder="输入广告备注"/>
+                            <input type="text" style="width: 80%" class="form-control" id="editRemark"/>
+                            </fieldset>
                         </div>
                     </form>
                     <form class="form-inline">
                         <div class="form-group" style="width: 100%">
                             <label>门店信息：</label>
-                            <select id="editStoreInfo" class="form-control" style="width: 50%">
-                                <option>淘金店</option>
-                                <option>杨琪店</option>
-                                <option>淘金店</option>
+                            <select class="form-control" id="editStoreInfo" style="width:150px">
+                                <#if markets?exists >
+                                    <#list markets as merket>
+                                        <option data_id="${merket.id?c}">${merket.name}</option>
+                                    </#list>
+                                </#if>
                             </select>
                         </div>
                     </form>
@@ -308,15 +354,13 @@
                     <form class="form-inline">
                         <div class="form-group" style="width: 100%">
                             <label>开始时间：</label>
-                            <input type="text" style="width: 50%" class="form-control" id="editStartTime" readonly>
-                            <span onClick="jeDate({dateCell:'#editStartTime',isTime:true,format:'YYYY-MM-DD hh:mm:ss'})"><i class="fa fa-calendar"></i></span>
+                            <input type="text" style="width: 50%" class="form-control" id="editStartTime">
                         </div>
                     </form>
                     <form class="form-inline">
                         <div class="form-group" style="width: 100%">
                             <label>结束时间：</label>
-                            <input type="text" style="width: 50%" class="form-control" id="editEndTime" readonly>
-                            <span onClick="jeDate({dateCell:'#editEndTime',isTime:true,format:'YYYY-MM-DD hh:mm:ss'})"><i class="fa fa-calendar"></i></span>
+                            <input type="text" style="width: 50%" class="form-control" id="editEndTime">
                         </div>
                     </form>
                     <form class="form-inline">

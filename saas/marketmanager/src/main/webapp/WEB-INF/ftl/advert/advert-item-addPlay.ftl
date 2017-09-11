@@ -17,27 +17,34 @@
             <div class="card-box">
                 <form class="form-inline" role="form">
                     <div class="form-group m-l-15">
-                        <label for="storeInfo">门店信息：</label>
+                        <label>门店信息：</label>
                         <select id="storeSelect" class="form-control">
-                            <option>选择门店</option>
-                            <option>淘金店</option>
-                            <option>杨琪店</option>
+                            <option value="">选择门店</option>
+                            <#if markets?exists >
+                                <#list markets as market>
+                                    <option value="${market.id?c}">${market.name}</option>
+                                </#list>
+                            </#if>
                         </select>
                     </div>
                     <div class="form-group m-l-15">
-                        <label for="screenNum">屏幕编号：</label>
+                        <label>屏幕编号：</label>
                         <select id="screenNumSelect" class="form-control">
-                            <option>10001-001</option>
-                            <option>10023-002</option>
+                            <option value="">选择屏幕编号</option>
+                            <#if screens?exists >
+                                <#list screens as screen>
+                                    <option value="${screen.screenID?c}">${screen.code}</option>
+                                </#list>
+                            </#if>
                         </select>
                     </div>
-                    <div class="form-group m-l-15">
-                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#selectButton"><i class="fa fa-check"></i> 选择广告</button>
+                    <div class="form-group pull-right">
+                        <button type="button" id="selectBtn" class="btn btn-primary" data-toggle="modal"><i class="fa fa-check"></i> 选择广告</button>
                     </div>
                 </form>
             </div>
 
-            <div class="row">
+            <div class="row" id="toggle">
                 <div class="col-sm-12">
                     <table class="table table-striped table-bordered">
                         <thead class="table_head">
@@ -51,53 +58,23 @@
                                 <th>操作</th>
                             </tr>
                         </thead>
-                        <tbody id="addPlayInfoTable">
+                        <tbody id="screenInfoTable">
                             <tr>
                                 <td style="text-align: center">1</td>
                                 <td style="text-align: center">xxx的广告</td>
-                                <td style="text-align: center">2017-08-24 00:00:00</td>
-                                <td style="text-align: center">2017-08-24 00:00:00</td>
-                                <td style="text-align: center">1</td>
-                                <td style="text-align: center">**********</td>
+                                <td style="text-align: center"><input type="text" class="form-control" id="stime"></td>
+                                <td style="text-align: center"><input type="text" class="form-control" id="stime"></td>
+                                <td style="text-align: center"><input type="text" class="form-control" id="stime"></td>
+                                <td style="text-align: center"><input type="text" class="form-control" id="stime"></td>
                                 <td style="text-align: center">
-                                    <a data-toggle="modal" data-target="#deleteButton">删除</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center">1</td>
-                                <td style="text-align: center">xxx的广告</td>
-                                <td style="text-align: center">2017-08-24 00:00:00</td>
-                                <td style="text-align: center">2017-08-24 00:00:00</td>
-                                <td style="text-align: center">1</td>
-                                <td style="text-align: center">**********</td>
-                                <td style="text-align: center">
-                                    <a data-toggle="modal" data-target="#deleteButton">删除</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center">1</td>
-                                <td style="text-align: center">xxx的广告</td>
-                                <td style="text-align: center">2017-08-24 00:00:00</td>
-                                <td style="text-align: center">2017-08-24 00:00:00</td>
-                                <td style="text-align: center">1</td>
-                                <td style="text-align: center">**********</td>
-                                <td style="text-align: center">
-                                    <a data-toggle="modal" data-target="#deleteButton">删除</a>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td style="text-align: center">1</td>
-                                <td style="text-align: center">xxx的广告</td>
-                                <td style="text-align: center">2017-08-24 00:00:00</td>
-                                <td style="text-align: center">2017-08-24 00:00:00</td>
-                                <td style="text-align: center">1</td>
-                                <td style="text-align: center">**********</td>
-                                <td style="text-align: center">
-                                    <a data-toggle="modal" data-target="#deleteButton">删除</a>
+                                    <button id="deleBtn" type="button" data-target="#deleModel"
+                                            class="btn btn-danger btn-sm" data-toggle="model">删除
+                                    </button>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                    <button type="button" class="btn btn-primary btn-lg pull-right">确定</button>
                 </div>
             </div>
 
@@ -112,24 +89,80 @@
         </div>
     </div>
 </div>
+<script>
+    $(document).ready(function () {
+        $("#toggle").hide();//每次刷新时先隐藏
+          //鼠标经过效果
+        $("tr[id^='tr_']").hover(
+            function(){ // onmouseover
+                $(this).css("background-color", "#FFFFBF") // 设置背景颜色
+                        //.css("cursor", "pointer"); // 设置鼠标光标为手状
+            },
+            function(){ // onmouseout
+                if (!$(this.id.replace("tr_", "")).attr("checked")){
+                    $(this).css("background-color", "#FFFFFF"); // 还原背景颜色
+                }
+            }
+        );
+        //选择广告
+        $("#selectBtn").on('click', function () {
+            $("#checkModel").modal('show');
+//            $("#checkAll").click(function(){
+//                $("input[type='checkbox']").attr("checked", this.checked);
+//            });
+            $('#checkAll').click(function(){
+                $("#checkTable tr td").each(function(){
+                    $(this).find("input[type=checkbox]").prop("checked", "checked");
+                });
+            });
+            $("#checkYesBtn").on('click',function(){//选择确定
+                $("#checkModel").modal('hide');
+                $("#toggle").show();
+            })
+        });
+        //删除
+        $("#screenInfoTable").find('button[id=deleBtn]').each(function () {
+            var that = this;
+            $(this).on('click', function () {
+                console.log($(that).attr("a_id"));
+                $("#deleModel").modal('show');
+                $("#deleNoBtn").on('click',function () {
+                    $("#deleModel").modal('hide');
+                });
+                $("#deleYesBtn").on('click',function () {
+                    /*$.post("${base}/advert/delScreenAdvert.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id"), function(data) {
+                        //重新刷新
+                        if(data.code == "0") {
+                            $("#deleModel").modal('hide');
+                            swal("提示", "删除成功", "success");
+                            setTimeout(function(){location.reload();},5000);
+                        } else {
+                            swal(data.msg);
+                        }
+                    }, "json");*/
+                });
+            });
+        });
 
+    });
+</script>
 <!--选择广告弹窗-->
-<div class="modal fade" id="selectButton" tabindex="-1" role="dialog">
+<div class="modal fade" id="checkModel" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="myModalLabel">选择广告</h4>
             </div>
-            <div class="modal-body">
+            <div class="modal-body" style="height: 650px;overflow-y:auto;">
                 <div class="modalAdvertStyle">
                     <div class="row">
                         <div class="col-sm-12">
-                            <table class="table table-striped table-bordered">
+                            <table class="table table-striped table-bordered" id="checkTable">
                                 <thead class="table_head">
                                     <tr>
                                         <th>
-                                            <input type="checkbox" value=""/>全选
+                                            <input id="checkAll" type="checkbox" value=""/>全选
                                         </th>
                                         <th>广告标题</th>
                                         <th>广告时长</th>
@@ -137,54 +170,22 @@
                                     </tr>
                                 </thead>
                                 <tbody id="advertInfoTable">
-                                    <tr>
-                                        <td style="text-align: center">
-                                            <input type="checkbox" value=""/>
-                                        </td>
-                                        <td style="text-align: center">xxx的广告</td>
-                                        <td style="text-align: center">30s</td>
-                                        <td style="text-align: center">*******</td>
+                                <#if (adverts?size > 0)>
+                                    <#list adverts as advert>
+                                    <tr id="tr_${advert_index}">
+                                        <td style="text-align: center"><input type="checkbox" value="${advert_index}"/></td>
+                                        <td style="text-align: center">${advert.title}</td>
+                                        <td style="text-align: center">${advert.timeSize}</td>
+                                        <td style="text-align: center">${advert.remark}</td>
                                     </tr>
+                                    </#list>
+                                <#else>
                                     <tr>
-                                        <td style="text-align: center">
-                                            <input type="checkbox" value=""/>
+                                        <td colSpan="11" height="200px">
+                                            <p class="text-center" style="line-height: 200px">暂无任何广告</p>
                                         </td>
-                                        <td style="text-align: center">xxx的广告</td>
-                                        <td style="text-align: center">30s</td>
-                                        <td style="text-align: center">*******</td>
                                     </tr>
-                                    <tr>
-                                        <td style="text-align: center">
-                                            <input type="checkbox" value=""/>
-                                        </td>
-                                        <td style="text-align: center">xxx的广告</td>
-                                        <td style="text-align: center">30s</td>
-                                        <td style="text-align: center">*******</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align: center">
-                                            <input type="checkbox" value=""/>
-                                        </td>
-                                        <td style="text-align: center">xxx的广告</td>
-                                        <td style="text-align: center">30s</td>
-                                        <td style="text-align: center">*******</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align: center">
-                                            <input type="checkbox" value=""/>
-                                        </td>
-                                        <td style="text-align: center">xxx的广告</td>
-                                        <td style="text-align: center">30s</td>
-                                        <td style="text-align: center">*******</td>
-                                    </tr>
-                                    <tr>
-                                        <td style="text-align: center">
-                                            <input type="checkbox" value=""/>
-                                        </td>
-                                        <td style="text-align: center">xxx的广告</td>
-                                        <td style="text-align: center">30s</td>
-                                        <td style="text-align: center">*******</td>
-                                    </tr>
+                                </#if>
                                 </tbody>
                             </table>
                         </div>
@@ -192,15 +193,15 @@
                 </div>
             </div>
             <div class="modal-footer" style="text-align: center">
-                <button type="button" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" style="padding:10px 80px">确定</button>
+                <button type="button" id="checkNoBtn" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
+                <button type="button" id="checkYesBtn" class="btn btn-primary" style="padding:10px 80px">确定</button>
             </div>
         </div>
     </div>
 </div>
 
 <!--删除弹窗-->
-<div class="modal fade" id="deleteButton" tabindex="-1" role="dialog">
+<div class="modal fade" id="deleModel" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -211,8 +212,8 @@
                 <p style="text-align: center">确定要删除该广告播放吗？</p>
             </div>
             <div class="modal-footer" style="text-align: center">
-                <button type="button" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
-                <button type="button" class="btn btn-primary" style="padding:10px 80px">确定</button>
+                <button type="button" id="deleNoBtn" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
+                <button type="button" id="deleYesBtn" class="btn btn-primary" style="padding:10px 80px">确定</button>
             </div>
         </div>
     </div>
