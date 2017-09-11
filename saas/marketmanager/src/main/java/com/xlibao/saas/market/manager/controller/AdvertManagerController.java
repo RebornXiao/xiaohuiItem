@@ -323,4 +323,19 @@ public class AdvertManagerController extends BaseController {
         }
         return response;
     }
+
+    /**
+     * t跳转至添加播放页
+     * @param map
+     * @return
+     */
+    @RequestMapping("/goAddAdvertScreen")
+    public String goAddAdvertScreen(ModelMap map) {
+        JSONObject marketResponse = marketManagerService.getAllMarkets();
+        if (marketResponse.getIntValue("code") == 0) {
+            map.put("markets", marketResponse.getJSONObject("response").getJSONArray("datas"));
+        }
+
+        return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_ADDPLAY, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
+    }
 }
