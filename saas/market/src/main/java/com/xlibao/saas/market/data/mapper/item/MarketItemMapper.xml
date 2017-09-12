@@ -21,6 +21,7 @@
         <result column="allocation_quantity" property="allocationQuantity" jdbcType="INTEGER"/>
         <result column="purchase_quantity" property="purchaseQuantity" jdbcType="INTEGER"/>
         <result column="status" property="status" jdbcType="TINYINT"/>
+        <result column="request_source" property="requestSource" jdbcType="INTEGER"/>
         <result column="cost_price" property="costPrice" jdbcType="BIGINT"/>
         <result column="sell_price" property="sellPrice" jdbcType="BIGINT"/>
         <result column="market_price" property="marketPrice" jdbcType="BIGINT"/>
@@ -37,13 +38,12 @@
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
-    <insert id="createItem" useGeneratedKeys="true" keyProperty="id"
-            parameterType="com.xlibao.market.data.model.MarketItem">
+    <insert id="createItem" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.market.data.model.MarketItem">
         insert into market_item(item_template_id, define_name, define_image, default_sort, owner_id, product_batches, batches_code, stock, lock_stock, pending_quantity, warning_quantity, keep_quantity, oversold_quantity,
-        maximum_sell_count, minimum_sell_count, allocation_quantity, purchase_quantity, status, cost_price, sell_price, market_price, discount_price, discount_type, restriction_quantity, beyond_control, delivery_delay,
+        maximum_sell_count, minimum_sell_count, allocation_quantity, purchase_quantity, status, request_source, cost_price, sell_price, market_price, discount_price, discount_type, restriction_quantity, beyond_control, delivery_delay,
         initial_sales, actual_sales, total_storage, total_out_storage, description, create_time)
         values(#{itemTemplateId}, #{defineName}, #{defineImage}, #{defaultSort}, #{ownerId}, #{productBatches}, #{batchesCode}, #{stock}, #{lockStock}, #{pendingQuantity}, #{warningQuantity}, #{keepQuantity}, #{oversoldQuantity},
-        #{maximumSellCount}, #{minimumSellCount}, #{allocationQuantity}, #{purchaseQuantity}, #{status}, #{costPrice}, #{sellPrice}, #{marketPrice}, #{discountPrice}, #{discountType}, #{restrictionQuantity}, #{beyondControl}, #{deliveryDelay},
+        #{maximumSellCount}, #{minimumSellCount}, #{allocationQuantity}, #{purchaseQuantity}, #{status}, #{requestSource}, #{costPrice}, #{sellPrice}, #{marketPrice}, #{discountPrice}, #{discountType}, #{restrictionQuantity}, #{beyondControl}, #{deliveryDelay},
         #{initialSales}, #{actualSales}, #{totalStorage}, #{totalOutStorage}, #{description}, #{createTime})
     </insert>
 
@@ -56,8 +56,8 @@
     </select>
 
     <select id="specialProducts" resultMap="BaseResultMap">
-        select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity -
-        lock_stock - pending_quantity) > 0 and restriction_quantity != 0
+        select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0
+        and (request_source &amp; #{requestSource}) = #{requestSource}
         <if test="appointType == -100">and #{timeout} > timestampdiff(second, create_time, now())</if>
         <if test="appointType == -99">and discount_type = 1</if>
         <if test="appointType == -98">and discount_type = 2</if>
@@ -71,12 +71,11 @@
     </select>
 
     <select id="conditionOrdering" resultMap="BaseResultMap">
-        select * from market_item where owner_id = #{marketId} and status = 1 and item_template_id
-        in(${itemTemplateSet}) and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and
-        restriction_quantity != 0 order by
-        <if test="sortType == 0">default_sort</if>
-        <if test="sortType == 1">sell_price</if>
-        <if test="sortType == 2">actual_sales</if>
+        select * from market_item where owner_id = #{marketId} and status = 1 and item_template_id in(${itemTemplateSet}) and (stock + oversold_quantity - lock_stock - pending_quantity) > 0
+        and restriction_quantity != 0 and (request_source &amp; #{requestSource}) = #{requestSource} order by
+        <if test="sortType == 0"> default_sort </if>
+        <if test="sortType == 1"> sell_price </if>
+        <if test="sortType == 2"> actual_sales </if>
 
         <if test="sortValue == 1">desc</if>, id
         limit #{pageStartIndex}, #{pageSize}
@@ -130,7 +129,7 @@
     </select>
 
     <update id="lockItemStock">
-        update market_item set lock_stock = lock_stock + #{lockQuantity} where id = #{itemId} and (stock + oversold_quantity - lock_stock - pending_quantity - #{lockQuantity}) > 0
+        update market_item set lock_stock = lock_stock + #{lockQuantity} where id = #{itemId} and (stock + oversold_quantity - lock_stock - pending_quantity - #{lockQuantity}) >= 0
     </update>
 
     <update id="itemPending">

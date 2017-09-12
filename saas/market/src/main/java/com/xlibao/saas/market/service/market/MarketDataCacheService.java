@@ -225,7 +225,7 @@ public class MarketDataCacheService {
 //        } catch (Throwable cause) {
 //            cause.printStackTrace();
 //        }
-        return dataAccessFactory.getMarketDataAccessManager().getAllMarkets();
+        return dataAccessFactory.getMarketDataAccessManager().loaderMarkets();
     }
 
     /**

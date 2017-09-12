@@ -19,7 +19,7 @@ public class XMarketTimeConfig {
     /** 新品有效时间 -- 7天 */
     public static final long ITEM_NEW_TIME = TimeUnit.DAYS.toMillis(7);
 
-    public static final long DELAY = 5;
+    public static final long DELAY = 2;
     public static final TimeUnit TIME_UNIT = TimeUnit.MINUTES;
 
     public static final long WAIT_LOCK_TIME_OUT = 2;

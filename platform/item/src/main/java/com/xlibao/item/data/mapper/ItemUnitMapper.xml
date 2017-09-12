@@ -8,7 +8,7 @@
     </resultMap>
 
     <select id="loaderItemUnits" resultMap="BaseResultMap">
-        select * from item_unit where status = #{status}
+        select * from item_unit
     </select>
 
     <select id="getItemUnit" resultMap="BaseResultMap">

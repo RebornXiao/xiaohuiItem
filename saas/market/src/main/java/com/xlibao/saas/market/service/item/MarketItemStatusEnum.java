@@ -3,7 +3,7 @@ package com.xlibao.saas.market.service.item;
 /**
  * @author chinahuangxc on 2016/10/27.
  */
-public enum ItemStatusEnum {
+public enum MarketItemStatusEnum {
 
     /** -1 -- 隐藏(逻辑删除) */
     HIDE(-1, "删除"),
@@ -17,7 +17,7 @@ public enum ItemStatusEnum {
     private int key;
     private String value;
 
-    ItemStatusEnum(int key, String value) {
+    MarketItemStatusEnum(int key, String value) {
         this.key = key;
         this.value = value;
     }

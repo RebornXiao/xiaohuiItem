@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
+import com.xlibao.common.constant.item.ItemRequestSourceEnum;
+import com.xlibao.common.constant.item.ItemStatusEnum;
 import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.exception.code.ItemErrorCodeEnum;
@@ -71,9 +73,9 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
     @Override
     public JSONObject itemTypes() {
-        List<ItemType> itemTypes = ItemDataCacheService.getItemTypes();
+        int requestSource = getIntParameter("requestSource", ItemRequestSourceEnum.ON_LINE.getKey());
 
-        JSONArray response = fillItemTypeMsg(itemTypes, false);
+        JSONArray response = fillItemTypeMsg(ItemDataCacheService.getItemTypes(), requestSource, false);
 
         return success(response);
     }
@@ -81,12 +83,14 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     @Override
     public JSONObject findSubItemTypes() {
         long itemTypeId = getLongParameter("itemTypeId");
+        int requestSource = getIntParameter("requestSource", ItemRequestSourceEnum.ON_LINE.getKey());
+
         ItemType itemType = ItemDataCacheService.getItemType(itemTypeId);
         if (itemType == null) {
             return MarketItemErrorCodeEnum.ITEM_TYPE_ERROR.response();
         }
         List<ItemType> itemTypes = ItemDataCacheService.relationItemTypes(itemTypeId);
-        JSONArray response = fillItemTypeMsg(itemTypes, true);
+        JSONArray response = fillItemTypeMsg(itemTypes, requestSource, true);
         return success(response);
     }
 
@@ -119,21 +123,24 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         int sortValue = getIntParameter("sortValue", 0);
         String searchKeyValue = getUTF("searchKeyValue", null);
 
+        int requestSource = getIntParameter("requestSource", ItemRequestSourceEnum.ON_LINE.getKey());
+
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex(pageSize);
 
         List<MarketItem> items;
         if (CommonUtils.isNotNullString(searchKeyValue)) {
-            // 记录搜索次数
-            incrementSearchTimes(marketId, searchKeyValue);
-
-            items = conditionPageItems(marketId, ItemDataCacheService.fuzzyQueryItemTemplates(searchKeyValue), sortType, sortValue, pageStartIndex, pageSize);
+            items = conditionPageItems(marketId, ItemDataCacheService.fuzzyQueryItemTemplates(searchKeyValue), sortType, sortValue, requestSource, pageStartIndex, pageSize);
+            if (!CommonUtils.isEmpty(items)) {
+                // 记录搜索次数
+                incrementSearchTimes(marketId, searchKeyValue);
+            }
         } else {
             ItemSpecialTypeEnum itemSpecialTypeEnum = ItemSpecialTypeEnum.getItemSpecialTypeEnum(itemTypeId);
             if (itemSpecialTypeEnum != null) {
-                items = specialPageItems(itemSpecialTypeEnum, marketId, sortType, sortValue, pageStartIndex, pageSize);
+                items = specialPageItems(itemSpecialTypeEnum, marketId, sortType, sortValue, requestSource, pageStartIndex, pageSize);
             } else {
-                items = conditionPageItems(marketId, ItemDataCacheService.appointItemType(itemTypeId), sortType, sortValue, pageStartIndex, pageSize);
+                items = conditionPageItems(marketId, ItemDataCacheService.appointItemType(itemTypeId), sortType, sortValue, requestSource, pageStartIndex, pageSize);
             }
         }
         if (CommonUtils.isEmpty(items)) {
@@ -245,7 +252,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         for (MarketItem item : items) {
             ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(item.getItemTemplateId());
             ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
-            if (item.getStatus() != ItemStatusEnum.NORMAL.getKey()) {
+            if (item.getStatus() != MarketItemStatusEnum.NORMAL.getKey()) {
                 logger.error("用户购买【" + itemTemplate.getName() + "】，目前处于下架状态(状态值：" + item.getStatus() + ")，暂不通过！");
                 throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.ITEM_STATUS_ERROR_OFF_LINE.getKey(), "抱歉，您购买的【" + itemTemplate.getName() + "】已下架！");
             }
@@ -298,7 +305,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         long sellPrice = getLongParameter("sellPrice");
         long marketPrice = getLongParameter("marketPrice", sellPrice);
         String description = getUTF("description", "");
-        int status = getIntParameter("status", ItemStatusEnum.OFF_SALE.getKey());
+        int status = getIntParameter("status", MarketItemStatusEnum.OFF_SALE.getKey());
 
         if (costPrice < 0) {
             return fail(3, "成本价不能小于0分");
@@ -320,8 +327,8 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             return ItemErrorCodeEnum.NOT_FOUND_ITEM_TEMPLATE.response("商品模版不存在，错误码：" + itemTemplateId);
         }
         MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplateId);
-        if (status == ItemStatusEnum.HIDE.getKey()) {
-            status = ItemStatusEnum.OFF_SALE.getKey();
+        if (status == MarketItemStatusEnum.HIDE.getKey()) {
+            status = MarketItemStatusEnum.OFF_SALE.getKey();
         }
         int result;
         if (item == null) {
@@ -563,19 +570,25 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return recommendItems;
     }
 
-    private JSONArray fillItemTypeMsg(List<ItemType> itemTypes, boolean fillImage) {
+    private JSONArray fillItemTypeMsg(List<ItemType> itemTypes, int requestSource, boolean fillImage) {
         if (CommonUtils.isEmpty(itemTypes)) {
             return new JSONArray();
         }
         JSONArray response = new JSONArray();
         for (ItemType itemType : itemTypes) {
+            if (itemType.getStatus() != ItemStatusEnum.NORMAL.getKey()) {
+                continue;
+            }
+            if ((itemType.getRequestSource() & requestSource) != requestSource) {
+                continue;
+            }
             List<ItemType> subItemTypes = ItemDataCacheService.relationItemTypes(itemType.getId());
             if (CommonUtils.isEmpty(subItemTypes)) {
                 continue;
             }
             JSONObject data = fillItemTypeMsg(itemType, fillImage);
 
-            JSONArray subItemTypeMsg = subItemTypes.stream().map(it -> fillItemTypeMsg(it, true)).collect(Collectors.toCollection(JSONArray::new));
+            JSONArray subItemTypeMsg = subItemTypes.stream().map(it -> fillItemTypeMsg(it, fillImage)).collect(Collectors.toCollection(JSONArray::new));
             data.put("subItemTypes", subItemTypeMsg);
             response.add(data);
         }
@@ -594,18 +607,18 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return response;
     }
 
-    private List<MarketItem> conditionPageItems(long marketId, List<ItemTemplate> itemTemplates, int sortType, int sortValue, int pageStartIndex, int pageSize) {
+    private List<MarketItem> conditionPageItems(long marketId, List<ItemTemplate> itemTemplates, int sortType, int sortValue, int requestSource, int pageStartIndex, int pageSize) {
         if (CommonUtils.isEmpty(itemTemplates)) {
             return null;
         }
         // 拼装商品集合
         String itemTemplateSet = ItemDataCacheService.assembleItemTemplateSet(itemTemplates);
         // 按前端指定的排序条件查找对应的商品列表
-        return dataAccessFactory.getItemDataAccessManager().conditionOrdering(marketId, itemTemplateSet, sortType, sortValue, pageStartIndex, pageSize);
+        return dataAccessFactory.getItemDataAccessManager().conditionOrdering(marketId, itemTemplateSet, sortType, sortValue, requestSource, pageStartIndex, pageSize);
     }
 
-    private List<MarketItem> specialPageItems(ItemSpecialTypeEnum itemSpecialTypeEnum, long marketId, int sortType, int sortValue, int pageStartIndex, int pageSize) {
-        return dataAccessFactory.getItemDataAccessManager().specialProducts(marketId, itemSpecialTypeEnum.getKey(), XMarketTimeConfig.ITEM_NEW_TIME, sortType, sortValue, pageStartIndex, pageSize);
+    private List<MarketItem> specialPageItems(ItemSpecialTypeEnum itemSpecialTypeEnum, long marketId, int sortType, int sortValue, int requestSource, int pageStartIndex, int pageSize) {
+        return dataAccessFactory.getItemDataAccessManager().specialProducts(marketId, itemSpecialTypeEnum.getKey(), XMarketTimeConfig.ITEM_NEW_TIME, sortType, sortValue, requestSource, pageStartIndex, pageSize);
     }
 
     private OrderItemSnapshot fillBaseOrderItemSnapshot(MarketItem item) {

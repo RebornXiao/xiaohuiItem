@@ -13,7 +13,7 @@ import com.xlibao.market.data.model.*;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemUnit;
 import com.xlibao.saas.market.data.DataAccessFactory;
-import com.xlibao.saas.market.service.item.ItemStatusEnum;
+import com.xlibao.saas.market.service.item.MarketItemStatusEnum;
 import com.xlibao.saas.market.service.item.ItemStockOffsetTypeEnum;
 import com.xlibao.saas.market.service.item.MarketItemErrorCodeEnum;
 import com.xlibao.saas.market.service.item.PrepareActionStatusEnum;
@@ -285,9 +285,9 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         if (item.getStock() < offShelvesQuantity) {
             return MarketItemErrorCodeEnum.ITEM_LOCATION_QUANTITY_ERROR.response("[0002]下架数量有误；商品剩余数量：" + item.getStock() + "；本次下架数量：" + offShelvesQuantity);
         }
-        int status = ItemStatusEnum.NORMAL.getKey();
+        int status = MarketItemStatusEnum.NORMAL.getKey();
         if (item.getStock() <= offShelvesQuantity) {
-            status = ItemStatusEnum.OFF_SALE.getKey();
+            status = MarketItemStatusEnum.OFF_SALE.getKey();
         }
         logger.info("[下架] " + passportId + "正在对商品(条码为：" + barcode + ")进行下架操作；商店ID：" + marketId + "，商品ID：" + item.getId() + "所在位置：" + location + "，下架数量：" + offShelvesQuantity + "；下架后商品状态为：" + status);
         int result = dataAccessFactory.getItemDataAccessManager().offShelves(item.getId(), offShelvesQuantity, status); // 减少库存 当库存为0时 设置为下架
@@ -335,12 +335,12 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplate.getId());
         if (item == null) {
             // 商店未存在该模版的商品 先添加
-            item = MarketItem.newInstance(marketId, itemTemplate, (byte) ItemStatusEnum.NORMAL.getKey());
+            item = MarketItem.newInstance(marketId, itemTemplate, (byte) MarketItemStatusEnum.NORMAL.getKey());
             dataAccessFactory.getItemDataAccessManager().createItem(item);
         }
         logger.info("[上架] " + passportId + "正在对商品(条码为：" + barcode + ")进行上架操作；商店ID：" + marketId + "，商品ID：" + item.getId() + "，所在位置：" + location + "，上架数量：" + onShelvesQuantity);
         // 存在该模版的商品时 更新库存和状态即可
-        dataAccessFactory.getItemDataAccessManager().offShelves(item.getId(), -onShelvesQuantity, ItemStatusEnum.NORMAL.getKey());
+        dataAccessFactory.getItemDataAccessManager().offShelves(item.getId(), -onShelvesQuantity, MarketItemStatusEnum.NORMAL.getKey());
 
         MarketItemLocation itemLocation = dataAccessFactory.getItemDataAccessManager().getItemLocationForMarket(marketId, location);
         if (itemLocation != null) {

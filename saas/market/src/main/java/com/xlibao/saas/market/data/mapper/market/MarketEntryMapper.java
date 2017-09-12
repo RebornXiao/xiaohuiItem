@@ -19,8 +19,6 @@ public interface MarketEntryMapper {
 
     int searchMarketsCount(@Param("searchModel")MarketEntry searchModel);
 
-    List<MarketEntry> getAllMarkets();
-
     int marketResponse(@Param("marketId") long marketId, @Param("status") int status);
 
     int createMarket(MarketEntry entry);

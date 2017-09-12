@@ -63,7 +63,7 @@
     </insert>
 
     <select id="loaderItemTemplates" resultMap="BaseResultMap">
-        select * from item_template where status = #{status}
+        select * from item_template
     </select>
 
     <select id="getItemTemplates" resultMap="BaseResultMap">

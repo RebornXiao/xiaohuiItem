@@ -26,7 +26,7 @@
     </resultMap>
 
     <select id="loaderMarkets" resultMap="BaseResultMap">
-        select * from market_entry where (status &amp; 1) = 1
+        select * from market_entry
     </select>
 
     <select id="getMarket" resultMap="BaseResultMap">
@@ -96,10 +96,6 @@
         <if test="searchModel.deliveryMode != -1">
             and delivery_mode = #{searchModel.deliveryMode}
         </if>
-    </select>
-
-    <select id="getAllMarkets" resultMap="BaseResultMap">
-        select * from market_entry
     </select>
 
     <update id="marketResponse">

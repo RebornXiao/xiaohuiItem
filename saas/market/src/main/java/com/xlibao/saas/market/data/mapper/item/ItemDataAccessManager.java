@@ -50,13 +50,12 @@ public class ItemDataAccessManager {
         return itemMapper.getMarketItem(id);
     }
 
-
-    public List<MarketItem> specialProducts(long marketId, long appointType, long timeout, int sortType, int sortValue, int pageStartIndex, int pageSize) {
-        return itemMapper.specialProducts(marketId, appointType, timeout, sortType, sortValue, pageStartIndex, pageSize);
+    public List<MarketItem> specialProducts(long marketId, long appointType, long timeout, int sortType, int sortValue, int requestSource, int pageStartIndex, int pageSize) {
+        return itemMapper.specialProducts(marketId, appointType, timeout, sortType, sortValue, requestSource, pageStartIndex, pageSize);
     }
 
-    public List<MarketItem> conditionOrdering(long marketId, String itemTemplateSet, int sortType, int sortValue, int pageStartIndex, int pageSize) {
-        return itemMapper.conditionOrdering(marketId, itemTemplateSet, sortType, sortValue, pageStartIndex, pageSize);
+    public List<MarketItem> conditionOrdering(long marketId, String itemTemplateSet, int sortType, int sortValue, int requestSource, int pageStartIndex, int pageSize) {
+        return itemMapper.conditionOrdering(marketId, itemTemplateSet, sortType, sortValue, requestSource, pageStartIndex, pageSize);
     }
 
     public List<MarketItem> getItemsForItemTemplateSet(long marketId, String itemTemplateSet, int pageStartIndex, int pageSize) {

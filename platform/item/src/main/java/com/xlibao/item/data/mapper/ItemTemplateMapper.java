@@ -33,9 +33,9 @@ public interface ItemTemplateMapper {
 
     List<ItemTemplate> fuzzyMatchItemTemplate(@Param("name") String name);
 
-    public int createTemplate(ItemTemplate itemTemplate);
+    int createTemplate(ItemTemplate itemTemplate);
 
-    public int updateTemplate(ItemTemplate itemTemplate);
+    int updateTemplate(ItemTemplate itemTemplate);
 
-    public int updateTemplateImgUrl(@Param("itemId") long itemId, @Param("itemImgUrl") String itemImgUrl);
+    int updateTemplateImgUrl(@Param("itemId") long itemId, @Param("itemImgUrl") String itemImgUrl);
 }
