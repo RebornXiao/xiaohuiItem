@@ -154,6 +154,8 @@
                     $(this).button("loading");
 
                     $.post("${base}/passportopen/login.do?userName=" + name + "&passWord=" + pass, function (data) {
+
+                        $(this).button("reset");
                         //重新刷新
                         if (data.code == "0") {
                             //登录成功，记录登录的用户ID，显示名称

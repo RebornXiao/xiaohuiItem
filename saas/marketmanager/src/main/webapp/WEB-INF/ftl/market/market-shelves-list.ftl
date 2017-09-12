@@ -515,7 +515,7 @@
                         var td = $("#h" + code);
                         if (td != null) {
                             td.empty();
-                            td.append(addBtns(td.attr("data_t"), td.attr("data_id"), td.attr("data_code")));
+                            td.append(addBtns(td.attr("task_id"), td.attr("data_id"), td.attr("data_code")));
                         }
                         //删除一项任务
                         task_count = task_count - 1;
@@ -533,11 +533,11 @@
                 //查看 任务详情
                 _clipListTable.on("click", "button[id=seeTaskBtn]", function () {
                     var td = $(this).parent();//找到父 td
-                    var data_t = td.attr("data_t");
+                    var task_id = td.attr("task_id");
                     var data_id = td.attr("data_id");
                     var data_code = td.attr("data_code");
                     //取得任务数据
-                    $.post("${base}/market/checkPrepareActionTask.do?taskId=" + data_id, function (json) {
+                    $.post("${base}/market/checkPrepareActionTask.do?taskId=" + task_id, function (json) {
                         if (json.code != 0) {
                             swal(json.msg);
                         } else {
@@ -548,7 +548,7 @@
                             _ipTaskDate.val(data.hopeExecutorDate);
 
                             //将当前数据注入按钮
-                            _cancelTaskBtn.attr("data_t", data_t);
+                            _cancelTaskBtn.attr("task_id", task_id);
                             _cancelTaskBtn.attr("data_id", data_id);
                             _cancelTaskBtn.attr("data_code", data_code);
 
@@ -562,7 +562,7 @@
 
                     //如果原来有商品
                     var td = $(this).parent();//找到父 td
-                    var data_t = td.attr("data_t");
+                    var task_id = td.attr("task_id");
                     var data_id = td.attr("data_id");
                     var data_code = td.attr("data_code");
 
@@ -601,7 +601,7 @@
                 _clipListTable.on("click", "button[id=changeItemBtn]", function () {
 
                     var td = $(this).parent();//找到父 td
-                    var data_t = td.attr("data_t");
+                    var task_id = td.attr("task_id");
                     var data_id = td.attr("data_id");
                     var data_code = td.attr("data_code");
 
@@ -630,7 +630,7 @@
 
                 //取消某个任务
                 _cancelTaskBtn.on("click", function () {
-                    var task_id = $(this).attr("data_t");
+                    var task_id = $(this).attr("task_id");
                     var data_id = $(this).attr("data_id");
                     var data_code = $(this).attr("data_code");
                     //2次确定
@@ -649,7 +649,7 @@
                                 var td = $("#h" + data_code);
                                 if(td != null) {
                                     td.empty();
-                                    td.attr("data_t", task_id);
+                                    td.attr("task_id", task_id);
                                     td.attr("data_id", data_id);
                                     td.attr("data_code", data_code);
                                     if (data_id == 0) {
@@ -674,7 +674,7 @@
                     var txt = "";
                     var hDate = "";
                     $.each(task_list, function (k, value) {
-                        txt = k + "-" + value.itemId + "-" + value.itemStock + ",";
+                        txt = txt + k + "-" + value.itemId + "-" + value.itemStock + ",";
                     });
                     $.post("${base}/market/prepareAction.do?marketId=" + s_MarketId + "&actionDatas=" + txt + "&hopeExecutorDate=" + hDate, function (data) {
                         //重新刷新
@@ -751,19 +751,19 @@
                         //如果没有任务，则什么也不做
                         if (!task_list[value.locationCode]) {
                             if (value.taskId > 0) {
-                                txt = txt + "<td id=\"h" + value.locationCode + "\" data_t=\"" + value.taskId + "\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\">" + addBtns(0, value.taskId, value.locationCode) + "</td>";
+                                txt = txt + "<td id=\"h" + value.locationCode + "\" task_id=\"" + value.taskId + "\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\">" + addBtns(0, value.taskId, value.locationCode) + "</td>";
                             } else if (value.itemTemplateId != 0) {
-                                txt = txt + "<td id=\"h" + value.locationCode + "\" data_t=\"1\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\">" + addBtns(1, value.itemTemplateId, value.locationCode) + "</td>";
+                                txt = txt + "<td id=\"h" + value.locationCode + "\" task_id=\"1\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\">" + addBtns(1, value.itemTemplateId, value.locationCode) + "</td>";
                             } else {
-                                txt = txt + "<td id=\"h" + value.locationCode + "\" data_t=\"2\" data_id=\"0\" data_code=\"" + value.locationCode + "\">" + addBtns(2, 0, value.locationCode) + "</td>";
+                                txt = txt + "<td id=\"h" + value.locationCode + "\" task_id=\"2\" data_id=\"0\" data_code=\"" + value.locationCode + "\">" + addBtns(2, 0, value.locationCode) + "</td>";
                             }
                         } else {
                             if (value.taskId > 0) {
-                                txt = txt + "<td id=\"h" + value.locationCode + "\" data_t=\"0\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\"><span class=\"label label-warning\">任务待提交</span></td>";
+                                txt = txt + "<td id=\"h" + value.locationCode + "\" task_id=\"0\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\"><span class=\"label label-warning\">任务待提交</span></td>";
                             } else if (value.itemTemplateId != 0) {
-                                txt = txt + "<td id=\"h" + value.locationCode + "\" data_t=\"1\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\"><span class=\"label label-warning\">任务待提交</span></td>";
+                                txt = txt + "<td id=\"h" + value.locationCode + "\" task_id=\"1\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\"><span class=\"label label-warning\">任务待提交</span></td>";
                             } else {
-                                txt = txt + "<td id=\"h" + value.locationCode + "\" data_t=\"2\" data_id=\"0\" data_code=\"" + value.locationCode + "\"><span class=\"label label-warning\">任务待提交</span></td>";
+                                txt = txt + "<td id=\"h" + value.locationCode + "\" task_id=\"2\" data_id=\"0\" data_code=\"" + value.locationCode + "\"><span class=\"label label-warning\">任务待提交</span></td>";
                             }
                         }
                         _clipListTable.append(txt);
@@ -802,7 +802,7 @@
                         }, function (isConfirm) {
                             if (isConfirm) {
                                 //直接切换
-                                open({url:"${base}/market/marketShelves.do?id=" + s_MarketId});
+                                open({url:"${base}/market/marketShelves.do?marketId=" + s_MarketId});
                                 //location.href = "${base}/market/marketShelves.do?id=" + s_MarketId;
                             } else {
                                 //弹出任务列表
@@ -811,7 +811,7 @@
                         });
                     } else {
                         //直接切换
-                        open({url:"${base}/market/marketShelves.do?id=" + s_MarketId});
+                        open({url:"${base}/market/marketShelves.do?marketId=" + s_MarketId});
                         //location.href = "${base}/market/marketShelves.do?id=" + s_MarketId;
                     }
                 });

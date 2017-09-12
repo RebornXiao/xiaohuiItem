@@ -53,7 +53,7 @@
                             <label class="col-md-4 control-label">商品名称：</label>
                             <div class="col-md-8">
                                 <input type="text" id="itemName" class="form-control" <#if item?exists>
-                                       value="${item.name}" </#if>>
+                                       value="${item.name!}" </#if>>
                             </div>
                         </div>
 
@@ -61,7 +61,7 @@
                             <label class="col-md-4 control-label" for="example-email">自定义编码：</label>
                             <div class="col-md-8">
                                 <input type="text" id="defineCode" class="form-control" <#if item?exists>
-                                       value="${(item.defineCode)!}" </#if>>
+                                       value="${item.defineCode!}" </#if>>
                             </div>
                         </div>
 
@@ -69,7 +69,7 @@
                             <label class="col-md-4 control-label">标准条形码：</label>
                             <div class="col-md-8">
                                 <input type="text" id="barcode" class="form-control" <#if item?exists>
-                                       value="${item.barcode}" </#if>>
+                                       value="${item.barcode!}" </#if>>
                             </div>
                         </div>
 

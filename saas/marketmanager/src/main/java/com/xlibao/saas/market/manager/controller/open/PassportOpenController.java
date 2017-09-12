@@ -34,7 +34,8 @@ public class PassportOpenController extends BaseController {
                 + "&clientType=" + ClientTypeEnum.BACKSTAGE.getKey()
                 + "&versionIndex=1");
 
-        return JSONObject.parseObject(json);
+        JSONObject response = JSONObject.parseObject(json);
+        return response;
     }
 
     @RequestMapping("/index")

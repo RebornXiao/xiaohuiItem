@@ -161,7 +161,7 @@
                             <#list markets as market>
                             <tr>
                                 <td>${market.id?c}</td>
-                                <td>${market.name}</td>
+                                <td>${(market.name)!}</td>
                                 <td>自营</td>
                                 <td>
                                     <#if market.status == 0>

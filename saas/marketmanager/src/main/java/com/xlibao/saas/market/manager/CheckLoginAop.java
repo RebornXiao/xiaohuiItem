@@ -48,6 +48,7 @@ public class CheckLoginAop extends BaseController {
 //            }
 //
 //            setAccessToken(accessToken);
+
             return point.proceed(args);
 
         } catch (XlibaoIllegalArgumentException ex) {
