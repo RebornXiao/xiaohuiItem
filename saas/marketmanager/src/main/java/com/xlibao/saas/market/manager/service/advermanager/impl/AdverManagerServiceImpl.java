@@ -218,7 +218,6 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
          JSONObject rest = new JSONObject();
          int marketID =  getIntParameter("marketID",0);
          int screenID =  getIntParameter("screenID",0);
-         String [] titles = getHttpServletRequest().getParameterValues("title");
          String [] advertIDs= getHttpServletRequest().getParameterValues("advertID");
          String [] beginTimes= getHttpServletRequest().getParameterValues("beginTime");
          String [] endTimes= getHttpServletRequest().getParameterValues("endTime");
@@ -238,7 +237,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
             String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/addAdvertInfoForScreen.do";
             JSONObject response = executor(url, parameters);
             if(response.getInteger("code")!=0){
-                resStr += "广告："+titles[i]+"。添加失败!";
+                resStr += "广告："+advertIDs[i]+"。添加失败!";
             }
         }
         rest.put("msg",resStr);
