@@ -255,12 +255,14 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         String endTime =  getUTF("endTime","");
         int playOrder =  getIntParameter("playOrder",-1);
         String remark =  getUTF("remark","");
+        String sCode = getUTF("sCode","");
 
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("marketID",String.valueOf(marketID));
         parameters.put("screenID",String.valueOf(screenID));
         parameters.put("advertID",String.valueOf(advertID));
+        parameters.put("sCode",sCode);
         parameters.put("beginTime",beginTime);
         parameters.put("endTime",endTime);
         parameters.put("playOrder",String.valueOf(playOrder));
