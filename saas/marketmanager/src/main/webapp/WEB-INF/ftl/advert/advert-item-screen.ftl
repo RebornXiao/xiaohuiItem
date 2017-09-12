@@ -181,7 +181,7 @@
                         //重新刷新
                         if(data.code == "0") {
                             swal("提示", "删除成功", "success");
-                            setTimeout(function(){location.reload();},500);
+                            setTimeout(function(){location.href = "${base}/advert/screens.do";},500);
                         } else {
                             swal(data.msg);
                         }
