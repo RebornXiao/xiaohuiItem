@@ -9,7 +9,7 @@
 
 <!-- 商品更改库存界面 -->
 <div class="modal fade" id="upItemDialog" tabindex="-1" role="dialog" >
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"
@@ -23,26 +23,26 @@
                         <form class="form-horizontal" role="form">
                             <div class="form-group">
                                 <label class="col-md-4 control-label">弹夹编码：</label>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <input type="text" id="ipItemCode" class="form-control" disabled>
                                 </div>
                             </div>
                             <div class="form-group" id="dItemName">
                                 <label class="col-md-4 control-label" id="lItemName">商品名称：</label>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <input type="text" id="ipItemName" class="form-control" disabled>
                                 </div>
                             </div>
                             <div class="form-group" id="dItemStock">
                                 <label class="col-md-4 control-label" id="lItemStock">库存：</label>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <input type="text" id="ipItemStock" class="form-control" disabled>
                                 </div>
                             </div>
                             <div class="form-group" id="dItemTypes">
                                 <label class="col-md-4 control-label" id="lItemTypes">选择替换的商品：</label>
-                                <div class="col-md-8">
-                                    <select id="sItemTypes" style="width:120px;">
+                                <div class="col-md-4">
+                                    <select id="sItemTypes" style="width:200px">
                                     <#if itemTypes?exists && (itemTypes?size > 0)>
                                         <option data_id="0">选择分类</option>
                                         <#list itemTypes as iType>
@@ -58,12 +58,12 @@
                                         <option data_id="0">选择分类</option>
                                     </#if>
                                     </select>
-                                    <select id="sItem" style="width:120px;"></select>
+                                    <select id="sItem" style="width:200px"></select>
                                 </div>
                             </div>
                             <div class="form-group" id="dNewItemStock">
                                 <label class="col-md-4 control-label" id="lNewItemStock">新增库存：</label>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <input type="number" id="ipNewItemStock" class="form-control">
                                 </div>
                             </div>

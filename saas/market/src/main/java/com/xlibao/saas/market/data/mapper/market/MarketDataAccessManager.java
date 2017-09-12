@@ -110,4 +110,5 @@ public class MarketDataAccessManager {
     public int clearShelves(long marketId) {
         return shelvesManagerMapper.clearShelves(marketId);
     }
+
 }

@@ -111,6 +111,20 @@
         order by create_time desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
+
+    <select id="searchMarketItemCount" resultType="Integer">
+        select count(id) from market_item where 1=1
+        <if test="marketId != 0">
+            and owner_id = #{marketId}
+        </if>
+        <if test="searchType == 'itemTemplateId'" >
+            and item_template_id = #{searchKey}
+        </if>
+        <if test="searchType == 'itemTemplateName'">
+            and define_name like "%"#{searchKey}"%"
+        </if>
+    </select>
+
     <select id="existItemTemplates" resultType="Long">
         select item_template_id from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0 and item_template_id in(${itemTemplateSet})
     </select>

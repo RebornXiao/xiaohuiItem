@@ -268,12 +268,11 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
     public JSONObject marketUpdateStatus() {
         long marketId = getLongParameter("marketId");
         byte status = getByteParameter("status");
-        //TODO
-//        if(dataAccessFactory.getMarketDataAccessManager().marketUpdateStatus(marketId, status)>0) {
-//            return success("修改成功");
-//        } else {
+        if(dataAccessFactory.getMarketDataAccessManager().marketResponse(marketId, status)>0) {
+            return success("修改成功");
+        } else {
             return fail("修改失败");
-//        }
+        }
     }
 
 

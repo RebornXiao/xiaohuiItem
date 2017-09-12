@@ -88,7 +88,17 @@ public class MarketManagerController extends BaseController {
         JSONObject response = marketJson.getJSONObject("response");
         JSONArray entrys = response.getJSONArray("data");
         for (int i = 0; i < entrys.size(); i++) {
-            Utils.changeData(entrys.getJSONObject(i), "createTime");
+            JSONObject ejson = entrys.getJSONObject(i);
+            Utils.changeData(ejson, "createTime");
+            //状态
+            int marketStatus = ejson.getIntValue("status");
+            //如果与硬件断连
+            if((marketStatus & 16) == 16) {
+                ejson.put("statusOffline", 1);
+                ejson.put("status", (marketStatus ^ 16));
+            } else {
+                ejson.put("statusOffline", 0);
+            }
         }
 
         map.put("markets", entrys);

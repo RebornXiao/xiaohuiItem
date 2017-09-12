@@ -165,27 +165,34 @@
                                 <td>自营</td>
                                 <td>
                                     <#if market.status == 0>
-                                        <button id="statusBtn" type="button"
+                                        <button id="statusBtn" type="button" data_s="${market.status}"
                                                 class="btn waves-effect waves-light btn-inverse btn-xs"
                                                 data_id="${market.id?c}" data_v="${market.name}">无效
                                         </button>
                                     </#if>
                                     <#if market.status == 1>
-                                        <button id="statusBtn" type="button"
+                                        <button id="statusBtn" type="button" data_s="${market.status}"
                                                 class="btn waves-effect waves-light btn-success btn-xs"
                                                 data_id="${market.id?c}" data_v="${market.name}">正常
                                         </button>
                                     </#if>
                                     <#if market.status == 2>
-                                        <button id="statusBtn" type="button"
+                                        <button id="statusBtn" type="button" data_s="${market.status}"
                                                 class="btn waves-effect waves-light btn-danger btn-xs"
                                                 data_id="${market.id?c}" data_v="${market.name}">关店
                                         </button>
                                     </#if>
                                     <#if market.status == 3>
-                                        <button id="statusBtn" type="button"
+                                        <button id="statusBtn" type="button" data_s="${market.status}"
                                                 class="btn waves-effect waves-light btn-inverse btn-xs"
                                                 data_id="${market.id?c}" data_v="${market.name}">维护
+                                        </button>
+                                    </#if>
+                                    <!-- 断连标志 -->
+                                    <#if market.statusOffline == 1>
+                                        <button id="statusBtn" type="button" data_s="${market.status}"
+                                                class="btn waves-effect waves-light btn-danger btn-xs"
+                                                data_id="${market.id?c}" data_v="${market.name}">与硬件断连
                                         </button>
                                     </#if>
                                 </td>
@@ -347,9 +354,7 @@
                     open({url: "${base}/market/marketEdit.do?provinceId=" + provinceId + "&cityId=" + cityId + "&districtId=" + districtId + "&streetId=" + streetId});
                 });
 
-                //搜索
-                $("#searchBtn").on('click', function () {
-
+                function searchHandler() {
                     //直接跳转
                     var province = getVs("loc_province", null);
                     var city = getVs("loc_city", null);
@@ -371,6 +376,12 @@
                             + "&status=" + _status + "&deliveryMode=" + _deliveryMode;
 
                     open({url: url});
+                }
+
+                //搜索
+                $("#searchBtn").on('click', function () {
+
+                    searchHandler();
                 });
 
                 //状态修改确定
@@ -381,7 +392,20 @@
                     var _status = _status_obj.attr("data_id");
 
                     //提交到服务器
+                    var btn = $(this);
+                    btn.button("loading");
 
+                    $.post("${base}/market/marketUpdateStatus.do?marketId=" + s_MarketId + "&status=" + _status, function (json) {
+
+                        btn.button("reset");
+
+                        if (json.code != 0) {
+                            swal(json.msg);
+                        } else {
+                            //改变
+                            searchHandler();
+                        }
+                    }, "json");
                 });
 
             <#if (markets?size > 0)>

@@ -67,6 +67,7 @@
         <if test="searchModel.deliveryMode != -1">
             and delivery_mode = #{searchModel.deliveryMode}
         </if>
+        order by create_time desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="searchMarketsCount" resultType="Integer">

@@ -91,6 +91,10 @@ public class ItemDataAccessManager {
         return itemMapper.searchMarketItems(marketId, searchType, searchKey, pageStartIndex, pageSize);
     }
 
+    public int searchMarketItemCount(long marketId, String searchType, String searchKey, int pageStartIndex, int pageSize) {
+        return itemMapper.searchMarketItemCount(marketId, searchType, searchKey, pageStartIndex, pageSize);
+    }
+
     public int releaseItemLockQuantity(long itemId, int releaseLockQuantity) {
         return itemMapper.releaseItemLockQuantity(itemId, releaseLockQuantity);
     }

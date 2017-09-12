@@ -7,6 +7,46 @@
 <script src="${res}/assets/plugins/bootstrap-select2/select2.min.js"></script>
 <script src="${res}/assets/plugins/bootstrap-select2/zh-CN.js"></script>
 
+
+<div class="modal fade" id="statusDialog" tabindex="-1" role="dialog">
+    <div class="modal-dialog modal-sm" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"
+                        aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="upItemTitle">商品上下架状态修改</h4>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-sm-10">
+                        <p id="statusItemName"></p>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-sm-10">
+                        <select class="form-control" id="updateStatusSelect">
+                            <option data_id="1">上架</option>
+                            <option data_id="3">下架</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <button id="statusOkBtn" type="button" class="btn btn-primary"
+                                data-dismiss="modal">确定
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
 <div class="content-page">
     <!-- Start content -->
     <div class="content">
@@ -146,7 +186,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                     <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/marketItems.do" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/marketItems.do?marketId=${marketId?c}&searchType=${searchType}&searchKey=${searchKey}" />
                 </div>
             </div>
         </#if>
