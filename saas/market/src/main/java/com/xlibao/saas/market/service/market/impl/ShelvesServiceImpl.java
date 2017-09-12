@@ -164,6 +164,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
 
             data.put("taskId", prepareAction.getId());
             data.put("itemName", itemTemplate.getName());
+            data.put("barcode", barcode);
             data.put("locationCode", prepareAction.getItemLocation());
             data.put("itemQuantity", prepareAction.getHopeItemQuantity());
             data.put("unitName", itemUnit.getTitle());

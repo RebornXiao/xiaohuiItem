@@ -506,13 +506,17 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         order.setCurrentLocation(currentLocation);
         order.setCollectingFees(collectingFees);
 
-        long deliverPrice = deliverType == DeliverTypeEnum.PICKED_UP.getKey() ? 0 : marketEntry.getDeliveryCost();
-        long actualPrice = deliverPrice;
-        long totalPrice = deliverPrice;
+        long actualPrice = 0;
+        long totalPrice = 0;
         for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
             actualPrice += itemSnapshot.getTotalPrice();
             totalPrice += (itemSnapshot.getNormalPrice() * itemSnapshot.totalQuantity());
         }
+        // 自提或达到免配送费额度时，配送费为0
+        long deliverPrice = (deliverType == DeliverTypeEnum.PICKED_UP.getKey() || actualPrice >= marketEntry.getFreeDeliveryFee()) ? 0 : marketEntry.getDeliveryCost();
+        actualPrice += deliverPrice;
+        totalPrice += deliverPrice;
+
         long discountPrice = totalPrice - actualPrice;
         order.setActualPrice(actualPrice);
         order.setTotalPrice(totalPrice);
@@ -555,22 +559,19 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             actualPrice += itemSnapshot.getTotalPrice();
             totalPrice += (itemSnapshot.getNormalPrice() * (itemSnapshot.totalQuantity()));
         }
-        long deliverCost = 0;
-        if (deliverType == DeliverTypeEnum.DISTRIBUTION.getKey()) {
-            deliverCost = marketEntry.getDeliveryCost();
-        }
-        // 仓库的配送费
-        actualPrice += deliverCost;
-        totalPrice += deliverCost;
+        // 自提或达到免配送费额度时，配送费为0
+        long deliverPrice = (deliverType == DeliverTypeEnum.PICKED_UP.getKey() || actualPrice >= marketEntry.getFreeDeliveryFee()) ? 0 : marketEntry.getDeliveryCost();
+        actualPrice += deliverPrice;
+        totalPrice += deliverPrice;
 
         long discountPrice = totalPrice - actualPrice;
-        if (!order.isPriceMatch(actualPrice, totalPrice, discountPrice, deliverCost, deliverType)) {
-            OrderRemoteService.correctOrderPrice(order.getId(), actualPrice, totalPrice, discountPrice, deliverCost, deliverType);
+        if (!order.isPriceMatch(actualPrice, totalPrice, discountPrice, deliverPrice, deliverType)) {
+            OrderRemoteService.correctOrderPrice(order.getId(), actualPrice, totalPrice, discountPrice, deliverPrice, deliverType);
 
             order.setActualPrice(actualPrice);
             order.setTotalPrice(totalPrice);
             order.setDiscountPrice(discountPrice);
-            order.setDistributionFee(deliverCost);
+            order.setDistributionFee(deliverPrice);
             order.setDeliverType(deliverType);
         }
     }
