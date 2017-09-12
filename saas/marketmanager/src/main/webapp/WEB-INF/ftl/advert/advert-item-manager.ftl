@@ -75,7 +75,7 @@
                 </form>
             </div>
 
-            <button type="button" class="btn btn-primary pull-right m-b-15" data-toggle="modal" id="addPlayButton" style="padding-left: 30px;padding-right: 30px;margin-right: 30px;margin-bottom: 20px"><i class="fa fa-pencil"></i> 添加广告播放</button>
+            <button type="button" class="btn btn-primary pull-right m-b-15" data-toggle="modal" id="addPlayButton" style="padding-left: 30px;padding-right: 30px;margin-right: 30px;margin-bottom: 20px"><i class="fa fa-plus"></i> 添加广告播放</button>
             <div class="row">
                 <div class="col-sm-12">
                     <table class="table table-striped table-bordered">
@@ -207,8 +207,8 @@
                 var that = this;
                 $(this).on('click', function () {
                     $("#editModel").modal('show');
-                    $.get("${base}/advert/getAdvertScreen.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id"),function(object){//取该行列表全部信息
-                        console.log(object);
+                    $.get("${base}/advert/getAdvertScreen.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id")+ "&marketID=" +$(that).attr("m_id"),function(object){//取该行列表全部信息
+                        console.log(object.title);
                         $("#editNoBtn").on('click',function () {
                             $("#editModel").modal('hide');
                         });
@@ -305,74 +305,88 @@
             </div>
             <div class="modal-body">
                 <div class="modalAdvertStyle">
-                    <form class="form-inline">
-                        <div class="form-group" style="width: 100%">
+                    <form class="form-horizontal" role="form">
+                        <div class="form-group">
                             <fieldset disabled>
-                            <label>广告标题：</label>
-                            <input type="text" style="width: 80%" class="form-control" id="editTitle"/>
+                            <label class="col-md-4 control-label">广告标题：</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="editTitle"/>
+                            </div>
                             </fieldset>
                         </div>
-                    </form>
-                    <form class="form-inline">
-                        <div class="form-group" style="width: 100%">
+                        <div class="form-group">
                             <fieldset disabled>
-                            <label>广告时长：</label>
-                            <input type="text" style="width: 20%" class="form-control" id="editTime"/>&nbsp;&nbsp;&nbsp;s (以秒为计算单位)
+                            <label class="col-md-4 control-label">广告时长：</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="editTime"/>
+                            </div>
                             </fieldset>
                         </div>
-                    </form>
-                    <form class="form-inline">
-                        <div class="form-group" style="width: 100%">
+                        <div class="form-group">
                             <fieldset disabled>
-                            <label>广告备注：</label>
-                            <input type="text" style="width: 80%" class="form-control" id="editRemark"/>
+                            <label class="col-md-4 control-label">广告备注：</label>
+                            <div class="col-md-6">
+                                <input type="text"class="form-control" id="editRemark"/>
+                            </div>
                             </fieldset>
                         </div>
-                    </form>
-                    <form class="form-inline">
-                        <div class="form-group" style="width: 100%">
-                            <label>门店信息：</label>
-                            <select class="form-control" id="editStoreInfo" style="width:150px">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">门店信息：</label>
+                            <div class="col-md-6">
+                                <select class="form-control" id="editStoreInfo">
                                 <#if markets?exists >
                                     <#list markets as merket>
                                         <option data_id="${merket.id?c}">${merket.name}</option>
                                     </#list>
                                 </#if>
-                            </select>
+                                </select>
+                            </div>
                         </div>
-                    </form>
-                    <form class="form-inline">
-                        <div class="form-group" style="width: 100%">
-                            <label>屏幕编号：</label>
-                            <select id="editScreenNum" class="form-control" style="width: 50%">
-                                <option>10001-001</option>
-                                <option>10002-002</option>
-                                <option>10023-005</option>
-                            </select>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">屏幕编号：</label>
+                            <div class="col-md-6">
+                                <select id="editScreenNum" class="form-control">
+                                    <option>10001-001</option>
+                                    <option>10002-002</option>
+                                    <option>10023-005</option>
+                                </select>
+                            </div>
                         </div>
-                    </form>
-                    <form class="form-inline">
-                        <div class="form-group" style="width: 100%">
-                            <label>开始时间：</label>
-                            <input type="text" style="width: 50%" class="form-control" id="editStartTime">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">开始时间：</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" id="editStartTime">
+                            </div>
+                            <div class="col-md-1">
+                                <span class="input-group-addon bg-default"
+                                      onClick="jeDate({dateCell:'#editStartTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                            </div>
                         </div>
-                    </form>
-                    <form class="form-inline">
-                        <div class="form-group" style="width: 100%">
-                            <label>结束时间：</label>
-                            <input type="text" style="width: 50%" class="form-control" id="editEndTime">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">结束时间：</label>
+                            <div class="col-md-5">
+                                <input type="text" class="form-control" id="editEndTime">
+                            </div>
+                            <div class="col-md-1">
+                                <span class="input-group-addon bg-default"
+                                      onClick="jeDate({dateCell:'#editEndTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})">
+                                    <i class="fa fa-calendar"></i>
+                                </span>
+                            </div>
                         </div>
-                    </form>
-                    <form class="form-inline">
-                        <div class="form-group" style="width: 100%">
-                            <label>播放排序：</label>
-                            <input type="text" style="width: 20%" class="form-control" id="editPlaySort"/>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">播放排序：</label>
+                            <div class="col-md-3">
+                                <input type="text" class="form-control" id="editPlaySort"/>
+                            </div>
                         </div>
-                    </form>
-                    <form class="form-inline">
-                        <div class="form-group" style="width: 100%">
-                            <label>播放备注：</label>
-                            <textarea class="form-control" style="width: 80%" rows="3" id="editPlayRemark"></textarea>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">播放备注：</label>
+                            <div class="col-md-6">
+                                <textarea class="form-control" rows="4" id="editPlayRemark"></textarea>
+                            </div>
                         </div>
                     </form>
                 </div>

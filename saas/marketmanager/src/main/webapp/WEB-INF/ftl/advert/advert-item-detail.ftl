@@ -78,15 +78,17 @@
                                     <thead>
                                     <tr>
                                         <th style="background-color: #f9f9f9">门店</th>
-                                        <th style="background-color: #f9f9f9">地址</th>
                                         <th style="background-color: #f9f9f9">屏幕编码</th>
+                                        <th style="background-color: #f9f9f9">屏幕分辨率</th>
                                     </tr>
                                     </thead>
                                     <tbody>
                                     <tr>
-                                        <td>---</td>
-                                        <td>---</td>
-                                        <td>---</td>
+                                    <#if screens?exists>
+                                        <td>${screens.marketName}</td>
+                                        <td>${screens.code}</td>
+                                        <td>${screens.screenSize}</td>
+                                    </#if>
                                     </tr>
                                     </tbody>
                                 </table>

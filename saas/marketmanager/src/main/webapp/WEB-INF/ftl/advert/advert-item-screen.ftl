@@ -150,7 +150,6 @@
 
             $.ajax({
                 type: "POST",
-            <#--url:"${base}/advert/addAdvert.do?title=" +up_title+ "&timeSize=" +up_time+ "&remark=" +up_remark+ "&file=" +path,-->
                 url: "${base}/advert/addScreen.do",
                 data: screen,
                 success: function (result) {
@@ -214,39 +213,51 @@
             </div>
             <div class="modal-body">
                 <div class="modalAdvertStyle">
-                    <form class="form-inline" id="addScreenForm" name="addScreenForm">
-                        <div class="form-group" style="width: 100%">
-                            <label for="modalStoreInfo">门店信息：</label>
-                            <select class="form-control" id="marketID2" name="marketID2" style="width:150px">
-                            <#if markets?exists >
-                                <#list markets as merket>
-                                    <option value="${merket.id?c}">${merket.name}</option>
-                                </#list>
-                            </#if>
-                            </select>
+                    <form class="form-horizontal" id="addScreenForm" name="addScreenForm">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">门店信息：</label>
+                            <div class="col-md-4">
+                                <select class="form-control" id="marketID2" name="marketID2">
+                                <#if markets?exists >
+                                    <#list markets as merket>
+                                        <option value="${merket.id?c}">${merket.name}</option>
+                                    </#list>
+                                </#if>
+                                </select>
+                            </div>
                         </div>
-                        <div class="form-group" style="width: 100%">
-                            <label for="modalScreenLv">屏幕编号：</label>
-                            <input type="text" class="form-control" id="aCode" name="aCode" placeholder="屏幕编号">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">屏幕编号：</label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" id="aCode" name="aCode" placeholder="屏幕编号">
+                            </div>
                         </div>
-                        <div class="form-group" style="width: 100%">
-                            <label for="modalScreenLv">屏幕分辨率：</label>
-                            <input type="text" class="form-control" id="size" name="size" placeholder="屏幕分辨率">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">屏幕分辨率：</label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" id="size" name="size" placeholder="屏幕分辨率">
+                            </div>
                         </div>
 
-                        <div class="form-group" style="width: 100%">
-                            <label for="modalScreenMAC">屏幕MAC：</label>
-                            <input type="text" style="width: 50%" class="form-control" id="mac" name="mac" placeholder="输入屏幕MAC"/>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">屏幕MAC：</label>
+                            <div class="col-md-4">
+                                <input type="text" class="form-control" id="mac" name="mac" placeholder="输入屏幕MAC"/>
+                            </div>
                         </div>
-                        <div class="form-group" style="width: 100%">
+                        <div class="form-group">
                             <fieldset disabled>
-                                <label for="modalPlaySort">屏幕请求时间：</label>
-                                <input type="text" style="width: 20%" class="form-control" id="requireTime" name="requireTime" value="300" placeholder="300"/> (默认300秒)
+                            <label class="col-md-4 control-label">屏幕请求时间：</label>
+                            <div class="col-md-2">
+                                <input type="text" class="form-control" id="requireTime" name="requireTime" value="300"/>
+                            </div>
                             </fieldset>
                         </div>
-                        <div class="form-group" style="width: 100%">
-                            <label for="modalScreenRtime">屏幕备注：</label>
-                            <textarea class="form-control" rows="3" id="screenRemark" name="screenRemark" style="width: 50%"></textarea>
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">屏幕备注：</label>
+                            <div class="col-md-6">
+                                <textarea class="form-control" rows="4" id="screenRemark" name="screenRemark"></textarea>
+                            </div>
                         </div>
                     </form>
                 </div>
