@@ -153,7 +153,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
 
         List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionForBarcode(marketId, barcode, PrepareActionStatusEnum.UN_EXECUTOR.getKey());
         if (CommonUtils.isEmpty(prepareActions)) {
-            return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response();
+            return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response("商品[条码：" + barcode + "]不存在预存任务");
         }
         JSONArray response = new JSONArray();
         for (MarketPrepareAction prepareAction : prepareActions) {

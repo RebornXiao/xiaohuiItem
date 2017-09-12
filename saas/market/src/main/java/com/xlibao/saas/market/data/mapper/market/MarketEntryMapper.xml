@@ -21,6 +21,7 @@
         <result column="covering_distance" property="coveringDistance" jdbcType="BIGINT"/>
         <result column="delivery_mode" property="deliveryMode" jdbcType="INTEGER"/>
         <result column="delivery_cost" property="deliveryCost" jdbcType="BIGINT"/>
+        <result column="free_delivery_fee" property="freeDeliveryFee" jdbcType="BIGINT"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
@@ -105,23 +106,12 @@
     </update>
 
     <insert id="createMarket" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.market.data.model.MarketEntry">
-        insert into market_entry(name, province, city, district, street_id,
-        street, street_number, address, location, delivery_mode, covering_distance, delivery_cost, status, type)
-        values(#{name}, #{province}, #{city}, #{district}, #{streetId},
-        #{street}, #{streetNumber}, #{address}, #{location}, #{deliveryMode},
-        #{distance}, #{deliveryCost}, #{status}, #{type})
+        insert into market_entry(name, province, city, district, street_id, street, street_number, address, location, delivery_mode, covering_distance, delivery_cost, free_delivery_fee, status, type)
+        values(#{name}, #{province}, #{city}, #{district}, #{streetId}, #{street}, #{streetNumber}, #{address}, #{location}, #{deliveryMode}, #{distance}, #{deliveryCost}, #{freeDeliveryFee}, #{status}, #{type})
     </insert>
 
     <update id="updateMarket" parameterType="com.xlibao.market.data.model.MarketEntry">
-        update market_entry set name = #{name}, province = #{province}, city = #{city},
-        district = #{district}, street_id = #{streetId},
-        street = #{street}, street_number = #{streetNumber},
-        address = #{address},
-        location = #{location},
-        delivery_mode = #{deliveryMode},
-        covering_distance = #{distance},
-        delivery_cost = #{deliveryCost}
-        where id = #{id}
+        update market_entry set name = #{name}, province = #{province}, city = #{city}, district = #{district}, street_id = #{streetId}, street = #{street}, street_number = #{streetNumber}, address = #{address},
+        location = #{location}, delivery_mode = #{deliveryMode}, covering_distance = #{distance}, delivery_cost = #{deliveryCost}, free_delivery_fee = #{freeDeliveryFee} where id = #{id}
     </update>
-
 </mapper>

@@ -390,6 +390,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
         String deliverTitle = (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_REFUND.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM_REFUND.getKey())
                 ? "退款进度" : (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "配送进度" : "自提进度");
+        orderMsg.put("refundReason", CommonUtils.nullToEmpty(orderEntry.getDetail()));
 
         orderMsg.put("deliverTitle", deliverTitle);
         orderMsg.put("deliverResult", orderStatusTitle(orderEntry.getDeliverType(), orderEntry.getStatus()));
@@ -402,7 +403,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         orderMsg.put("discountPrice", orderEntry.getDiscountPrice());
 
         orderMsg.put("addressTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货地址：" : "收货地址：");
-        orderMsg.put("address", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? orderEntry.formatShippingAddress() : orderEntry.formatReceiptAddress());
+        orderMsg.put("address", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? orderEntry.formatShippingAddress() :
+                orderEntry.formatReceiptAddress() + CommonUtils.SPLIT_COMMA + CommonUtils.nullToEmpty(orderEntry.getReceiptNickName()) + CommonUtils.SPLIT_COMMA + CommonUtils.nullToEmpty(orderEntry.getReceiptPhone()));
         orderMsg.put("targetTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货点：" : "收货人：");
         orderMsg.put("targetName", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "小惠便利店" + orderEntry.getShippingNickName() : orderEntry.getReceiptNickName());
 
@@ -449,7 +451,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         Map<Long, List<MarketItemLadderPrice>> itemLadderPriceMap = itemSupport.loadItemLadderPrices(items);
 
         String itemSet = processItemSet(items);
-        List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers = dataAccessFactory.getItemDataAccessManager().passportDailyBuyLoggers(passportId, itemSet);
+        List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers = (passportId <= 0 ? null : dataAccessFactory.getItemDataAccessManager().passportDailyBuyLoggers(passportId, itemSet));
         // 购买资格检查
         itemSupport.buyQualifications(items, itemDailyPurchaseLoggers, buyItemTemplates);
 

@@ -209,7 +209,7 @@ public class MarketOpenApiController {
      *              <b>itemName</b> - String 商品名
      *              <b>locationCode</b> - String 位置信息
      *              <b>itemQuantity</b> - int 需补货数量
-     *              <b>unitName</b> - 单位名称
+     *              <b>unitName</b> - String 单位名称
      * </pre>
      */
     @ResponseBody

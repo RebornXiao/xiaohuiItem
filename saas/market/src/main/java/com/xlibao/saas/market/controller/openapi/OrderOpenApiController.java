@@ -62,7 +62,7 @@ public class OrderOpenApiController {
      *     <b>访问方式：</b>GET/POST 推荐使用POST
      *
      *     <b>参数：</b>
-     *          <b>passportId</b> - long 下单通行证ID，必填参数。
+     *          <b>passportId</b> - long 下单通行证ID，小程序时必填参数；当来自商店购买端时，非必填或为0。
      *          <b>marketId</b> - long 商店ID，必填参数。
      *          <b>deviceType</b> - int 设备类型，非必填参数；默认为{@linkplain com.xlibao.common.constant.device.DeviceTypeEnum#DEVICE_TYPE_ANDROID}，
      *                                              具体参考：{@linkplain com.xlibao.common.constant.device.DeviceTypeEnum}。

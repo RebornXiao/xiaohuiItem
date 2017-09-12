@@ -27,6 +27,7 @@ public class MarketEntry {
     private Long coveringDistance;
     private Integer deliveryMode;
     private Long deliveryCost;
+    private Long freeDeliveryFee;
     private Date createTime;
 
     private int distance = 0;
@@ -173,6 +174,14 @@ public class MarketEntry {
 
     public void setDeliveryMode(Integer deliveryMode) {
         this.deliveryMode = deliveryMode;
+    }
+
+    public Long getFreeDeliveryFee() {
+        return freeDeliveryFee;
+    }
+
+    public void setFreeDeliveryFee(Long freeDeliveryFee) {
+        this.freeDeliveryFee = freeDeliveryFee;
     }
 
     public Long getDeliveryCost() {

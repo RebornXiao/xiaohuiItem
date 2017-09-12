@@ -421,6 +421,9 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     }
 
     private MarketItemLadderPrice findOptimalItemLadderPrice(List<MarketItemLadderPrice> itemLadderPrices, int quantity) {
+        if (CommonUtils.isEmpty(itemLadderPrices)) {
+            return null;
+        }
         for (MarketItemLadderPrice itemLadderPrice : itemLadderPrices) {
             if (quantity >= itemLadderPrice.getMinQuantity()) {
                 return itemLadderPrice;
