@@ -248,6 +248,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
 
     @Override
     public JSONObject updateScreenAdvert() {
+        int marketID =  getIntParameter("marketID",0);
         int screenID =  getIntParameter("screenID",0);
         int advertID =  getIntParameter("advertID",0);
         String beginTime =  getUTF("beginTime","");
@@ -257,6 +258,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
 
 
         Map<String, String> parameters = new HashMap<>();
+        parameters.put("marketID",String.valueOf(marketID));
         parameters.put("screenID",String.valueOf(screenID));
         parameters.put("advertID",String.valueOf(advertID));
         parameters.put("beginTime",beginTime);
