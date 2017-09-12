@@ -235,6 +235,11 @@ public class AdvertManagerController extends BaseController {
             map.put("markets", marketResponse.getJSONObject("response").getJSONArray("datas"));
         }
 
+        JSONObject screenResponse = adverManagerService.getScreenListBy();
+        if (screenResponse.getIntValue("code") == 0) {
+            map.put("screens", screenResponse.getJSONObject("response").getJSONArray("data"));
+        }
+
          int pageIndex = getIntParameter("pageIndex", 1);
          map.put("marketID", getIntParameter("marketID",0));
          map.put("code", getUTF("code",""));
