@@ -92,7 +92,7 @@
                                     </button>
                                     <button id="deleBtn" type="button" data-target="#deleModel"
                                             class="btn btn-danger btn-sm"
-                                            data_id="${screen.screenID?c}">删除
+                                            market_id="${screen.marketId?c}"  data_id="${screen.screenID?c}">删除
                                     </button>
                                 </td>
                             </tr>
@@ -177,11 +177,11 @@
                     $("#deleteButton").modal('hide');
                 });
                 $("#deleOkBtn").on('click',function () {
-                    $.post("${base}/advert/delScreen.do?screenID=" + $(that).attr("data_id"), function(data) {
+                    $.post("${base}/advert/delScreen.do?screenID=" + $(that).attr("data_id")+"&marketID=" + $(that).attr("market_id"), function(data) {
                         //重新刷新
                         if(data.code == "0") {
                             swal("提示", "删除成功", "success");
-                            setTimeout(function(){location.reload();},5000);
+                            setTimeout(function(){location.reload();},500);
                         } else {
                             swal(data.msg);
                         }
