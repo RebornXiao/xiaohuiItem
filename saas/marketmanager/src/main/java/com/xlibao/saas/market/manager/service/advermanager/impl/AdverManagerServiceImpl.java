@@ -237,12 +237,8 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
             parameters.put("remark",remarks[i]);
 
             String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/addAdvertInfoForScreen.do";
-            JSONObject response = executor(url, parameters);
-            if(response.getInteger("code")!=0){
-                resStr += "广告："+advertIDs[i]+"。添加失败!";
-            }
+            rest = executor(url, parameters);
         }
-        rest.put("msg",resStr);
         return rest;
     }
 
