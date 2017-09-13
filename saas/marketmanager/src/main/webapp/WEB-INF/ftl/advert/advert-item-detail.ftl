@@ -83,13 +83,21 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <tr>
-                                    <#if screens?exists>
-                                        <td>${screens.marketName}</td>
-                                        <td>${screens.code}</td>
-                                        <td>${screens.screenSize}</td>
+                                    <#if (screens?size > 0)>
+                                        <#list screens as screen>
+                                        <tr>
+                                            <td>${screen.marketName}</td>
+                                            <td>${screen.code}</td>
+                                            <td>${screen.screenSize}</td>
+                                        </tr>
+                                        </#list>
+                                    <#else>
+                                        <tr>
+                                            <td colSpan="11" height="100px">
+                                                <p class="text-center" style="line-height: 100px">暂无任何数据</p>
+                                            </td>
+                                        </tr>
                                     </#if>
-                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
