@@ -408,6 +408,69 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     }
 
     @Override
+    public JSONObject itemLadderPrices() {
+        long itemId = getLongParameter("itemId");
+
+        List<MarketItemLadderPrice> itemLadderPrices = dataAccessFactory.getItemDataAccessManager().loadItemLadderPrices(String.valueOf(itemId));
+
+        MarketItem item = dataAccessFactory.getItemDataAccessManager().getMarketItem(itemId);
+        if (item == null) {
+            return MarketItemErrorCodeEnum.NOT_FOUND_ITEM.response();
+        }
+
+        JSONArray response = new JSONArray();
+        for (MarketItemLadderPrice itemLadderPrice : itemLadderPrices) {
+            JSONObject data = new JSONObject();
+            data.put("id", itemLadderPrice.getId());
+            data.put("minQuantity", itemLadderPrice.getMinQuantity());
+            data.put("maxQuantity", itemLadderPrice.getMaxQuantity());
+            data.put("expectPrice", itemLadderPrice.getExpectPrice());
+            data.put("status", itemLadderPrice.getStatus());
+            data.put("mark", itemLadderPrice.getMark());
+
+            response.add(data);
+        }
+        return success(response);
+    }
+
+    @Override
+    public JSONObject createItemLadderPrice() {
+        long itemId = getLongParameter("itemId");
+        int minQuantity = getIntParameter("minQuantity");
+        int maxQuantity = getIntParameter("maxQuantity");
+        long expectPrice = getLongParameter("expectPrice", 1);
+        String mark = getUTF("mark");
+
+        MarketItem item = dataAccessFactory.getItemDataAccessManager().getMarketItem(itemId);
+        if (item == null) {
+            return MarketItemErrorCodeEnum.NOT_FOUND_ITEM.response();
+        }
+        List<MarketItemLadderPrice> itemLadderPrices = dataAccessFactory.getItemDataAccessManager().loadItemLadderPrices(String.valueOf(itemId));
+        if (!CommonUtils.isEmpty(itemLadderPrices)) {
+            return MarketItemErrorCodeEnum.EXIST_ITEM_LADDER_PRICE.response();
+        }
+        MarketItemLadderPrice itemLadderPrice = new MarketItemLadderPrice();
+        itemLadderPrice.setItemId(itemId);
+        itemLadderPrice.setMinQuantity(minQuantity);
+        itemLadderPrice.setMaxQuantity(maxQuantity);
+        itemLadderPrice.setExpectPrice(expectPrice);
+        itemLadderPrice.setStatus((int) GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
+        itemLadderPrice.setMark(mark);
+
+        int result = dataAccessFactory.getItemDataAccessManager().createItemLadderPrice(itemLadderPrice);
+        return result <= 0 ? PlatformErrorCodeEnum.DB_ERROR.response() : success();
+    }
+
+    @Override
+    public JSONObject removeItemLadderPrice() {
+        long itemId = getLongParameter("itemId");
+        long itemLadderId = getLongParameter("itemLadderId");
+
+        int result = dataAccessFactory.getItemDataAccessManager().removeItemLadderPrice(itemId, itemLadderId);
+        return result <= 0 ? PlatformErrorCodeEnum.DB_ERROR.response() : success();
+    }
+
+    @Override
     public Map<Long, List<MarketItemLadderPrice>> loadItemLadderPrices(List<MarketItem> items) {
         String itemSet = processItem(items);
         if (CommonUtils.isNullString(itemSet)) {

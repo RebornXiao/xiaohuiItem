@@ -223,8 +223,16 @@ public class ItemDataAccessManager {
         searchHistoryMapper.createHistorySearch(searchHistory);
     }
 
+    public int createItemLadderPrice(MarketItemLadderPrice itemLadderPrice) {
+        return itemLadderPriceMapper.createItemLadderPrice(itemLadderPrice);
+    }
+
     public List<MarketItemLadderPrice> loadItemLadderPrices(String itemSet) {
         return itemLadderPriceMapper.loadItemLadderPrices(itemSet);
+    }
+
+    public int removeItemLadderPrice(long itemId, long itemLadderId) {
+        return itemLadderPriceMapper.removeItemLadderPrice(itemId, itemLadderId);
     }
 
     private void createItemLocationStockLogger(MarketItemLocationStockLogger itemLocationStockLogger) {

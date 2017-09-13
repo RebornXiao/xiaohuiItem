@@ -97,21 +97,21 @@ public class AliyunOSSUtils {
     }
 
     public static void main(String[] args) throws Exception {
-//        File file = new File("D:\\item_image");
-//        for (File f : file.listFiles()) {
-//            String address = uploadImageFile("xmarket", "item", f.getAbsolutePath());
-//            System.out.println(address);
-//        }
-        String address = uploadImageFile("xmarket", "item", "D:\\item_image\\6921168593033.jpg");
-        System.out.println(address);
-
-        address = uploadImageFile("xmarket", "item", "D:\\item_image\\6923644242961.jpg");
-        System.out.println(address);
-
-        address = uploadImageFile("xmarket", "item", "D:\\item_image\\6932512600369.jpg");
-        System.out.println(address);
-
-        address = uploadImageFile("xmarket", "item", "D:\\item_image\\6949352201434.jpg");
-        System.out.println(address);
+        File file = new File("D:\\program\\xlibao\\xmarket\\image\\item");
+        for (File f : file.listFiles()) {
+            String address = uploadImageFile("xmarket", "item", f.getAbsolutePath());
+            System.out.println(address);
+        }
+//        String address = uploadImageFile("xmarket", "item", "D:\\item_image\\6921168593033.jpg");
+//        System.out.println(address);
+//
+//        address = uploadImageFile("xmarket", "item", "D:\\item_image\\6923644242961.jpg");
+//        System.out.println(address);
+//
+//        address = uploadImageFile("xmarket", "item", "D:\\item_image\\6932512600369.jpg");
+//        System.out.println(address);
+//
+//        address = uploadImageFile("xmarket", "item", "D:\\item_image\\6949352201434.jpg");
+//        System.out.println(address);
     }
 }

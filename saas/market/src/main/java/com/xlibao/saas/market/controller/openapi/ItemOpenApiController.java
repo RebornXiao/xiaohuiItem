@@ -243,4 +243,73 @@ public class ItemOpenApiController {
     public JSONObject fuzzyMatchItemName() {
         return itemService.fuzzyMatchItemName();
     }
+
+    /**
+     *  <pre>
+     *      <b>获取商品阶梯价记录</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/item/openapi/itemLadderPrices.do
+     *     <b>访问方式：</b>GET/POST；推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>itemId</b> - long 商品ID，必填参数。
+     *
+     *     <b>返回：</b>
+     *          <b>datas</b> - JSONArray 阶梯价的具体数据，结构为：JSONObject
+     *              <b>id</b> - long 阶梯价ID
+     *              <b>minQuantity</b> - int 最低购买数量
+     *              <b>maxQuantity</b> - int 最高购买数量，当存在多个阶梯时，该值有效；但处于最后一级时，该值无效
+     *              <b>expectPrice</b> - long 期望售价，单位：分
+     *              <b>status</b> - int 当前状态，{@link com.xlibao.common.GlobalAppointmentOptEnum#LOGIC_TRUE} 有效；{@link com.xlibao.common.GlobalAppointmentOptEnum#LOGIC_FALSE} 无效
+     *              <b>mark</b> - String 描述
+     *  </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "itemLadderPrices")
+    public JSONObject itemLadderPrices() {
+        return itemService.itemLadderPrices();
+    }
+
+    /**
+     * <pre>
+     *     <b>建立阶梯价记录</b>
+     *          <b>注意：</b>目前的结构仅支持存在一个配置
+     *
+     *     <b>访问地址：</b>http://domainName/market/item/openapi/createItemLadderPrice.do
+     *     <b>访问方式：</b>GET/POST；推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>itemId</b> - long 商品ID，必填参数。
+     *          <b>minQuantity</b> - int 最低购买数量
+     *          <b>maxQuantity</b> - int 最高购买数量，当存在多个阶梯时，该值有效；但处于最后一级时，该值无效
+     *          <b>expectPrice</b> - long 期望售价，单位：分
+     *          <b>mark</b> - String 描述
+     *
+     *     <b>返回：</b>仅提示成功或失败原因
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "createItemLadderPrice")
+    public JSONObject createItemLadderPrice() {
+        return itemService.createItemLadderPrice();
+    }
+
+    /**
+     * <pre>
+     *     <b>移除阶梯价配置</b>
+     *     <b>访问地址：</b>http://domainName/market/item/openapi/removeItemLadderPrice.do
+     *     <b>访问方式：</b>GET/POST；推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>itemId</b> - long 商品ID，必填参数。
+     *          <b>itemLadderId</b> - long 阶梯ID，必填参数。
+     *
+     *     <b>返回：</b>仅提示成功或失败原因
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "removeItemLadderPrice")
+    public JSONObject removeItemLadderPrice() {
+        return itemService.removeItemLadderPrice();
+    }
 }

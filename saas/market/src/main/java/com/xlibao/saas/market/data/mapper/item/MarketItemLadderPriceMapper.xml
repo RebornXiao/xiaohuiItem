@@ -11,8 +11,17 @@
         <result column="mark" property="mark" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
-    
+
+    <insert id="createItemLadderPrice">
+        insert into market_item_ladder_price(item_id, min_quantity, max_quantity, expect_price, status, mark, create_time)
+        values(#{itemId}, #{minQuantity}, #{maxQuantity}, #{expectPrice}, #{status}, #{mark}, #{createTime})
+    </insert>
+
     <select id="loadItemLadderPrices" resultMap="BaseResultMap">
         select * from market_item_ladder_price where item_id in (${itemSet}) and status = 1 order by min_quantity desc
     </select>
+
+    <update id="removeItemLadderPrice">
+        delete from market_item_ladder_price where id = #{itemLadderId} and item_id = #{itemId}
+    </update>
 </mapper>

@@ -23,7 +23,7 @@ public class XlibaoPassportApplicationContext {
     @PostConstruct
     public void applicationContextInit() {
         logger.info("↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 通行证(Passport)系统开始初始化状态 ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓");
-        //applicationContextLoaderNotify.applicationContextLoaderNotify();
+        applicationContextLoaderNotify.applicationContextLoaderNotify();
         logger.info("↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 通行证(Passport)系统初始化状态完成 ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑");
     }
 }

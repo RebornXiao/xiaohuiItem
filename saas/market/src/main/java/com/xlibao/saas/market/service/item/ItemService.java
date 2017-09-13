@@ -42,5 +42,11 @@ public interface ItemService {
 
     JSONObject fuzzyMatchItemName();
 
+    JSONObject createItemLadderPrice();
+
+    JSONObject itemLadderPrices();
+
+    JSONObject removeItemLadderPrice();
+
     Map<Long, List<MarketItemLadderPrice>> loadItemLadderPrices(List<MarketItem> items);
 }
