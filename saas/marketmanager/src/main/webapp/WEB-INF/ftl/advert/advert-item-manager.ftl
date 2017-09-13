@@ -242,9 +242,9 @@
                                 if(data.code == "0") {
                                     $("#editBtn").modal('hide');
                                     swal("提示", "更新成功", "success");
-                                    setTimeout(function(){location.reload();},5000);
+                                    setTimeout(function(){location.reload();},1000);
                                 } else {
-                                    swal(data.msg);
+                                    swal("提示", "更新失败", "error");
                                 }
                             }, "json");
                         });
@@ -263,14 +263,14 @@
                         $("#deleModel").modal('hide');
                     });
                     $("#deleYesBtn").on('click',function () {
-                        $.post("${base}/advert/delScreenAdvert.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id"), function(data) {
+                        $.post("${base}/advert/delScreenAdvert.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id")+ "&marketID=" +$(that).attr("m_id"), function(data) {
                             //重新刷新
                             if(data.code == "0") {
                                 $("#deleModel").modal('hide');
                                 swal("提示", "删除成功", "success");
-                                setTimeout(function(){location.reload();},5000);
+                                setTimeout(function(){location.reload();},1000);
                             } else {
-                                swal(data.msg);
+                                swal("提示", "删除失败", "error");
                             }
                         }, "json");
                     });
@@ -282,8 +282,6 @@
             $("#storeInfoListTable").find('button[id=lookBtn]').each(function () {
                 var that = this;
                 $(this).on('click', function () {
-                    alert($(that).attr("a_id"));
-                    alert($(that).attr("m_id"));
                     location.href = "${base}/advert/goAdvertScreen.do?advertID="+$(that).attr("a_id")+"&screenID="+$(that).attr("s_id")+"&marketID="+$(that).attr("m_id");
                 });
             });

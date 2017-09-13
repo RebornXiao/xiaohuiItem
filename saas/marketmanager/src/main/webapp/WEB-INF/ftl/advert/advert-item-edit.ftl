@@ -110,8 +110,12 @@
         var add_timeType = GetQueryString("timeType");
         document.getElementById("advertNavTitle").value=add_title;
         if(add_timeType='-1'){
-            document.getElementById("advertNavTime").text="选择广告时长";
-        }else if(add_timeType='0'){document.getElementById("advertNavTime").text="15秒以内";}
+            var tOption = $("#advertNavTime");
+            tOption.text = "选择广告时长";
+            tOption.selected = true;
+        }else if(add_timeType='0'){
+            document.getElementById("advertNavTime").text="15秒以内";
+        }
 
         //鼠标经过效果
         $("tr[id^='tr_']").hover(
@@ -126,19 +130,6 @@
                 }
         );
 
-        //搜索功能
-        /*$("#searchButton").on('click', function () {
-            var s_title = $("#advertNavTitle").val();
-            var s_time = $("#advertNavTime").get(0).selectedIndex;//选中index
-            $.get("${base}/advert/adverts.do?title=" + s_title + "&timeType=" + s_time, function(data) {
-                if(data.code == "0") {
-                    location.reload();
-                } else {
-                    swal(data.msg);
-                }
-            }, "json");
-        });*/
-
         //上传广告
         $("#uploadAdvertButton").on('click', function () {
 //             var up_title = $("#modalAdvertTitle").val();
@@ -150,7 +141,6 @@
             console.log(form);
             $.ajax({
                 type: "POST",
-                //url:"${base}/advert/addAdvert.do?title=" +up_title+ "&timeSize=" +up_time+ "&remark=" +up_remark+ "&file=" +path,
                 url:"${base}/advert/addAdvert.do",
                 data:form,
                 // 告诉jQuery不要去处理发送的数据
@@ -168,38 +158,7 @@
                     alert("添加广告失败！");
                 }
             });
-
-            //测试回调值
-//           $("#hidden_frame").load(function(){
-//               var text=$(this).contents().find("body").text();
-//               var j=$.parseJSON(text);
-//               alert(j);
-//               if(j.code!=0){
-//                   alert(j.msg);
-//               }else{
-//                   alert("上传成功");
-//               }
-//           });
-
-            //测试ajax submit.
-//            $("#updateForm").submit(function() {
-//                $(this).ajaxSubmit({
-//                    success: function(data) { // data 保存提交后返回的数据，一般为 json 数据
-//                        var obj = eval("("+data+")");
-//                        alert(obj);
-//                        if(obj.code==0) {
-//
-//                        }
-//                        else {
-//                            alert("上传失败,请重试!");
-//                        }
-//                    }
-//                });
-//                return false;
-//            });
-
         });
-
 
         //删除
     <#if (advertList?size > 0)>
@@ -217,9 +176,9 @@
                         if(data.code == "0") {
                             $("#deleModel").modal('hide');
                             swal("提示", "删除成功", "success");
-                            setTimeout(function(){location.reload();},5000);
+                            setTimeout(function(){location.reload();},1000);
                         } else {
-                            swal(data.msg);
+                            swal("提示", "删除失败", "error");
                         }
                     }, "json");
                 });
@@ -247,9 +206,9 @@
                         if(data.code == "0") {
                             $("#editModel").modal('hide');
                             swal("提示", "编辑成功", "success");
-                            setTimeout(function(){location.reload();},5000);
+                            setTimeout(function(){location.reload();},1000);
                         } else {
-                            swal(data.msg);
+                            swal("提示", "编辑失败", "error");
                         }
                     }, "json");
                 });

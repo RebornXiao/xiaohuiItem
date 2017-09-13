@@ -49,7 +49,7 @@
                                         <select id="advertTitle" class="form-control">
                                         <#if adverts?exists >
                                             <#list adverts as advert>
-                                                <option value="${advert.advertID}">${advert.title}</option>
+                                                <option value="${advert.advertID?c}">${advert.title}</option>
                                             </#list>
                                         </#if>
                                         </select>
@@ -129,10 +129,10 @@
                 success: function (result) {
                     if ('yes' == result) {
                         swal("提示", "添加成功", "success");
-                        setTimeout(function(){location.reload();},5000);
+                        setTimeout(function(){location.reload();},1000);
                     } else {
-                        swal("提示", "添加失败", "success");
-                        setTimeout(function(){location.reload();},5000);
+                        swal("提示", "添加失败", "error");
+                        setTimeout(function(){location.reload();},1000);
                     }
                 },
                 error: function (result) {

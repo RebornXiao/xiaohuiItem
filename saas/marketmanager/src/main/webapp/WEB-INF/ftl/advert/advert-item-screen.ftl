@@ -155,10 +155,10 @@
                 success: function (result) {
                     if ('yes' == result) {
                         swal("提示", "添加成功", "success");
-                        setTimeout(function(){location.reload();},5000);
+                        setTimeout(function(){location.reload();},1000);
                     } else {
-                        swal("提示", "添加失败", "success");
-                        setTimeout(function(){location.reload();},5000);
+                        swal("提示", "添加失败", "error");
+                        setTimeout(function(){location.reload();},1000);
                     }
                 },
                 error: function (result) {
@@ -182,9 +182,9 @@
                         if(data.code == "0") {
                             $("#deleteButton").modal('hide');
                             swal("提示", "删除成功", "success");
-                            setTimeout(function(){location.href = "${base}/advert/screens.do";},500);
+                            setTimeout(function(){location.href = "${base}/advert/screens.do";},1000);
                         } else {
-                            swal(data.msg);
+                            swal("提示", "删除失败", "error");
                         }
                     }, "json");
                 });

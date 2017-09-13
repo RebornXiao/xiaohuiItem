@@ -97,6 +97,12 @@
                                         <td>${advert.timeSize}</td>
                                     </tr>
                                         </#list>
+                                    <#else>
+                                    <tr>
+                                        <td colSpan="11" height="100px">
+                                            <p class="text-center" style="line-height: 100px">暂无任何数据</p>
+                                        </td>
+                                    </tr>
                                     </#if>
                                     </tbody>
                                 </table>
