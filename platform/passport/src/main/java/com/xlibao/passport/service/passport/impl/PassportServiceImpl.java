@@ -404,7 +404,7 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         response.put("passportId", passport.getId());
         response.put("showName", passport.getShowName());
         response.put("phoneNumber", passport.getPhoneNumber());
-        response.put("showPhoneNumber", CommonUtils.hideChar(passport.getPhoneNumber(), 3, 6));
+        response.put("showPhoneNumber", CommonUtils.hideChar(passport.getPhoneNumber(), 3, 7));
         response.put("headImage", properties == null ? "" : CommonUtils.nullToEmpty(properties.getV()));
         response.put("roleValue", roleValue);
         response.put("accessToken", passport.getAccessToken());

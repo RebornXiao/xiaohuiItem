@@ -404,7 +404,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         orderMsg.put("address", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? orderEntry.formatShippingAddress() : orderEntry.formatReceiptAddress());
         orderMsg.put("targetTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货点：" : "收货人：");
         orderMsg.put("targetName", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "小惠便利店" + CommonUtils.nullToEmpty(orderEntry.getShippingNickName()) : CommonUtils.nullToEmpty(orderEntry.getReceiptNickName()));
-        orderMsg.put("receiptPhone", CommonUtils.hideChar(orderEntry.getReceiptPhone(), 3, 6));
+        orderMsg.put("receiptPhone", CommonUtils.hideChar(orderEntry.getReceiptPhone(), 3, 7));
 
         fillItemSnapshotMsg(orderMsg, orderEntry);
 
