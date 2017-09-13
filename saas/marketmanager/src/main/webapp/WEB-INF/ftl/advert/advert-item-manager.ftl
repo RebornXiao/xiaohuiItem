@@ -185,7 +185,8 @@
             var s_etime = $("#endTime").val();//结束时间
             var s_isDown = '0';//下载状态
             var s_playStatus = '0';//播放状态
-            var url ="${base}/advert/advertScreens.do?marketID="+s_store+"&code="+s_number+"&title="+s_title+"&beginTime="+s_time+"&endTime="+s_etime+"&isDown="+s_isDown+"&playStatus="+s_playStatus;
+            var url ="${base}/advert/advertScreens.do?marketID="+s_store+"&code="+s_number+"&title="+s_title+
+                    "&beginTime="+s_time+"&endTime="+s_etime+"&isDown="+s_isDown+"&playStatus="+s_playStatus;
                 console.log(url);
             $.get(url, function(data) {
                 if(data.code == "0") {
@@ -230,7 +231,7 @@
                             };
                             var url="${base}/advert/updateScreenAdvert.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id")+ "&marketID="
                                     +$(that).attr("m_id")+ "&beginTime="+arr.e_stime+"&endTime="+arr.e_etime+"&playOrder="+arr.e_sort+"&remark="+arr.e_pRemark+"&sCode="+arr.editScreenNum;
-                                console.log('提交url====='+url);
+                                console.log(url);
                             $.get(url, function(data) {
                                 //重新刷新
                                 console.log(data);

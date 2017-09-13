@@ -37,7 +37,7 @@
                     </div>
                 </form>
             </div>
-        <#--<hr style="height:1px;width:100%;border:none;border-top:1px solid #ccc;" />-->
+
             <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#uploadModel" style="padding-left: 30px;padding-right: 30px;margin-right: 30px;margin-bottom: 20px"><i class="fa fa-upload"></i> 上传广告</button>
             <div class="row">
                 <div class="col-sm-12">
@@ -117,65 +117,65 @@
 
         //鼠标经过效果
         $("tr[id^='tr_']").hover(
-                function(){ // onmouseover
-                    $(this).css("background-color", "#FFFFBF"); // 设置背景颜色
-                },
-                function(){ // onmouseout
-                    // 代表当前行对应的checkbox没有选中
-                    if (!$(this.id.replace("tr_", "")).attr("checked")){
-                        $(this).css("background-color", "#FFFFFF"); // 还原背景颜色
-                    }
+            function(){ // onmouseover
+                $(this).css("background-color", "#FFFFBF"); // 设置背景颜色
+            },
+            function(){ // onmouseout
+                // 代表当前行对应的checkbox没有选中
+                if (!$(this.id.replace("tr_", "")).attr("checked")){
+                    $(this).css("background-color", "#FFFFFF"); // 还原背景颜色
                 }
+            }
         );
 
         //上传广告
         $("#uploadAdvertButton").on('click', function () {
-//             var up_title = $("#modalAdvertTitle").val();
-//             var up_time = $("#modalAdvertTime").val();
-//             var up_remark = $("#modalAdvertRemark").val();
-//             var path = $("#modalAdvertFile").val();
-//                 path = path.substring(path.lastIndexOf("\\")+1,path.length);//文件名
-            var form = new FormData(document.getElementById("updateForm"));//表数据
-            console.log(form.length);
-            var error = checkElement(form);
-            if (error) {
-                return;
-            }else{
-            swal({
-                title: "文件正在上传中…",
-                text: "文件越大,用时稍长,请耐心等待!",
-                imageUrl: "${res}/assets/images/gif/timg1.gif",
-                animation: "slide-from-top",
-                showConfirmButton: false,
-            });
-            $.ajax({
-                type: "POST",
-                url:"${base}/advert/addAdvert.do",
-                data:form,
-                // 告诉jQuery不要去处理发送的数据
-                processData : false,
-                // 告诉jQuery不要去设置Content-Type请求头
-                contentType : false,
-                success: function(result){
-                    if('yes'==result){
-                        $("#uploadModel").modal('hide');
-                        swal("提示", "上传成功", "success");
-                        setTimeout(function(){location.reload();},1000);
-                    }else{
-                        swal("提示", "上传失败！请检查重试", "error");
-                    }
-                },
-                error:function(result){
-                    swal("提示","请求失败","info" );
+            function checkInput (obj){//检查表单是否有空项，空格验证方法待加
+                var val = obj.val();
+                if(val == "") {
+                    return false;
+                } else {
+                    return true;
                 }
-            });
             }
-            function checkElement(data) {
-                console.log(data);
-                if (data.length =='undefined') {
-                    toastr.warning("至少选择一项");
-                }
-            };
+            var form = new FormData($('#uploadForm')[0]);//表单数据，序列化
+            console.log(form.get("file"));
+            var input1 = checkInput($("#modalAdvertTitle"));
+            var input2 = checkInput($("#modalAdvertTime"));
+            var input3 = checkInput($("#modalAdvertRemark"));
+            var input4 = checkInput($("#modalAdvertFile"));
+            if(input1 && input2 && input3 && input4){
+                swal({
+                    title: "文件正在上传中…",
+                    text: "文件越大,用时稍长,请耐心等待!",
+                    imageUrl: "${res}/assets/images/gif/timg1.gif",
+                    animation: "slide-from-top",
+                    showConfirmButton: false,
+                });
+                $.ajax({
+                    type: "POST",
+                    url:"${base}/advert/addAdvert.do",
+                    data:form,
+                    // 告诉jQuery不要去处理发送的数据
+                    processData : false,
+                    // 告诉jQuery不要去设置Content-Type请求头
+                    contentType : false,
+                    success: function(result){
+                        if('yes'==result){
+                            $("#uploadModel").modal('hide');
+                            swal("提示", "上传成功", "success");
+                            setTimeout(function(){location.reload();},1000);
+                        }else{
+                            swal("提示", "上传失败！请检查重试", "error");
+                        }
+                    },
+                    error:function(result){
+                        swal("提示","请求失败","info" );
+                    }
+                });
+            }else{
+                swal("提示", "请检查表单是否有漏填项！", "info");
+            }
         });
 
         //删除
@@ -255,7 +255,7 @@
             </div>
             <div class="modal-body" role="form">
                 <div class="modalAdvertStyle">
-                    <form class="form-inline" id="updateForm" name="updateForm" enctype="multipart/form-data" action="${base}/advert/addAdvert.do" method="post" target="hidden_frame">
+                    <form class="form-inline" id="uploadForm" enctype="multipart/form-data">
                         <div class="form-group" style="width: 100%">
                             <label>广告标题：</label>
                             <input type="text" style="width: 80%" class="form-control" id="modalAdvertTitle" placeholder="输入广告标题" name="title"/>
