@@ -728,6 +728,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     public JSONObject showOrders() {
         String partnerId = getUTF("partnerId");
         String targetUserId = getUTF("targetUserId");
+        long appointFriendPassportId = getLongParameter("appointFriendPassportId", 0);
         byte target = getByteParameter("target");
         int roleType = getIntParameter("roleType");
         int type = getIntParameter("type", -1);
@@ -742,7 +743,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         List<OrderEntry> orders;
         switch (roleTypeEnum) {
             case CONSUMER: // 消费者
-                orders = orderDataAccessManager.showConsumerOrders(partnerId, targetUserId, target, orderStatusSet, type, pageStartIndex, pageSize);
+                orders = orderDataAccessManager.showConsumerOrders(partnerId, targetUserId, appointFriendPassportId, target, orderStatusSet, type, pageStartIndex, pageSize);
                 break;
             case MERCHANT: // 商家
                 orders = orderDataAccessManager.showMerchantOrders(partnerId, Long.parseLong(targetUserId), orderStatusSet, type, pageStartIndex, pageSize);

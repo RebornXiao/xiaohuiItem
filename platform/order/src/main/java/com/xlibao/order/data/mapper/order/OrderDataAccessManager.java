@@ -83,8 +83,8 @@ public class OrderDataAccessManager {
         return entryMapper.getOrderEntrys(sequenceNumber);
     }
 
-    public List<OrderEntry> showConsumerOrders(String partnerId, String partnerUserId, byte target, String orderStatusSet, int type, int pageStartIndex, int pageSize) {
-        return entryMapper.showConsumerOrders(partnerId, partnerUserId, target, orderStatusSet, type, pageStartIndex, pageSize);
+    public List<OrderEntry> showConsumerOrders(String partnerId, String partnerUserId, long shippingPassportId, byte target, String orderStatusSet, int type, int pageStartIndex, int pageSize) {
+        return entryMapper.showConsumerOrders(partnerId, partnerUserId, shippingPassportId, target, orderStatusSet, type, pageStartIndex, pageSize);
     }
 
     public List<OrderEntry> showMerchantOrders(String partnerId, long shippingPassportId, String orderStatusSet, int type, int pageStartIndex, int pageSize) {

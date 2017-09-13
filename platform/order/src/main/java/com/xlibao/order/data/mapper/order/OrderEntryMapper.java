@@ -15,7 +15,7 @@ public interface OrderEntryMapper {
 
     List<OrderEntry> getOrderEntrys(@Param("sequenceNumber") String sequenceNumber);
 
-    List<OrderEntry> showConsumerOrders(@Param("partnerId") String partnerId, @Param("partnerUserId") String partnerUserId, @Param("target") byte target, @Param("orderStatusSet") String orderStatusSet, @Param("type") int type, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
+    List<OrderEntry> showConsumerOrders(@Param("partnerId") String partnerId, @Param("partnerUserId") String partnerUserId, @Param("shippingPassportId") long shippingPassportId, @Param("target") byte target, @Param("orderStatusSet") String orderStatusSet, @Param("type") int type, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 
     List<OrderEntry> showMerchantOrders(@Param("partnerId") String partnerId, @Param("shippingPassportId") long shippingPassportId, @Param("orderStatusSet") String orderStatusSet, @Param("type") int type, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 

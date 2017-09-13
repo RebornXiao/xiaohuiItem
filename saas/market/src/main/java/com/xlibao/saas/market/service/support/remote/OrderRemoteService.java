@@ -142,11 +142,12 @@ public class OrderRemoteService extends BasicRemoteService {
         return orders;
     }
 
-    public static List<OrderEntry> showOrders(long passportId, byte target, int roleType, String orderStatusSet, int type, int pageIndex, int pageSize) {
+    public static List<OrderEntry> showOrders(long passportId, long appointFriendPassportId, byte target, int roleType, String orderStatusSet, int type, int pageIndex, int pageSize) {
         Map<String, String> parameters = initialParameter();
 
         parameters.put("targetUserId", String.valueOf(passportId));
         parameters.put("target", String.valueOf(target));
+        parameters.put("appointFriendPassportId", String.valueOf(appointFriendPassportId));
         parameters.put("roleType", String.valueOf(roleType));
         parameters.put("orderStatusSet", orderStatusSet);
         parameters.put("type", String.valueOf(type));

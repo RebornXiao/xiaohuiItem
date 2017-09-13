@@ -179,13 +179,14 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     @Override
     public JSONObject showOrders() {
         long passportId = getPassportId();
+        long marketId = getLongParameter("marketId", 0);
         int roleType = getIntParameter("roleType");
         int orderType = getIntParameter("orderType");
         int statusEnter = getIntParameter("statusEnter");
         int pageIndex = getIntParameter("pageIndex", GlobalConstantConfig.DEFAULT_PAGE_INDEX);
         int pageSize = getPageSize();
 
-        List<OrderEntry> orders = OrderRemoteService.showOrders(passportId, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), roleType, orderStatusSet(roleType, statusEnter), orderType, pageIndex, pageSize);
+        List<OrderEntry> orders = OrderRemoteService.showOrders(passportId, marketId, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), roleType, orderStatusSet(roleType, statusEnter), orderType, pageIndex, pageSize);
         JSONArray response = fillShowOrderMsg(roleType, orders);
         return success(response);
     }
@@ -389,7 +390,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         orderMsg.put("statusValue", statusValue);
 
         String deliverTitle = (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_REFUND.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM_REFUND.getKey())
-                ? "退款进度" : (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "配送进度" : "自提进度");
+                ? "退款进度" : (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "自提进度" : "配送进度");
         orderMsg.put("refundReason", CommonUtils.nullToEmpty(orderEntry.getDetail()));
 
         orderMsg.put("deliverTitle", deliverTitle);
@@ -404,7 +405,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
         orderMsg.put("addressTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货地址：" : "收货地址：");
         orderMsg.put("address", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? orderEntry.formatShippingAddress() :
-                orderEntry.formatReceiptAddress() + CommonUtils.SPLIT_COMMA + CommonUtils.nullToEmpty(orderEntry.getReceiptNickName()) + CommonUtils.SPLIT_COMMA + CommonUtils.nullToEmpty(orderEntry.getReceiptPhone()));
+                orderEntry.formatReceiptAddress() + CommonUtils.SPACE + CommonUtils.nullToEmpty(orderEntry.getReceiptNickName()) + CommonUtils.SPACE + CommonUtils.nullToEmpty(orderEntry.getReceiptPhone()));
         orderMsg.put("targetTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货点：" : "收货人：");
         orderMsg.put("targetName", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "小惠便利店" + orderEntry.getShippingNickName() : orderEntry.getReceiptNickName());
 

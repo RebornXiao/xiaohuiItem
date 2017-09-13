@@ -76,6 +76,7 @@
 
     <select id="showConsumerOrders" resultMap="BaseResultMap">
         select * from order_entry where partner_id = #{partnerId}
+        <if test="shippingPassportId != 0"> and shipping_passport_id = #{shippingPassportId} </if>
         <if test='orderStatusSet != null and orderStatusSet != "0"'> and status in (${orderStatusSet}) </if>
         <if test="target == 0"> and partner_user_id = #{partnerUserId} </if>
         <if test="target == 1"> and receipt_user_id = #{partnerUserId} </if>
