@@ -24,7 +24,7 @@
                         <label for="advertNavTime">广告时长：</label>
                         <select id="advertNavTime" class="form-control" name="timeType">
                             <option class="optionTime" value="-1">选择广告时长</option>
-                            <option class="optionTime" value="0">15以内</option>
+                            <option class="optionTime" value="0">15s以内</option>
                             <option class="optionTime" value="1">16s-30s</option>
                             <option class="optionTime" value="2">31s-60s</option>
                             <option class="optionTime" value="3">61s-90s</option>
@@ -38,7 +38,7 @@
                 </form>
             </div>
         <#--<hr style="height:1px;width:100%;border:none;border-top:1px solid #ccc;" />-->
-            <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#uploadButton" style="padding-left: 30px;padding-right: 30px;margin-right: 30px;margin-bottom: 20px"><i class="fa fa-upload"></i> 上传广告</button>
+            <button type="button" class="btn btn-primary pull-right" data-toggle="modal" data-target="#uploadModel" style="padding-left: 30px;padding-right: 30px;margin-right: 30px;margin-bottom: 20px"><i class="fa fa-upload"></i> 上传广告</button>
             <div class="row">
                 <div class="col-sm-12">
                     <table class="table table-striped table-bordered">
@@ -109,12 +109,10 @@
         var add_title = GetQueryString("title");
         var add_timeType = GetQueryString("timeType");
         document.getElementById("advertNavTitle").value=add_title;
-        if(add_timeType='-1'){
-            var tOption = $("#advertNavTime");
-            tOption.text = "选择广告时长";
-            tOption.selected = true;
-        }else if(add_timeType='0'){
-            document.getElementById("advertNavTime").text="15秒以内";
+        if(add_timeType='0'){
+            $("#advertNavTime").find("option[text='15s以内']").attr("selected",false);
+        }else if(add_timeType='1'){
+            $("#advertNavTime").find("option[text='16s-30s']").attr("selected",true);
         }
 
         //鼠标经过效果
@@ -138,7 +136,18 @@
 //             var path = $("#modalAdvertFile").val();
 //                 path = path.substring(path.lastIndexOf("\\")+1,path.length);//文件名
             var form = new FormData(document.getElementById("updateForm"));//表数据
-            console.log(form);
+            console.log(form.length);
+            var error = checkElement(form);
+            if (error) {
+                return;
+            }else{
+            swal({
+                title: "文件正在上传中…",
+                text: "文件越大,用时稍长,请耐心等待!",
+                imageUrl: "${res}/assets/images/gif/timg1.gif",
+                animation: "slide-from-top",
+                showConfirmButton: false,
+            });
             $.ajax({
                 type: "POST",
                 url:"${base}/advert/addAdvert.do",
@@ -149,15 +158,24 @@
                 contentType : false,
                 success: function(result){
                     if('yes'==result){
-                        alert("添加成功");
+                        $("#uploadModel").modal('hide');
+                        swal("提示", "上传成功", "success");
+                        setTimeout(function(){location.reload();},1000);
                     }else{
-                        alert("添加失败");
+                        swal("提示", "上传失败！请检查重试", "error");
                     }
                 },
                 error:function(result){
-                    alert("添加广告失败！");
+                    swal("提示","请求失败","info" );
                 }
             });
+            }
+            function checkElement(data) {
+                console.log(data);
+                if (data.length =='undefined') {
+                    toastr.warning("至少选择一项");
+                }
+            };
         });
 
         //删除
@@ -228,7 +246,7 @@
 </script>
 
 <!--上传弹窗-->
-<div class="modal fade" id="uploadButton" tabindex="-1" role="dialog">
+<div class="modal fade" id="uploadModel" tabindex="-1" role="dialog">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -254,17 +272,10 @@
                             <label>附&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件：</label>
                             <input id="modalAdvertFile" type="file" multiple="multiple" name="file"/>
                         </div>
-                        <div class="progress" style="display: block;">
-                            <div class="progress-bar" role="progressbar" aria-valuenow="60"
-                                 aria-valuemin="0" aria-valuemax="100" style="width: 20%;">
-                                <span class="sr-only">40% 完成</span>
-                            </div>
-                        </div>
                         <div class="modal-footer" style="text-align: center">
                             <button type="button" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
                             <button type="button" class="btn btn-primary" style="padding:10px 80px " id="uploadAdvertButton">确定</button>
                         </div>
-                        <iframe name="hidden_frame" id="hidden_frame" style="display: none"></iframe>
                     </form>
                 </div>
             </div>

@@ -44,14 +44,14 @@
                         <div class="input-group">
                             <input id="startTime" type="text" class="form-control" readonly>
                             <span class="input-group-addon bg-default"
-                                  onClick="jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD hh:mm:ss'})"><i
+                                  onClick="jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})"><i
                                     class="fa fa-calendar"></i></span>
                         </div>
                         <label>至</label>
                         <div class="input-group">
                             <input id="endTime" type="text" class="form-control" readonly>
                             <span class="input-group-addon bg-default"
-                                  onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD hh:mm:ss'})"><i
+                                  onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})"><i
                                     class="fa fa-calendar"></i></span>
                         </div>
                     </div>
@@ -178,16 +178,11 @@
         );
         //搜索功能
         $("#searchBtn").on('click', function () {
-            var str = " 00:00:00";
-            var s_store = $("#marketSelect").get(0).selectedIndex;//选中index
+            var s_store = $("#marketSelect").val();//门店值
             var s_number = $("#screenNum").val();//屏幕编号
             var s_title = $("#advertNavTitle").val();//广告标题
             var s_time = $("#startTime").val();//开始时间
-                s_time = s_time.substring(0, 10);
-                s_time = s_time + str;
             var s_etime = $("#endTime").val();//结束时间
-                s_etime = s_etime.substring(0, 10);
-                s_etime = s_etime + str;
             var s_isDown = '0';//下载状态
             var s_playStatus = '0';//播放状态
             var url ="${base}/advert/advertScreens.do?marketID="+s_store+"&code="+s_number+"&title="+s_title+"&beginTime="+s_time+"&endTime="+s_etime+"&isDown="+s_isDown+"&playStatus="+s_playStatus;
@@ -238,7 +233,7 @@
                                 console.log('提交url====='+url);
                             $.get(url, function(data) {
                                 //重新刷新
-                                console.log('提交返回值===='+data)
+                                console.log(data);
                                 if(data.code == "0") {
                                     $("#editBtn").modal('hide');
                                     swal("提示", "更新成功", "success");
