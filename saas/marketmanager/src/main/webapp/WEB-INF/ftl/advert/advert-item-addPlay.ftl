@@ -126,17 +126,17 @@
                 type: "POST",
                 url: "${base}/advert/addScreenAdvert.do",
                 data: adverts,
-                success: function (result) {
-                    if ('yes' == result) {
+                success: function (data) {
+                    console.log(data);
+                    if (data.code =='0') {
                         swal("提示", "添加成功", "success");
                         setTimeout(function(){location.reload();},1000);
                     } else {
                         swal("提示", "添加失败", "error");
-                        setTimeout(function(){location.reload();},1000);
                     }
                 },
-                error: function (result) {
-                    alert("添加失败！请重试...");
+                error: function (data) {
+                    swal("提示", data.msg, "info");
                 }
             });
         });
