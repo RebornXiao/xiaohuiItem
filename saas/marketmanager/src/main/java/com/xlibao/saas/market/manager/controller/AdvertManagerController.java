@@ -359,4 +359,15 @@ public class AdvertManagerController extends BaseController {
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_ADDPLAY, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
 
+    /**
+     * 用户店铺与屏幕级联
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/getScreenListBy")
+    public JSONObject getScreenListBy(ModelMap map) {
+       return adverManagerService.getScreenListBy();
+    }
+
 }
