@@ -96,14 +96,12 @@ public class AdvertManagerController extends BaseController {
         }else {
             map.put("advert", "");
         }
-        JSONObject advertJson =  adverManagerService.getScreensByAdvertID();
-        JSONObject adresponse = advertJson.getJSONObject("response");
-        JSONArray screens = adresponse.getJSONArray("data");
-        if(adverts.size()>0) {
-            map.put("screens", screens.get(0));
-        }else {
-            map.put("screens", "");
-        }
+        JSONObject screenJson =  adverManagerService.getScreensByAdvertID();
+        JSONObject screenponse = screenJson.getJSONObject("response");
+        JSONArray screens = screenponse.getJSONArray("data");
+
+        map.put("screens", screens);
+
 
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_DETAIL, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }

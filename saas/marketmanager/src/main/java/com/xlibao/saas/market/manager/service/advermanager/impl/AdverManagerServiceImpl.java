@@ -278,10 +278,12 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
     public JSONObject delAdvertScreenByID() {
         int screenID =  getIntParameter("screenID",0);
         int advertID =  getIntParameter("advertID",0);
+        int marketID =  getIntParameter("marketID",0);
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("screenID", String.valueOf(screenID));
         parameters.put("advertID", String.valueOf(advertID));
+        parameters.put("marketID", String.valueOf(marketID));
 
         String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/deleteAdvertInfoFromID.do";
         JSONObject response = executor(url, parameters);
