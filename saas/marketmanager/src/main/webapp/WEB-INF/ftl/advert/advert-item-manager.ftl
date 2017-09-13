@@ -113,15 +113,15 @@
                                 <td>
                                     <button id="lookBtn" type="button"
                                             class="btn btn-primary btn-sm"
-                                            a_id="${advert.advertID?c}" m_id="${advert.screenID}" s_id="${advert.screenID?c}">查看
+                                            a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">查看
                                     </button>
                                     <button id="editBtn" type="button" data-target="#editModel"
                                         class="btn btn-primary btn-sm" data-toggle="model"
-                                        a_id="${advert.advertID?c}" m_id="${advert.screenID}" s_id="${advert.screenID?c}">编辑
+                                        a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">编辑
                                     </button>
                                     <button id="deleBtn" type="button" data-target="#deleModel"
                                             class="btn btn-danger btn-sm" data-toggle="model"
-                                            a_id="${advert.advertID?c}" m_id="${advert.screenID}" s_id="${advert.screenID?c}">删除
+                                            a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">删除
                                     </button>
                                 </td>
                             </tr>
@@ -214,9 +214,11 @@
                         });
                         $("#editTitle").val(object.title);
                         $("#editTime").val(object.timeSize);
+                        $("#editRemark").val(object.advertRemark);
                         $("#editStartTime").val(object.beginTime);
                         $("#editEndTime").val(object.endTime);
                         $("#editPlaySort").val(object.playOrder);
+                        $("#editPlayRemark").val(object.remark);
                         $("#editYesBtn").on('click',function () {
                             var arr ={
                                 "title":$("#editTitle").val(),//标题
@@ -224,18 +226,17 @@
                                 "remark":$("#editRemark").val(),//广告备注
                                 "storeInfo":$("#editStoreInfo").val(),//门店
                                 "storeIndex":$("#editStoreInfo").get(0).selectedIndex,//门店index
-                                "editScreenNum":$("#editScreenNum").val(),//屏幕编号
+                                "editScreenNum":$("#editScreenNum").find("option:selected").text(),//屏幕编号
                                 "screenNumIndex":$("#editScreenNum").get(0).selectedIndex,//屏幕编号index
                                 "e_stime":$("#editStartTime").val(),//开始时间
                                 "e_etime":$("#editEndTime").val(),//结束时间
                                 "e_sort":$("#editPlaySort").val(),//播放排序
                                 "e_pRemark":$("#editPlayRemark").val(),//播放备注
                             };
-                            alert(arr.storeIndex);
-                            var url="${base}/advert/updateScreenAdvert.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id")+
-                                    "&beginTime="+arr.e_stime+"&endTime="+arr.e_etime+"&playOrder="+arr.e_sort+"&remark="+arr.e_pRemark;
-                                console.log('提交url====='+url)
-                            $.post(url, function(data) {
+                            var url="${base}/advert/updateScreenAdvert.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id")+ "&marketID="
+                                    +$(that).attr("m_id")+ "&beginTime="+arr.e_stime+"&endTime="+arr.e_etime+"&playOrder="+arr.e_sort+"&remark="+arr.e_pRemark+"&sCode="+arr.editScreenNum;
+                                console.log('提交url====='+url);
+                            $.get(url, function(data) {
                                 //重新刷新
                                 console.log('提交返回值===='+data)
                                 if(data.code == "0") {
@@ -326,7 +327,7 @@
                             <fieldset disabled>
                             <label class="col-md-4 control-label">广告备注：</label>
                             <div class="col-md-6">
-                                <input type="text"class="form-control" id="editRemark"/>
+                                <input type="text" class="form-control" id="editRemark"/>
                             </div>
                             </fieldset>
                         </div>
@@ -346,9 +347,11 @@
                             <label class="col-md-4 control-label">屏幕编号：</label>
                             <div class="col-md-6">
                                 <select id="editScreenNum" class="form-control">
-                                    <option>10001-001</option>
-                                    <option>10002-002</option>
-                                    <option>10023-005</option>
+                                <#if screens?exists >
+                                    <#list screens as screen>
+                                        <option value="${screen.screenID?c}">${screen.code}</option>
+                                    </#list>
+                                </#if>
                                 </select>
                             </div>
                         </div>

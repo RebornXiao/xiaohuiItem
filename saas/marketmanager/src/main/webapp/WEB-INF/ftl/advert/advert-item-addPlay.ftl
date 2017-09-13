@@ -23,7 +23,6 @@
                                     <label class="col-md-4 control-label">门店信息：</label>
                                     <div class="col-md-4">
                                         <select id="storeSelect" class="form-control">
-                                            <option value="">选择门店</option>
                                         <#if markets?exists >
                                             <#list markets as market>
                                                 <option value="${market.id?c}">${market.name}</option>
@@ -36,7 +35,6 @@
                                     <label class="col-md-4 control-label">屏幕编号：</label>
                                     <div class="col-md-4">
                                         <select id="screenNumSelect" class="form-control">
-                                            <option value="">选择屏幕编号</option>
                                         <#if screens?exists >
                                             <#list screens as screen>
                                                 <option value="${screen.screenID?c}">${screen.code}</option>
@@ -49,7 +47,6 @@
                                     <label class="col-md-4 control-label">广告标题：</label>
                                     <div class="col-md-4">
                                         <select id="advertTitle" class="form-control">
-                                            <option value="">选择广告标题</option>
                                         <#if adverts?exists >
                                             <#list adverts as advert>
                                                 <option value="${advert.advertID}">${advert.title}</option>

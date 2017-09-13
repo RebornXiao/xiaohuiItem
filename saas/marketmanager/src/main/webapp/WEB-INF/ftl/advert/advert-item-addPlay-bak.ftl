@@ -248,51 +248,51 @@
             });
         });
         //确认添加
-        <#--$("#submitBtn").on("click", function () {-->
-            <#--var data = [];//声明一个数组-->
-            <#--var t = $("#submitBtn tbody tr").length;-->
-            <#--alert(t);-->
-            <#--$(".table tbody tr:lt("+t+")").each(function () { //获取行号，从第t行开始遍历-->
-                <#--if ($(this).find("td:eq(0) input").prop("checked") == true) { //只遍历checkbox选中的-->
-                    <#--var param = {};//声明一个json-->
-                    <#--param.id = $(this).find("td:eq(0) input").val();//开始json的键值对赋值-->
-                    <#--var extractAmount = $(this).find("td:eq(4)").text();-->
-                    <#--extractAmount = $.trim(extractAmount);-->
-                    <#--param.extractAmount = extractAmount;-->
-                    <#--var uid = $(this).find("td:eq(7)").text();-->
-                    <#--uid = $.trim(uid);-->
-                    <#--param.uid = uid;-->
-                    <#--data.push(param);//将封装好的json添加到数组-->
-                <#--}-->
-            <#--});-->
-            <#--console.log(data);-->
-            <#--var error = checkElement(data);-->
-            <#--if (error) {-->
-                <#--return;-->
-            <#--}-->
-            <#--$.ajax({-->
-                <#--url: "${pageContext.request.contextPath }/activityCommission/approveCommission.do",-->
-                <#--type: "POST",-->
-                <#--dataType: 'json',-->
-                <#--cache: false,-->
-                <#--data: {param: JSON.stringify(data)},//将json转换成string类型，提交给后台-->
-                <#--success: function (data) {-->
-                    <#--if (data.success) {-->
-                        <#--toastr.success("审核成功!");-->
-                        <#--setTimeout(function () {-->
-                            <#--window.location.reload();-->
-                        <#--}, 500);-->
-                    <#--} else {-->
-                        <#--toastr.error(data.resultMsg);-->
-                    <#--}-->
-                <#--}-->
-            <#--});-->
-            <#--function checkElement(data) {-->
-                <#--if (data.length < 1) {-->
-                    <#--toastr.warning("至少选择一项");-->
-                <#--}-->
-            <#--};-->
-        <#--});-->
+        $("#submitBtn").on("click", function () {
+            var data = [];//声明一个数组
+            var t = $("#submitBtn tbody tr").length;
+            alert(t);
+            $(".table tbody tr:lt("+t+")").each(function () { //获取行号，从第t行开始遍历
+                if ($(this).find("td:eq(0) input").prop("checked") == true) { //只遍历checkbox选中的
+                    var param = {};//声明一个json
+                    param.id = $(this).find("td:eq(0) input").val();//开始json的键值对赋值
+                    var extractAmount = $(this).find("td:eq(4)").text();
+                    extractAmount = $.trim(extractAmount);
+                    param.extractAmount = extractAmount;
+                    var uid = $(this).find("td:eq(7)").text();
+                    uid = $.trim(uid);
+                    param.uid = uid;
+                    data.push(param);//将封装好的json添加到数组
+                }
+            });
+            console.log(data);
+            var error = checkElement(data);
+            if (error) {
+                return;
+            }
+            $.ajax({
+                url: "${pageContext.request.contextPath }/activityCommission/approveCommission.do",
+                type: "POST",
+                dataType: 'json',
+                cache: false,
+                data: {param: JSON.stringify(data)},//将json转换成string类型，提交给后台
+                success: function (data) {
+                    if (data.success) {
+                        toastr.success("审核成功!");
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 500);
+                    } else {
+                        toastr.error(data.resultMsg);
+                    }
+                }
+            });
+            function checkElement(data) {
+                if (data.length < 1) {
+                    toastr.warning("至少选择一项");
+                }
+            };
+        });
     });
 </script>
 <!--选择广告弹窗-->
