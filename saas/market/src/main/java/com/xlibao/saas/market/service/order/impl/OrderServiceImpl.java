@@ -255,10 +255,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         }
 
         JSONObject response = new JSONObject();
-        MarketOrderProperties orderContainerSetProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.CONTAINER_SET.getKey());
-        if (orderContainerSetProperties == null) {
-            orderContainerSetProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getKey());
-        }
+        MarketOrderProperties orderContainerSetProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getKey());
         if (orderContainerSetProperties == null) {
             // return MarketOrderErrorCodeEnum.ORDER_STATUS_ERROR.response();
         }
@@ -404,10 +401,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         orderMsg.put("discountPrice", orderEntry.getDiscountPrice());
 
         orderMsg.put("addressTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货地址：" : "收货地址：");
-        orderMsg.put("address", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? orderEntry.formatShippingAddress() :
-                orderEntry.formatReceiptAddress() + CommonUtils.SPACE + CommonUtils.nullToEmpty(orderEntry.getReceiptNickName()) + CommonUtils.SPACE + CommonUtils.nullToEmpty(orderEntry.getReceiptPhone()));
+        orderMsg.put("address", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? orderEntry.formatShippingAddress() : orderEntry.formatReceiptAddress());
         orderMsg.put("targetTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货点：" : "收货人：");
-        orderMsg.put("targetName", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "小惠便利店" + orderEntry.getShippingNickName() : orderEntry.getReceiptNickName());
+        orderMsg.put("targetName", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "小惠便利店" + CommonUtils.nullToEmpty(orderEntry.getShippingNickName()) : CommonUtils.nullToEmpty(orderEntry.getReceiptNickName()));
+        orderMsg.put("receiptPhone", CommonUtils.hideChar(orderEntry.getReceiptPhone(), 3, 6));
 
         fillItemSnapshotMsg(orderMsg, orderEntry);
 

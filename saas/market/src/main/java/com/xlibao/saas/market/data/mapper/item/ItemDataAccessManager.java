@@ -106,8 +106,8 @@ public class ItemDataAccessManager {
         return itemMapper.offShelves(itemId, quantity, status);
     }
 
-    public List<Long> existItemTemplates(long marketId, String itemTemplateSet) {
-        return itemMapper.existItemTemplates(marketId, itemTemplateSet);
+    public List<Long> existItemTemplates(long marketId, String itemTemplateSet, int requestSource) {
+        return itemMapper.existItemTemplates(marketId, itemTemplateSet, requestSource);
     }
 
     public int createItemLocation(MarketItemLocation itemLocation) {

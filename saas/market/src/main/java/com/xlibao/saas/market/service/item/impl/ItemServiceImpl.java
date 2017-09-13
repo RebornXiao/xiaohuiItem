@@ -389,20 +389,25 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     public JSONObject fuzzyMatchItemName() {
         long marketId = getLongParameter("marketId");
         String itemName = getUTF("fuzzyItemName");
+        int requestSource = getIntParameter("requestSource", ItemRequestSourceEnum.ON_LINE.getKey());
+
         List<ItemTemplate> itemTemplates = ItemDataCacheService.fuzzyQueryItemTemplates(itemName);
         if (CommonUtils.isEmpty(itemTemplates)) {
             return PlatformErrorCodeEnum.NO_MORE_DATA.response();
         }
         String itemTemplateSet = ItemDataCacheService.assembleItemTemplateSet(itemTemplates);
 
-        List<Long> itemTemplateIdSet = dataAccessFactory.getItemDataAccessManager().existItemTemplates(marketId, itemTemplateSet);
+        List<Long> itemTemplateIdSet = dataAccessFactory.getItemDataAccessManager().existItemTemplates(marketId, itemTemplateSet, requestSource);
 
-        JSONArray itemNameSet = itemTemplates.stream().map(ItemTemplate::getName).collect(Collectors.toCollection(JSONArray::new));
+        JSONArray itemNameSet = new JSONArray();
         for (ItemTemplate itemTemplate : itemTemplates) {
             if (!itemTemplateIdSet.contains(itemTemplate.getId())) {
                 continue;
             }
             itemNameSet.add(itemTemplate.getName());
+        }
+        if (itemNameSet.size() <= 0) {
+            return PlatformErrorCodeEnum.NO_MORE_DATA.response();
         }
         return success(itemNameSet);
     }

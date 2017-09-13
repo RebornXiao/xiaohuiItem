@@ -229,6 +229,7 @@ public class MarketEntry {
         marketEntry.setCoveringDistance(getCoveringDistance());
         marketEntry.setDeliveryMode(getDeliveryMode());
         marketEntry.setDeliveryCost(getDeliveryCost());
+        marketEntry.setFreeDeliveryFee(getFreeDeliveryFee());
         marketEntry.setCreateTime(getCreateTime());
 
         return marketEntry;
@@ -248,6 +249,7 @@ public class MarketEntry {
         response.put("coveringDistance", CommonUtils.formatDistance(getCoveringDistance()));
         response.put("deliveryMode", getDeliveryMode());
         response.put("deliveryCost", getDeliveryCost());
+        response.put("freeDeliveryFee", getFreeDeliveryFee());
         response.put("formatDistance", CommonUtils.formatDistance(SimpleLocationUtils.simpleDistance(latitude, longitude, Double.parseDouble(getLocation().split(CommonUtils.SPLIT_COMMA)[1]), Double.parseDouble(getLocation().split(CommonUtils.SPLIT_COMMA)[0]))));
 
         return response;

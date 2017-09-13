@@ -82,8 +82,7 @@
     </select>
 
     <select id="getItemsForItemTemplateSet" resultMap="BaseResultMap">
-        select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity -
-        lock_stock - pending_quantity) > 0 and restriction_quantity != 0
+        select * from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0
         <if test="itemTemplateSet != null">and item_template_id in(${itemTemplateSet})</if>
         order by create_time desc limit #{pageStartIndex}, #{pageSize}
     </select>
@@ -125,7 +124,8 @@
     </select>
 
     <select id="existItemTemplates" resultType="Long">
-        select item_template_id from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0 and item_template_id in(${itemTemplateSet})
+        select item_template_id from market_item where owner_id = #{marketId} and status = 1 and (stock + oversold_quantity - lock_stock - pending_quantity) > 0 and restriction_quantity != 0
+        and item_template_id in(${itemTemplateSet}) and (request_source &amp; #{requestSource}) = #{requestSource}
     </select>
 
     <update id="lockItemStock">

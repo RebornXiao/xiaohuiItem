@@ -25,7 +25,7 @@ public interface MarketItemMapper {
 
     List<MarketItem> getItems(@Param("itemSet") String itemSet);
 
-    List<Long> existItemTemplates(@Param("marketId") long marketId, @Param("itemTemplateSet") String itemTemplateSet);
+    List<Long> existItemTemplates(@Param("marketId") long marketId, @Param("itemTemplateSet") String itemTemplateSet, @Param("requestSource") int requestSource);
 
     List<MarketItem> searchMarketItems(@Param("marketId") long marketId, @Param("searchType") String searchType, @Param("searchKey") String searchKey, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 
