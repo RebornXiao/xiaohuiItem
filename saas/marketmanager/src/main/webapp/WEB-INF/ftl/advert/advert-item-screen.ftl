@@ -182,7 +182,7 @@
                         if(data.code == "0") {
                             $("#deleteButton").modal('hide');
                             swal("提示", "删除成功", "success");
-                            setTimeout(function(){location.href = "${base}/advert/screens.do";},1000);
+                            setTimeout(function(){location.reload();},1000);
                         } else {
                             swal("提示", "删除失败", "error");
                         }

@@ -130,7 +130,7 @@
                     console.log(data);
                     if (data.code =='0') {
                         swal("提示", "添加成功", "success");
-                        setTimeout(function(){location.reload();},1000);
+                        setTimeout(function(){location.href="${base}/advert/advertScreens.do"},1000);
                     } else {
                         swal("提示", "添加失败", "error");
                     }
