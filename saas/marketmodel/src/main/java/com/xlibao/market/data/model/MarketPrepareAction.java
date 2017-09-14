@@ -10,8 +10,10 @@ public class MarketPrepareAction {
     private String itemLocation;
     private Long hopeItemTemplateId;
     private String hopeItemBarcode;
+    private Integer hasCompleteQuantity;
     private Integer hopeItemQuantity;
     private Date hopeExecutorDate;
+    private Integer type;
     private Integer status;
     private Date createTime;
     private Date completeTime;
@@ -64,6 +66,14 @@ public class MarketPrepareAction {
         this.hopeItemBarcode = hopeItemBarcode == null ? null : hopeItemBarcode.trim();
     }
 
+    public Integer getHasCompleteQuantity() {
+        return hasCompleteQuantity;
+    }
+
+    public void setHasCompleteQuantity(Integer hasCompleteQuantity) {
+        this.hasCompleteQuantity = hasCompleteQuantity;
+    }
+
     public Integer getHopeItemQuantity() {
         return hopeItemQuantity;
     }
@@ -78,6 +88,14 @@ public class MarketPrepareAction {
 
     public void setHopeExecutorDate(Date hopeExecutorDate) {
         this.hopeExecutorDate = hopeExecutorDate;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public Integer getStatus() {

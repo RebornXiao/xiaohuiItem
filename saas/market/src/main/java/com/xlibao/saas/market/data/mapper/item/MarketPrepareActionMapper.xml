@@ -8,16 +8,18 @@
         <result column="item_location" property="itemLocation" jdbcType="VARCHAR"/>
         <result column="hope_item_template_id" property="hopeItemTemplateId" jdbcType="BIGINT"/>
         <result column="hope_item_barcode" property="hopeItemBarcode" jdbcType="VARCHAR"/>
+        <result column="has_complete_quantity" property="hasCompleteQuantity" jdbcType="INTEGER"/>
         <result column="hope_item_quantity" property="hopeItemQuantity" jdbcType="INTEGER"/>
         <result column="hope_executor_date" property="hopeExecutorDate" jdbcType="TIMESTAMP"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
         <result column="complete_time" property="completeTime" jdbcType="TIMESTAMP"/>
     </resultMap>
     
     <insert id="createPrepareAction">
-        insert into market_prepare_action(market_id, action_passport_id, item_location, hope_item_template_id, hope_item_barcode, hope_item_quantity, hope_executor_date, status, create_time)
-        values(#{marketId}, #{actionPassportId}, #{itemLocation}, #{hopeItemTemplateId}, #{hopeItemBarcode}, #{hopeItemQuantity}, #{hopeExecutorDate}, #{status}, #{createTime})
+        insert into market_prepare_action(market_id, action_passport_id, item_location, hope_item_template_id, hope_item_barcode, has_complete_quantity, hope_item_quantity, hope_executor_date, type, status, create_time)
+        values(#{marketId}, #{actionPassportId}, #{itemLocation}, #{hopeItemTemplateId}, #{hopeItemBarcode}, #{hasCompleteQuantity}, #{hopeItemQuantity}, #{hopeExecutorDate}, #{type}, #{status}, #{createTime})
     </insert>
 
     <select id="getPrepareActionForId" resultMap="BaseResultMap">
@@ -25,22 +27,22 @@
     </select>
 
     <select id="getPrepareAction" resultMap="BaseResultMap">
-        select * from market_prepare_action where market_id = #{marketId} and item_location = #{itemLocation} and status = #{status}
+        select * from market_prepare_action where market_id = #{marketId} and item_location = #{itemLocation} and type = #{type} and status in(${statusSet})
     </select>
 
     <select id="getPrepareActions" resultMap="BaseResultMap">
-        select * from market_prepare_action where market_id = #{marketId} and status = #{status} order by hope_executor_date desc, item_location, hope_item_quantity limit #{pageStartIndex}, #{pageSize}
+        select * from market_prepare_action where market_id = #{marketId} and status = #{status} order by hope_executor_date desc, has_complete_quantity, item_location, type desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="getPrepareActionsForLocationSet" resultMap="BaseResultMap">
-        select * from market_prepare_action where market_id = #{marketId} and item_location in (${locationSet}) and status = #{status} order by item_location asc, hope_item_quantity asc
+        select * from market_prepare_action where market_id = #{marketId} and item_location in (${locationSet}) and status in (${statusSet}) order by item_location asc, hope_item_quantity asc
     </select>
 
     <select id="getPrepareActionForBarcode" resultMap="BaseResultMap">
-        select * from market_prepare_action where market_id = #{marketId} and status = #{status} and hope_item_barcode = #{barcode} order by hope_item_quantity asc
+        select * from market_prepare_action where market_id = #{marketId} and status in (${statusSet}) and hope_item_barcode = #{barcode} order by item_location asc
     </select>
 
     <update id="modifyPrepareActionStatus">
-        update market_prepare_action set status = #{status}, complete_time = #{time} where market_id = #{marketId} and item_location = #{itemLocation} and status = #{matchStatus}
+        update market_prepare_action set status = #{status}, complete_time = #{time} where market_id = #{marketId} and item_location = #{itemLocation} and status in(${matchStatusSet})
     </update>
 </mapper>

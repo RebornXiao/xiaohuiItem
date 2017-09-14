@@ -110,7 +110,11 @@ public class MarketOpenApiController {
      *              <b>itemQuantity</b> - int 当前的商品库存
      *              <b>barcode</b> - String 当前存放的商品条码
      *              <b>unitName</b> - String 当前存放的商品单位
+     *
      *              <b>taskId</b> - long 任务ID；当没有存在预操作任务时为0，否则为对应的任务ID
+     *              <b>taskStatus</b> - int 任务状态，当<b>taskId</b>为0时无效
+     *              <b>hasCompleteQuantity</b> - int 已完成的数量，当<b>taskId</b>为0时无效
+     *              <b>hopeItemQuantity</b> - int 期望执行的数量，当<b>taskId</b>为0时无效
      * </pre>
      */
     @ResponseBody
@@ -204,12 +208,14 @@ public class MarketOpenApiController {
      *          <b>barcode</b> - String 商品条码，必填参数；一般为扫码获取。
      *
      *     <b>返回：</b>
-     *          <b>datas</b> - JSONArray 任务集合，每个元素为JSONObject，结构如：
-     *              <b>taskId</b> - long 任务ID
-     *              <b>itemName</b> - String 商品名
-     *              <b>locationCode</b> - String 位置信息
-     *              <b>itemQuantity</b> - int 需补货数量
-     *              <b>unitName</b> - String 单位名称
+     *          <b>taskId</b> - long 任务ID
+     *          <b>locationCode</b> - String 位置信息
+     *          <b>itemName</b> - String 商品名
+     *          <b>unitName</b> - String 单位名称
+     *          <b>hasCompleteQuantity</b> - int 已补货数量
+     *          <b>itemQuantity</b> - int 需补货数量
+     *          <b>barcode</b> - String 商品条码
+     *          <b>status</b> - int 任务状态
      * </pre>
      */
     @ResponseBody
@@ -236,9 +242,10 @@ public class MarketOpenApiController {
      *              <b>locationCode</b> - String 弹夹的完整编码，如：01010101
      *              <b>itemTemplateId</b> - long 商品模版ID
      *              <b>itemName</b> - String 商品名
+     *              <b>unitName</b> - String 当前存放的商品单位
+     *              <b>hasCompleteQuantity</b> - int 已补货的数量
      *              <b>itemQuantity</b> - int 商品数量
      *              <b>barcode</b> - String 商品的条码
-     *              <b>unitName</b> - String 当前存放的商品单位
      *              <b>status</b> - int 任务状态，参考：{@link com.xlibao.saas.market.service.item.PrepareActionStatusEnum}
      *              <b>hopeExecutorDate</b> - String 期望执行的日期
      * </pre>

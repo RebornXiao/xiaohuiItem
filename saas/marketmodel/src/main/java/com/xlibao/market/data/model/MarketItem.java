@@ -48,6 +48,8 @@ public class MarketItem {
 
     public static MarketItem newInstance(long ownerId, ItemTemplate itemTemplate, long costPrice, long sellPrice, long marketPrice, long discountPrice, String description, byte status) {
         MarketItem item = new MarketItem();
+        item.setDefineName(itemTemplate.getName());
+        item.setDefineImage(itemTemplate.getImageUrl());
         item.setOwnerId(ownerId);
         item.setItemTemplateId(itemTemplate.getId());
         item.setCostPrice(costPrice);

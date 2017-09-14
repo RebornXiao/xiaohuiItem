@@ -17,6 +17,8 @@ public interface MarketItemLocationMapper {
 
     List<MarketItemLocation> getItemLocations(@Param("itemId") long itemId);
 
+    List<MarketItemLocation> getItemLocationsForMarket(@Param("marketId") long marketId, @Param("itemLocationSet") String itemLocationSet);
+
     int offsetItemLocationStock(@Param("locationId") long locationId, @Param("decrementStock") int decrementStock);
 
     int removeItemLocation(@Param("locationId") long locationId);

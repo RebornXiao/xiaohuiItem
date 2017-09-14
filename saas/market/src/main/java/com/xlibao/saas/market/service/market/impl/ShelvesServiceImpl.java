@@ -8,14 +8,16 @@ import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.exception.code.ItemErrorCodeEnum;
+import com.xlibao.common.support.PassportRemoteService;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.market.data.model.*;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemUnit;
+import com.xlibao.metadata.passport.Passport;
 import com.xlibao.saas.market.data.DataAccessFactory;
-import com.xlibao.saas.market.service.item.MarketItemStatusEnum;
 import com.xlibao.saas.market.service.item.ItemStockOffsetTypeEnum;
 import com.xlibao.saas.market.service.item.MarketItemErrorCodeEnum;
+import com.xlibao.saas.market.service.item.MarketItemStatusEnum;
 import com.xlibao.saas.market.service.item.PrepareActionStatusEnum;
 import com.xlibao.saas.market.service.market.*;
 import com.xlibao.saas.market.service.support.remote.MarketShopRemoteService;
@@ -42,6 +44,8 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
     private DataAccessFactory dataAccessFactory;
     @Autowired
     private MarketShopRemoteService marketShopRemoteService;
+
+    private static String VALID_ACTION_STATUS_SET = PrepareActionStatusEnum.UN_EXECUTOR.getKey() + CommonUtils.SPLIT_COMMA + PrepareActionStatusEnum.EXCEPTION.getKey();
 
     @Override
     public void builderShelvesData(MarketEntry marketEntry, String content) {
@@ -98,7 +102,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
 
         List<MarketShelvesManager> shelvesManagers = dataAccessFactory.getMarketDataAccessManager().getClipDatas(marketId, groupCode, unitCode, floorCode, pageStartIndex, pageSize);
         if (CommonUtils.isEmpty(shelvesManagers)) {
-            return MarketErrorCodeEnum.SHELVES_LOCATION_ERROR.response("货架信息有误，从检查是否未重置货架信息或提供的信息错误");
+            return MarketErrorCodeEnum.SHELVES_LOCATION_ERROR.response("货架信息有误，请检查是否未重置货架信息或提供的信息错误");
         }
         StringBuilder locationSet = new StringBuilder();
         for (MarketShelvesManager shelvesManager : shelvesManagers) {
@@ -111,15 +115,13 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         for (MarketItemLocation itemLocation : itemLocations) {
             itemLocationMap.put(itemLocation.getLocationCode(), itemLocation);
         }
-
-        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionsForLocationSet(marketId, locationSet.toString(), PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionsForLocationSet(marketId, locationSet.toString(), VALID_ACTION_STATUS_SET);
         Map<String, MarketPrepareAction> prepareActionMap = new HashMap<>();
         if (!CommonUtils.isEmpty(prepareActions)) {
             for (MarketPrepareAction prepareAction : prepareActions) {
                 prepareActionMap.put(prepareAction.getItemLocation(), prepareAction);
             }
         }
-
         JSONArray response = new JSONArray();
         for (MarketShelvesManager shelvesManager : shelvesManagers) {
             String locationCode = groupCode + unitCode + floorCode + shelvesManager.getClipCode();
@@ -138,11 +140,13 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
 
             MarketPrepareAction prepareAction = prepareActionMap.get(locationCode);
             data.put("taskId", prepareAction == null ? 0 : prepareAction.getId());
+            data.put("taskStatus", prepareAction == null ? 0 : prepareAction.getStatus());
+            data.put("hasCompleteQuantity", prepareAction == null ? 0 : prepareAction.getHasCompleteQuantity());
+            data.put("hopeItemQuantity", prepareAction == null ? 0 : prepareAction.getHopeItemQuantity());
 
             response.add(data);
         }
-        //TODO 将当前分页，当前页内容数量都要发回去
-
+        // TODO 将当前分页，当前页内容数量都要发回去
         return success(response);
     }
 
@@ -151,26 +155,25 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         long marketId = getLongParameter("marketId");
         String barcode = getUTF("barcode");
 
-        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionForBarcode(marketId, barcode, PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionForBarcode(marketId, barcode, VALID_ACTION_STATUS_SET);
         if (CommonUtils.isEmpty(prepareActions)) {
             return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response("商品[条码：" + barcode + "]不存在预存任务");
         }
-        JSONArray response = new JSONArray();
-        for (MarketPrepareAction prepareAction : prepareActions) {
-            ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareAction.getHopeItemTemplateId());
-            ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
+        MarketPrepareAction prepareAction = prepareActions.get(0);
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareAction.getHopeItemTemplateId());
+        ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
 
-            JSONObject data = new JSONObject();
+        JSONObject response = new JSONObject();
 
-            data.put("taskId", prepareAction.getId());
-            data.put("itemName", itemTemplate.getName());
-            data.put("barcode", barcode);
-            data.put("locationCode", prepareAction.getItemLocation());
-            data.put("itemQuantity", prepareAction.getHopeItemQuantity());
-            data.put("unitName", itemUnit.getTitle());
+        response.put("taskId", prepareAction.getId());
+        response.put("locationCode", prepareAction.getItemLocation());
+        response.put("itemName", itemTemplate.getName());
+        response.put("unitName", itemUnit.getTitle());
+        response.put("hasCompleteQuantity", prepareAction.getHasCompleteQuantity());
+        response.put("itemQuantity", prepareAction.getHopeItemQuantity());
+        response.put("barcode", barcode);
+        response.put("status", prepareAction.getStatus());
 
-            response.add(data);
-        }
         return success(response);
     }
 
@@ -183,12 +186,12 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
 
         JSONArray actionArray = JSONObject.parseArray(actionDatas);
 
-        beforePrepareAction(marketId, actionArray); // 执行前的检查 检查本次的数量与原位置上是否存在未完成的任务
+        beforePrepareAction(passportId, marketId, actionArray, hopeExecutorDate); // 执行前的检查 检查本次的数量与原位置上是否存在未完成的任务
 
         for (int i = 0; i < actionArray.size(); i++) {
             JSONObject data = actionArray.getJSONObject(i);
 
-            createPrepareAction(passportId, marketId, hopeExecutorDate, data);
+            createPrepareAction(passportId, marketId, hopeExecutorDate, data, ShelvesTaskTypeEnum.ON_SHELVES);
         }
         return success();
     }
@@ -221,8 +224,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         if (prepareAction == null) {
             return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response("找不到任务，任务ID：" + taskId);
         }
-        int result = dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(prepareAction.getMarketId(), prepareAction.getItemLocation(), PrepareActionStatusEnum.UN_EXECUTOR.getKey(),
-                PrepareActionStatusEnum.INVALID.getKey(), CommonUtils.nowFormat());
+        int result = dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(prepareAction.getMarketId(), prepareAction.getItemLocation(), VALID_ACTION_STATUS_SET, PrepareActionStatusEnum.INVALID.getKey(), CommonUtils.nowFormat());
         return result <= 0 ? fail() : success();
     }
 
@@ -252,53 +254,67 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         String location = getUTF("location");
         String barcode = getUTF("barcode");
         int offShelvesQuantity = getIntParameter("offShelvesQuantity");
-
+        if (offShelvesQuantity <= 0) {
+            return PlatformErrorCodeEnum.ILLEGAL_ARGUMENT.response("下架数量必须大于0");
+        }
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
         if (marketEntry.getStatus() != MarketStatusEnum.MAINTAIN.getKey()) {
             logger.error("[下架] " + passportId + "没有先将商店[" + marketEntry.getName() + "]进行维护操作便执行了下架操作，系统已拦截该请求！");
             return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("商店[" + marketEntry.getName() + "]必须处于维护中才能执行该操作");
         }
-
         ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplateForBarcode(barcode);
         if (itemTemplate == null) {
             throw ItemErrorCodeEnum.BARCODE_NOT_EXIST.throwException("不存在条码为[" + barcode + "]的商品");
         }
-
-        MarketPrepareAction prepareAction = dataAccessFactory.getItemDataAccessManager().getPrepareAction(marketId, location, PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        // 获取下架任务记录(包括未执行或执行一半的记录)
+        MarketPrepareAction prepareAction = dataAccessFactory.getItemDataAccessManager().getPrepareAction(marketId, location, ShelvesTaskTypeEnum.OFF_SHELVES.getKey(), VALID_ACTION_STATUS_SET);
         if (prepareAction == null) {
-            return MarketItemErrorCodeEnum.NOT_FOUND_PREPARE_ACTION.response("位置" + location + "不存在预操作行为");
+            return MarketItemErrorCodeEnum.NOT_FOUND_PREPARE_ACTION.response("位置" + location + "不存在预下架任务");
         }
-
+        int hopeExecutorQuantity = (prepareAction.getHopeItemQuantity() - prepareAction.getHasCompleteQuantity());
+        if (offShelvesQuantity > hopeExecutorQuantity) {
+            return MarketItemErrorCodeEnum.ITEM_LOCATION_QUANTITY_ERROR.response("错误的操作行为，您本次执行的下架数量：" + offShelvesQuantity + "；任务要求下架：" + hopeExecutorQuantity);
+        }
         MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplate.getId());
         if (item == null) {
             return MarketItemErrorCodeEnum.NOT_FOUND_ITEM.response("商店不存在条码为[" + barcode + "]的商品");
         }
-
         MarketItemLocation itemLocation = dataAccessFactory.getItemDataAccessManager().getItemLocation(item.getId(), location);
         if (itemLocation == null) {
             return MarketItemErrorCodeEnum.ITEM_LOCATION_ERROR.response("位置[" + location + "]上不存在条码为[" + barcode + "]的商品");
         }
-
         if (itemLocation.getStock() < offShelvesQuantity) {
-            return MarketItemErrorCodeEnum.ITEM_LOCATION_QUANTITY_ERROR.response("[0001]下架数量有误；商品剩余数量：" + itemLocation.getStock() + "；本次下架数量：" + offShelvesQuantity);
+            return MarketItemErrorCodeEnum.ITEM_LOCATION_QUANTITY_ERROR.response("[0001]下架数量有误；货架商品剩余数量：" + itemLocation.getStock() + "；本次下架数量：" + offShelvesQuantity);
         }
         if (item.getStock() < offShelvesQuantity) {
-            return MarketItemErrorCodeEnum.ITEM_LOCATION_QUANTITY_ERROR.response("[0002]下架数量有误；商品剩余数量：" + item.getStock() + "；本次下架数量：" + offShelvesQuantity);
+            return MarketItemErrorCodeEnum.ITEM_LOCATION_QUANTITY_ERROR.response("[0002]下架数量有误；商品剩余总数量：" + item.getStock() + "；本次下架数量：" + offShelvesQuantity);
         }
-        int status = MarketItemStatusEnum.NORMAL.getKey();
+        int status = item.getStatus();
         if (item.getStock() <= offShelvesQuantity) {
             status = MarketItemStatusEnum.OFF_SALE.getKey();
         }
-        logger.info("[下架] " + passportId + "正在对商品(条码为：" + barcode + ")进行下架操作；商店ID：" + marketId + "，商品ID：" + item.getId() + "所在位置：" + location + "，下架数量：" + offShelvesQuantity + "；下架后商品状态为：" + status);
+        Passport passport = PassportRemoteService.getPassport(passportId);
+        logger.info("[下架] " + passport.getShowName() + "(" + passportId + ")正在对商品\"" + itemTemplate.getName() + "(条码为：" + barcode + ")\"" + "进行下架操作；商店ID：" + marketId + "，商品ID：" + item.getId()
+                + "库存数量：" + item.getStock() + "，所在位置：" + location + "，位置上商品数量：" + itemLocation.getStock() + "，下架数量：" + offShelvesQuantity + "；下架后商品状态为：" + status);
         int result = dataAccessFactory.getItemDataAccessManager().offShelves(item.getId(), offShelvesQuantity, status); // 减少库存 当库存为0时 设置为下架
         if (result <= 0) {
             throw PlatformErrorCodeEnum.DB_ERROR.throwException("[0001]更新商品库存失败");
         }
         // 需减少位置上的数量
-        result = dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation, offShelvesQuantity, ItemStockOffsetTypeEnum.OFF_SHELVES.getKey(), passportId, "");
+        result = dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation, offShelvesQuantity, ItemStockOffsetTypeEnum.OFF_SHELVES.getKey(), passportId, passport.getShowName());
         if (result <= 0) {
             throw PlatformErrorCodeEnum.DB_ERROR.throwException("[0002]更新商品库存失败");
         }
+        int taskStatus = PrepareActionStatusEnum.COMPLETE.getKey();
+        String mark = "[系统]正常完成下架任务";
+        if (offShelvesQuantity != hopeExecutorQuantity) {
+            mark = "[系统]任务要求下架数量：" + hopeExecutorQuantity + "；由于货架上商品数量剩余" + itemLocation.getStock() + "；本次下架数量：" + offShelvesQuantity + "属于正常操作";
+            if (offShelvesQuantity != itemLocation.getStock()) {
+                taskStatus = PrepareActionStatusEnum.EXCEPTION.getKey();
+                mark = "[系统]任务要求下架数量：" + hopeExecutorQuantity + "；但本次执行下架数量为：" + offShelvesQuantity + "；货架上商品剩余数量为：" + itemLocation.getStock();
+            }
+        }
+        completePrepareActionTask(marketId, location, ShelvesTaskTypeEnum.OFF_SHELVES.getKey(), passportId, itemTemplate.getId(), offShelvesQuantity, hopeExecutorQuantity, mark, prepareAction.getStatus(), taskStatus);
         return success();
     }
 
@@ -311,36 +327,49 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         String barcode = getUTF("barcode");
         int onShelvesQuantity = getIntParameter("onShelvesQuantity");
 
+        if (onShelvesQuantity <= 0) {
+            return PlatformErrorCodeEnum.ILLEGAL_ARGUMENT.response("上架数量必须大于0");
+        }
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
         if (marketEntry.getStatus() != MarketStatusEnum.MAINTAIN.getKey()) {
             logger.error("[上架] " + passportId + "没有先将商店[" + marketEntry.getName() + "]进行维护操作便执行了上架操作，系统已拦截该请求！");
             return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("商店[" + marketEntry.getName() + "]必须处于维护中才能执行该操作");
         }
-
         ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplateForBarcode(barcode);
         if (itemTemplate == null) {
             throw ItemErrorCodeEnum.BARCODE_NOT_EXIST.throwException("不存在条码为[" + barcode + "]的商品");
         }
-
-        MarketPrepareAction prepareAction = dataAccessFactory.getItemDataAccessManager().getPrepareAction(marketId, location, PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        MarketPrepareAction prepareAction = dataAccessFactory.getItemDataAccessManager().getPrepareAction(marketId, location, ShelvesTaskTypeEnum.ON_SHELVES.getKey(), VALID_ACTION_STATUS_SET);
         if (prepareAction == null) {
-            return MarketItemErrorCodeEnum.NOT_FOUND_PREPARE_ACTION.response("位置" + location + "不存在预操作行为");
+            return MarketItemErrorCodeEnum.NOT_FOUND_PREPARE_ACTION.response("位置" + location + "不存在上架任务");
         }
         if (!barcode.equals(prepareAction.getHopeItemBarcode())) {
             ItemTemplate it = ItemDataCacheService.getItemTemplateForBarcode(prepareAction.getHopeItemBarcode());
-            return MarketItemErrorCodeEnum.ERROR_PREPARE_ACTION.response("操作被拒绝；预操作行为期望该位置存放商品(条码：" + prepareAction.getHopeItemBarcode() + "，名称：[" + it.getName() + "])的商品，" +
+            return MarketItemErrorCodeEnum.ERROR_PREPARE_ACTION.response("操作被拒绝；期望该位置存放商品(条码：" + prepareAction.getHopeItemBarcode() + "，名称：[" + it.getName() + "])，" +
                     "与您提供的商品(条码：" + barcode + "，名称：[" + itemTemplate.getName() + "])不一致");
         }
-
+        int hopeExecutorQuantity = (prepareAction.getHopeItemQuantity() - prepareAction.getHasCompleteQuantity());
+        if (onShelvesQuantity > hopeExecutorQuantity) {
+            return MarketItemErrorCodeEnum.ITEM_LOCATION_QUANTITY_ERROR.response("错误的操作行为，您本次执行的上架数量：" + onShelvesQuantity + "；任务要求上架：" + hopeExecutorQuantity);
+        }
         MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplate.getId());
         if (item == null) {
             // 商店未存在该模版的商品 先添加
             item = MarketItem.newInstance(marketId, itemTemplate, (byte) MarketItemStatusEnum.NORMAL.getKey());
             dataAccessFactory.getItemDataAccessManager().createItem(item);
         }
-        logger.info("[上架] " + passportId + "正在对商品(条码为：" + barcode + ")进行上架操作；商店ID：" + marketId + "，商品ID：" + item.getId() + "，所在位置：" + location + "，上架数量：" + onShelvesQuantity);
-        // 存在该模版的商品时 更新库存和状态即可
+        Passport passport = PassportRemoteService.getPassport(passportId);
+        logger.info("[上架] " + passport.getShowName() + "(" + passportId + ")正在对商品\"" + itemTemplate.getName() + "(条码为：" + barcode + ")\"" + "进行上架操作；商店ID：" + marketId + "，商品ID：" + item.getId()
+                + "，所在位置：" + location + "，上架数量：" + onShelvesQuantity);
+        // 存在该模版的商品时 更新库存和状态即可 注意：使用了下架的数据库支持，因此偏移值必须为负数
         dataAccessFactory.getItemDataAccessManager().offShelves(item.getId(), -onShelvesQuantity, MarketItemStatusEnum.NORMAL.getKey());
+
+        int taskStatus = PrepareActionStatusEnum.COMPLETE.getKey();
+        String mark = "[系统]正常完成上架任务";
+        if (onShelvesQuantity < hopeExecutorQuantity) {
+            taskStatus = PrepareActionStatusEnum.EXCEPTION.getKey();
+            mark = "[系统]任务要求上架架数量：" + hopeExecutorQuantity + "；但本次执行上架数量为：" + onShelvesQuantity + "；未完成数量为：" + (hopeExecutorQuantity - onShelvesQuantity);
+        }
 
         MarketItemLocation itemLocation = dataAccessFactory.getItemDataAccessManager().getItemLocationForMarket(marketId, location);
         if (itemLocation != null) {
@@ -350,31 +379,35 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
                     throw MarketItemErrorCodeEnum.ITEM_LOCATION_ERROR.throwException("位置[" + location + "]上存在条码为[" + itemTemplate.getBarcode() + "]的商品[" + itemTemplate.getName() + "]");
                 }
                 // 需增加位置上的数量
-                dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation, -onShelvesQuantity, ItemStockOffsetTypeEnum.ON_SHELVES.getKey(), passportId, "");
+                dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation, -onShelvesQuantity, ItemStockOffsetTypeEnum.ON_SHELVES.getKey(), passportId, passport.getShowName());
                 // 完成了预操作行为
-                completePrepareActionTask(marketId, location, passportId, itemTemplate.getId(), onShelvesQuantity);
+                completePrepareActionTask(marketId, location, ShelvesTaskTypeEnum.ON_SHELVES.getKey(), passportId, itemTemplate.getId(), onShelvesQuantity, prepareAction.getHopeItemQuantity(), mark, prepareAction.getStatus(), taskStatus);
                 return success();
             }
+            // 直接移除原来位置的商品信息
             dataAccessFactory.getItemDataAccessManager().removeItemLocation(itemLocation.getId());
         }
         itemLocation = MarketItemLocation.newInstance(marketId, item.getId(), item.getItemTemplateId(), location, onShelvesQuantity);
         // 新建位置信息
-        dataAccessFactory.getItemDataAccessManager().createItemLocation(itemLocation);
+        dataAccessFactory.getItemDataAccessManager().createItemLocation(itemLocation, ShelvesTaskTypeEnum.ON_SHELVES.getKey(), passportId, passport.getShowName());
         // 完成了预操作行为
-        completePrepareActionTask(marketId, location, passportId, itemTemplate.getId(), onShelvesQuantity);
+        completePrepareActionTask(marketId, location, ShelvesTaskTypeEnum.ON_SHELVES.getKey(), passportId, itemTemplate.getId(), onShelvesQuantity, prepareAction.getHopeItemQuantity(), mark, prepareAction.getStatus(), taskStatus);
         return success();
     }
 
-    private void completePrepareActionTask(long marketId, String location, long executorPassportId, long itemTemplateId, int quantity) {
+    private void completePrepareActionTask(long marketId, String location, int type, long executorPassportId, long itemTemplateId, int quantity, int hopeQuantity, String mark, int matchActionStatus, int hopeActionStatus) {
         // 完成了预操作行为
-        dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(marketId, location, PrepareActionStatusEnum.UN_EXECUTOR.getKey(), PrepareActionStatusEnum.COMPLETE.getKey(), CommonUtils.nowFormat());
+        dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(marketId, location, String.valueOf(matchActionStatus), hopeActionStatus, CommonUtils.nowFormat());
 
         MarketTaskLogger taskLogger = new MarketTaskLogger();
         taskLogger.setMarketId(marketId);
-        taskLogger.setItemTemplateId(itemTemplateId);
         taskLogger.setItemLocation(location);
-        taskLogger.setItemQuantity(quantity);
+        taskLogger.setType(type);
         taskLogger.setExecutorPassportId(executorPassportId);
+        taskLogger.setItemTemplateId(itemTemplateId);
+        taskLogger.setItemQuantity(quantity);
+        taskLogger.setHopeItemQuantity(hopeQuantity);
+        taskLogger.setMark(mark);
         dataAccessFactory.getMarketDataAccessManager().createTaskLogger(taskLogger);
     }
 
@@ -409,6 +442,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         response.put("itemTemplateId", prepareAction.getHopeItemTemplateId());
         response.put("itemName", itemTemplate.getName());
         response.put("unitName", itemUnit.getTitle());
+        response.put("hasCompleteQuantity", prepareAction.getHasCompleteQuantity());
         response.put("itemQuantity", prepareAction.getHopeItemQuantity());
         response.put("barcode", prepareAction.getHopeItemBarcode());
         response.put("status", prepareAction.getStatus());
@@ -451,7 +485,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         return response;
     }
 
-    private void beforePrepareAction(long marketId, JSONArray actionArray) {
+    private void beforePrepareAction(long passportId, long marketId, JSONArray actionArray, String hopeExecutorDate) {
         StringBuilder locationSet = new StringBuilder();
         StringBuilder itemTemplateSet = new StringBuilder();
         for (int i = 0; i < actionArray.size(); i++) {
@@ -469,7 +503,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         locationSet.deleteCharAt(locationSet.length() - 1);
         itemTemplateSet.deleteCharAt(itemTemplateSet.length() - 1);
 
-        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionsForLocationSet(marketId, locationSet.toString(), PrepareActionStatusEnum.UN_EXECUTOR.getKey());
+        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionsForLocationSet(marketId, locationSet.toString(), VALID_ACTION_STATUS_SET);
         if (!CommonUtils.isEmpty(prepareActions)) { // 指定的位置 存在未执行的任务
             StringBuilder errorMsg = new StringBuilder().append("以下位置上存在未完成的任务：");
             for (MarketPrepareAction prepareAction : prepareActions) {
@@ -480,9 +514,19 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             }
             throw MarketItemErrorCodeEnum.PREPARE_ACTION_LOCATION_ERROR.throwException(errorMsg.toString());
         }
+        // 建立下架任务
+        List<MarketItemLocation> itemLocations = dataAccessFactory.getItemDataAccessManager().getItemLocationsForMarket(marketId, locationSet.toString());
+        for (MarketItemLocation itemLocation : itemLocations) {
+            JSONObject prepareActionData = new JSONObject();
+            prepareActionData.put("itemTemplateId", itemLocation.getItemTemplateId());
+            prepareActionData.put("location", itemLocation.getLocationCode());
+            prepareActionData.put("quantity", itemLocation.getStock()); // 该数量并不能作为最终控制的数量，仅为期望或参考数据
+
+            createPrepareAction(passportId, marketId, hopeExecutorDate, prepareActionData, ShelvesTaskTypeEnum.OFF_SHELVES);
+        }
     }
 
-    private void createPrepareAction(long passportId, long marketId, String hopeExecutorDate, JSONObject prepareActionData) {
+    private void createPrepareAction(long passportId, long marketId, String hopeExecutorDate, JSONObject prepareActionData, ShelvesTaskTypeEnum shelvesTaskTypeEnum) {
         ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareActionData.getLongValue("itemTemplateId"));
 
         MarketPrepareAction prepareAction = new MarketPrepareAction();
@@ -491,8 +535,10 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         prepareAction.setItemLocation(prepareActionData.getString("location"));
         prepareAction.setHopeItemTemplateId(itemTemplate.getId());
         prepareAction.setHopeItemBarcode(itemTemplate.getBarcode());
+        prepareAction.setHasCompleteQuantity(0);
         prepareAction.setHopeItemQuantity(prepareActionData.getIntValue("quantity"));
         prepareAction.setHopeExecutorDate(new Date(CommonUtils.dateFormatToLong(hopeExecutorDate)));
+        prepareAction.setType(shelvesTaskTypeEnum.getKey());
         prepareAction.setStatus(PrepareActionStatusEnum.UN_EXECUTOR.getKey());
         prepareAction.setCreateTime(new Date());
 

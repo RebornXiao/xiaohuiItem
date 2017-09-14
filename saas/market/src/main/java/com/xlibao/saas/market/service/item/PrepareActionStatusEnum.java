@@ -11,6 +11,8 @@ public enum PrepareActionStatusEnum {
     UN_EXECUTOR(1, "未执行"),
     /** 2 -- 完成 */
     COMPLETE(2, "完成"),
+    /** 3 -- 异常(执行一半) */
+    EXCEPTION(3, "异常(执行一半)"),
     ;
 
     private int key;

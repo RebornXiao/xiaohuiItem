@@ -14,6 +14,8 @@ public enum PlatformErrorCodeEnum {
     REMOTE_TIMEOUT(99, "远程服务器无响应"),
     /** 100 -- 没有更多数据 */
     NO_MORE_DATA(100, "没有更多数据"),
+    /** 101 -- 参数错误 */
+    ILLEGAL_ARGUMENT(101, "参数错误"),
     /** 200 -- 错误的手机号 */
     PHONE_NUMBER_ERROR(200, "错误的手机号"),
     /** 201 -- 应用设置拦截消息 */

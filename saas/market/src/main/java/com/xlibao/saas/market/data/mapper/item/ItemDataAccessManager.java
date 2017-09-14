@@ -114,7 +114,20 @@ public class ItemDataAccessManager {
         return itemMapper.existItemTemplates(marketId, itemTemplateSet, requestSource);
     }
 
-    public int createItemLocation(MarketItemLocation itemLocation) {
+    public int createItemLocation(MarketItemLocation itemLocation, int offsetType, long operatorPassportId, String operatorPassportName) {
+        MarketItemLocationStockLogger itemLocationStockLogger = new MarketItemLocationStockLogger();
+
+        itemLocationStockLogger.setItemId(itemLocation.getItemId());
+        itemLocationStockLogger.setLocationCode(itemLocation.getLocationCode());
+        itemLocationStockLogger.setBeforeStock(0);
+        itemLocationStockLogger.setOffsetStock(itemLocation.getStock());
+        itemLocationStockLogger.setAfterStock(itemLocation.getStock());
+        itemLocationStockLogger.setOperationType(offsetType);
+        itemLocationStockLogger.setOperatorPassportId(operatorPassportId);
+        itemLocationStockLogger.setOperatorPassportName(operatorPassportName);
+
+        createItemLocationStockLogger(itemLocationStockLogger);
+
         return itemLocationMapper.createItemLocation(itemLocation);
     }
 
@@ -132,6 +145,10 @@ public class ItemDataAccessManager {
 
     public List<MarketItemLocation> getItemLocations(long itemId) {
         return itemLocationMapper.getItemLocations(itemId);
+    }
+
+    public List<MarketItemLocation> getItemLocationsForMarket(long marketId, String itemLocationSet) {
+        return itemLocationMapper.getItemLocationsForMarket(marketId, itemLocationSet);
     }
 
     public int offsetItemLocationStock(MarketItemLocation itemLocation, int decrementStock, int offsetType, long operatorPassportId, String operatorPassportName) {
@@ -191,24 +208,24 @@ public class ItemDataAccessManager {
         return prepareActionMapper.getPrepareActionForId(taskId);
     }
 
-    public MarketPrepareAction getPrepareAction(long marketId, String itemLocation, int status) {
-        return prepareActionMapper.getPrepareAction(marketId, itemLocation, status);
+    public MarketPrepareAction getPrepareAction(long marketId, String itemLocation, int type, String statusSet) {
+        return prepareActionMapper.getPrepareAction(marketId, itemLocation, type, statusSet);
     }
 
-    public List<MarketPrepareAction> getPrepareActionsForLocationSet(long marketId, String locationSet, int status) {
-        return prepareActionMapper.getPrepareActionsForLocationSet(marketId, locationSet, status);
+    public List<MarketPrepareAction> getPrepareActionsForLocationSet(long marketId, String locationSet, String statusSet) {
+        return prepareActionMapper.getPrepareActionsForLocationSet(marketId, locationSet, statusSet);
     }
 
-    public List<MarketPrepareAction> getPrepareActionForBarcode(long marketId, String barcode, int status) {
-        return prepareActionMapper.getPrepareActionForBarcode(marketId, barcode, status);
+    public List<MarketPrepareAction> getPrepareActionForBarcode(long marketId, String barcode, String statusSet) {
+        return prepareActionMapper.getPrepareActionForBarcode(marketId, barcode, statusSet);
     }
 
     public List<MarketPrepareAction> getUnCompletePrepareActions(long marketId, int pageStartIndex, int pageSize) {
         return prepareActionMapper.getPrepareActions(marketId, PrepareActionStatusEnum.UN_EXECUTOR.getKey(), pageStartIndex, pageSize);
     }
 
-    public int modifyPrepareActionStatus(long marketId, String itemLocation, int matchStatus, int status, String time) {
-        return prepareActionMapper.modifyPrepareActionStatus(marketId, itemLocation, matchStatus, status, time);
+    public int modifyPrepareActionStatus(long marketId, String itemLocation, String matchStatusSet, int status, String time) {
+        return prepareActionMapper.modifyPrepareActionStatus(marketId, itemLocation, matchStatusSet, status, time);
     }
 
     public List<String> loaderHotSearch(long marketId, int pageStartIndex, int pageSize) {
