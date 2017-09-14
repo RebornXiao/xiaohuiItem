@@ -288,7 +288,7 @@
                     var _location = checkVal("mAddress", "请输入详情地址");
                     if(_location == null) return;
 
-                    $(this).button("loading");
+                    //$(this).button("loading");
 
                     var post_data = {
                         marketId:_marketId,
@@ -306,6 +306,8 @@
                         deliveryCost:$("#mDeliveryCost").val(),
                     };
 
+                    $(this).attr("disabled", true);
+
                     $.post("${base}/market/marketEditSave.do", post_data, function (data) {
 
                         //重新刷新
@@ -318,7 +320,8 @@
                                 open({ url: url });
                             });
                         } else {
-                            $(this).button("reset");
+                            //$(this).button("reset");
+                            $(this).removeAttr("disabled");
                             swal(data.msg);
                         }
 

@@ -50,6 +50,10 @@ public class ItemDataAccessManager {
         return itemMapper.getMarketItem(id);
     }
 
+    public int marketItemUpdateStatus(long itemId, byte status) {
+        return itemMapper.marketItemUpdateStatus(itemId, status);
+    }
+
     public List<MarketItem> specialProducts(long marketId, long appointType, long timeout, int sortType, int sortValue, int requestSource, int pageStartIndex, int pageSize) {
         return itemMapper.specialProducts(marketId, appointType, timeout, sortType, sortValue, requestSource, pageStartIndex, pageSize);
     }

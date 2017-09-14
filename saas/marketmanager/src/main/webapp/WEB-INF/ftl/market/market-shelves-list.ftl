@@ -669,13 +669,16 @@
                         swal("当前没有任务可提交");
                         return;
                     }
-                    $(this).button("loading");
+                    //$(this).button("loading");
                     //将 task 拼成 map;
                     var txt = "";
                     var hDate = "";
                     $.each(task_list, function (k, value) {
                         txt = txt + k + "-" + value.itemId + "-" + value.itemStock + ",";
                     });
+
+                    $(this).attr("disabled", true);
+
                     $.post("${base}/market/prepareAction.do?marketId=" + s_MarketId + "&actionDatas=" + txt + "&hopeExecutorDate=" + hDate, function (data) {
                         //重新刷新
                         if (data.code == 0) {
@@ -684,7 +687,8 @@
                                 //location.href = "${base}/market/marketItems.do?id=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer;
                             })
                         } else {
-                            $(this).button("reset");
+                            //$(this).button("reset");
+                            $(this).removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

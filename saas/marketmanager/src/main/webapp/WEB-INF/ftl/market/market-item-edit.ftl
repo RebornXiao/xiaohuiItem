@@ -26,7 +26,7 @@
             </div>
 
             <div class="row m-t-30">
-                <div class="col-md-8">
+                <div class="col-md-6">
                     <form class="form-horizontal" role="form" id="formDefault">
                         <div class="form-group">
                             <label class="col-md-4 control-label">店铺：</label>
@@ -92,6 +92,11 @@
                         <br><br><br><br><br>
                     </form>
                 </div>
+
+
+                <div class="col-md-6">
+
+                </div>
             </div>
 
             <!-- end container -->
@@ -112,7 +117,7 @@
                 //保存商品单位
                 $("#saveBtn").on('click', function () {
 
-                    $(this).button("loading");
+                    //$(this).button("loading");
 
                     var _costPrice = $("#ipCostPrice").val();
                     var _sellPrice = $("#ipSellPrice").val();
@@ -130,6 +135,8 @@
                         description:des,
                     };
 
+                    $(this).attr("disabled", true);
+
                     $.post("${base}/market/marketItemEditSave.do", post_data, function (data) {
 
                         //重新刷新
@@ -139,7 +146,8 @@
                                 });
                             });
                         } else {
-                            $(this).button("reset");
+                            //$(this).button("reset");
+                            $(this).removeAttr("disabled");
                             swal(data.msg);
                         }
 

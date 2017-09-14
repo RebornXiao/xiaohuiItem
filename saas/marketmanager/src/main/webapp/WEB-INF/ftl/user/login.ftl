@@ -151,11 +151,13 @@
                         $.cookie("loginName", '', { expires: -1 });
                     }
 
-                    $(this).button("loading");
+                    //$(this).button("loading");
+
+                    $(this).attr("disabled", true);
 
                     $.post("${base}/passportopen/login.do?userName=" + name + "&passWord=" + pass, function (data) {
 
-                        $(this).button("reset");
+                        //$(this).button("reset");
                         //重新刷新
                         if (data.code == "0") {
                             //登录成功，记录登录的用户ID，显示名称
@@ -163,7 +165,8 @@
                             open({url:"${base}/passport/main.do?passportId="+passport.id})
                             //location.href = "${base}/passport/main.do?passportId="+passport.id;
                         } else {
-                            $("#loginBtn").button("reset");
+                            //$("#loginBtn").button("reset");
+                            $(this).removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

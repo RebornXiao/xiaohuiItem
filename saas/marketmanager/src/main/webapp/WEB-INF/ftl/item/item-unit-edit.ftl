@@ -85,7 +85,7 @@
                 //保存商品单位
                 $("#saveBtn").on('click', function () {
 
-                    $(this).button("loading");
+                    //$(this).button("loading");
 
                     //检测
                     var title = _itemUnitTitle.val();
@@ -98,6 +98,8 @@
                     if (_itemUnitStatus.is(':checked')) {
                         status = 1;
                     }
+
+                    $(this).attr("disabled", true);
 
                     $.post("${base}/item/itemUnitEditSave.do?id=" + itemUnitId + "&title=" + title + "&status=" + status, function (data) {
 
@@ -113,6 +115,7 @@
                                 open({url:"${base}/item/itemUnits.do"});
                             });
                         } else {
+                            $(this).removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

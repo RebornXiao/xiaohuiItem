@@ -99,12 +99,14 @@
                         return;
                     }
 
-                    $(this).button("loading");
+                    //$(this).button("loading");
 
                     //直接跳转
                     var provinceId = $('#loc_province').val();
                     var cityId = $('#loc_city').val();
                     var areaId = $('#loc_district').val();
+
+                    $(this).attr("disabled", true);
 
                     $.post("${base}/market/streetEditSave.do?id=" + _streetId + "&title=" + title + "&areaId=" + areaId, function (data) {
                         //重新刷新
@@ -114,7 +116,8 @@
                                 //location.href = "${base}/market/marketItems.do?id=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer;
                             })
                         } else {
-                            $(this).button("reset");
+                            //$(this).button("reset");
+                            $(this).removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

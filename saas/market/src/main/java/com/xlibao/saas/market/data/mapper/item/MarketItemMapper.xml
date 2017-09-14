@@ -153,6 +153,10 @@
         update market_item set cost_price = #{costPrice}, sell_price = #{sellPrice}, market_price = #{marketPrice}, discount_price = #{discountPrice}, status = #{status}, description = #{description} where id = #{itemId}
     </update>
 
+    <update id="marketItemUpdateStatus">
+        update market_item set status = #{status} where id = #{itemId}
+    </update>
+
     <update id="releaseItemLockQuantity">
         update market_item set lock_stock = lock_stock - #{releaseLockQuantity} where id = #{itemId}
     </update>

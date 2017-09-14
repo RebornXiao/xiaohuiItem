@@ -7,6 +7,8 @@ import java.util.List;
 
 public interface MarketItemMapper {
 
+    int marketItemUpdateStatus(@Param("itemId") long itemId, @Param("status") long status);
+
     int createItem(MarketItem item);
 
     MarketItem getItem(@Param("marketId") long marketId, @Param("itemTemplateId") long itemTemplateId);

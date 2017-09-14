@@ -19,4 +19,6 @@ public interface MarketItemService {
     JSONObject marketItemAddSave();
 
     JSONObject existItemTemplate();
+
+    JSONObject marketItemUpdateStatus();
 }

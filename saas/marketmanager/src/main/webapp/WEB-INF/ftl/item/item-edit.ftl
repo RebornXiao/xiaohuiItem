@@ -278,7 +278,6 @@
                 //添加/修改 商品
                 $("#saveBtn").on('click', function () {
 
-                    $(this).button("loading");
 
                     var _typeId = $("#typeSelect").find("option:selected").attr("data_id");
                     if(_typeId == 0) {
@@ -316,6 +315,9 @@
                         imgUrl:_imgUrl,
                     };
 
+                    //$(this).button("loading");
+                    $(this).attr("disabled", true);
+
                     $.post("${base}/item/itemEditSave.do", post_data, function(data) {
                         //重新刷新
                         if(data.code == "0") {
@@ -328,7 +330,9 @@
                                 postSuccess();
                             }
                         } else {
-                            $(this).button("reset");
+                            //$(this).button("reset");
+
+                            $(this).removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

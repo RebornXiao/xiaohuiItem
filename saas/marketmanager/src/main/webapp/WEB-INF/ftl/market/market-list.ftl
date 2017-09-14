@@ -165,32 +165,32 @@
                                 <td>自营</td>
                                 <td>
                                     <#if market.status == 0>
-                                        <button id="statusBtn" type="button" data_s="${market.statusOffline}"
+                                        <button id="statusBtn" type="button" data_s="${market.statusOffline}" data_status="${market.nowStatus}"
                                                 class="btn waves-effect waves-light btn-inverse btn-xs"
                                                 data_id="${market.id?c}" data_v="${market.name}">无效
                                         </button>
                                     </#if>
                                     <#if market.status == 1>
-                                        <button id="statusBtn" type="button" data_s="${market.statusOffline}"
+                                        <button id="statusBtn" type="button" data_s="${market.statusOffline}" data_status="${market.nowStatus}"
                                                 class="btn waves-effect waves-light btn-success btn-xs"
                                                 data_id="${market.id?c}" data_v="${market.name}">正常
                                         </button>
                                     </#if>
                                     <#if market.status == 2>
-                                        <button id="statusBtn" type="button" data_s="${market.statusOffline}"
+                                        <button id="statusBtn" type="button" data_s="${market.statusOffline}" data_status="${market.nowStatus}"
                                                 class="btn waves-effect waves-light btn-danger btn-xs"
                                                 data_id="${market.id?c}" data_v="${market.name}">关店
                                         </button>
                                     </#if>
                                     <#if market.status == 3>
-                                        <button id="statusBtn" type="button" data_s="${market.statusOffline}"
+                                        <button id="statusBtn" type="button" data_s="${market.statusOffline}" data_status="${market.nowStatus}"
                                                 class="btn waves-effect waves-light btn-inverse btn-xs"
                                                 data_id="${market.id?c}" data_v="${market.name}">维护
                                         </button>
                                     </#if>
                                     <!-- 断连标志 -->
                                     <#if market.statusOffline == 1>
-                                        <button id="statusBtn" type="button" data_s="${market.statusOffline}"
+                                        <button id="statusBtn" type="button" data_s="${market.statusOffline}" data_status="${market.nowStatus}"
                                                 class="btn waves-effect waves-light btn-danger btn-xs"
                                                 data_id="${market.id?c}" data_v="${market.name}">与硬件断连
                                         </button>
@@ -305,8 +305,7 @@
 
             $(document).ready(function () {
 
-                //弹出状态修改的窗体前，设置该值，指向目标
-                var showStatusBtn = null;
+                var _statusOkBtn = $("#statusOkBtn");
 
                 var _marketListTable = $("#marketListTable");
 
@@ -385,7 +384,7 @@
                 });
 
                 //状态修改确定
-                $("#statusOkBtn").on('click', function () {
+                _statusOkBtn.on('click', function () {
 
                     //获得当前想修改的值
                     var _status_obj = $("#updateStatusSelect").find("option:selected");
@@ -393,18 +392,17 @@
 
                     //提交到服务器
                     var btn = $(this);
-                    //如果是切换去1，则不允许
-                    if(btn.attr("status") == 1 && _status == 1) {
+                    var beforeStatus = btn.attr("data_status");
+
+                    //硬件有断连，并且又改为正常，则不允许修改
+                    if(btn.attr("data_s") == "1" && _status == "1") {
                         swal("硬件断连中，不能将店铺状态改为 正常");
                         return;
                     }
 
-                    btn.button("loading");
+                    $.post("${base}/market/marketUpdateStatus.do?marketId=" + btn.attr("data_id") + "&status=" + _status + "&beforeStatus=" + beforeStatus, function (json) {
 
-                    $.post("${base}/market/marketUpdateStatus.do?marketId=" + s_MarketId + "&status=" + _status, function (json) {
-
-                        btn.button("reset");
-                        $("#statusDialog").modal('hibe');
+                        $("#statusDialog").modal('hide');
 
                         if (json.code != 0) {
                             swal(json.msg);
@@ -438,9 +436,14 @@
                 //单项状态改变
                 _marketListTable.find('button[id=statusBtn]').each(function () {
                     $(this).on('click', function () {
-                        showStatusBtn = $(this);
-                        $("#statusMarketName").html(showStatusBtn.attr("data_v"));
-                        $("#statusMarketName").attr("data_id", showStatusBtn.attr("data_id"));
+
+                        _statusOkBtn.attr("data_s", $(this).attr("data_s"));
+                        _statusOkBtn.attr("data_status", $(this).attr("data_status"));
+                        _statusOkBtn.attr("data_id", $(this).attr("data_id"));
+
+
+                        $("#statusMarketName").html($(this).attr("data_v"));
+                        $("#statusMarketName").attr("data_id", $(this).attr("data_id"));
                         $("#statusDialog").modal('show');
                     });
                 });

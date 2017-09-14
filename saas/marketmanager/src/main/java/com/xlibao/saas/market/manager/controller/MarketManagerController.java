@@ -94,10 +94,13 @@ public class MarketManagerController extends BaseController {
             int marketStatus = ejson.getIntValue("status");
             //如果与硬件断连
             if((marketStatus & 16) == 16) {
-                ejson.put("statusOffline", 1);
-                ejson.put("status", (marketStatus ^ 16));
+                ejson.put("statusOffline", 1);//与硬件断连
+                ejson.put("nowStatus",marketStatus);//当前值
+                ejson.put("status", (marketStatus ^ 16));//原状态
             } else {
                 ejson.put("statusOffline", 0);
+                ejson.put("nowStatus", marketStatus);//当前值
+                ejson.put("status", marketStatus);//原状态
             }
         }
 
@@ -179,31 +182,6 @@ public class MarketManagerController extends BaseController {
                     }
                 }
             }
-//           +++++++++++++++++++
-// 拿省
-//            String provinceName = entry.getProvince();
-//            if (CommonUtils.isNotNullString(provinceName)) {
-//                PassportProvince province = passportManagerService.searchProvinceByName(provinceName);
-//                if (province != null) {
-//                    map.put("provinceId", province.getId());
-//                }
-//            }
-//            //拿市
-//            String cityName = entry.getCity();
-//            if (CommonUtils.isNotNullString(cityName)) {
-//                PassportCity city = passportManagerService.searchCityByName(cityName);
-//                if (city != null) {
-//                    map.put("cityId", city.getId());
-//                }
-//            }
-//            //拿区
-//            String districtName = entry.getDistrict();
-//            if (CommonUtils.isNotNullString(districtName)) {
-//                PassportArea area = passportManagerService.searchAreaByName(districtName);
-//                if (area != null) {
-//                    map.put("districtId", area.getId());
-//                }
-//            }
         } else {
             //直接拿到所有数据
             long provinceId = getLongParameter("provinceId", 0);
@@ -251,6 +229,16 @@ public class MarketManagerController extends BaseController {
     public JSONObject marketUpdateStatus() {
         Map map = getMapParameter();
         String url = ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/marketUpdateStatus.do";
+        String json = HttpRequest.post(url, map);
+        return JSONObject.parseObject(json);
+    }
+
+    //商店 编辑 保存
+    @ResponseBody
+    @RequestMapping("/marketItemUpdateStatus")
+    public JSONObject marketItemUpdateStatus() {
+        Map map = getMapParameter();
+        String url = ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/item/manager/marketItemUpdateStatus.do";
         String json = HttpRequest.post(url, map);
         return JSONObject.parseObject(json);
     }

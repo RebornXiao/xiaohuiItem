@@ -179,7 +179,7 @@
                 //保存商品单位
                 $("#saveBtn").on('click', function () {
 
-                    $(this).button("loading");
+                    //$(this).button("loading");
 
                     var market_obj = $("#sMarket").find("option:selected");
                     var marketId = market_obj.attr("data_id");
@@ -211,6 +211,8 @@
                         description:des,
                     };
 
+                    $(this).attr("disabled", true);
+
                     $.post("${base}/market/marketItemAddSave.do", post_data, function (data) {
 
                         //重新刷新
@@ -220,7 +222,8 @@
                                 });
                             });
                         } else {
-                            $(this).button("reset");
+                            //$(this).button("reset");
+                            $(this).removeAttr("disabled");
                             swal(data.msg);
                         }
 

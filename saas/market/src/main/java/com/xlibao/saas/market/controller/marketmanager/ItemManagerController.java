@@ -1,12 +1,15 @@
 package com.xlibao.saas.market.controller.marketmanager;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.http.HttpRequest;
 import com.xlibao.saas.market.service.manager.MarketItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Map;
 
 /**
  * Created by Administrator on 2017/8/27 0027.
@@ -40,6 +43,16 @@ public class ItemManagerController {
     public JSONObject marketItemAddSave() {
         return marketItemService.marketItemAddSave();
     }
+
+
+
+    //商店 编辑 保存
+    @ResponseBody
+    @RequestMapping("/marketItemUpdateStatus")
+    public JSONObject marketItemUpdateStatus() {
+        return marketItemService.marketItemUpdateStatus();
+    }
+
 
     /**
      * <pre>

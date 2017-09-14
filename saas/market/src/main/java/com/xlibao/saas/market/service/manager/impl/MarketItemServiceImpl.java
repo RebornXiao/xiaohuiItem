@@ -57,6 +57,15 @@ public class MarketItemServiceImpl extends BasicWebService implements MarketItem
         }
     }
 
+    public JSONObject marketItemUpdateStatus() {
+        long itemId = getLongParameter("itemId");
+        byte status = getByteParameter("status");
+        if (dataAccessFactory.getItemDataAccessManager().marketItemUpdateStatus(itemId, status) > 0) {
+            return success("修改成功");
+        } else {
+            return fail("修改失败");
+        }
+    }
 
     public JSONObject getMarketItem() {
         long id = getLongParameter("id");

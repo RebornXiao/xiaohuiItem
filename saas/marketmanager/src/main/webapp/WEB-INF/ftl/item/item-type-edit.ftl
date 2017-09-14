@@ -221,8 +221,6 @@
                         return;
                     }
 
-                    $(this).button("loading");
-
                     var _typeId = 0;
                     if(addType == 2) {
                         _typeId = $("#typeSelect").find("option:selected").attr("data_id");
@@ -234,6 +232,9 @@
                         title: title,
                         icon: _imgUrl,
                     }
+
+                    //$(this).button("loading");
+                    $(this).attr("disabled", true);
 
                     //保存
                     $.post("${base}/item/itemTypeEditSave.do", post_data, function(data) {
@@ -248,7 +249,8 @@
                                 postSuccess();
                             }
                         } else {
-                            $(this).button("reset");
+                            //$(this).button("reset");
+                            $(this).removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

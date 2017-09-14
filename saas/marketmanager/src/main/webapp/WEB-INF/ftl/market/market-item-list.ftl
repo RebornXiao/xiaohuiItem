@@ -74,6 +74,9 @@
                                     class="fa fa-pencil"></i> 添加店铺商品
                             </button>
 
+                            <#--<button id="pBtn" type="button"-->
+                                    <#--class="btn btn-default waves-effect waves-light btn-primary ">批量上下架</button>-->
+
                             <div class="form-group">
                                 <label>选择店铺：</label>
                                 <select id="sMarket" style="width:200px;">
@@ -150,14 +153,23 @@
                                 <td>${item.marketPrice}</td>
                                 <td>${item.discountPrice}</td>
                                 <td>
-                                    <#if item.status == 0>
-                                        <span class="label label-primary">未上架</span>
+                                    <#if item.status == 2>
+                                        <button id="statusBtn" type="button"
+                                                class="btn waves-effect waves-light btn-danger btn-xs"
+                                                data_id="${item.id?c}" data_v="${item.defineName}">失效
+                                        </button>
                                     </#if>
                                     <#if item.status == 1>
-                                        <span class="label label-success">可售</span>
+                                        <button id="statusBtn" type="button"
+                                                class="btn waves-effect waves-light btn-success btn-xs"
+                                                data_id="${item.id?c}" data_v="${item.defineName}">可售
+                                        </button>
                                     </#if>
-                                    <#if item.status == 2>
-                                        <span class="label label-default">失效</span>
+                                    <#if item.status == 0>
+                                        <button id="statusBtn" type="button"
+                                                class="btn waves-effect waves-light btn-inverse btn-xs"
+                                                data_id="${item.id?c}" data_v="${item.defineName}">未上架
+                                        </button>
                                     </#if>
                                 </td>
                                 <td>
@@ -268,6 +280,30 @@
                     open({url:"${base}/market/marketItems.do?marketId=" + s_marketId+"&searchType="+s_searchType+"&searchKey="+s_searchKey});
                 });
 
+                //状态修改确定
+                $("#statusOkBtn").on('click', function () {
+
+                    //获得当前想修改的值
+                    var _status_obj = $("#updateStatusSelect").find("option:selected");
+                    var _status = _status_obj.attr("data_id");
+
+                    $.post("${base}/market/marketItemUpdateStatus.do?itemId=" + $(this).attr("data_id") + "&status=" + _status, function (json) {
+
+                        $("#statusDialog").modal('hide');
+
+                        if (json.code != 0) {
+                            swal(json.msg);
+                        } else {
+                            //改变
+                            var s_searchKey_a = _searchKeyTxt.val();
+                            var select_obj_a = _sMarket.find("option:selected");
+                            s_marketId = select_obj_a.attr("data_id");
+
+                            open({url:"${base}/market/marketItems.do?marketId=" + s_marketId+"&searchType="+s_searchType+"&searchKey="+s_searchKey_a+"&pageSize=${pageSize}&pageIndex=${pageIndex}"});
+                        }
+                    }, "json");
+                });
+
                 <#if items?exists && (items?size > 0) >
                     //单项编辑
                     $("#itemsTable").find('button[id=editBtn]').each(function () {
@@ -278,6 +314,17 @@
                                 +"&pageSize=${pageSize}&pageIndex=${pageIndex}"
                             });
                             //location.href = "${base}/market/marketItemEdit.do?marketId=" + s_marketId + "&id=" + $(this).attr("data_id");
+                        });
+                    });
+
+                    //单项状态改变
+                    $("#itemsTable").find('button[id=statusBtn]').each(function () {
+                        $(this).on('click', function () {
+                            $("#statusOkBtn").attr("data_s", $(this).attr("data_s"));
+                            $("#statusOkBtn").attr("data_id", $(this).attr("data_id"));
+                            $("#statusItemName").html($(this).attr("data_v"));
+                            $("#statusItemName").attr("data_id", $(this).attr("data_id"));
+                            $("#statusDialog").modal('show');
                         });
                     });
                 </#if>
