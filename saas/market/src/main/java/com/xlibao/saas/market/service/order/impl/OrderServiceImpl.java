@@ -13,8 +13,6 @@ import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.exception.code.OrderErrorCodeEnum;
-import com.xlibao.common.exception.code.PassportErrorCodeEnum;
-import com.xlibao.common.support.PassportRemoteService;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketItem;
@@ -23,7 +21,6 @@ import com.xlibao.market.data.model.MarketItemLadderPrice;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
-import com.xlibao.metadata.passport.Passport;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketOrderProperties;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
@@ -43,7 +40,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author chinahuangxc on 2017/7/10.
@@ -70,13 +70,6 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         OrderTypeEnum orderTypeEnum = OrderTypeEnum.getOrderTypeEnum(orderType);
         if (orderTypeEnum == null) {
             return fail("订单类型出错，无法预创建订单，类型值：" + orderType);
-        }
-        Passport passport = PassportRemoteService.getPassport(passportId);
-        if (passport == null) {
-            return PassportErrorCodeEnum.NOT_FOUND_PASSPORT.response("找不到通行证记录，错误码：" + passportId);
-        }
-        if (CommonUtils.isNullString(passport.getPhoneNumber())) {
-            return PlatformErrorCodeEnum.UN_PERFECT_PASSPORT.response("请绑定平台帐号");
         }
         return OrderRemoteService.prepareCreateOrder(passportId, orderTypeEnum);
     }

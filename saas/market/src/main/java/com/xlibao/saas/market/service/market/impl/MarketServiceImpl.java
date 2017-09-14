@@ -178,9 +178,9 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         if (marketEntry == null) {
             return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response("找不到商店，通行证ID：" + passportId);
         }
-        int status = (responseStatus == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) ? (marketEntry.getStatus() ^ MarketStatusEnum.NO_RESPONSE.getKey()) : (marketEntry.getStatus() | MarketStatusEnum.NO_RESPONSE.getKey());
-        marketEntry.setStatus(status);
-        dataAccessFactory.getMarketDataAccessManager().marketResponse(marketEntry.getId(), status);
+        int status = (responseStatus == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()) ? (marketEntry.getStatus() | MarketStatusEnum.NO_RESPONSE.getKey()) :
+                ((marketEntry.getStatus() & MarketStatusEnum.NO_RESPONSE.getKey()) == MarketStatusEnum.NO_RESPONSE.getKey() ? (marketEntry.getStatus() ^ MarketStatusEnum.NO_RESPONSE.getKey()) : marketEntry.getStatus());
+        dataAccessFactory.getMarketDataAccessManager().marketResponse(marketEntry.getId(), status, marketEntry.getStatus());
         return success();
     }
 
@@ -242,7 +242,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         entry.setDistance(distance);
         entry.setDeliveryCost(deliveryCost);
 
-        if(marketId == 0) {
+        if (marketId == 0) {
 
             //如果是新增
             entry.setType(0);//默认是自动化的类型店铺
@@ -267,12 +267,17 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
     @Override
     public JSONObject marketUpdateStatus() {
         long marketId = getLongParameter("marketId");
-        byte status = getByteParameter("status");
-        if(dataAccessFactory.getMarketDataAccessManager().marketResponse(marketId, status)>0) {
-            return success("修改成功");
-        } else {
-            return fail("修改失败");
+        int status = getIntParameter("status");
+        int beforeStatus = getIntParameter("beforeStatus");
+
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
+        if (marketEntry == null) {
+            return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response();
         }
+        if ((marketEntry.getStatus() & MarketStatusEnum.NO_RESPONSE.getKey()) == MarketStatusEnum.NO_RESPONSE.getKey()) {
+            status = status | MarketStatusEnum.NO_RESPONSE.getKey();
+        }
+        return dataAccessFactory.getMarketDataAccessManager().marketResponse(marketId, status, beforeStatus) > 0 ? success("修改成功") : fail("修改失败");
     }
 
 

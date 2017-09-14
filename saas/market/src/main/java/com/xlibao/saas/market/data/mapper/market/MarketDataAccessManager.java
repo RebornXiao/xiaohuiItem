@@ -47,8 +47,8 @@ public class MarketDataAccessManager {
         return entryMapper.getMarketForPassport(passportId);
     }
 
-    public int marketResponse(long marketId, int status) {
-        return entryMapper.marketResponse(marketId, status);
+    public int marketResponse(long marketId, int status, int matchStatus) {
+        return entryMapper.marketResponse(marketId, status, matchStatus);
     }
 
     public List<MarketEntry> searchMarkets(MarketEntry searchModel, int pageSize, int pageStartIndex) {

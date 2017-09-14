@@ -686,12 +686,13 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         return result > 0 ? success("收货成功") : fail("收货失败");
     }
 
+    @Override
     public JSONObject refreshOrderStatus() {
         String orderSequenceNumber = getUTF("orderSequenceNumber"); // 订单序列号
         String operationPassportId = getUTF("operationPassportId"); // 操作者通行证ID
         int permissionType = getIntParameter("permissionType", 1);  // 等于或包含以下值时：1、下单方 2、销售方 4、收货方 8、发货方 16、配送方
         String validStatusSet = getUTF("validStatusSet");           // 有效的状态集合，即处于指定状态下才可执行该请求的意思
-        int targetStatus = getIntParameter("targetStatus");         // 状态的目标值
+        int targetStatus = getIntParameter("targetStatus");         // 目标状态值
 
         OrderEntry orderEntry = getOrder(orderSequenceNumber);
         if (!validStatusSet.contains(String.valueOf(orderEntry.getStatus()))) {
