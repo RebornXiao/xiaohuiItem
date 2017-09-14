@@ -16,5 +16,5 @@ public interface PassportStreetMapper {
 
     void updateStreet(@Param("streetId") long streetId, @Param("name") String name);
 
-    int createStreet(@Param("street") PassportStreet street);
+    int createStreet(PassportStreet street);
 }

@@ -56,12 +56,10 @@
                         </thead>
                         <tbody>
 
+                        <!-- 这里显示的是当前所有二级的一级，应需求不需要显示 -->
                         <#if itemType?exists >
                         <tr>
-                            <td>${itemType.id?c}</td>
-                            <td>${itemType.title}</td>
-                            <td><span class="label label-primary">一级分类</span></td>
-                            <td>${itemType.sort}</td>
+                            <td colspan="4">${itemType.title}  的所有二级</td>
                             <td>
                                 <button id="pEditBtn" type="button" data_id="${itemType.id?c}"
                                         class="btn waves-effect waves-light btn-warning btn-sm">编辑

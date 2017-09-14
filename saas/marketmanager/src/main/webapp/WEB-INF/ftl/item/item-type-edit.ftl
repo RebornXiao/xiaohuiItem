@@ -54,7 +54,7 @@
                                 <select class="form-control" id="itSelect">
                                 <#if itemTypes?exists && (itemTypes?size > 0)>
                                     <#list itemTypes as type>
-                                        <option data_id="${type.id}"
+                                        <option data_id="${type.id?c}"
                                                 <#if pItemType?exists && pItemType.id == type.id>
                                                 selected
                                                 <#else>
@@ -223,7 +223,7 @@
 
                     var _typeId = 0;
                     if(addType == 2) {
-                        _typeId = $("#typeSelect").find("option:selected").attr("data_id");
+                        _typeId = $("#itSelect").find("option:selected").attr("data_id");
                     }
 
                     var post_data = {
