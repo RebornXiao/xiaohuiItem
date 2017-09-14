@@ -30,7 +30,7 @@
                 <div class="col-sm-10">
                     <select class="form-control" id="updateStatusSelect">
                         <option data_id="1">正常</option>
-                        <option data_id="3">维护</option>
+                        <option data_id="4">维护</option>
                         <option data_id="2">关店</option>
                         <option data_id="0">无效</option>
                     </select>
@@ -182,7 +182,7 @@
                                                 data_id="${market.id?c}" data_v="${market.name}">关店
                                         </button>
                                     </#if>
-                                    <#if market.status == 3>
+                                    <#if market.status == 4>
                                         <button id="statusBtn" type="button" data_s="${market.statusOffline}" data_status="${market.nowStatus}"
                                                 class="btn waves-effect waves-light btn-inverse btn-xs"
                                                 data_id="${market.id?c}" data_v="${market.name}">维护

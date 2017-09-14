@@ -226,6 +226,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         int deliveryMode = getIntParameter("deliveryMode", 0);
         int distance = getIntParameter("distance", 0);
         long deliveryCost = CommonUtils.changeMoney(getUTF("deliveryCost", "0"));
+        long freeDeliveryCost = CommonUtils.changeMoney(getUTF("freeDeliveryCost", "0"));
 
         MarketEntry entry = new MarketEntry();
         entry.setId(marketId);
@@ -241,6 +242,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         entry.setDeliveryMode(deliveryMode);
         entry.setDistance(distance);
         entry.setDeliveryCost(deliveryCost);
+        entry.setFreeDeliveryFee(freeDeliveryCost);
 
         if (marketId == 0) {
 

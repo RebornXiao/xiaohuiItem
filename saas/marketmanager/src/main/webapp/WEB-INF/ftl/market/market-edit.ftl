@@ -147,6 +147,14 @@
                                     </div>
                                 </div>
 
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">满多少免配送费(元)：</label>
+                                    <div class="col-md-8">
+                                        <input type="number" id="mFreeDeliveryCost" class="form-control" <#if market?exists>
+                                               value="${market.freeDeliveryFee?c}" </#if>  onkeyup="clearNoNum(this)">
+                                    </div>
+                                </div>
+
                                 <div class="form-group m-t-20">
                                     <div class="col-md-4">
                                     </div>
@@ -285,8 +293,8 @@
                     var _location = checkVal("mLocation", "请设置经纬度");
                     if(_location == null) return;
 
-                    var _location = checkVal("mAddress", "请输入详情地址");
-                    if(_location == null) return;
+                    var _Address = checkVal("mAddress", "请输入详情地址");
+                    if(_Address == null) return;
 
                     //$(this).button("loading");
 
@@ -302,14 +310,14 @@
                         address:$("#mAddress").val(),
                         location:_location,
                         deliveryMode:$("#mDeliveryMode").find("option:selected").attr("data_id"),
-                        distance:$("#mDistance").val(),
+                        distance:_Address,
                         deliveryCost:$("#mDeliveryCost").val(),
+                        freeDeliveryCost:$("#mFreeDeliveryCost").val(),
                     };
 
                     $(this).attr("disabled", true);
 
                     $.post("${base}/market/marketEditSave.do", post_data, function (data) {
-
                         //重新刷新
                         if(data.code == "0") {
                             showSuccess(data.msg, function () {
