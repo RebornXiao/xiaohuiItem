@@ -19,58 +19,76 @@
                 <button id="adScreenEditBtn" type="button" class="btn btn-default btn-lg"><i class="fa fa-edit"></i> 屏幕配置</button>
             </div>
             <div class="card-box">
-                <form class="form-inline" role="form">
-                    <div class="form-group m-l-15">
-                        <label for="l_storeInfo">门店信息:</label>
-                        <select class="form-control" id="marketSelect" style="width:150px">
-                            <option data_id="0">全部店铺</option>
+                <form class="form-inline" role="form" action="${base}/advert/advertScreens.do">
+                    <div class="form-group m-l-35">
+                        <label>门店信息:</label>
+                        <select class="form-control" id="marketSelect" name="marketID">
+                            <option value="-1">全部店铺</option>
                             <#if markets?exists >
                                 <#list markets as merket>
-                                    <option data_id="${merket.id?c}">${merket.name}</option>
+                                    <option value="${merket.id?c}">${merket.name}</option>
                                 </#list>
                             </#if>
                         </select>
                     </div>
-                    <div class="form-group m-l-15">
+                    <div class="form-group m-l-35">
                         <label>屏幕编号:</label>
-                        <input type="text" class="form-control" id="screenNum" placeholder="输入编号">
+                        <input type="text" class="form-control" id="screenNum" placeholder="输入编号" name="code">
                     </div>
-                    <div class="form-group m-l-15">
+                    <div class="form-group m-l-35">
                         <label>广告标题:</label>
-                        <input type="text" class="form-control" id="advertNavTitle" placeholder="输入广告标题关键字">
+                        <input type="text" class="form-control" id="advertNavTitle" placeholder="输入广告标题关键字" name="title">
                     </div>
-                    <div class="form-group m-l-15">
+                    <div class="form-group m-l-35">
                         <label>日期:</label>
                         <div class="input-group">
-                            <input id="startTime" type="text" class="form-control" readonly>
+                            <input id="startTime" type="text" class="form-control" name="beginTime" readonly>
                             <span class="input-group-addon bg-default"
                                   onClick="jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})"><i
                                     class="fa fa-calendar"></i></span>
                         </div>
-                        <label>至</label>
+                        <label> &nbsp;至&nbsp; </label>
                         <div class="input-group">
-                            <input id="endTime" type="text" class="form-control" readonly>
+                            <input id="endTime" type="text" class="form-control" name="endTime" readonly>
                             <span class="input-group-addon bg-default"
                                   onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})"><i
                                     class="fa fa-calendar"></i></span>
                         </div>
                     </div>
-                    <div class="form-group pull-right m-l-15">
-                        <label>是否下载：</label>
-                        <button type="button" class="btn btn-primary">全部</button>
-                        <button type="button" class="btn btn-default">是</button>
-                        <button type="button" class="btn btn-default">否</button>
+                    <div class="form-group m-l-35">
+                        <label>是否下载:</label>
+                        <select class="form-control" id="isdownSelect" name="isDown">
+                            <option value="-1">全部</option>
+                            <option value="0">是</option>
+                            <option value="1">否</option>
+                        </select>
                     </div>
-                    <div class="form-group m-l-15 m-t-20">
-                        <label>播放状态：</label>
-                        <button type="button" class="btn btn-primary">全部</button>
-                        <button type="button" class="btn btn-default">待播放</button>
-                        <button type="button" class="btn btn-default">播放中</button>
-                        <button type="button" class="btn btn-default">已停止</button>
-                        <button type="button" class="btn btn-default">已移除</button>
+                    <div class="form-group m-l-35">
+                        <label>播放状态:</label>
+                        <select class="form-control" id="statusSelect" name="playStatus">
+                            <option value="-1">全部</option>
+                            <option value="0">待播放</option>
+                            <option value="1">播放中</option>
+                            <option value="2">已停止</option>
+                            <option value="3">已移除</option>
+                        </select>
                     </div>
-                    <div class="form-group  m-l-25 m-t-20">
-                        <button type="button" class="btn btn-primary" id="searchBtn"><i class="fa fa-search"></i> 搜索</button>
+                    <#--<div class="form-group pull-right m-l-15" id="isdownBtnGroup">-->
+                        <#--<label>是否下载：</label>-->
+                        <#--<button type="button" class="btn btn-default btn-primary focus" value="-1">全部</button>-->
+                        <#--<button type="button" class="btn btn-default" value="0">是</button>-->
+                        <#--<button type="button" class="btn btn-default" value="1">否</button>-->
+                    <#--</div>-->
+                    <#--<div class="form-group m-l-15 m-t-20" id="isplayBtnGroup">-->
+                        <#--<label>播放状态：</label>-->
+                        <#--<button type="button" class="btn btn-default btn-primary action">全部</button>-->
+                        <#--<button type="button" class="btn btn-default">待播放</button>-->
+                        <#--<button type="button" class="btn btn-default">播放中</button>-->
+                        <#--<button type="button" class="btn btn-default">已停止</button>-->
+                        <#--<button type="button" class="btn btn-default">已移除</button>-->
+                    <#--</div>-->
+                    <div class="form-group  m-l-25">
+                        <button type="submit" class="btn btn-primary" id="searchBtn"><i class="fa fa-search"></i> 搜索</button>
                     </div>
                 </form>
             </div>
@@ -163,7 +181,6 @@
         var add_code = GetQueryString("code");
         document.getElementById("advertNavTitle").value=add_title;
         document.getElementById("screenNum").value=add_code;
-
         //鼠标经过效果
         $("tr[id^='tr_']").hover(
             function(){ // onmouseover
@@ -176,15 +193,33 @@
                 }
             }
         );
+        //单选按钮组处理
+        /*$("#isdownBtnGroup").find('button').each(function () {
+            $(this).on('click',function () {
+                console.log(this);
+                if(!$(this).hasClass('btn-primary')){
+                    $("#isdownBtnGroup button").removeClass("btn-primary focus");
+                    $(this).addClass("btn-primary focus");
+                }
+            })
+        });
+        $("#isplayBtnGroup").find('button').each(function () {
+            $(this).on('click',function () {
+                if(!$(this).hasClass('btn-primary')){
+                    $("#isplayBtnGroup button").removeClass("btn-primary action");
+                    $(this).addClass("btn-primary action");
+                }
+            });
+        });*/
         //搜索功能
         $("#searchBtn").on('click', function () {
-            var s_store = $("#marketSelect").val();//门店值
+            var s_store = $("#marketSelect option:selected").val();//门店值
             var s_number = $("#screenNum").val();//屏幕编号
             var s_title = $("#advertNavTitle").val();//广告标题
             var s_time = $("#startTime").val();//开始时间
             var s_etime = $("#endTime").val();//结束时间
-            var s_isDown = '0';//下载状态
-            var s_playStatus = '0';//播放状态
+            var s_isDown = $("#isdownSelect option:selected").val();//下载状态
+            var s_playStatus = $("#statusSelect option:selected").val();//播放状态
             var url ="${base}/advert/advertScreens.do?marketID="+s_store+"&code="+s_number+"&title="+s_title+
                     "&beginTime="+s_time+"&endTime="+s_etime+"&isDown="+s_isDown+"&playStatus="+s_playStatus;
                 console.log(url);
@@ -196,7 +231,6 @@
                 }
             }, "json");
         });
-
         //编辑
         <#if (advertScreens?size > 0)>
             $("#storeInfoListTable").find('button[id=editBtn]').each(function () {
@@ -204,13 +238,16 @@
                 $(this).on('click', function () {
                     $("#editModel").modal('show');
                     $.get("${base}/advert/getAdvertScreen.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id")+ "&marketID=" +$(that).attr("m_id"),function(object){//取该行列表全部信息
-                        console.log(object.title);
                         $("#editNoBtn").on('click',function () {
                             $("#editModel").modal('hide');
                         });
                         $("#editTitle").val(object.title);
                         $("#editTime").val(object.timeSize);
                         $("#editRemark").val(object.advertRemark);
+                        $("#editStoreInfo option:selected").val(object.marketID);
+                        $("#editStoreInfo option:selected").text(object.marketName);
+                        $("#editScreenNum option:selected").val(object.screenID);
+                        $("#editScreenNum option:selected").text(object.sCode);
                         $("#editStartTime").val(object.beginTime);
                         $("#editEndTime").val(object.endTime);
                         $("#editPlaySort").val(object.playOrder);
@@ -222,27 +259,39 @@
                                 "remark":$("#editRemark").val(),//广告备注
                                 "storeInfo":$("#editStoreInfo").val(),//门店
                                 "storeIndex":$("#editStoreInfo").get(0).selectedIndex,//门店index
-                                "editScreenNum":$("#editScreenNum").find("option:selected").text(),//屏幕编号
+                                "editScreenNum":$("#editScreenNum").val(),//屏幕编号
                                 "screenNumIndex":$("#editScreenNum").get(0).selectedIndex,//屏幕编号index
                                 "e_stime":$("#editStartTime").val(),//开始时间
                                 "e_etime":$("#editEndTime").val(),//结束时间
                                 "e_sort":$("#editPlaySort").val(),//播放排序
                                 "e_pRemark":$("#editPlayRemark").val(),//播放备注
                             };
-                            var url="${base}/advert/updateScreenAdvert.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id")+ "&marketID="
-                                    +$(that).attr("m_id")+ "&beginTime="+arr.e_stime+"&endTime="+arr.e_etime+"&playOrder="+arr.e_sort+"&remark="+arr.e_pRemark+"&sCode="+arr.editScreenNum;
+                            var input1 = checkInput(arr.e_stime);
+                            var input2 = checkInput(arr.e_etime);
+                            var input3 = checkInput(arr.e_sort);
+                            var input4 = checkInput(arr.e_pRemark);
+                            function checkInput (obj){//检查表单是否有空项，空格验证方法待加
+                                if(obj == "") {return false;} else {return true;}
+                            }
+                            if(input1 && input2 && input3 && input4) {
+                                var url="${base}/advert/updateScreenAdvert.do?advertID=" +$(that).attr("a_id")+ "&screenID="
+                                        +$(that).attr("s_id")+ "&marketID=" +$(that).attr("m_id")+ "&beginTime="+arr.e_stime+"&endTime="
+                                        +arr.e_etime+"&playOrder="+arr.e_sort+"&remark="+arr.e_pRemark+"&sCode="+arr.editScreenNum;
                                 console.log(url);
-                            $.get(url, function(data) {
-                                //重新刷新
-                                console.log(data);
-                                if(data.code == "0") {
-                                    $("#editBtn").modal('hide');
-                                    swal("提示", "更新成功", "success");
-                                    setTimeout(function(){location.reload();},1000);
-                                } else {
-                                    swal("提示", "更新失败", "error");
-                                }
-                            }, "json");
+                                $.get(url, function(data) {
+                                    //重新刷新
+                                    console.log(data);
+                                    if(data.code == "0") {
+                                        $("#editBtn").modal('hide');
+                                        swal("提示", "更新成功", "success");
+                                        setTimeout(function(){location.reload();},1000);
+                                    } else {
+                                        swal("提示", "更新失败", "error");
+                                    }
+                                }, "json");
+                            } else {
+                                swal("提示", "请检查表单是否有漏填项！", "info");
+                            }
                         });
                     },"json");
                 });
@@ -326,28 +375,34 @@
                             </fieldset>
                         </div>
                         <div class="form-group">
+                            <fieldset disabled>
                             <label class="col-md-4 control-label">门店信息：</label>
                             <div class="col-md-6">
                                 <select class="form-control" id="editStoreInfo">
-                                <#if markets?exists >
-                                    <#list markets as merket>
-                                        <option data_id="${merket.id?c}">${merket.name}</option>
-                                    </#list>
-                                </#if>
+                                    <option value=""></option>
+                                <#--<#if markets?exists >-->
+                                    <#--<#list markets as merket>-->
+                                        <#--<option value="${merket.id?c}">${merket.name}</option>-->
+                                    <#--</#list>-->
+                                <#--</#if>-->
                                 </select>
                             </div>
+                            </fieldset>
                         </div>
                         <div class="form-group">
+                            <fieldset disabled>
                             <label class="col-md-4 control-label">屏幕编号：</label>
                             <div class="col-md-6">
                                 <select id="editScreenNum" class="form-control">
-                                <#if screens?exists >
-                                    <#list screens as screen>
-                                        <option value="${screen.screenID?c}">${screen.code}</option>
-                                    </#list>
-                                </#if>
+                                    <option value=""></option>
+                                <#--<#if screens?exists >-->
+                                    <#--<#list screens as screen>-->
+                                        <#--<option value="${screen.screenID?c}">${screen.code}</option>-->
+                                    <#--</#list>-->
+                                <#--</#if>-->
                                 </select>
                             </div>
+                            </fieldset>
                         </div>
                         <div class="form-group">
                             <label class="col-md-4 control-label">开始时间：</label>

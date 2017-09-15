@@ -138,33 +138,45 @@
         );
         //添加屏幕
         $("#addButton").on('click', function () {
+            function checkInput(obj) {
+                if(obj == "") {return false;} else {return true;}
+            }
             var screen = {
                 "marketID":$("#marketID2").val(),
                 "marketName":$("#marketID2").find("option:selected").text(),
                 "size":$("#size").val(),
-                "code":$("#aCode").val(),
+//                "code":$("#aCode").val(),
                 "mac":$("#mac").val(),
                 "requireTime":$("#requireTime").val(),
                 "screenRemark":$("#screenRemark").val(),
             };
-
-            $.ajax({
-                type: "POST",
-                url: "${base}/advert/addScreen.do",
-                data: screen,
-                success: function (result) {
-                    if ('yes' == result) {
-                        swal("提示", "添加成功", "success");
-                        setTimeout(function(){location.reload();},1000);
-                    } else {
-                        swal("提示", "添加失败", "error");
-                        setTimeout(function(){location.reload();},1000);
+            var input1 = checkInput(screen.marketID);
+            var input2 = checkInput(screen.marketName);
+            var input3 = checkInput(screen.size);
+            var input4 = checkInput(screen.mac);
+            var input5 = checkInput(screen.requireTime);
+            var input6 = checkInput(screen.screenRemark);
+            if(input1&&input2&&input3&&input4&&input5&&input6){
+                $.ajax({
+                    type: "POST",
+                    url: "${base}/advert/addScreen.do",
+                    data: screen,
+                    success: function (result) {
+                        if ('yes' == result) {
+                            swal("提示", "添加成功", "success");
+                            setTimeout(function(){location.reload();},1000);
+                        } else {
+                            swal("提示", "添加失败", "error");
+                            setTimeout(function(){location.reload();},1000);
+                        }
+                    },
+                    error: function (result) {
+                        swal("提示", "服务器出错", "info");
                     }
-                },
-                error: function (result) {
-                    alert("添加屏幕失败！");
-                }
-            });
+                });
+            }else{
+                swal("提示", "请检查表单是否有漏填项！", "info");
+            }
         });
         //删除
     <#if (screens?size > 0)>
@@ -227,12 +239,12 @@
                                 </select>
                             </div>
                         </div>
-                        <div class="form-group">
-                            <label class="col-md-4 control-label">屏幕编号：</label>
-                            <div class="col-md-4">
-                                <input type="text" class="form-control" id="aCode" name="aCode" placeholder="屏幕编号">
-                            </div>
-                        </div>
+                        <#--<div class="form-group">-->
+                            <#--<label class="col-md-4 control-label">屏幕编号：</label>-->
+                            <#--<div class="col-md-4">-->
+                                <#--<input type="text" class="form-control" id="aCode" name="aCode" placeholder="屏幕编号">-->
+                            <#--</div>-->
+                        <#--</div>-->
                         <div class="form-group">
                             <label class="col-md-4 control-label">屏幕分辨率：</label>
                             <div class="col-md-4">
