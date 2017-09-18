@@ -449,7 +449,6 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             shelvesDailyTaskLogger.setMarketId(marketId);
             shelvesDailyTaskLogger.setActualBarcodeQuantity(distinctItemBarcodeQuantity);
             shelvesDailyTaskLogger.setMark(mark);
-
         }
         // 将该商店的所有任务设置为完成状态
         dataAccessFactory.getItemDataAccessManager().batchModifyPrepareActionStatus(passportId, marketId, PrepareActionStatusEnum.COMPLETE.getKey(), VALID_ACTION_STATUS_SET + CommonUtils.SPLIT_COMMA + PrepareActionStatusEnum.COMMIT.getKey());
