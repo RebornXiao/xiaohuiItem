@@ -27,12 +27,13 @@ public class PassportOpenController extends BaseController {
         String userName = getUTF("userName");
         String passWord = getUTF("passWord");
 
-        //登陆
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().passportRemoteURL
+        String url = ConfigFactory.getDomainNameConfig().passportRemoteURL
                 + "passport/loginPassport?username=" + userName + "&password=" + passWord
                 + "&deviceType=" + DeviceTypeEnum.DEVICE_TYPE_HTML.getKey()
                 + "&clientType=" + ClientTypeEnum.BACKSTAGE.getKey()
-                + "&versionIndex=1");
+                + "&versionIndex=1";
+        //登陆
+        String json = HttpRequest.get(url);
 
         JSONObject response = JSONObject.parseObject(json);
         return response;

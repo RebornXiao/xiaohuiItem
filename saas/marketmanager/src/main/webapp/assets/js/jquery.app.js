@@ -399,6 +399,17 @@ function checkVal(ui_name, info) {
     return v;
 }
 
+function tokenPost(url, callback) {
+    var accessToken = $.cookie("accessToken") || "";
+    var passportId = $.cookie("passportId") || "";
+    $.post(url + "&passportId="+passportId+"&accessToken="+accessToken, callback, "json");
+}
+function tokenPost(url, pres, callback) {
+    var accessToken = $.cookie("accessToken") || "";
+    var passportId = $.cookie("passportId") || "";
+    $.post(url + "&passportId="+passportId+"&accessToken="+accessToken, pres, callback, "json");
+}
+
 function open(option) {
     option = $.extend({
         url: '',
@@ -417,10 +428,10 @@ function open(option) {
     for (var Key in u.data) {
         form.append($('<input type="text" name="' + Key + '" value="' + u.data[Key] + '" />'));
     }
-    var assessToke = $.cookie("assessToke") || "";
+    var accessToken = $.cookie("accessToken") || "";
     var passportId = $.cookie("passportId") || "";
 
-    form.append($('<input type="text" name="assessToke" value="' + assessToke + '" />'));
+    form.append($('<input type="text" name="accessToken" value="' + accessToken + '" />'));
     form.append($('<input type="text" name="passportId" value="' + passportId + '" />'));
 
     // 提交表单

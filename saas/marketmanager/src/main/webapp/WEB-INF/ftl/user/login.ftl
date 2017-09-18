@@ -162,7 +162,12 @@
                         if (data.code == "0") {
                             //登录成功，记录登录的用户ID，显示名称
                             var passport = data.response;
-                            open({url:"${base}/passport/main.do?passportId="+passport.id})
+                            //记录这个passportId
+                            $.cookie("passportId", passport.passportId, { expires: 365 });
+                            $.cookie("showName", passport.showName, { expires: 365 });
+                            $.cookie("accessToken", passport.accessToken, { expires: 365 });
+
+                            open({url:"${base}/passport/main.do?passportId="+passport.passportId})
                             //location.href = "${base}/passport/main.do?passportId="+passport.id;
                         } else {
                             //$("#loginBtn").button("reset");
