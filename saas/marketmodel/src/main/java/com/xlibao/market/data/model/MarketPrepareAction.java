@@ -7,6 +7,7 @@ public class MarketPrepareAction {
     private Long id;
     private Long marketId;
     private Long actionPassportId;
+    private Long executorPassportId;
     private String itemLocation;
     private Long hopeItemTemplateId;
     private String hopeItemBarcode;
@@ -40,6 +41,14 @@ public class MarketPrepareAction {
 
     public void setActionPassportId(Long actionPassportId) {
         this.actionPassportId = actionPassportId;
+    }
+
+    public Long getExecutorPassportId() {
+        return executorPassportId;
+    }
+
+    public void setExecutorPassportId(Long executorPassportId) {
+        this.executorPassportId = executorPassportId;
     }
 
     public String getItemLocation() {

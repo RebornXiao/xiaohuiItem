@@ -5,7 +5,6 @@ import com.xlibao.common.thread.AsyncScheduledService;
 import com.xlibao.market.data.model.*;
 import com.xlibao.saas.market.data.model.MarketSearchHistory;
 import com.xlibao.saas.market.service.item.ItemLockTypeEnum;
-import com.xlibao.saas.market.service.item.PrepareActionStatusEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,8 +24,8 @@ public class ItemDataAccessManager {
     private MarketItemDailyPurchaseLoggerMapper itemDailyPurchaseLoggerMapper;
     @Autowired
     private MarketItemStockLockLoggerMapper itemStockLockLoggerMapper;
-    @Autowired
-    private MarketShoppingCartMapper shoppingCartMapper;
+    // @Autowired
+    // private MarketShoppingCartMapper shoppingCartMapper;
     @Autowired
     private MarketSpecialButtonMapper specialButtonMapper;
     @Autowired
@@ -37,6 +36,8 @@ public class ItemDataAccessManager {
     private MarketItemLocationStockLoggerMapper itemLocationStockLoggerMapper;
     @Autowired
     private MarketItemLadderPriceMapper itemLadderPriceMapper;
+    @Autowired
+    private MarketShelvesDailyTaskLoggerMapper shelvesDailyTaskLoggerMapper;
 
     public int createItem(MarketItem item) {
         return itemMapper.createItem(item);
@@ -115,6 +116,10 @@ public class ItemDataAccessManager {
     }
 
     public int createItemLocation(MarketItemLocation itemLocation, int offsetType, long operatorPassportId, String operatorPassportName) {
+        int result = itemLocationMapper.createItemLocation(itemLocation);
+        if (result <= 0) {
+            return result;
+        }
         MarketItemLocationStockLogger itemLocationStockLogger = new MarketItemLocationStockLogger();
 
         itemLocationStockLogger.setItemId(itemLocation.getItemId());
@@ -127,8 +132,7 @@ public class ItemDataAccessManager {
         itemLocationStockLogger.setOperatorPassportName(operatorPassportName);
 
         createItemLocationStockLogger(itemLocationStockLogger);
-
-        return itemLocationMapper.createItemLocation(itemLocation);
+        return result;
     }
 
     public MarketItemLocation getItemLocation(long itemId, String location) {
@@ -152,6 +156,10 @@ public class ItemDataAccessManager {
     }
 
     public int offsetItemLocationStock(MarketItemLocation itemLocation, int decrementStock, int offsetType, long operatorPassportId, String operatorPassportName) {
+        int result = itemLocationMapper.offsetItemLocationStock(itemLocation.getId(), decrementStock);
+        if (result <= 0) {
+            return result;
+        }
         MarketItemLocationStockLogger itemLocationStockLogger = new MarketItemLocationStockLogger();
 
         itemLocationStockLogger.setItemId(itemLocation.getItemId());
@@ -164,8 +172,7 @@ public class ItemDataAccessManager {
         itemLocationStockLogger.setOperatorPassportName(operatorPassportName);
 
         createItemLocationStockLogger(itemLocationStockLogger);
-
-        return itemLocationMapper.offsetItemLocationStock(itemLocation.getId(), decrementStock);
+        return result;
     }
 
     public int removeItemLocation(long id) {
@@ -220,12 +227,20 @@ public class ItemDataAccessManager {
         return prepareActionMapper.getPrepareActionForBarcode(marketId, barcode, statusSet);
     }
 
-    public List<MarketPrepareAction> getUnCompletePrepareActions(long marketId, int pageStartIndex, int pageSize) {
-        return prepareActionMapper.getPrepareActions(marketId, PrepareActionStatusEnum.UN_EXECUTOR.getKey(), pageStartIndex, pageSize);
+    public List<MarketPrepareAction> getPrepareActions(long executorPassportId, long marketId, String statusSet, int pageStartIndex, int pageSize) {
+        return prepareActionMapper.getPrepareActions(executorPassportId, marketId, statusSet, pageStartIndex, pageSize);
     }
 
-    public int modifyPrepareActionStatus(long marketId, String itemLocation, String matchStatusSet, int status, String time) {
-        return prepareActionMapper.modifyPrepareActionStatus(marketId, itemLocation, matchStatusSet, status, time);
+    public int getRemainActionRows(long marketId, int key, String validActionStatusSet) {
+        return prepareActionMapper.getRemainActionRows(marketId, key, validActionStatusSet);
+    }
+
+    public int modifyPrepareActionStatus(long executorPassportId, long marketId, String itemLocation, int incrementQuantity, int hopeExecutorQuantity, String matchStatusSet, int status, String time) {
+        return prepareActionMapper.modifyPrepareActionStatus(executorPassportId, marketId, itemLocation, incrementQuantity, hopeExecutorQuantity, matchStatusSet, status, time);
+    }
+
+    public int batchModifyPrepareActionStatus(long executorPassportId, long marketId, int targetStatus, String matchStatusSet) {
+        return prepareActionMapper.batchModifyPrepareActionStatus(executorPassportId, marketId, targetStatus, matchStatusSet);
     }
 
     public List<String> loaderHotSearch(long marketId, int pageStartIndex, int pageSize) {
@@ -254,6 +269,18 @@ public class ItemDataAccessManager {
 
     public int removeItemLadderPrice(long itemId, long itemLadderId) {
         return itemLadderPriceMapper.removeItemLadderPrice(itemId, itemLadderId);
+    }
+
+    public List<MarketShelvesDailyTaskLogger> preparedSummaryData(long passportId, long marketId, int type, String statusSet) {
+        return prepareActionMapper.preparedSummaryData(passportId, marketId, type, statusSet);
+    }
+
+    public int distinctPrepareItemBarcode(long marketId, String statusSet, long passportId, String hopeExecutorDate) {
+        return prepareActionMapper.distinctPrepareItemBarcode(marketId, statusSet, passportId, hopeExecutorDate);
+    }
+
+    public int createShelvesDailyTaskLogger(MarketShelvesDailyTaskLogger shelvesDailyTaskLogger) {
+        return shelvesDailyTaskLoggerMapper.createShelvesDailyTaskLogger(shelvesDailyTaskLogger);
     }
 
     private void createItemLocationStockLogger(MarketItemLocationStockLogger itemLocationStockLogger) {

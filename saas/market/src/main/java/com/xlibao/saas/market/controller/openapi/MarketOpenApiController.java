@@ -112,7 +112,7 @@ public class MarketOpenApiController {
      *              <b>unitName</b> - String 当前存放的商品单位
      *
      *              <b>taskId</b> - long 任务ID；当没有存在预操作任务时为0，否则为对应的任务ID
-     *              <b>taskStatus</b> - int 任务状态，当<b>taskId</b>为0时无效
+     *              <b>taskStatus</b> - int 任务状态，当<b>taskId</b>为0时无效；具体参考：{@link com.xlibao.saas.market.service.item.PrepareActionStatusEnum}
      *              <b>hasCompleteQuantity</b> - int 已完成的数量，当<b>taskId</b>为0时无效
      *              <b>hopeItemQuantity</b> - int 期望执行的数量，当<b>taskId</b>为0时无效
      * </pre>
@@ -286,5 +286,16 @@ public class MarketOpenApiController {
     @RequestMapping(value = "showShelvesTask")
     public JSONObject showShelvesTask() {
         return shelvesService.showShelvesTask();
+    }
+
+    /**
+     * <pre>
+     *     <b>完成今天的所有预操作任务</b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "finishTodayPrepareActions")
+    public JSONObject finishTodayPrepareActions() {
+        return shelvesService.finishTodayPrepareActions();
     }
 }

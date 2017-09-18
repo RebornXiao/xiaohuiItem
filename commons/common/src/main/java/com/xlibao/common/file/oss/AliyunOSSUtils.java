@@ -97,9 +97,9 @@ public class AliyunOSSUtils {
     }
 
     public static void main(String[] args) throws Exception {
-        File file = new File("D:\\program\\xlibao\\xmarket\\image\\item");
+        File file = new File("D:\\item_image");
         for (File f : file.listFiles()) {
-            String address = uploadImageFile("xmarket", "item", f.getAbsolutePath());
+            String address = uploadImageFile("xmarket", "market/app/icon", f.getAbsolutePath());
             System.out.println(address);
         }
 //        String address = uploadImageFile("xmarket", "item", "D:\\item_image\\6921168593033.jpg");
