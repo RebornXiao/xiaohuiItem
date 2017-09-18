@@ -39,7 +39,7 @@ public class QiniuFileUtil {
             String filename = item.getOriginalFilename();
             json.put("name", filename);
             json.put("size", item.getSize());
-            if (filename.endsWith("mp4") || filename.endsWith("wmv") || filename.endsWith("jpg") || filename.endsWith("png")) {
+            if (filename.endsWith("mp4") || filename.endsWith("wmv") || filename.endsWith("mkv") || filename.endsWith("rmvb")||filename.endsWith("avi")) {
                 try {
                     byte[] uploadBytes = item.getBytes();
 
