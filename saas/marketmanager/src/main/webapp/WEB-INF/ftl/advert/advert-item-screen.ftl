@@ -30,7 +30,9 @@
                             <option value="">全部店铺</option>
                         <#if markets?exists >
                             <#list markets as market>
-                                <option value="${market.id?c}">${market.name}</option>
+                                <option value="${market.id?c}">
+                                ${market.name}
+                                </option>
                             </#list>
                         </#if>
                         </select>

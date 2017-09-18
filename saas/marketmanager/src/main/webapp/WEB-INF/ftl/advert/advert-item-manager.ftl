@@ -25,8 +25,10 @@
                         <select class="form-control" id="marketSelect" name="marketID">
                             <option value="-1">全部店铺</option>
                             <#if markets?exists >
-                                <#list markets as merket>
-                                    <option value="${merket.id?c}">${merket.name}</option>
+                                <#list markets as market>
+                                    <option value="${market.id?c}"<#if marketID == market.id>selected</#if>>
+                                    ${market.name}
+                                    </option>
                                 </#list>
                             </#if>
                         </select>
@@ -58,19 +60,19 @@
                     <div class="form-group m-l-35">
                         <label>是否下载:</label>
                         <select class="form-control" id="isdownSelect" name="isDown">
-                            <option value="-1">全部</option>
-                            <option value="0">是</option>
-                            <option value="1">否</option>
+                            <option value="-1"<#if isDown == -1>selected</#if>>全部</option>
+                            <option value="0"<#if isDown == 0>selected</#if>>是</option>
+                            <option value="1"<#if isDown == 1>selected</#if>>否</option>
                         </select>
                     </div>
                     <div class="form-group m-l-35">
                         <label>播放状态:</label>
                         <select class="form-control" id="statusSelect" name="playStatus">
-                            <option value="-1">全部</option>
-                            <option value="0">待播放</option>
-                            <option value="1">播放中</option>
-                            <option value="2">已停止</option>
-                            <option value="3">已移除</option>
+                            <option value="-1"<#if playStatus == -1>selected</#if>>全部</option>
+                            <option value="0"<#if playStatus == 0>selected</#if>>待播放</option>
+                            <option value="1"<#if playStatus == 1>selected</#if>>播放中</option>
+                            <option value="2"<#if playStatus == 2>selected</#if>>已停止</option>
+                            <option value="3"<#if playStatus == 3>selected</#if>>已移除</option>
                         </select>
                     </div>
                     <#--<div class="form-group pull-right m-l-15" id="isdownBtnGroup">-->
@@ -88,7 +90,7 @@
                         <#--<button type="button" class="btn btn-default">已移除</button>-->
                     <#--</div>-->
                     <div class="form-group  m-l-25">
-                        <button type="submit" class="btn btn-primary" id="searchBtn"><i class="fa fa-search"></i> 搜索</button>
+                        <button type="submit" class="btn btn-primary" id="searchBtn"><i class="fa fa-search"></i> 搜索 </button>
                     </div>
                 </form>
             </div>
