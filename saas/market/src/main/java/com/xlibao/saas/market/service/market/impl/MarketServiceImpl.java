@@ -212,7 +212,6 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
 
     @Override
     public JSONObject marketEditSave() {
-
         long marketId = getLongParameter("marketId", 0);
         String marketName = getUTF("name");
         String provinceName = getUTF("province");

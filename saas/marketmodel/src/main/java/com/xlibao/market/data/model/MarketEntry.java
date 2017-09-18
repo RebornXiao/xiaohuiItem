@@ -241,6 +241,7 @@ public class MarketEntry {
         response.put("id", getId());
         response.put("name", getName());
         response.put("type", getType());
+        response.put("status", getStatus());
         response.put("adminName", CommonUtils.nullToEmpty(getAdminName()));
         response.put("showPhoneNumber", CommonUtils.hideChar(getPhoneNumber(), 4, 7));
         response.put("hidePhoneNumber", getPhoneNumber());

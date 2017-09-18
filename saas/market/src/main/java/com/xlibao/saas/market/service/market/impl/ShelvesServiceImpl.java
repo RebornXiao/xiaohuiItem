@@ -155,29 +155,42 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         long marketId = getLongParameter("marketId");
         String barcode = getUTF("barcode");
 
+        JSONArray response = new JSONArray();
+        int remainTask = dataAccessFactory.getItemDataAccessManager().getRemainActionRows(marketId, ShelvesTaskTypeEnum.OFF_SHELVES.getKey(), VALID_ACTION_STATUS_SET);
+        if (remainTask > 0) {
+            // 存在下架任务
+            MarketPrepareAction prepareAction = dataAccessFactory.getItemDataAccessManager().getPrepareAction(marketId, barcode, ShelvesTaskTypeEnum.OFF_SHELVES.getKey(), VALID_ACTION_STATUS_SET);
+            if (prepareAction == null) {
+                return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response("位置[编码：" + barcode + "]上不存在下架任务");
+            }
+            JSONObject data = fillPrepareActionMsg(prepareAction);
+            response.add(data);
+            return success(response);
+        }
+
         List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActionForBarcode(marketId, barcode, VALID_ACTION_STATUS_SET);
         if (CommonUtils.isEmpty(prepareActions)) {
-            return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response("商品[条码：" + barcode + "]不存在预存任务");
+            return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response("商品[条码：" + barcode + "]不存在上架任务");
         }
-        JSONArray response = new JSONArray();
-
-        for (MarketPrepareAction prepareAction : prepareActions) {
-            ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareAction.getHopeItemTemplateId());
-            ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
-
-            JSONObject data = new JSONObject();
-            data.put("taskId", prepareAction.getId());
-            data.put("locationCode", prepareAction.getItemLocation());
-            data.put("itemName", itemTemplate.getName());
-            data.put("unitName", itemUnit.getTitle());
-            data.put("hasCompleteQuantity", prepareAction.getHasCompleteQuantity());
-            data.put("itemQuantity", prepareAction.getHopeItemQuantity());
-            data.put("barcode", barcode);
-            data.put("status", prepareAction.getStatus());
-
-            response.add(data);
-        }
+        response.addAll(prepareActions.stream().map(this::fillTaskMsg).collect(Collectors.toList()));
         return success(response);
+    }
+
+    private JSONObject fillTaskMsg(MarketPrepareAction prepareAction) {
+        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(prepareAction.getHopeItemTemplateId());
+        ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
+
+        JSONObject data = new JSONObject();
+        data.put("taskId", prepareAction.getId());
+        data.put("locationCode", prepareAction.getItemLocation());
+        data.put("itemName", itemTemplate.getName());
+        data.put("unitName", itemUnit.getTitle());
+        data.put("hasCompleteQuantity", prepareAction.getHasCompleteQuantity());
+        data.put("itemQuantity", prepareAction.getHopeItemQuantity());
+        data.put("barcode", prepareAction.getHopeItemBarcode());
+        data.put("status", prepareAction.getStatus());
+
+        return data;
     }
 
     @Override
@@ -456,6 +469,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         for (MarketShelvesDailyTaskLogger shelvesDailyTaskLogger : shelvesDailyTaskLoggers) {
             dataAccessFactory.getItemDataAccessManager().createShelvesDailyTaskLogger(shelvesDailyTaskLogger);
         }
+        dataAccessFactory.getMarketDataAccessManager().marketResponse(marketId, marketEntry.getStatus() ^ MarketStatusEnum.MAINTAIN.getKey(), marketEntry.getStatus());
         return success();
     }
 
@@ -500,6 +514,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         response.put("hasCompleteQuantity", prepareAction.getHasCompleteQuantity());
         response.put("itemQuantity", prepareAction.getHopeItemQuantity());
         response.put("barcode", prepareAction.getHopeItemBarcode());
+        response.put("type", prepareAction.getType());
         response.put("status", prepareAction.getStatus());
         response.put("hopeExecutorDate", formatDate);
 
