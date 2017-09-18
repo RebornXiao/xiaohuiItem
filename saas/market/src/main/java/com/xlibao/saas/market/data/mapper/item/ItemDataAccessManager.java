@@ -231,8 +231,8 @@ public class ItemDataAccessManager {
         return prepareActionMapper.getPrepareActions(executorPassportId, marketId, statusSet, pageStartIndex, pageSize);
     }
 
-    public int getRemainActionRows(long marketId, int key, String validActionStatusSet) {
-        return prepareActionMapper.getRemainActionRows(marketId, key, validActionStatusSet);
+    public int getRemainActionRows(long marketId, int type, String validActionStatusSet) {
+        return prepareActionMapper.getRemainActionRows(marketId, type, validActionStatusSet);
     }
 
     public int modifyPrepareActionStatus(long executorPassportId, long marketId, String itemLocation, int incrementQuantity, int hopeExecutorQuantity, String matchStatusSet, int status, String time) {

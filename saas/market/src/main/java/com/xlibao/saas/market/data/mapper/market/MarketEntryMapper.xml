@@ -99,7 +99,8 @@
     </select>
 
     <update id="marketResponse">
-        update market_entry set status = #{status} where id = #{marketId} and status = #{matchStatus}
+        update market_entry set status = #{status} where id = #{marketId}
+        <if test="matchStatus != 0">and status = #{matchStatus}</if>
     </update>
 
     <insert id="createMarket" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.market.data.model.MarketEntry">

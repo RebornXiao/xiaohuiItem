@@ -205,17 +205,19 @@ public class MarketOpenApiController {
      *
      *     <b>参数：</b>
      *          <b>marketId</b> - long 商店ID，必填参数。
-     *          <b>barcode</b> - String 商品条码，必填参数；一般为扫码获取。
+     *          <b>barcode</b> - String 商品或货架编码，必填参数；一般为扫码获取。
      *
      *     <b>返回：</b>
-     *          <b>taskId</b> - long 任务ID
-     *          <b>locationCode</b> - String 位置信息
-     *          <b>itemName</b> - String 商品名
-     *          <b>unitName</b> - String 单位名称
-     *          <b>hasCompleteQuantity</b> - int 已补货数量
-     *          <b>itemQuantity</b> - int 需补货数量
-     *          <b>barcode</b> - String 商品条码
-     *          <b>status</b> - int 任务状态
+     *          <b>datas</b> - JSONArray 当前的任务列表，每个元素为JSONObject，结构为：
+     *              <b>taskId</b> - long 任务ID
+     *              <b>locationCode</b> - String 位置信息
+     *              <b>itemName</b> - String 商品名
+     *              <b>unitName</b> - String 单位名称
+     *              <b>hasCompleteQuantity</b> - int 已补货数量
+     *              <b>itemQuantity</b> - int 需补货数量
+     *              <b>barcode</b> - String 商品条码
+     *              <b>type</b> - int 任务列表，参考：{@link com.xlibao.saas.market.service.market.ShelvesTaskTypeEnum}
+     *              <b>status</b> - int 任务状态
      * </pre>
      */
     @ResponseBody
