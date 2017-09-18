@@ -140,7 +140,7 @@
                             return;
                         }
                         //去取消
-                        $.post("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
+                        tokenPost("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
                             if (json.code != 0) {
                                 swal(json.msg);
                             } else {

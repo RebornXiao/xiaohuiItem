@@ -404,7 +404,8 @@ function tokenPost(url, callback) {
     var passportId = $.cookie("passportId") || "";
     $.post(url + "&passportId="+passportId+"&accessToken="+accessToken, callback, "json");
 }
-function tokenPost(url, pres, callback) {
+
+function tokenPresPost(url, pres, callback) {
     var accessToken = $.cookie("accessToken") || "";
     var passportId = $.cookie("passportId") || "";
     $.post(url + "&passportId="+passportId+"&accessToken="+accessToken, pres, callback, "json");

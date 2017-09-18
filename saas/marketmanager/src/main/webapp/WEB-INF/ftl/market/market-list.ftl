@@ -91,7 +91,7 @@
                                 <select class="form-control" id="statusSelect" style="width:150px">
                                     <option data_id="-1" <#if status?exists && status == -1>selected</#if>>全部</option>
                                     <option data_id="1" <#if status?exists && status == 1>selected</#if>>正常</option>
-                                    <option data_id="3" <#if status?exists && status == 3>selected</#if>>维护</option>
+                                    <option data_id="4" <#if status?exists && status == 4>selected</#if>>维护</option>
                                     <option data_id="2" <#if status?exists && status == 2>selected</#if>>关店</option>
                                     <option data_id="0" <#if status?exists && status == 0>selected</#if>>无效</option>
                                 </select>

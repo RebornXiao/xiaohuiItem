@@ -679,7 +679,7 @@
 
                     $(this).attr("disabled", true);
 
-                    $.post("${base}/market/prepareAction.do?marketId=" + s_MarketId + "&actionDatas=" + txt + "&hopeExecutorDate=" + hDate, function (data) {
+                    tokenPost("${base}/market/prepareAction.do?marketId=" + s_MarketId + "&actionDatas=" + txt + "&hopeExecutorDate=" + hDate, function (data) {
                         //重新刷新
                         if (data.code == 0) {
                             showSuccess(data.msg, function () {
@@ -834,7 +834,7 @@
                     s_Group = select_obj.val();
 
                     if (unit_list[s_Group] == null) {
-                        $.post("${base}/market/getShelvesMarks.do?marketId=" + s_MarketId + "&shelvesType=2&groupCode=" + s_Group, function (json) {
+                        tokenPost("${base}/market/getShelvesMarks.do?marketId=" + s_MarketId + "&shelvesType=2&groupCode=" + s_Group, function (json) {
                             if (json.code != 0) {
                                 swal("无法找到该店铺的 单元 信息");
                             } else {
@@ -864,7 +864,7 @@
                     s_Unit = select_obj.val();
 
                     if (level_list[s_Unit] == null) {
-                        $.post("${base}/market/getShelvesMarks.do?marketId=" + s_MarketId + "&shelvesType=3&groupCode=" + s_Group + "&unitCode=" + s_Unit, function (json) {
+                        tokenPost("${base}/market/getShelvesMarks.do?marketId=" + s_MarketId + "&shelvesType=3&groupCode=" + s_Group + "&unitCode=" + s_Unit, function (json) {
                             if (json.code != 0) {
                                 swal("无法找到该店铺的 层 信息");
                             } else {
@@ -891,7 +891,7 @@
                     }
                     s_Layer = select_obj.val();
 
-                    $.post("${base}/market/loaderClipDatas.do?marketId=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer, function (json) {
+                    tokenPost("${base}/market/loaderClipDatas.do?marketId=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer, function (json) {
 
                         if (json.code != 0) {
                             hibeDatas(json.msg);
