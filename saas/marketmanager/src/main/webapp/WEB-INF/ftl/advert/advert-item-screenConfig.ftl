@@ -45,7 +45,7 @@
                                         <td style="background-color: #f9f9f9">屏幕MAC</td>
                                         <td>${screen.mac}</td>
                                         <td style="background-color: #f9f9f9">屏幕请求时间</td>
-                                        <td>${screen.requireTime}s</td>
+                                        <td>${screen.requireTime} s</td>
                                     </tr>
                                     </tbody>
                                     <tbody>

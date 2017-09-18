@@ -108,12 +108,11 @@
         }
         var add_title = GetQueryString("title");
         var add_timeType = GetQueryString("timeType");
-        document.getElementById("advertNavTitle").value=add_title;
-        if(add_timeType='0'){
-            $("#advertNavTime").find("option[text='15s以内']").attr("selected",false);
-        }else if(add_timeType='1'){
-            $("#advertNavTime").find("option[text='16s-30s']").attr("selected",true);
-        }
+//        if(add_timeType=='-1'){
+//            $("#advertNavTime option:selected").text("选择时长");
+//        }else if(add_timeType=='0'){
+//            $("#advertNavTime option:selected").text("15s以内");
+//        }
 
         //鼠标经过效果
         $("tr[id^='tr_']").hover(
@@ -127,7 +126,7 @@
                 }
             }
         );
-
+        //搜索
         //上传广告
         $("#uploadAdvertButton").on('click', function () {
             function checkInput (obj){//检查表单是否有空项，空格验证方法待加
