@@ -37,8 +37,8 @@ public class OssController extends BaseController {
         //店铺market, 商品item, 分类图标itemtype
         String targetDir = getUTF("targetDir");
 
-        String accessId = AliyunConfig.getAccessKeyId();
-        String accessKey = AliyunConfig.getAccessKeySecret();
+        String accessId = "LTAIzupnl78sRpBm";//AliyunConfig.getAccessKeyId();
+        String accessKey = "4zbTwU9ghdfpmr2XPE8GHQsDeIv3eP";//AliyunConfig.getAccessKeySecret();
         String bucket = "xmarket";
         String dir = targetDir + "/";
         String endpoint = AliyunConfig.getOssPublicEndPoint();

@@ -79,8 +79,10 @@
                                 <select class="form-control" id="typeSelect">
                                 <#if (itemTypes?size > 0)>
                                     <#list itemTypes as iType>
-                                        <option data_id="${iType.id?c}" <#if item?exists && iType.id == item.typeId>
-                                                selected </#if>>
+                                        <option data_id="${iType.id?c}"
+                                            <#if item?exists && iType.id == item.typeId>selected </#if>
+                                            data_pid="${iType.parentId?c}"
+                                        >
 
                                             <#if iType.parentId == 0>
                                             ${iType.title}
@@ -96,7 +98,7 @@
                             </div>
                             <button id="addTypeBtn" type="button"
                                     class="btn col-md-2 waves-effect waves-light btn-default">
-                                添加商品类型
+                                添加商品分类
                             </button>
                         </div>
 
@@ -278,8 +280,12 @@
                 //添加/修改 商品
                 $("#saveBtn").on('click', function () {
 
-
-                    var _typeId = $("#typeSelect").find("option:selected").attr("data_id");
+                    var _type_obj = $("#typeSelect").find("option:selected");
+                    if(_type_obj.attr("data_pid") == "0") {
+                        swal("商品只能挂在二级分类下，请重新选择分类");
+                        return;
+                    }
+                    var _typeId = _type_obj.attr("data_id");
                     if(_typeId == 0) {
                         swal("请选择分类");
                         return;
