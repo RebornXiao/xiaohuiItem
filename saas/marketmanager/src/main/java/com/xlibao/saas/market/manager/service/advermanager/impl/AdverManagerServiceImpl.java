@@ -39,7 +39,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("pageSize", String.valueOf(pageSize));
         parameters.put("pageIndex", String.valueOf(pageIndex));
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAdvertTemplateList.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/getAdvertTemplateList.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -59,7 +59,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("videoName",videoName);
 
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/uploadAdvertInfo.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/uploadAdvertInfo.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -78,7 +78,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("remark",remark);
         parameters.put("advertID", String.valueOf(advertID));
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/updateAdvertInfo.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/updateAdvertInfo.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -91,7 +91,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         Map<String, String> parameters = new HashMap<>();
         parameters.put("advertID", String.valueOf(advertID));
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAdvertFromID.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/getAdvertFromID.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -103,7 +103,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         Map<String, String> parameters = new HashMap<>();
         parameters.put("advertID", String.valueOf(advertID));
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/deleteAdvertFromID.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/deleteAdvertFromID.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -124,7 +124,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("pageSize", String.valueOf(pageSize));
         parameters.put("pageIndex", String.valueOf(pageIndex));
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getScreenTemplateList.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/getScreenTemplateList.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -151,7 +151,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("mac",mac);
         parameters.put("screenRemark",screenRemark);
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/addScreenInfo.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/addScreenInfo.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -163,7 +163,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         Map<String, String> parameters = new HashMap<>();
         parameters.put("mac", mac);
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getScreenInfoFromMAC.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/getScreenInfoFromMAC.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -177,7 +177,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("screenID", String.valueOf(screenID));
         parameters.put("marketID", String.valueOf(marketID));
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/deleteScreenFromID.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/deleteScreenFromID.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -209,7 +209,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("pageSize", String.valueOf(pageSize));
         parameters.put("pageIndex", String.valueOf(pageIndex));
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAdvertTemplates.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/getAdvertTemplates.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -236,7 +236,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
             parameters.put("playOrder",playOrders[i]);
             parameters.put("remark",remarks[i]);
 
-            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/addAdvertInfoForScreen.do";
+            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/addAdvertInfoForScreen.do";
             rest = executor(url, parameters);
         }
         return rest;
@@ -264,7 +264,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("playOrder",String.valueOf(playOrder));
         parameters.put("remark",remark);
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/updateAdvertInfoFromID.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/updateAdvertInfoFromID.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -281,7 +281,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("advertID", String.valueOf(advertID));
         parameters.put("marketID", String.valueOf(marketID));
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/deleteAdvertInfoFromID.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/deleteAdvertInfoFromID.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -293,7 +293,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         Map<String, String> parameters = new HashMap<>();
         parameters.put("marketId", String.valueOf(marketId));
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAllScreenInfo.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/getAllScreenInfo.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -311,7 +311,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("advertID", advertID);
         parameters.put("marketID", marketID);
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAdvertInfoFromID.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/getAdvertInfoFromID.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -324,7 +324,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         Map<String, String> parameters = new HashMap<>();
         parameters.put("screenID", screenID);
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAdvertInfoFromScreenID.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/getAdvertInfoFromScreenID.do";
         JSONObject response = executor(url, parameters);
 
         return response;
@@ -337,7 +337,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         Map<String, String> parameters = new HashMap<>();
         parameters.put("advertID", advertID);
 
-        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getScreenInfoFromAdvertID.do";
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/getScreenInfoFromAdvertID.do";
         JSONObject response = executor(url, parameters);
 
         return response;
