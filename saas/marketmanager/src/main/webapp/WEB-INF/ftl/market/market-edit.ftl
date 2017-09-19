@@ -238,7 +238,7 @@
                         <#if districtId?exists >${districtId?c}<#else>0</#if> ,
                         <#if streetId?exists >${streetId?c}<#else>0</#if> ,
                         _streets, function (id, func) {
-                            $.post("${base}/market/getStreets.do?districtId=" + id, function (data) {
+                            tokenPost("${base}/market/getStreets.do?districtId=" + id, function (data) {
                                 func(id, data);
                             }, "json");
                         });
@@ -317,7 +317,7 @@
 
                     $(this).attr("disabled", true);
 
-                    $.post("${base}/market/marketEditSave.do", post_data, function (data) {
+                    tokenPresPost("${base}/market/marketEditSave.do", post_data, function (data) {
                         //重新刷新
                         if(data.code == "0") {
                             showSuccess(data.msg, function () {

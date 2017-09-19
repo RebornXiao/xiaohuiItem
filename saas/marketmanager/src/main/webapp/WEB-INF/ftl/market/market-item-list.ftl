@@ -287,7 +287,7 @@
                     var _status_obj = $("#updateStatusSelect").find("option:selected");
                     var _status = _status_obj.attr("data_id");
 
-                    $.post("${base}/market/marketItemUpdateStatus.do?itemId=" + $(this).attr("data_id") + "&status=" + _status, function (json) {
+                    tokenPost("${base}/market/marketItemUpdateStatus.do?itemId=" + $(this).attr("data_id") + "&status=" + _status, function (json) {
 
                         $("#statusDialog").modal('hide');
 

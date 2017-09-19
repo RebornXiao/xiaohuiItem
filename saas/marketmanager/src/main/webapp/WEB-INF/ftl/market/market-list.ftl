@@ -400,7 +400,7 @@
                         return;
                     }
 
-                    $.post("${base}/market/marketUpdateStatus.do?marketId=" + btn.attr("data_id") + "&status=" + _status + "&beforeStatus=" + beforeStatus, function (json) {
+                    tokenPost("${base}/market/marketUpdateStatus.do?marketId=" + btn.attr("data_id") + "&status=" + _status + "&beforeStatus=" + beforeStatus, function (json) {
 
                         $("#statusDialog").modal('hide');
 

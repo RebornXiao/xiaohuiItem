@@ -133,7 +133,7 @@
                 }
                 //上传图片
                 function updateImgUrl(itemTypeId, itemImgUrl) {
-                    $.post("${base}/item/itemTypeUpdateIconUrl.do?itemTypeId="+itemTypeId+"&itemTypeIconUrl="+itemImgUrl, function(data) {
+                    tokenPost("${base}/item/itemTypeUpdateIconUrl.do?itemTypeId="+itemTypeId+"&itemTypeIconUrl="+itemImgUrl, function(data) {
                         //重新刷新
                         postSuccess();
                     }, "json");
@@ -243,7 +243,7 @@
                     $(this).attr("disabled", true);
 
                     //保存
-                    $.post("${base}/item/itemTypeEditSave.do", post_data, function(data) {
+                    tokenPresPost("${base}/item/itemTypeEditSave.do", post_data, function(data) {
 
                         //重新刷新
                         if(data.code == "0") {

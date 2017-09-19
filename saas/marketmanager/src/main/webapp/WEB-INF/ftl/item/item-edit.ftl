@@ -227,7 +227,7 @@
                 }
                 //上传图片
                 function updateImgUrl(itemId, itemImgUrl) {
-                    $.post("${base}/item/itemUpdateImgUrl.do?itemId="+itemId+"&itemImgUrl="+itemImgUrl, function(data) {
+                    tokenPost("${base}/item/itemUpdateImgUrl.do?itemId="+itemId+"&itemImgUrl="+itemImgUrl, function(data) {
                         //重新刷新
                         postSuccess();
                     }, "json");
@@ -324,7 +324,7 @@
                     //$(this).button("loading");
                     $(this).attr("disabled", true);
 
-                    $.post("${base}/item/itemEditSave.do", post_data, function(data) {
+                    tokenPresPost("${base}/item/itemEditSave.do", post_data, function(data) {
                         //重新刷新
                         if(data.code == "0") {
                             //提交成功，这里重新包装一个商品ID

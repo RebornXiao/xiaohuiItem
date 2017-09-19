@@ -108,7 +108,7 @@
 
                     $(this).attr("disabled", true);
 
-                    $.post("${base}/market/streetEditSave.do?id=" + _streetId + "&title=" + title + "&areaId=" + areaId, function (data) {
+                    tokenPost("${base}/market/streetEditSave.do?id=" + _streetId + "&title=" + title + "&areaId=" + areaId, function (data) {
                         //重新刷新
                         if (data.code == "0") {
                             showSuccess(data.msg, function () {

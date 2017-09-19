@@ -137,7 +137,7 @@
 
                     $(this).attr("disabled", true);
 
-                    $.post("${base}/market/marketItemEditSave.do", post_data, function (data) {
+                    tokenPresPost("${base}/market/marketItemEditSave.do", post_data, function (data) {
 
                         //重新刷新
                         if(data.code == "0") {

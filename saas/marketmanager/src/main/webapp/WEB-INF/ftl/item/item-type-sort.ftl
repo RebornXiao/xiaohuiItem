@@ -108,7 +108,7 @@
                     }
 
                     //保存
-                    $.post("${base}/item/itemTypeSortEditSave.do", {ids:ids}, function(data) {
+                    tokenPresPost("${base}/item/itemTypeSortEditSave.do", {ids:ids}, function(data) {
 
                         if(data.code == 0) {
                             //成功

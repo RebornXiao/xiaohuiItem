@@ -155,7 +155,7 @@
                         });
                     } else {
                         //从网络获取
-                        $.post("${base}/item/idNameItems.do?itemTypeId=" + data_id, function (json) {
+                        tokenPost("${base}/item/idNameItems.do?itemTypeId=" + data_id, function (json) {
                             if (json.code != 0) {
                                 swal(json.msg);
                             } else {
@@ -213,7 +213,7 @@
 
                     $(this).attr("disabled", true);
 
-                    $.post("${base}/market/marketItemAddSave.do", post_data, function (data) {
+                    tokenPresPost("${base}/market/marketItemAddSave.do", post_data, function (data) {
 
                         //重新刷新
                         if(data.code == "0") {
