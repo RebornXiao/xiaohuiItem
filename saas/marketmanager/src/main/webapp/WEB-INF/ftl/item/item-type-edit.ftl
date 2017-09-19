@@ -221,6 +221,12 @@
                         return;
                     }
 
+                    //检测长度
+                    if(strlen(title) > 8) {
+                        swal("分类名称不能超过4个中文或者8个字符!");
+                        return;
+                    }
+
                     var _typeId = 0;
                     if(addType == 2) {
                         _typeId = $("#itSelect").find("option:selected").attr("data_id");

@@ -160,7 +160,7 @@
                             <div class="col-md-4">
                                 <div id="itemMainImgDiv" style="background: white; width:150px; height:150px;">
                                     <img id="upImg" <#if item?exists && item.imageUrl??>
-                                         src="${item.imageUrl}" </#if> width="150px" height="150px"/>
+                                         src="${item.imageUrl}" </#if> />
                                 </div>
                                 <p class="m-t-10">
                                     <button id="selectFileBtn" type="button"
@@ -222,7 +222,7 @@
                         msg = "修改成功";
                     }
                     showSuccess(msg, function () {
-                        open({url:"${base}/item/itemUnitEdit.do"});
+                        open({url:"${base}/item/itemList.do"});
                     });
                 }
                 //上传图片

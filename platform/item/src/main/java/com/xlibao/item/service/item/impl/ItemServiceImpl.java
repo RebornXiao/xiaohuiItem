@@ -403,13 +403,13 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
         long itemId = getLongParameter("itemId", 0);
         String name = getUTF("name");
-        String defineCode = getUTF("defineCode");
+        String defineCode = getUTF("defineCode", "");
         String barcode = getUTF("barcode");
         String imgUrl = getUTF("imgUrl", "");
         long typeId = getLongParameter("typeId");
         long unitId = getLongParameter("unitId");
-        long costPrice = CommonUtils.changeMoney(getUTF("costPrice"));
-        long defaultPrice = CommonUtils.changeMoney(getUTF("defaultPrice"));
+        long costPrice = CommonUtils.changeMoney(getUTF("costPrice", "0"));
+        long defaultPrice = CommonUtils.changeMoney(getUTF("defaultPrice", "0"));
         long passportId = getLongParameter("passportId");
 
         int ilength = getIntParameter("iLength", 0);

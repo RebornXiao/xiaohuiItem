@@ -386,13 +386,13 @@ function getUrl(href) {
 
 function checkVal(ui_name, info) {
     var v = $("#" + ui_name).val();
-    if(v == null || v == "") {
+    if (v == null || v == "") {
         swal(info);
         return null;
     }
     //去掉左右空格
     v = v.replace(/(^\s*)|(\s*$)/g, "");
-    if(v == "") {
+    if (v == "") {
         swal(info);
         return null;
     }
@@ -402,13 +402,13 @@ function checkVal(ui_name, info) {
 function tokenPost(url, callback) {
     var accessToken = $.cookie("accessToken") || "";
     var passportId = $.cookie("passportId") || "";
-    $.post(url + "&passportId="+passportId+"&accessToken="+accessToken, callback, "json");
+    $.post(url + "&passportId=" + passportId + "&accessToken=" + accessToken, callback, "json");
 }
 
 function tokenPresPost(url, pres, callback) {
     var accessToken = $.cookie("accessToken") || "";
     var passportId = $.cookie("passportId") || "";
-    $.post(url + "&passportId="+passportId+"&accessToken="+accessToken, pres, callback, "json");
+    $.post(url + "&passportId=" + passportId + "&accessToken=" + accessToken, pres, callback, "json");
 }
 
 function open(option) {
@@ -441,6 +441,21 @@ function open(option) {
     return false;
 }
 
+//字符长度，区别中英文
+function strlen(str) {
+    var len = 0;
+    for (var i = 0; i < str.length; i++) {
+        var c = str.charCodeAt(i);
+        //单字节加1
+        if ((c >= 0x0001 && c <= 0x007e) || (0xff60 <= c && c <= 0xff9f)) {
+            len++;
+        }
+        else {
+            len += 2;
+        }
+    }
+    return len;
+}
 
 //policy 要经过base64编码， signature 还要进一步处理，可以查阅官方文档
 // function OssUpload(param, file, fileName, callBack) {
