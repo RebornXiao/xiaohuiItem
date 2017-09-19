@@ -2,6 +2,7 @@ package com.xlibao.saas.market.service.support.remote;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.support.ShareOrderRemoteService;
 import com.xlibao.metadata.order.OrderEntry;
@@ -88,12 +89,13 @@ public class OrderRemoteService extends BasicRemoteService {
         return response;
     }
 
-    public static JSONObject distributionOrder(long orderId, long courierPassportId, byte self) {
+    public static JSONObject distributionOrder(long orderId, long courierPassportId, byte self, boolean refreshOrderStatus) {
         Map<String, String> parameters = initialParameter();
 
         parameters.put("orderId", String.valueOf(orderId));
         parameters.put("courierPassportId", String.valueOf(courierPassportId));
         parameters.put("self", String.valueOf(self));
+        parameters.put("refreshOrderStatus", String.valueOf(refreshOrderStatus ? GlobalAppointmentOptEnum.LOGIC_TRUE.getKey() : GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()));
 
         JSONObject response = postOrderMsg("order/distributionOrder", parameters);
         logger.info("配送结果：" + response);

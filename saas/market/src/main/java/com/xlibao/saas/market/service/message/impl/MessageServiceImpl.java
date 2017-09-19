@@ -62,9 +62,13 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
             containerData.put("containers", containers);
             dataAccessFactory.getOrderDataAccessManager().updateOrderProperties(orderProperties.getId(), containerData.toJSONString());
         }
-        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() && containers.size() >= containerData.getIntValue("containerCount")) { // 自提订单时，出货完成将订单状态设置为配送中(展示则为：待取货)
-            // 修改订单状态
-            OrderRemoteService.distributionOrder(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey(), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
+        if (containers.size() >= containerData.getIntValue("containerCount")) {
+            if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) { // 自提订单时，出货完成将订单状态设置为配送中(展示则为：待取货)
+                // 修改订单状态
+                OrderRemoteService.distributionOrder(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey(), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), true);
+            } else {
+                OrderRemoteService.distributionOrder(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey(), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), false);
+            }
         }
         dataAccessFactory.getOrderDataAccessManager().modifyOrderRemoteStatusLogger(orderSequenceNumber + CommonUtils.SPLIT_UNDER_LINE + serialNumber, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_PAYMENT,
                 GlobalAppointmentOptEnum.LOGIC_TRUE.getKey(), System.currentTimeMillis());
@@ -167,13 +171,13 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
 
         OrderEntry orderEntry = checkOrderAdministrators(orderSequenceNumber, passportId);
         if (orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() && orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() && orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
-            throw MarketOrderErrorCodeEnum.PICK_UP_DATA_ERROR.throwException("当前状态不能进行取货操作");
+            return MarketOrderErrorCodeEnum.PICK_UP_DATA_ERROR.response("当前状态不能进行取货操作");
         }
         MarketOrderStatusLogger pickupOrderStatusLogger = dataAccessFactory.getOrderDataAccessManager().getOrderStatusLogger(orderSequenceNumber, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_ARRIVE);
         if (pickupOrderStatusLogger == null) { // 记录请求取货状态
             dataAccessFactory.getOrderDataAccessManager().createOrderStatusLogger(orderSequenceNumber, "", OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_ARRIVE, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), System.currentTimeMillis());
         } else if (pickupOrderStatusLogger.getRemoteStatus() == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) {
-            throw MarketOrderErrorCodeEnum.PICK_UP_DATA_ERROR.throwException("已完成取货，请不要重复请求");
+            return MarketOrderErrorCodeEnum.PICK_UP_DATA_ERROR.response("已完成取货，请不要重复请求");
         }
         // 检查是否需要进行补发
         boolean repairShipmentOrder = repairShipment(orderEntry);
@@ -188,7 +192,7 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
     }
 
     private boolean repairShipment(OrderEntry orderEntry) {
-        // TODO 通过配送状态来判断
+        // 通过配送状态来判断
         if (orderEntry.getDeliverStatus() == OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
             return false;
         }
@@ -214,8 +218,8 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
             if (orderStatusLogger.getRemoteStatus() == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) {
                 continue;
             }
-            // 补推至硬件 其实此时并不能确定是否硬件未处理，因为中间可能存在网络中断或消息丢失的情况
-            marketShopRemoteService.shipmentMessage(marketEntry.getPassportId(), orderSerialCode, orderStatusLogger.getMark());
+            // (暴力)补推至硬件 其实此时并不能确定是否硬件未处理，因为中间可能存在网络中断或消息丢失的情况
+            marketShopRemoteService.shipmentMessage(marketEntry.getPassportId(), orderSerialCode, orderStatusLogger.getMark(), true);
         }
         return true;
     }

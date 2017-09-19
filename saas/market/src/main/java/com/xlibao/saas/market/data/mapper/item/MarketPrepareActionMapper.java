@@ -20,7 +20,7 @@ public interface MarketPrepareActionMapper {
 
     int getRemainActionRows(@Param("marketId") long marketId, @Param("type") int type, @Param("statusSet") String statusSet);
 
-    int modifyPrepareActionStatus(@Param("executorPassportId") long executorPassportId, @Param("marketId") long marketId, @Param("itemLocation") String itemLocation, @Param("incrementQuantity") int incrementQuantity, @Param("hopeExecutorQuantity") int hopeExecutorQuantity,@Param("matchStatusSet") String matchStatusSet, @Param("status") int status, @Param("time") String time);
+    int modifyPrepareActionStatus(@Param("executorPassportId") long executorPassportId, @Param("marketId") long marketId, @Param("type") int type, @Param("itemLocation") String itemLocation, @Param("incrementQuantity") int incrementQuantity, @Param("hopeExecutorQuantity") int hopeExecutorQuantity,@Param("matchStatusSet") String matchStatusSet, @Param("status") int status, @Param("time") String time);
 
     MarketPrepareAction getPrepareActionForId(@Param("taskId") long taskId);
 

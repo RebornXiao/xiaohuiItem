@@ -46,20 +46,21 @@ public class MarketShopRemoteService extends BasicRemoteService {
     @Autowired
     private DataAccessFactory dataAccessFactory;
 
-    public void shipmentMessage(long passportId, String mark, String content) {
-        content = HardwareMessageType.SHIPMENT + content;
+    public void shipmentMessage(long passportId, String mark, String content, boolean repairShipment) {
         // 记录发送状态
         logger.info("推送出货消息到商店系统，passport id is " + passportId + ", content is " + content);
 
-        MarketOrderStatusLogger orderStatusLogger = dataAccessFactory.getOrderDataAccessManager().getOrderStatusLogger(mark, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_PAYMENT);
-        if (orderStatusLogger != null && orderStatusLogger.getRemoteStatus() == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) {
-            logger.error("订单重复请求出货功能，mark : " + mark);
-            throw new XlibaoRuntimeException("不能重复出货");
+        if (!repairShipment) {
+            MarketOrderStatusLogger orderStatusLogger = dataAccessFactory.getOrderDataAccessManager().getOrderStatusLogger(mark, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_PAYMENT);
+            if (orderStatusLogger != null && orderStatusLogger.getRemoteStatus() == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) {
+                logger.error("订单重复请求出货功能，mark : " + mark);
+                throw new XlibaoRuntimeException("不能重复出货");
+            }
+            if (orderStatusLogger == null) {
+                dataAccessFactory.getOrderDataAccessManager().createOrderStatusLogger(mark, content, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_PAYMENT, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), System.currentTimeMillis());
+            }
         }
-        if (orderStatusLogger == null) {
-            dataAccessFactory.getOrderDataAccessManager().createOrderStatusLogger(mark, content, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_PAYMENT, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), System.currentTimeMillis());
-        }
-        String finalContent = content;
+        String finalContent = HardwareMessageType.SHIPMENT + content;
         Runnable runnable = () -> sendMessage(passportId, finalContent);
         // 执行即时任务
         AsyncScheduledService.submitImmediateRemoteNotifyTask(runnable);
@@ -127,7 +128,7 @@ public class MarketShopRemoteService extends BasicRemoteService {
         }
         for (Map.Entry<String, String> entry : messages.entrySet()) {
             // 发送消息给硬件做出货操作
-            shipmentMessage(marketEntry.getPassportId(), entry.getKey(), entry.getValue());
+            shipmentMessage(marketEntry.getPassportId(), entry.getKey(), entry.getValue(), false);
         }
         // 释放锁定库存
         releaseItemLock(orderEntry);

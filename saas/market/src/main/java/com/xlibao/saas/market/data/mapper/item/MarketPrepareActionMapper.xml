@@ -71,7 +71,7 @@
     <update id="modifyPrepareActionStatus">
         update market_prepare_action set status = #{status}, has_complete_quantity = has_complete_quantity + #{incrementQuantity}, complete_time = #{time}, executor_passport_id = #{executorPassportId}
         <if test="hopeExecutorQuantity != 0">, hope_item_quantity = #{hopeExecutorQuantity}</if>
-        where market_id = #{marketId} and item_location = #{itemLocation} and status in(${matchStatusSet})
+        where market_id = #{marketId} and item_location = #{itemLocation} and type = #{type} and status in(${matchStatusSet})
     </update>
 
     <update id="batchModifyPrepareActionStatus">

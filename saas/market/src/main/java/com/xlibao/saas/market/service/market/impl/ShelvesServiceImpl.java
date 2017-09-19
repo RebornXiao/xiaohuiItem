@@ -229,7 +229,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         if (prepareAction == null) {
             return MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.response("找不到任务，任务ID：" + taskId);
         }
-        int result = dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(passportId, prepareAction.getMarketId(), prepareAction.getItemLocation(), prepareAction.getHasCompleteQuantity(), prepareAction.getHopeItemQuantity(), VALID_ACTION_STATUS_SET, PrepareActionStatusEnum.INVALID.getKey(), CommonUtils.nowFormat());
+        int result = dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(passportId, prepareAction.getMarketId(), prepareAction.getType(), prepareAction.getItemLocation(), prepareAction.getHasCompleteQuantity(), prepareAction.getHopeItemQuantity(), VALID_ACTION_STATUS_SET, PrepareActionStatusEnum.INVALID.getKey(), CommonUtils.nowFormat());
         return result <= 0 ? fail() : success();
     }
 
@@ -469,7 +469,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
 
     private void completePrepareActionTask(long passportId, long marketId, String location, int type, long executorPassportId, long itemTemplateId, int quantity, int hasCompleteQuantity, int hopeQuantity, String mark, int matchActionStatus, int hopeActionStatus) {
         // 完成了预操作行为
-        dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(passportId, marketId, location, quantity, hopeQuantity, String.valueOf(matchActionStatus), hopeActionStatus, CommonUtils.nowFormat());
+        dataAccessFactory.getItemDataAccessManager().modifyPrepareActionStatus(passportId, marketId, type, location, quantity, hopeQuantity, String.valueOf(matchActionStatus), hopeActionStatus, CommonUtils.nowFormat());
 
         MarketTaskLogger taskLogger = new MarketTaskLogger();
         taskLogger.setMarketId(marketId);

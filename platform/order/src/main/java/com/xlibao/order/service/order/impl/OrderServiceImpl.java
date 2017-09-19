@@ -422,6 +422,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         long courierPassportId = getLongParameter("courierPassportId");
         // 是否自营订单
         byte self = getByteParameter("self", GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
+        byte refreshOrderStatus = getByteParameter("refreshOrderStatus", GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
 
         OrderEntry orderEntry = getOrder(orderId);
 
@@ -475,7 +476,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             }
         }
         // 设置订单状态
-        orderEntry.setStatus(isBatch ? OrderStatusEnum.ORDER_STATUS_BATCH.getKey() : OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey());
+        orderEntry.setStatus(isBatch ? OrderStatusEnum.ORDER_STATUS_BATCH.getKey() :
+                (refreshOrderStatus == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey() ? OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey() : orderEntry.getStatus()));
         int deliverStatus = OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey();
         // 更新订单状态和配送状态
         int result = orderDataAccessManager.updateOrderStatus(orderEntry.getId(), orderEntry.getStatus(), beforeStatus, deliverStatus, orderEntry.getDeliverStatus());
