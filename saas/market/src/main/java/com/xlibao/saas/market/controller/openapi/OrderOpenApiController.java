@@ -192,8 +192,14 @@ public class OrderOpenApiController {
         return orderService.acceptOrder();
     }
 
+    /**
+     * <b>配送订单</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/deliverOrder.do
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     */
     @ResponseBody
-    @RequestMapping(value = "acceptOrder")
+    @RequestMapping(value = "deliverOrder")
     public JSONObject deliverOrder() {
         return orderService.deliverOrder();
     }

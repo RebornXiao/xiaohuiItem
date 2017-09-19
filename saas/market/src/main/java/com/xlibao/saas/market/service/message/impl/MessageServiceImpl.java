@@ -193,7 +193,7 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
 
     private boolean repairShipment(OrderEntry orderEntry) {
         // 通过配送状态来判断
-        if (orderEntry.getDeliverStatus() == OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
+        if (orderEntry.getDeliverStatus() > 0) {
             return false;
         }
         MarketOrderProperties orderProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.CONTAINER_DATA.getTypeEnum().getKey(), PropertiesKeyEnum.CONTAINER_DATA.getKey());

@@ -229,11 +229,14 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
     @Override
     public JSONObject deliverOrder() {
+        long passportId = getLongParameter("passportId");
         String orderSequenceNumber = getUTF("orderSequenceNumber");
 
         OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
-        OrderRemoteService.refreshOrderStatus(orderSequenceNumber, OrderPermissionTypeEnum.DELIVERY.getKey(), String.valueOf(orderEntry.getCourierPassportId()), OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey(), String.valueOf(OrderStatusEnum.ORDER_STATUS_DELIVER.getKey()));
-        return success();
+        if (orderEntry.getCourierPassportId() != passportId) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+        }
+        return OrderRemoteService.distributionOrder(orderEntry.getId(), orderEntry.getCourierPassportId(), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), true);
     }
 
     @Override

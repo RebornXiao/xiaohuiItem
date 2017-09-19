@@ -400,7 +400,6 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
     @Override
     public JSONObject itemEditSave() {
-
         long itemId = getLongParameter("itemId", 0);
         String name = getUTF("name");
         String defineCode = getUTF("defineCode", "");
