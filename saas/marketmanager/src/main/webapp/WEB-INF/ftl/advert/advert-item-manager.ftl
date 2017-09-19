@@ -162,8 +162,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                <@paginate nowPage=pageIndex itemCount=count action="${base}/advert/advertScreens.do?marketID=${marketID}&code=${code}
-                                &title=${title}&beginTime=${beginTime}&endTime=${endTime}&isDown=${isDown}&playStatus=${playStatus}"/>
+                <@paginate nowPage=pageIndex itemCount=count action="${base}/advert/advertScreens.do?marketID=${marketID}&code=${code}&title=${title}&beginTime=${beginTime}&endTime=${endTime}&isDown=${isDown}&playStatus=${playStatus}"/>
                 </div>
             </div>
             <!--/分页-->
