@@ -146,7 +146,7 @@ public class AdvertManagerController extends BaseController {
 
         int pageIndex = getIntParameter("pageIndex", 1);
         map.put("code", getUTF("code",""));
-        map.put("marketID", getUTF("marketID",""));
+        map.put("marketID", getIntParameter("marketID",-1));
         map.put("size", getUTF("size",""));
         map.put("pageIndex", pageIndex);
         map.put("screens", screens);
@@ -239,7 +239,7 @@ public class AdvertManagerController extends BaseController {
         }
 
          int pageIndex = getIntParameter("pageIndex", 1);
-         map.put("marketID", getIntParameter("marketID",0));
+         map.put("marketID", getIntParameter("marketID",-1));
          map.put("code", getUTF("code",""));
          map.put("title", getUTF("title",""));
          map.put("beginTime", getUTF("beginTime",""));

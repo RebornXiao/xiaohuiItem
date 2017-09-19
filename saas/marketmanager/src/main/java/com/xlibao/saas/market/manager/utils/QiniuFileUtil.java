@@ -39,7 +39,7 @@ public class QiniuFileUtil {
             String filename = item.getOriginalFilename();
             json.put("name", filename);
             json.put("size", item.getSize());
-            if (filename.endsWith("mp4") || filename.endsWith("wmv") || filename.endsWith("jpg") || filename.endsWith("png")) {
+            if (filename.endsWith("mp4") || filename.endsWith("wmv") || filename.endsWith("mkv") || filename.endsWith("rmvb")||filename.endsWith("avi")||filename.endsWith("flv")||filename.endsWith("mpg")||filename.endsWith("swf")||filename.endsWith("qlv")) {
                 try {
                     byte[] uploadBytes = item.getBytes();
 
@@ -53,10 +53,11 @@ public class QiniuFileUtil {
 
                     Response response = uploadManager.put(byteArrayInputStream, key, upToken, null, null);
                     DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
-                    path = path+putRet.key;
+                    System.out.println("path:"+path);
                     json.put("status", STATUS_SUCCESS);
                     json.put("path",path);
                     json.put("videoName",putRet.key);
+                    System.out.println("putRet.key:"+putRet.key);
                 } catch (QiniuException e) {
                     Response r = e.response;
                     json.put("status", STATUS_ERROR);
