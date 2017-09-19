@@ -160,7 +160,7 @@
                             <div class="col-md-4">
                                 <div id="itemMainImgDiv" style="background: white; width:150px; height:150px;">
                                     <img id="upImg" <#if item?exists && item.imageUrl??>
-                                         src="${item.imageUrl}" </#if> />
+                                         src="${item.imageUrl}" </#if>  style="width:150px; height:150px;" />
                                 </div>
                                 <p class="m-t-10">
                                     <button id="selectFileBtn" type="button"
