@@ -264,7 +264,6 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         }
     }
 
-
     @Override
     public JSONObject marketUpdateStatus() {
         long marketId = getLongParameter("marketId");

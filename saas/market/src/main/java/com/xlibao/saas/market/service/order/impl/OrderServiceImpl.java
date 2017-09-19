@@ -14,10 +14,7 @@ import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.exception.code.OrderErrorCodeEnum;
 import com.xlibao.datacache.item.ItemDataCacheService;
-import com.xlibao.market.data.model.MarketEntry;
-import com.xlibao.market.data.model.MarketItem;
-import com.xlibao.market.data.model.MarketItemDailyPurchaseLogger;
-import com.xlibao.market.data.model.MarketItemLadderPrice;
+import com.xlibao.market.data.model.*;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
@@ -179,7 +176,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         int pageIndex = getIntParameter("pageIndex", GlobalConstantConfig.DEFAULT_PAGE_INDEX);
         int pageSize = getPageSize();
 
-        List<OrderEntry> orders = OrderRemoteService.showOrders(passportId, marketId, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), roleType, orderStatusSet(roleType, statusEnter), orderType, pageIndex, pageSize);
+        String statusSet = orderStatusSet(roleType, statusEnter);
+        // statusEnter == StatusEnterEnum.COURIER_WAIT_ACCEPT.getKey()
+
+        List<OrderEntry> orders = OrderRemoteService.showOrders(passportId, marketId, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), roleType, statusSet, orderType, pageIndex, pageSize);
         JSONArray response = fillShowOrderMsg(roleType, orders);
         return success(response);
     }
@@ -209,7 +209,31 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if (orderEntry.getCourierPassportId() != null && orderEntry.getCourierPassportId() > 0) {
             return MarketOrderErrorCodeEnum.ORDER_HAS_ACCEPT.response();
         }
+        MarketOrderUnacceptLogger orderUnacceptLogger = dataAccessFactory.getOrderDataAccessManager().getOrderUnacceptLogger(passportId, orderEntry.getOrderSequenceNumber());
+        if (orderUnacceptLogger == null) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response("订单已被接取");
+        }
+        // 移除所有未接记录
+        dataAccessFactory.getOrderDataAccessManager().removeUnAcceptLoggers(orderEntry.getOrderSequenceNumber());
         return OrderRemoteService.acceptOrder(passportId, orderId);
+    }
+
+    @Override
+    public JSONObject notifyAcceptedOrder() {
+        String data = getUTF("data");
+        OrderEntry orderEntry = JSONObject.toJavaObject(JSONObject.parseObject(data), OrderEntry.class);
+
+        orderEventListenerManager.notifyAcceptedOrder(orderEntry);
+        return success();
+    }
+
+    @Override
+    public JSONObject deliverOrder() {
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+        OrderRemoteService.refreshOrderStatus(orderSequenceNumber, OrderPermissionTypeEnum.DELIVERY.getKey(), String.valueOf(orderEntry.getCourierPassportId()), OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey(), String.valueOf(OrderStatusEnum.ORDER_STATUS_DELIVER.getKey()));
+        return success();
     }
 
     @Override
@@ -246,21 +270,26 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if (Long.parseLong(orderEntry.getPartnerUserId()) != passportId) {
             return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
         }
-
         JSONObject response = new JSONObject();
         MarketOrderProperties orderContainerSetProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getKey());
         if (orderContainerSetProperties == null) {
-            // return MarketOrderErrorCodeEnum.ORDER_STATUS_ERROR.response();
+            return MarketOrderErrorCodeEnum.PICK_UP_DATA_ERROR.response("没有可以领取的商品");
         }
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
-        // TODO 模拟数据
+        String statusCode = orderContainerSetProperties.getV().split(CommonUtils.SPLIT_UNDER_LINE)[0];
+        String value = orderContainerSetProperties.getV().split(CommonUtils.SPLIT_UNDER_LINE)[1];
         response.put("mark", "请从" + marketEntry.getName() + "以下出货口取走商品");
+        response.put("statusCode", statusCode);
 
         JSONArray containerData = new JSONArray();
-        containerData.add("A106");
-        containerData.add("A108");
-        containerData.add("A206");
 
+        if ("00".equals(statusCode)) {
+            for (int i = 0; i < value.length() / 2; i++) {
+                containerData.add(value.substring(i * 2, (i + 1) * 2));
+            }
+        } else {
+            containerData.add(value);
+        }
         response.put("containerData", containerData);
         return success(response);
     }
@@ -283,8 +312,23 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             if (statusEnter == StatusEnterEnum.RECOMMEND.getKey()) { // 首页推荐
                 return OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey();
             }
+            return OrderStatusEnum.ORDER_STATUS_CANCEL.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey();
         }
-        return OrderStatusEnum.ORDER_STATUS_CANCEL.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey();
+        if (roleType == OrderRoleTypeEnum.COURIER.getKey()) {
+            if (statusEnter == StatusEnterEnum.COURIER_WAIT_ACCEPT.getKey()) {
+                return String.valueOf(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey());
+            }
+            if (statusEnter == StatusEnterEnum.COURIER_WAIT_PICK_UP.getKey()) {
+                return OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_ACCEPT.getKey();
+            }
+            if (statusEnter == StatusEnterEnum.COURIER_DELIVER.getKey()) {
+                return String.valueOf(OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey());
+            }
+            if (statusEnter == StatusEnterEnum.COURIER_CANCEL.getKey()) {
+                return String.valueOf(OrderStatusEnum.ORDER_STATUS_CANCEL.getKey());
+            }
+        }
+        return String.valueOf(OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey());
     }
 
     private JSONArray fillShowOrderMsg(int roleType, List<OrderEntry> orderEntries) {

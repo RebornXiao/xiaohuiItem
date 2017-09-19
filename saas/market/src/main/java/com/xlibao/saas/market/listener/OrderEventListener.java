@@ -11,6 +11,8 @@ public interface OrderEventListener {
 
     void notifyOrderPayment(OrderEntry order);
 
+    void notifyAcceptedOrder(OrderEntry orderEntry);
+
     void notifyDeliveredOrderEntry(OrderEntry orderEntry);
 
     void notifyConfirmedOrderEntry(OrderEntry orderEntry);

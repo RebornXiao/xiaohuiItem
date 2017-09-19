@@ -6,6 +6,7 @@ package com.xlibao.saas.market.service.market;
 public enum MarketRelationshipTypeEnum {
 
     FOCUS(1, "关注"),
+    COURIER(2, "配送")
     ;
 
     private int key;

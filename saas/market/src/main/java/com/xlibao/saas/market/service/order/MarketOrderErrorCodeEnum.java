@@ -17,6 +17,8 @@ public enum MarketOrderErrorCodeEnum {
     NON_MARKET_ORDER (3002, "非本店订单，不能在本店取货"),
     /** 3003 - 已不能退款 */
     CANNOT_REFUND(3003, "已不能退款"),
+    /** 3004 -- 取货数据有误 */
+    PICK_UP_DATA_ERROR(3004, "取货数据有误")
     ;
 
     private int key;
@@ -43,11 +45,11 @@ public enum MarketOrderErrorCodeEnum {
         return response(getValue());
     }
 
-    public void throwException() {
-        throwException(getValue());
+    public XlibaoRuntimeException throwException() {
+        return throwException(getValue());
     }
 
-    public void throwException(String message) {
+    public XlibaoRuntimeException throwException(String message) {
         throw new XlibaoRuntimeException(getKey(), message);
     }
 }

@@ -124,24 +124,6 @@ public class OrderRemoteService extends BasicRemoteService {
                 ConfigFactory.getDomainNameConfig().orderRemoteURL, orderSequenceNumber);
     }
 
-    public static List<OrderEntry> getOrders(String sequenceNumber) {
-        Map<String, String> parameters = initialParameter();
-
-        parameters.put("sequenceNumber", sequenceNumber);
-
-        JSONObject response = postOrderMsg("order/getOrders", parameters);
-
-        logger.info("批量获取订单数据：" + response);
-
-        response = response.getJSONObject("response");
-        JSONArray orderArray = response.getJSONArray("orderArray");
-        List<OrderEntry> orders = new ArrayList<>();
-        for (int i = 0; i < orderArray.size(); i++) {
-            orders.add(JSONObject.parseObject(orderArray.getString(i), OrderEntry.class));
-        }
-        return orders;
-    }
-
     public static List<OrderEntry> showOrders(long passportId, long appointFriendPassportId, byte target, int roleType, String orderStatusSet, int type, int pageIndex, int pageSize) {
         Map<String, String> parameters = initialParameter();
 
@@ -216,15 +198,6 @@ public class OrderRemoteService extends BasicRemoteService {
         JSONObject response = postOrderMsg("order/correctOrderPrice", parameters);
 
         logger.info("修正订单价格结果：" + response);
-    }
-
-    public static void paymentOrder(long orderId, String paymentType) {
-        Map<String, String> parameters = initialParameter();
-
-        parameters.put("orderId", String.valueOf(orderId));
-        parameters.put("transType", paymentType);
-
-        postOrderMsg("order/paymentOrder", parameters);
     }
 
     public static JSONObject cancelOrder(long orderId, String partnerUserId, int beforeStatus, String reason) {

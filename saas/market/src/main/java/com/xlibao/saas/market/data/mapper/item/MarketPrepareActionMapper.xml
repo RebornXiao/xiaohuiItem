@@ -36,7 +36,7 @@
     </select>
 
     <select id="distinctPrepareItemBarcode" resultType="int">
-        select ifnull(sum(distinct hope_item_barcode), 0) from market_prepare_action where market_id = #{marketId} and status = #{matchStatusSet} and executor_passport_id in(0, ${passportId})
+        select ifnull(count(distinct hope_item_barcode), 0) from market_prepare_action where market_id = #{marketId} and status = #{matchStatusSet} and executor_passport_id in(0, ${passportId})
         and hope_executor_date = #{hopeExecutorDate} and has_complete_quantity > 0
     </select>
 
@@ -45,7 +45,7 @@
     </select>
 
     <select id="getPrepareActions" resultMap="BaseResultMap">
-        select * from market_prepare_action where market_id = #{marketId} and statusSet = #{statusSet}
+        select * from market_prepare_action where market_id = #{marketId} and status in(${statusSet})
         <if test="executorPassportId != 0"> and executor_passport_id = #{executorPassportId} </if>
         order by hope_executor_date desc, type desc, has_complete_quantity, item_location limit #{pageStartIndex}, #{pageSize}
     </select>
@@ -59,11 +59,12 @@
     </select>
 
     <select id="getRemainActionRows" resultType="int">
-        select count(*) from market_prepare_action where
+        select count(*) from market_prepare_action where market_id = #{marketId} and status in(${statusSet})
+        <if test="type != 0"> and type = #{type} </if>
     </select>
 
     <select id="preparedSummaryData" resultMap="SummaryMap">
-        select hope_executor_date, sum(hope_item_quantity) hope_total_item_quantity, sum(has_complete_quantity) actual_item_quantity, sum(distinct hope_item_barcode) hope_total_barcode_quantity from market_prepare_action
+        select hope_executor_date, sum(hope_item_quantity) hope_total_item_quantity, sum(has_complete_quantity) actual_item_quantity, ifnull(count(distinct hope_item_barcode), 0) hope_total_barcode_quantity from market_prepare_action
         where market_id = #{marketId} and type = #{type} and status in (${statusSet}) and executor_passport_id = #{passportId} group by hope_executor_date
     </select>
 

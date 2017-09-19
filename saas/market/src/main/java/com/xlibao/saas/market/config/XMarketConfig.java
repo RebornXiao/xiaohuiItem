@@ -32,6 +32,11 @@ public class XMarketConfig {
     @Value("${marketShopAppkey}")
     private String marketShopAppkey;
 
+    @Value("${jpush_app_secret}")
+    private String jpushAppSecret;
+    @Value("${jpush_app_key}")
+    private String jpushAppKey;
+
     public String getPartnerId() {
         return partnerId;
     }
@@ -66,5 +71,13 @@ public class XMarketConfig {
 
     public String getMarketShopAppkey() {
         return marketShopAppkey;
+    }
+
+    public String getJPushAppSecret() {
+        return jpushAppSecret;
+    }
+
+    public String getJPushAppKey() {
+        return jpushAppKey;
     }
 }

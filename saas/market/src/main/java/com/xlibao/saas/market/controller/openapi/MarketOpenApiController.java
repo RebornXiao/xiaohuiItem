@@ -290,6 +290,12 @@ public class MarketOpenApiController {
         return shelvesService.showShelvesTask();
     }
 
+    @ResponseBody
+    @RequestMapping(value = "findValidTasks")
+    public JSONObject findValidTasks() {
+        return shelvesService.findValidTasks();
+    }
+
     /**
      * <pre>
      *     <b>完成今天的所有预操作任务</b>

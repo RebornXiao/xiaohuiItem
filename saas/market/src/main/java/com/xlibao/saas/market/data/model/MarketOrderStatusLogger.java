@@ -6,6 +6,7 @@ public class MarketOrderStatusLogger {
 
     private Long id;
     private String orderSequenceNumber;
+    private String mark;
     private Integer notifyType;
     private Integer localStatus;
     private Integer remoteStatus;
@@ -26,6 +27,14 @@ public class MarketOrderStatusLogger {
 
     public void setOrderSequenceNumber(String orderSequenceNumber) {
         this.orderSequenceNumber = orderSequenceNumber == null ? null : orderSequenceNumber.trim();
+    }
+
+    public String getMark() {
+        return mark;
+    }
+
+    public void setMark(String mark) {
+        this.mark = mark;
     }
 
     public Integer getNotifyType() {
