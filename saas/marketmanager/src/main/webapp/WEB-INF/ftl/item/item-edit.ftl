@@ -314,7 +314,6 @@
                         unitId:_unitId,
                         costPrice:$("#costPrice").val(),
                         defaultPrice:$("#defaultPrice").val(),
-                        passportId:0,
                         iLength:$("#iLength").val(),
                         iWidth:$("#iWidth").val(),
                         iHeight:$("#iHeight").val(),

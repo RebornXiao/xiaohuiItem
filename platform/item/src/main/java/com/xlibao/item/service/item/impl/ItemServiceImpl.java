@@ -410,7 +410,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         long unitId = getLongParameter("unitId");
         long costPrice = CommonUtils.changeMoney(getUTF("costPrice", "0"));
         long defaultPrice = CommonUtils.changeMoney(getUTF("defaultPrice", "0"));
-        long passportId = getLongParameter("passportId");
+        long passportId = getLongParameter("passportId", 0);
 
         int ilength = getIntParameter("iLength", 0);
         int iwidth = getIntParameter("iWidth", 0);
