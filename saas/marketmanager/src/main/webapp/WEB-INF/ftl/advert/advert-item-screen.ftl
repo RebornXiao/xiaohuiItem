@@ -21,11 +21,11 @@
             <div class="card-box">
                 <form class="form-inline" role="form" action="${base}/advert/screens.do">
                     <div class="form-group m-l-15">
-                        <label for="screenNumber">屏幕编号：</label>
+                        <label>屏幕编号：</label>
                         <input type="text" class="form-control" id="code" name="code" value="${code}" placeholder="输入编号">
                     </div>
                     <div class="form-group m-l-15">
-                        <label for="storeInfo">门店信息：</label>
+                        <label>门店信息：</label>
                         <select class="form-control" id="marketID" name="marketID" style="width:150px">
                             <option value="">全部店铺</option>
                         <#if markets?exists >
@@ -115,7 +115,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/advert/screens.do"/>
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/advert/screens.do?code=${code}&marketID=${marketID}"/>
                 </div>
             </div>
             <!--/分页-->

@@ -26,7 +26,7 @@
                             <option value="-1">全部店铺</option>
                             <#if markets?exists >
                                 <#list markets as market>
-                                    <option value="${market.id?c}"<#if marketID == market.id>selected</#if>>
+                                    <option value="${market.id?c}">
                                     ${market.name}
                                     </option>
                                 </#list>
@@ -162,7 +162,8 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                <#--<@paginate nowPage=pageIndex itemCount=count action="${base}/item/itemList.do?searchType=${searchType}&searchKey=${searchKey}" />-->
+                <@paginate nowPage=pageIndex itemCount=count action="${base}/advert/advertScreens.do?marketID=${marketID}&code=${code}
+                                &title=${title}&beginTime=${beginTime}&endTime=${endTime}&isDown=${isDown}&playStatus=${playStatus}"/>
                 </div>
             </div>
             <!--/分页-->

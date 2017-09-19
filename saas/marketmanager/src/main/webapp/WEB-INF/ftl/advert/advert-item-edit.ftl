@@ -17,11 +17,11 @@
             <div class="card-box">
                 <form class="form-inline" role="form" action="${base}/advert/adverts.do">
                     <div class="form-group m-l-15">
-                        <label for="advertNavTitle">广告标题：</label>
+                        <label>广告标题：</label>
                         <input type="text" class="form-control" id="advertNavTitle" placeholder="输入广告标题关键字" name="title">
                     </div>
                     <div class="form-group m-l-15">
-                        <label for="advertNavTime">广告时长：</label>
+                        <label>广告时长：</label>
                         <select id="advertNavTime" class="form-control" name="timeType">
                             <option class="optionTime" value="-1">选择广告时长</option>
                             <option class="optionTime" value="0">15s以内</option>
@@ -91,7 +91,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/advert/adverts.do?title=test7&timeType=1"/>
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/advert/adverts.do?title=${title}&timeType=${timeType}"/>
                 </div>
             </div>
             <!--/分页-->
