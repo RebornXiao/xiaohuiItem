@@ -1,6 +1,8 @@
 package com.xlibao.saas.market.data.mapper.order;
 
 import com.xlibao.common.constant.order.OrderStatusEnum;
+import com.xlibao.market.data.model.MarketOrderPushedLogger;
+import com.xlibao.market.data.model.MarketOrderUnacceptLogger;
 import com.xlibao.market.data.model.MarketSplitOrder;
 import com.xlibao.saas.market.data.model.MarketOrderProperties;
 import com.xlibao.saas.market.data.model.MarketOrderStatusLogger;
@@ -22,10 +24,15 @@ public class OrderDataAccessManager {
     private MarketOrderPropertiesMapper orderPropertiesMapper;
     @Autowired
     private MarketSplitOrderMapper splitOrderMapper;
+    @Autowired
+    private MarketOrderUnacceptLoggerMapper orderUnacceptLoggerMapper;
+    @Autowired
+    private MarketOrderPushedLoggerMapper orderPushedLoggerMapper;
 
-    public int createOrderStatusLogger(String orderSequenceNumber, int notifyType, OrderStatusEnum localStatus, int remoteStatus, long remoteCompleteTime) {
+    public int createOrderStatusLogger(String orderSequenceNumber, String mark, int notifyType, OrderStatusEnum localStatus, int remoteStatus, long remoteCompleteTime) {
         MarketOrderStatusLogger orderStatusLogger = new MarketOrderStatusLogger();
         orderStatusLogger.setOrderSequenceNumber(orderSequenceNumber);
+        orderStatusLogger.setMark(mark);
         orderStatusLogger.setNotifyType(notifyType);
         orderStatusLogger.setLocalStatus(localStatus.getKey());
         orderStatusLogger.setLocalCompleteTime(new Date(System.currentTimeMillis()));
@@ -74,5 +81,34 @@ public class OrderDataAccessManager {
 
     public List<MarketSplitOrder> getSplitOrders(long orderId) {
         return splitOrderMapper.getSplitOrders(orderId);
+    }
+
+    public int removeUnAcceptLoggers(String orderSequenceNumber) {
+        return orderUnacceptLoggerMapper.removeUnAcceptLoggers(orderSequenceNumber);
+    }
+
+    public int createUnAcceptLogger(String orderSequenceNumber, long passportId) {
+        MarketOrderUnacceptLogger orderUnacceptLogger = new MarketOrderUnacceptLogger();
+        orderUnacceptLogger.setTargetPassportId(passportId);
+        orderUnacceptLogger.setOrderSequenceNumber(orderSequenceNumber);
+
+        return orderUnacceptLoggerMapper.createUnAcceptLogger(orderUnacceptLogger);
+    }
+
+    public MarketOrderUnacceptLogger getOrderUnacceptLogger(long passportId, String orderSequenceNumber) {
+        return orderUnacceptLoggerMapper.getOrderUnacceptLogger(passportId, orderSequenceNumber);
+    }
+
+    public int createOrderPushedLogger(String orderSequenceNumber, long passportId, int type, String msgTitle, String msgContent, String pushResult, Date date, byte status) {
+        MarketOrderPushedLogger orderPushedLogger = new MarketOrderPushedLogger();
+        orderPushedLogger.setOrderSequenceNumber(orderSequenceNumber);
+        orderPushedLogger.setTargetPassportId(passportId);
+        orderPushedLogger.setPushType(type);
+        orderPushedLogger.setPushTitle(msgTitle);
+        orderPushedLogger.setPushMsgContent(msgContent);
+        orderPushedLogger.setPushResult(pushResult);
+        orderPushedLogger.setPushTime(date);
+        orderPushedLogger.setStatus(status);
+        return orderPushedLoggerMapper.createOrderPushedLogger(orderPushedLogger);
     }
 }

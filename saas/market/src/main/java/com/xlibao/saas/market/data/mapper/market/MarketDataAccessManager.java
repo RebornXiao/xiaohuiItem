@@ -19,10 +19,6 @@ public class MarketDataAccessManager {
     @Autowired
     private MarketEntryMapper entryMapper;
     @Autowired
-    private MarketCabinetLoggerMapper cabinetLoggerMapper;
-    @Autowired
-    private MarketCabinetMapper cabinetMapper;
-    @Autowired
     private MarketRelationshipMapper relationshipMapper;
     @Autowired
     private MarketAccessLoggerMapper accessLoggerMapper;
@@ -89,6 +85,10 @@ public class MarketDataAccessManager {
 
     public List<MarketRelationship> myFocusMarkets(long passportId, int type) {
         return relationshipMapper.myFocusMarkets(passportId, type);
+    }
+
+    public List<MarketRelationship> getRelationships(long marketId, int type) {
+        return relationshipMapper.getRelationships(marketId, type);
     }
 
     public MarketRelationship getRelationship(long passportId, long marketId, int type) {

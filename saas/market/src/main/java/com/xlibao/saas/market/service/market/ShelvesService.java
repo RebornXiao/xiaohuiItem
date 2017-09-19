@@ -31,4 +31,6 @@ public interface ShelvesService {
     JSONObject onShelves();
 
     JSONObject finishTodayPrepareActions();
+
+    JSONObject findValidTasks();
 }

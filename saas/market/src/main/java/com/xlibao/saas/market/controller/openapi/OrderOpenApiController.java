@@ -192,6 +192,12 @@ public class OrderOpenApiController {
         return orderService.acceptOrder();
     }
 
+    @ResponseBody
+    @RequestMapping(value = "acceptOrder")
+    public JSONObject deliverOrder() {
+        return orderService.deliverOrder();
+    }
+
     /**
      * <pre>
      *     <b>退款</b>

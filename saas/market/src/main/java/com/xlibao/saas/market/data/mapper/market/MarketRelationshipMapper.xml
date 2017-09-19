@@ -17,4 +17,8 @@
     <select id="getRelationship" resultMap="BaseResultMap">
         select * from market_relationship where market_id = #{marketId} and type = #{type} and status = 1 and passport_id = #{passportId}
     </select>
+
+    <select id="getRelationships" resultMap="BaseResultMap">
+        select * from market_relationship where market_id = #{marketId} and type = #{type} and status = 1
+    </select>
 </mapper>

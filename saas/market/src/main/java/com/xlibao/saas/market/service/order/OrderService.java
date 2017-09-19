@@ -21,6 +21,10 @@ public interface OrderService {
 
     JSONObject acceptOrder();
 
+    JSONObject notifyAcceptedOrder();
+
+    JSONObject deliverOrder();
+
     JSONObject refundOrder();
 
     JSONObject findContainerData();

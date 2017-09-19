@@ -144,7 +144,7 @@
 
     <update id="offShelves">
         update market_item set stock = stock - #{quantity}, status = #{status}
-        <if test="quantity > 0">, total_storage = total_storage + #{stock}</if>
+        <if test="quantity > 0">, total_storage = total_storage + #{quantity}</if>
         <if test="quantity &lt; 0">, total_out_storage = total_out_storage + #{quantity}</if>
         where id = #{itemId}
     </update>

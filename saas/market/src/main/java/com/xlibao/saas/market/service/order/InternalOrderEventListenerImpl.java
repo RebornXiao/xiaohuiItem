@@ -1,18 +1,26 @@
 package com.xlibao.saas.market.service.order;
 
+import cn.jpush.api.JPushClient;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.CommonUtils;
+import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.constant.order.DeliverTypeEnum;
 import com.xlibao.common.constant.order.OrderPermissionTypeEnum;
 import com.xlibao.common.constant.order.OrderStatusEnum;
+import com.xlibao.common.thread.AsyncScheduledService;
 import com.xlibao.datacache.item.ItemDataCacheService;
+import com.xlibao.io.service.jpush.JPushConfig;
+import com.xlibao.io.service.jpush.JPushService;
+import com.xlibao.market.data.model.MarketRelationship;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
+import com.xlibao.saas.market.config.ConfigFactory;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.listener.OrderEventListener;
 import com.xlibao.saas.market.service.XMarketServiceConfig;
+import com.xlibao.saas.market.service.market.MarketRelationshipTypeEnum;
 import com.xlibao.saas.market.service.order.properties.PropertiesKeyEnum;
 import com.xlibao.saas.market.service.support.remote.OrderRemoteService;
 import org.slf4j.Logger;
@@ -83,7 +91,6 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
 
             dataAccessFactory.getOrderDataAccessManager().createSplitOrder(orderEntry.getId(), orderEntry.getOrderSequenceNumber(), serialCode, value.toString());
         }
-
         JSONObject containerData = new JSONObject();
         containerData.put("containerCount", counter);
         containerData.put("containers", new JSONArray());
@@ -95,7 +102,13 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
     public void notifyOrderPayment(OrderEntry order) {
         if (order.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) { // 自提时 支付完成后将订单设置为出货状态
             OrderRemoteService.refreshOrderStatus(order.getOrderSequenceNumber(), OrderPermissionTypeEnum.CONSUMER.getKey(), order.getPartnerUserId(), OrderStatusEnum.ORDER_STATUS_DELIVER.getKey(), String.valueOf(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()));
+            return;
         }
+        pushCourierMessage(order);
+    }
+
+    @Override
+    public void notifyAcceptedOrder(OrderEntry orderEntry) {
     }
 
     @Override
@@ -123,6 +136,41 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
 
         groupOrder.add(data);
         groupOrders.put(counter, groupOrder);
+    }
+
+    private void pushCourierMessage(OrderEntry orderEntry) {
+        final String msgTitle = "您有一个新的配送订单";
+        final String msgContent = "【" + orderEntry.getShippingNickName() + "】的订单";
+        Runnable runnable = () -> {
+            List<MarketRelationship> marketRelationships = dataAccessFactory.getMarketDataAccessManager().getRelationships(orderEntry.getShippingPassportId(), MarketRelationshipTypeEnum.FOCUS.getKey());
+            if (CommonUtils.isEmpty(marketRelationships)) {
+                return;
+            }
+            Date date = new Date();
+            Map<String, String> messageEntry = new HashMap<>();
+            messageEntry.put("type", "1");
+            messageEntry.put("orderType", String.valueOf(orderEntry.getType()));
+            messageEntry.put("orderSequenceNumber", orderEntry.getOrderSequenceNumber());
+
+            // 移除原来所有的推送记录(不管是否存在)
+            dataAccessFactory.getOrderDataAccessManager().removeUnAcceptLoggers(orderEntry.getOrderSequenceNumber());
+            String[] targets = new String[marketRelationships.size()];
+            for (int i = 0; i < marketRelationships.size(); i++) {
+                MarketRelationship marketRelationship = marketRelationships.get(i);
+                targets[i] = String.valueOf(marketRelationship.getPassportId());
+                // 建立推送记录
+                dataAccessFactory.getOrderDataAccessManager().createUnAcceptLogger(orderEntry.getOrderSequenceNumber(), marketRelationship.getPassportId());
+            }
+            // 执行推送
+            JPushClient pushClient = JPushConfig.initialJPushClient(ConfigFactory.getXMarketConfig().getJPushAppSecret(), ConfigFactory.getXMarketConfig().getJPushAppKey());
+            String pushResult = JPushService.pushMessage(pushClient, msgTitle, msgContent, null, messageEntry, targets);
+
+            for (MarketRelationship marketRelationship : marketRelationships) {
+                dataAccessFactory.getOrderDataAccessManager().createOrderPushedLogger(orderEntry.getOrderSequenceNumber(), marketRelationship.getPassportId(), orderEntry.getType(), msgTitle, msgContent,
+                        pushResult, date, GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
+            }
+        };
+        AsyncScheduledService.submitImmediateRemoteNotifyTask(runnable);
     }
 
     private class ItemLengthComparator implements Comparator<OrderItemSnapshot> {
