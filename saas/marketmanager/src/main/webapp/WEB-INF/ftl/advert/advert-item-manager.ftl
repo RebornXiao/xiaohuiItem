@@ -243,12 +243,13 @@
                         $("#editNoBtn").on('click',function () {
                             $("#editModel").modal('hide');
                         });
+                        console.log(object);
                         $("#editTitle").val(object.title);
                         $("#editTime").val(object.timeSize);
                         $("#editRemark").val(object.advertRemark);
                         $("#editStoreInfo option:selected").val(object.marketID);
                         $("#editStoreInfo option:selected").text(object.marketName);
-                        $("#editScreenNum option:selected").val(object.screenID);
+                        $("#editScreenNum option:selected").val(object.sCode);
                         $("#editScreenNum option:selected").text(object.sCode);
                         $("#editStartTime").val(object.beginTime);
                         $("#editEndTime").val(object.endTime);
