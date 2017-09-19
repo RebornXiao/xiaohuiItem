@@ -53,10 +53,11 @@ public class QiniuFileUtil {
 
                     Response response = uploadManager.put(byteArrayInputStream, key, upToken, null, null);
                     DefaultPutRet putRet = new Gson().fromJson(response.bodyString(), DefaultPutRet.class);
-                    path = path+putRet.key;
+                    System.out.println("path:"+path);
                     json.put("status", STATUS_SUCCESS);
                     json.put("path",path);
                     json.put("videoName",putRet.key);
+                    System.out.println("putRet.key:"+putRet.key);
                 } catch (QiniuException e) {
                     Response r = e.response;
                     json.put("status", STATUS_ERROR);

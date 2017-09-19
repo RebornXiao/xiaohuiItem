@@ -55,7 +55,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("title",title);
         parameters.put("timeSize", timeSize);
         parameters.put("remark",remark);
-        parameters.put("url",path);
+        parameters.put("url",path+videoName);
         parameters.put("videoName",videoName);
 
 
