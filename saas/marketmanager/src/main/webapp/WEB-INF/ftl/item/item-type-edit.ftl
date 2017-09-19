@@ -239,8 +239,8 @@
                         icon: _imgUrl,
                     }
 
-                    //$(this).button("loading");
-                    $(this).attr("disabled", true);
+                    var btn_ = $(this);
+                    btn_.attr("disabled", true);
 
                     //保存
                     tokenPresPost("${base}/item/itemTypeEditSave.do", post_data, function(data) {
@@ -256,7 +256,7 @@
                             }
                         } else {
                             //$(this).button("reset");
-                            $(this).removeAttr("disabled");
+                            btn_.removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

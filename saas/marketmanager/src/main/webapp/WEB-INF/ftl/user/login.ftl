@@ -151,9 +151,8 @@
                         $.cookie("loginName", '', { expires: -1 });
                     }
 
-                    //$(this).button("loading");
-
-                    $(this).attr("disabled", true);
+                    var btn_ = $(this);
+                    btn_.attr("disabled", true);
 
                     $.post("${base}/passportopen/login.do?userName=" + name + "&passWord=" + pass, function (data) {
 
@@ -171,7 +170,7 @@
                             //location.href = "${base}/passport/main.do?passportId="+passport.id;
                         } else {
                             //$("#loginBtn").button("reset");
-                            $(this).removeAttr("disabled");
+                            btn_.removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

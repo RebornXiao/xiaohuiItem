@@ -211,7 +211,9 @@
                         description:des,
                     };
 
-                    $(this).attr("disabled", true);
+
+                    var btn_ = $(this);
+                    btn_.attr("disabled", true);
 
                     tokenPresPost("${base}/market/marketItemAddSave.do", post_data, function (data) {
 
@@ -223,7 +225,7 @@
                             });
                         } else {
                             //$(this).button("reset");
-                            $(this).removeAttr("disabled");
+                            btn_.removeAttr("disabled");
                             swal(data.msg);
                         }
 

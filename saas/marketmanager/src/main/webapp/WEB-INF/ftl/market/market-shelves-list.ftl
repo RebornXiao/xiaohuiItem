@@ -677,7 +677,8 @@
                         txt = txt + k + "-" + value.itemId + "-" + value.itemStock + ",";
                     });
 
-                    $(this).attr("disabled", true);
+                    var btn_ = $(this);
+                    btn_.attr("disabled", true);
 
                     tokenPost("${base}/market/prepareAction.do?marketId=" + s_MarketId + "&actionDatas=" + txt + "&hopeExecutorDate=" + hDate, function (data) {
                         //重新刷新
@@ -688,7 +689,7 @@
                             })
                         } else {
                             //$(this).button("reset");
-                            $(this).removeAttr("disabled");
+                            btn_.removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

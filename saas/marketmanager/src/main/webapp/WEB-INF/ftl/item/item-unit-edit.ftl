@@ -99,7 +99,8 @@
                         status = 1;
                     }
 
-                    $(this).attr("disabled", true);
+                    var btn_ = $(this);
+                    btn_.attr("disabled", true);
 
                     tokenPost("${base}/item/itemUnitEditSave.do?id=" + itemUnitId + "&title=" + title + "&status=" + status, function (data) {
 
@@ -115,7 +116,7 @@
                                 open({url:"${base}/item/itemUnits.do"});
                             });
                         } else {
-                            $(this).removeAttr("disabled");
+                            btn_.removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

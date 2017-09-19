@@ -106,7 +106,9 @@
                     var cityId = $('#loc_city').val();
                     var areaId = $('#loc_district').val();
 
-                    $(this).attr("disabled", true);
+
+                    var btn_ = $(this);
+                    btn_.attr("disabled", true);
 
                     tokenPost("${base}/market/streetEditSave.do?id=" + _streetId + "&title=" + title + "&areaId=" + areaId, function (data) {
                         //重新刷新
@@ -117,7 +119,7 @@
                             })
                         } else {
                             //$(this).button("reset");
-                            $(this).removeAttr("disabled");
+                            btn_.removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");
