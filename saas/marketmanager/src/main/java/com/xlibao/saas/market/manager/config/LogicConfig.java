@@ -49,6 +49,25 @@ public class LogicConfig {
     public static final String FTL_ADVERT_MANAGET_PLAYDETAIL = "advert/advert-item-playDetail";
     public static final String FTL_ADVERT_MANAGET_ADDPLAY = "advert/advert-item-addPlay";
 
+    //采购相关页面
+    public static final String FTL_PURCHASE_EDIT = "purchase/purchase-edit";
+    public static final String FTL_PURCHASE_ADD = "purchase/purchase-add";
+    public static final String FTL_PURCHASE_DETAIL = "purchase/purchase-detail";
+    public static final String FTL_PURCHASE_LIST = "purchase/purchase-list";
+
+    public static final String FTL_HOUSE_EDIT = "purchase/house-edit";
+    public static final String FTL_HOUSE_ADD = "purchase/house-add";
+    public static final String FTL_HOUSE_DETAIL = "purchase/house-detail";
+    public static final String FTL_HOUSE_LIST = "purchase/house-list";
+    public static final String FTL_HOUSE_ADDUSER = "purchase/house-addUser";
+
+    public static final String FTL_SUPPLIER_EDIT = "purchase/supplier-edit";
+    public static final String FTL_SUPPLIER_ADD = "purchase/supplier-add";
+    public static final String FTL_SUPPLIER_DETAIL = "purchase/supplier-detail";
+    public static final String FTL_SUPPLIER_LIST = "purchase/supplier-list";
+
+    public static final String FTL_STOCK_LIST = "purchase/stock-list";
+
     //商品相关页面
     public static final String FTL_ITEM_LIST = "item/item-list";
     public static final String FTL_ITEM_EDIT = "item/item-edit";
