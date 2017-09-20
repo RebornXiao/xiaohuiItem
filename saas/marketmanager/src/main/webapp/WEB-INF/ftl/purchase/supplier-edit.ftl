@@ -35,13 +35,12 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">供应商属性：</label>
-                                    <div class="col-md-4">
+                                    <div class="col-md-2">
                                         <select id="supplierSelect" class="form-control">
-                                        <#if adverts?exists >
-                                            <#list adverts as advert>
-                                                <option value="${advert.advertID?c}">${advert.title}</option>
-                                            </#list>
-                                        </#if>
+                                            <option value="1">一级供应商</option>
+                                            <option value="2">二级供应商</option>
+                                            <option value="3">品牌供应商</option>
+                                            <option value="4">超市供应商</option>
                                         </select>
                                     </div>
                                 </div>
@@ -51,17 +50,45 @@
                                         <input type="text" id="cycle" class="form-control">
                                     </div>
                                 </div>
-                                <div class="form-group m-t-20">
-                                    <div class="col-md-4">
-                                    </div>
-                                    <button id="saveBtn" type="button"
-                                            class="btn waves-effect waves-light btn-primary col-md-2">确定
-                                    </button>
-                                    <button id="backBtn" type="button"
-                                            class="btn waves-effect waves-light btn-default col-md-2">返回
-                                    </button>
+                            </form>
+                            <h5 class="page-title" style="padding-top: 20px"><b>联系信息</b></h5>
+                            <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                            <form class="form-horizontal" role="form">
+                                <div class="table-responsive advert_detail_table">
+                                    <table class="table table-bordered">
+                                        <thead>
+                                        <tr>
+                                            <th style="background-color: #f9f9f9">对接业务员</th>
+                                            <th style="background-color: #f9f9f9">联系电话</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <#--<#if (screens?size > 0)>-->
+                                        <#--<#list screens as screen>-->
+                                        <#--<tr>-->
+                                            <#--<td>${screen.marketName}</td>-->
+                                            <#--<td>${screen.code}</td>-->
+                                        <#--</tr>-->
+                                        <#--</#list>-->
+                                    <#--<#else>-->
+                                        <#--<tr>-->
+                                            <#--<td colSpan="11" height="100px">-->
+                                                <#--<p class="text-center" style="line-height: 100px">暂无任何数据</p>-->
+                                            <#--</td>-->
+                                        <#--</tr>-->
+                                    <#--</#if>-->
+                                        </tbody>
+                                    </table>
                                 </div>
                             </form>
+                            <div class="form-group m-t-20">
+                                <button id="saveBtn" type="button"
+                                        class="btn waves-effect waves-light btn-primary col-md-2">确定
+                                </button>
+                                <button id="backBtn" type="button"
+                                        class="btn waves-effect waves-light btn-default col-md-2">返回
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>

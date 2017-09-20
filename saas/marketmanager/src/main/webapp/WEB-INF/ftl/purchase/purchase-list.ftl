@@ -24,7 +24,11 @@
                         </select>
                     </div>
                     <div class="form-group m-l-15">
-                        <label>状态：</label>
+                        <label>供应商名称：</label>
+                        <input type="text" class="form-control" id="supplierName" placeholder="输入供应商名称" name="title">
+                    </div>
+                    <div class="form-group m-l-15">
+                        <label>入库状态：</label>
                         <select id="status" class="form-control" name="timeType">
                             <option value="-1">全部</option>
                             <option value="0">正常</option>
@@ -37,52 +41,52 @@
                 </form>
             </div>
 
-            <button type="button" class="btn btn-primary pull-right" style="padding-left: 30px;padding-right: 30px;margin-right: 30px;margin-bottom: 20px"><i class="fa fa-plus"></i> 新建仓库</button>
+            <button type="button" class="btn btn-primary pull-right" style="padding-left: 30px;padding-right: 30px;margin-right: 30px;margin-bottom: 20px"><i class="fa fa-plus"></i> 新建采购单</button>
             <div class="row">
                 <div class="col-sm-12">
                     <table class="table table-striped table-bordered">
                         <thead class="table_head">
                         <tr>
-                            <th>仓库编码</th>
-                            <th>名称</th>
-                            <th>地址</th>
-                            <th>仓管员/位</th>
-                            <th>状态</th>
+                            <th>ID</th>
+                            <th>仓库名称</th>
+                            <th>供应商名称</th>
+                            <th>创建时间</th>
+                            <th>入库状态</th>
                             <th>操作</th>
                         </tr>
                         </thead>
                         <tbody id="purchaseInfoTable">
-                        <#if (advertList?size > 0)>
-                            <#list advertList as advert>
-                            <tr id="tr_${advert_index}">
-                                <td>${advert_index +1}</td>
-                                <td>${advert.title}</td>
-                                <td>${advert.timeSize}</td>
-                                <td>${advert.timeSize}</td>
-                                <td>${advert.createTime}</td>
-                                <td>
-                                    <button id="lookBtn" type="button" class="btn btn-primary btn-sm"
-                                            data_title="${advert.title}" data_remark="${advert.remark}"
-                                             data_time="${advert.timeSize}" data_id="${advert.advertID?c}">查看
-                                    </button>
-                                    <button id="editBtn" type="button" data-target="#editModel" class="btn btn-primary btn-sm"
-                                            data_title="${advert.title}" data_remark="${advert.remark}"
-                                            data_time="${advert.timeSize}" data_id="${advert.advertID?c}">编辑
-                                    </button>
-                                    <button id="deleBtn" type="button" data-target="#deleModel" class="btn btn-danger btn-sm"
-                                            data_title="${advert.title}" data_remark="${advert.remark}"
-                                            data_time="${advert.timeSize}" data_id="${advert.advertID?c}">启用
-                                    </button>
-                                </td>
-                            </tr>
-                            </#list>
-                        <#else>
-                        <tr>
-                            <td colSpan="11" height="200px">
-                                <p class="text-center" style="line-height: 200px">暂无任何数据</p>
-                            </td>
-                        </tr>
-                        </#if>
+                        <#--<#if (advertList?size > 0)>-->
+                            <#--<#list advertList as advert>-->
+                            <#--<tr id="tr_${advert_index}">-->
+                                <#--<td>${advert_index +1}</td>-->
+                                <#--<td>${advert.title}</td>-->
+                                <#--<td>${advert.timeSize}</td>-->
+                                <#--<td>${advert.timeSize}</td>-->
+                                <#--<td>${advert.createTime}</td>-->
+                                <#--<td>-->
+                                    <#--<button id="lookBtn" type="button" class="btn btn-primary btn-sm"-->
+                                            <#--data_title="${advert.title}" data_remark="${advert.remark}"-->
+                                             <#--data_time="${advert.timeSize}" data_id="${advert.advertID?c}">查看-->
+                                    <#--</button>-->
+                                    <#--<button id="editBtn" type="button" data-target="#editModel" class="btn btn-primary btn-sm"-->
+                                            <#--data_title="${advert.title}" data_remark="${advert.remark}"-->
+                                            <#--data_time="${advert.timeSize}" data_id="${advert.advertID?c}">编辑-->
+                                    <#--</button>-->
+                                    <#--<button id="deleBtn" type="button" data-target="#deleModel" class="btn btn-danger btn-sm"-->
+                                            <#--data_title="${advert.title}" data_remark="${advert.remark}"-->
+                                            <#--data_time="${advert.timeSize}" data_id="${advert.advertID?c}">启用-->
+                                    <#--</button>-->
+                                <#--</td>-->
+                            <#--</tr>-->
+                            <#--</#list>-->
+                        <#--<#else>-->
+                        <#--<tr>-->
+                            <#--<td colSpan="11" height="200px">-->
+                                <#--<p class="text-center" style="line-height: 200px">暂无任何数据</p>-->
+                            <#--</td>-->
+                        <#--</tr>-->
+                        <#--</#if>-->
                         </tbody>
                     </table>
                 </div>
@@ -122,20 +126,20 @@
         );
 
         //查看,编辑
-    <#if (advertList?size > 0)>
-        $("#supplierInfoTable").find('button[id=lookBtn]').each(function () {
-            var that = this;
-            $(this).on('click', function () {
-                location.href = "${base}"+$(that).attr("data_id");
-            });
-        });
-        $("#supplierInfoTable").find('button[id=editBtn]').each(function () {
-            var that = this;
-            $(this).on('click', function () {
-                location.href = "${base}"+$(that).attr("data_id");
-            });
-        });
-    </#if>
+    <#--<#if (advertList?size > 0)>-->
+        <#--$("#supplierInfoTable").find('button[id=lookBtn]').each(function () {-->
+            <#--var that = this;-->
+            <#--$(this).on('click', function () {-->
+                <#--location.href = "${base}"+$(that).attr("data_id");-->
+            <#--});-->
+        <#--});-->
+        <#--$("#supplierInfoTable").find('button[id=editBtn]').each(function () {-->
+            <#--var that = this;-->
+            <#--$(this).on('click', function () {-->
+                <#--location.href = "${base}"+$(that).attr("data_id");-->
+            <#--});-->
+        <#--});-->
+    <#--</#if>-->
     });
 </script>
 
