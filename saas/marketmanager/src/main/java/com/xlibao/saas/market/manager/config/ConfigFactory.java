@@ -1,5 +1,6 @@
 package com.xlibao.saas.market.manager.config;
 
+import com.xlibao.common.support.PassportRemoteService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
@@ -30,6 +31,9 @@ public class ConfigFactory {
 
         //DataCacheApplicationContextLoaderNotify.setItemRemoteServiceURL(domainName.itemRemoteURL);
         //ItemDataCacheService.initItemCache();
+
+
+        PassportRemoteService.setPassportRemoteServiceURL(domainName.passportRemoteURL);
 
         xmarket = xmarketConfig;
     }
