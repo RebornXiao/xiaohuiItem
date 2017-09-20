@@ -53,31 +53,31 @@
                         </tr>
                         </thead>
                         <tbody id="supplierInfoTable">
-                        <#if (advertList?size > 0)>
-                            <#list advertList as advert>
-                            <tr id="tr_${advert_index}">
-                                <td>${advert_index +1}</td>
-                                <td>${advert.title}</td>
-                                <td>${advert.timeSize}</td>
-                                <td>${advert.timeSize}</td>
-                                <td>${advert.createTime}</td>
-                                <td>${advert.timeSize}</td>
-                                <td>${advert.timeSize}</td>
-                                <td>
-                                    <button id="editBtn" type="button" class="btn btn-primary btn-sm"
-                                            data_title="${advert.title}" data_remark="${advert.remark}"
-                                             data_time="${advert.timeSize}" data_id="${advert.advertID?c}">查看
-                                    </button>
-                                </td>
-                            </tr>
-                            </#list>
-                        <#else>
-                        <tr>
-                            <td colSpan="11" height="200px">
-                                <p class="text-center" style="line-height: 200px">暂无任何数据</p>
-                            </td>
-                        </tr>
-                        </#if>
+                        <#--<#if (advertList?size > 0)>-->
+                            <#--<#list advertList as advert>-->
+                            <#--<tr id="tr_${advert_index}">-->
+                                <#--<td>${advert_index +1}</td>-->
+                                <#--<td>${advert.title}</td>-->
+                                <#--<td>${advert.timeSize}</td>-->
+                                <#--<td>${advert.timeSize}</td>-->
+                                <#--<td>${advert.createTime}</td>-->
+                                <#--<td>${advert.timeSize}</td>-->
+                                <#--<td>${advert.timeSize}</td>-->
+                                <#--<td>-->
+                                    <#--<button id="editBtn" type="button" class="btn btn-primary btn-sm"-->
+                                            <#--data_title="${advert.title}" data_remark="${advert.remark}"-->
+                                             <#--data_time="${advert.timeSize}" data_id="${advert.advertID?c}">查看-->
+                                    <#--</button>-->
+                                <#--</td>-->
+                            <#--</tr>-->
+                            <#--</#list>-->
+                        <#--<#else>-->
+                        <#--<tr>-->
+                            <#--<td colSpan="11" height="200px">-->
+                                <#--<p class="text-center" style="line-height: 200px">暂无任何数据</p>-->
+                            <#--</td>-->
+                        <#--</tr>-->
+                        <#--</#if>-->
                         </tbody>
                     </table>
                 </div>
@@ -117,13 +117,13 @@
         );
 
 	//编辑
-    <#if (advertList?size > 0)>
-        $("#supplierInfoTable").find('button[id=editBtn]').each(function () {
-            var that = this;
-            $(this).on('click', function () {
-                location.href = "${base}"+$(that).attr("data_id");
-            });
-        });
-    </#if>
+    <#--<#if (advertList?size > 0)>-->
+        <#--$("#supplierInfoTable").find('button[id=editBtn]').each(function () {-->
+            <#--var that = this;-->
+            <#--$(this).on('click', function () {-->
+                <#--location.href = "${base}"+$(that).attr("data_id");-->
+            <#--});-->
+        <#--});-->
+    <#--</#if>-->
     });
 </script>

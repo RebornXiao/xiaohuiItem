@@ -25,11 +25,15 @@ public class LogicConfig {
     public static final String TAB_MARKET_TASK_LIST = "stasks";
     public static final String TAB_MARKET_STREET_LIST = "streets";
 
+    public static final String TAB_PURCHASE = "purchase";
+    public static final String TAB_PURCHASE_LIST = "purchases";
+    public static final String TAB_SUPPLIER_LIST = "suppliers";
+    public static final String TAB_STOCK_LIST = "stocks";
+    public static final String TAB_HOUSE_LIST = "houses";
+
     public static final String TAB_ADVERT = "advert";
     public static final String TAB_ADVERT_LIST = "adverts";
     public static final String TAB_ADVERT_MANAGER = "admanager";
-
-    public static final String TAB_ADVERT_SCREEN = "adscreen";
 
     public static final String ERROR_NAME = "error";
 

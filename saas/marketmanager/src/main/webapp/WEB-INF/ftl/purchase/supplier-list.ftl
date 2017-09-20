@@ -18,7 +18,7 @@
                 <form class="form-inline" role="form" action="${base}">
                     <div class="form-group m-l-15">
                         <label>供应商名称：</label>
-                        <input type="text" class="form-control" id="supplierName" placeholder="输入广告供应商名称" name="title">
+                        <input type="text" class="form-control" id="supplierName" placeholder="输入供应商名称" name="title">
                     </div>
                     <div class="form-group m-l-15">
                         <label>供应商属性：</label>
@@ -60,38 +60,38 @@
                         </tr>
                         </thead>
                         <tbody id="supplierInfoTable">
-                        <object (supplierItem?size > 0)>
-                            <#list supplierItem as supplier>
-                            <tr id="tr_${advert_index}">
-                                <td>${supplier.id}</td>
-                                <td>${supplier.supplierName}</td>
-                                <td>${supplier.supplierType}</td>
-                                <td>${supplier.address}</td>
-                                <td>${supplier.createTime}</td>
-                                <td>${supplier.status}</td>
-                                <td>
-                                    <button id="lookBtn" type="button" class="btn btn-primary btn-sm"
-                                            data_title="${advert.title}" data_remark="${advert.remark}"
-                                             data_time="${advert.timeSize}" data_id="${advert.advertID?c}">查看
-                                    </button>
-                                    <button id="editBtn" type="button" data-target="#editModel" class="btn btn-primary btn-sm"
-                                            data_title="${advert.title}" data_remark="${advert.remark}"
-                                            data_time="${advert.timeSize}" data_id="${advert.advertID?c}">编辑
-                                    </button>
-                                    <button id="deleBtn" type="button" data-target="#deleModel" class="btn btn-danger btn-sm"
-                                            data_title="${advert.title}" data_remark="${advert.remark}"
-                                            data_time="${advert.timeSize}" data_id="${advert.advertID?c}">启用
-                                    </button>
-                                </td>
-                            </tr>
-                            </#list>
-                        <#else>
-                        <tr>
-                            <td colSpan="11" height="200px">
-                                <p class="text-center" style="line-height: 200px">暂无任何数据</p>
-                            </td>
-                        </tr>
-                        </object>
+                        <#--<#if (supplierItem?size > 0)>-->
+                            <#--<#list supplierItem as supplier>-->
+                            <#--<tr id="tr_${advert_index}">-->
+                                <#--<td>${supplier.id}</td>-->
+                                <#--<td>${supplier.supplierName}</td>-->
+                                <#--<td>${supplier.supplierType}</td>-->
+                                <#--<td>${supplier.address}</td>-->
+                                <#--<td>${supplier.createTime}</td>-->
+                                <#--<td>${supplier.status}</td>-->
+                                <#--<td>-->
+                                    <#--<button id="lookBtn" type="button" class="btn btn-primary btn-sm"-->
+                                            <#--data_title="${advert.title}" data_remark="${advert.remark}"-->
+                                             <#--data_time="${advert.timeSize}" data_id="${advert.advertID?c}">查看-->
+                                    <#--</button>-->
+                                    <#--<button id="editBtn" type="button" data-target="#editModel" class="btn btn-primary btn-sm"-->
+                                            <#--data_title="${advert.title}" data_remark="${advert.remark}"-->
+                                            <#--data_time="${advert.timeSize}" data_id="${advert.advertID?c}">编辑-->
+                                    <#--</button>-->
+                                    <#--<button id="deleBtn" type="button" data-target="#deleModel" class="btn btn-danger btn-sm"-->
+                                            <#--data_title="${advert.title}" data_remark="${advert.remark}"-->
+                                            <#--data_time="${advert.timeSize}" data_id="${advert.advertID?c}">启用-->
+                                    <#--</button>-->
+                                <#--</td>-->
+                            <#--</tr>-->
+                            <#--</#list>-->
+                        <#--<#else>-->
+                        <#--<tr>-->
+                            <#--<td colSpan="11" height="200px">-->
+                                <#--<p class="text-center" style="line-height: 200px">暂无任何数据</p>-->
+                            <#--</td>-->
+                        <#--</tr>-->
+                        <#--</#if>-->
                         </tbody>
                     </table>
                 </div>
@@ -131,20 +131,20 @@
         );
 
         //查看,编辑
-    <#if (advertList?size > 0)>
-        $("#supplierInfoTable").find('button[id=lookBtn]').each(function () {
-            var that = this;
-            $(this).on('click', function () {
-                location.href = "${base}"+$(that).attr("data_id");
-            });
-        });
-        $("#supplierInfoTable").find('button[id=editBtn]').each(function () {
-            var that = this;
-            $(this).on('click', function () {
-                location.href = "${base}"+$(that).attr("data_id");
-            });
-        });
-    </#if>
+    <#--<#if (advertList?size > 0)>-->
+        <#--$("#supplierInfoTable").find('button[id=lookBtn]').each(function () {-->
+            <#--var that = this;-->
+            <#--$(this).on('click', function () {-->
+                <#--location.href = "${base}"+$(that).attr("data_id");-->
+            <#--});-->
+        <#--});-->
+        <#--$("#supplierInfoTable").find('button[id=editBtn]').each(function () {-->
+            <#--var that = this;-->
+            <#--$(this).on('click', function () {-->
+                <#--location.href = "${base}"+$(that).attr("data_id");-->
+            <#--});-->
+        <#--});-->
+    <#--</#if>-->
     });
 </script>
 

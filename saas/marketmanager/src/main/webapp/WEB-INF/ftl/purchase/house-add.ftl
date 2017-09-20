@@ -42,7 +42,15 @@
                                 <div class="form-group">
                                     <label class="col-md-4 control-label">备注：</label>
                                     <div class="col-md-8">
-                                        <input type="text" id="remark" class="form-control">
+                                        <textarea class="form-control" rows="6" id="remark"></textarea>
+                                    </div>
+                                </div>
+                                <h5 class="page-title" style="padding-top: 20px"><b>对接信息</b></h5>
+                                <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                                <div class="form-group">
+                                    <label class="col-md-4 control-label">Key：</label>
+                                    <div class="col-md-8">
+                                        <input type="text" id="keyInput" class="form-control">
                                     </div>
                                 </div>
                                 <div class="form-group m-t-20">

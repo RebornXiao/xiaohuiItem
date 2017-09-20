@@ -248,7 +248,7 @@ public class AdvertManagerController extends BaseController {
          map.put("playStatus", getIntParameter("playStatus",0));
          map.put("pageIndex", pageIndex);
          map.put("advertScreens", advertScreens);
-        return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGER, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
+        return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGER, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_MANAGER);
     }
     /**
      * 添加投放视频

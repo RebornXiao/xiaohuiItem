@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
         @RequestMapping("/purchaseList")
         public String searchPurchasePage(ModelMap map) {
 
-            return jumpPage(map, LogicConfig.FTL_ITEM_TYPES, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
+            return jumpPage(map, LogicConfig.FTL_PURCHASE_EDIT, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_PURCHASE_LIST);
         }
 
 }
