@@ -26,7 +26,7 @@ public class PurchaseManagerController extends BaseController {
          * @param map
          * @return
          */
-        @RequestMapping("/purchasePage")
+        @RequestMapping("/supplierPage")
         public String searchPurchasePage(ModelMap map) {
             JSONObject supplierJson =  supplierManagerService.searchSupplierPage();
             JSONObject response = supplierJson.getJSONObject("response");
@@ -40,7 +40,7 @@ public class PurchaseManagerController extends BaseController {
             map.put("pageIndex", pageIndex);
             map.put("pageSize", getPageSize());
             map.put("suppliers", suppliers);
-            return jumpPage(map, LogicConfig.FTL_ITEM_TYPES, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
+            return jumpPage(map, LogicConfig.FTL_SUPPLIER_LIST, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_SUPPLIER_LIST);
         }
 
     /**
@@ -50,7 +50,7 @@ public class PurchaseManagerController extends BaseController {
      */
     @RequestMapping("/supplierAdd")
     public String supplierAdd(ModelMap map) {
-        return jumpPage(map, LogicConfig.FTL_ITEM_TYPES, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
+        return jumpPage(map, LogicConfig.FTL_SUPPLIER_ADD, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_SUPPLIER_LIST);
     }
     /**
      * 添加供应商
@@ -72,9 +72,9 @@ public class PurchaseManagerController extends BaseController {
         JSONObject jsonObject= supplierManagerService.getSupplier();
         JSONObject supplier = jsonObject.getJSONObject("response");
         map.put("supplier", supplier);
-        return jumpPage(map, LogicConfig.FTL_ITEM_TYPES, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
-    }
-    /**
+        return jumpPage(map, LogicConfig.FTL_SUPPLIER_EDIT, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_SUPPLIER_LIST);
+     }
+     /**
      * 更新供应商
      * @param map
      * @return
@@ -109,7 +109,7 @@ public class PurchaseManagerController extends BaseController {
 
         /*************采购信息BEGIN*************/
         /*************采购信息*****END********/
-        return jumpPage(map, LogicConfig.FTL_ITEM_TYPES, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
+        return jumpPage(map, LogicConfig.FTL_SUPPLIER_DETAIL, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_SUPPLIER_LIST);
     }
 
 }
