@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -28,8 +29,19 @@ public class XlibaoFilterChain implements Filter {
         response.setCharacterEncoding(encoding);
         // 请求信息跟踪
         requestInfoTrack((HttpServletRequest) request);
+
+        // 获取浏览器访问访问服务器时传递过来的cookie数组
+
         // 每次会话的超时时间
         ((HttpServletRequest) request).getSession().setMaxInactiveInterval(1200);
+        Cookie[] cookies = ((HttpServletRequest) request).getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("accessToken".equals(cookie.getName())) {
+                    request.setAttribute("accessToken", cookie.getValue());
+                }
+            }
+        }
         // 逻辑处理
         filterChain.doFilter(request, response);
     }

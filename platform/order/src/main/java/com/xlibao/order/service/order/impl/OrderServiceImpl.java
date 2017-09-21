@@ -509,9 +509,6 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey()) {
             return fail("订单已完成，无需再次配送");
         }
-        if (orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_BATCH.getKey() && orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
-            return fail("订单状态有误，不能执行送达操作；当天状态：" + OrderStatusEnum.getOrderStatusEnum(orderEntry.getStatus()).getValue());
-        }
         if ((orderEntry.getDeliverStatus() & OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) != OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
             return fail("不为配送状态，暂时不能执行送达操作");
         }

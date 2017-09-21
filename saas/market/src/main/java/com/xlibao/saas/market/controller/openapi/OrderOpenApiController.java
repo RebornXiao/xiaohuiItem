@@ -17,12 +17,116 @@ public class OrderOpenApiController {
     @Autowired
     private OrderService orderService;
 
+    /**
+     * <pre>
+     *     <b>订单列表展示</b>
+     *
+     *     <b>访问地址：</b>http://domainName/order/showOrders
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>访问参数：</b>
+     *          <b>passportId</b> - long 通行证ID，必填参数。
+     *          <b>marketId</b> - long 指定的商店ID，非必填参数；为0时表示不指定。
+     *          <b>roleType</b> - int 角色类型，必填参数；具体参考：{@linkplain com.xlibao.common.constant.order.OrderRoleTypeEnum}。
+     *          <b>orderType</b> - int 订单类型，必填参数；具体参考：{@linkplain com.xlibao.common.constant.order.OrderTypeEnum}。
+     *          <b>statusEnter</b> - int 状态入口，必填参数；具体参考：{@linkplain com.xlibao.saas.market.service.order.StatusEnterEnum}。
+     *          <b>pageIndex</b> - int 页码，非必填参数；默认为：{@linkplain com.xlibao.common.GlobalConstantConfig#DEFAULT_PAGE_INDEX}。
+     *          <b>pageSize</b> - int 显示数量，非必填参数；默认为：{@linkplain com.xlibao.common.GlobalConstantConfig#DEFAULT_PAGE_SIZE}。
+     *
+     *     <b>返回结果：</b>
+     *          <b>datas</b> - JSONArray 订单集合，每个元素为一个订单，结构为JSONObject，数据结构：
+     *              以下部分为公用数据内容，由于不同的角色需要的数据不同，将会根据请求的角色类型做部分数据的区分
+     *              <b>sequenceNumber</b> - String 公用序号，预下单时生产
+     *              <b>orderId</b> - long 订单ID
+     *              <b>orderSequenceNumber</b> - String 订单序列号，下单时生成，每个订单独立
+     *
+     *              以下为区分角色的数据内容
+     *              当<b>roleType</b>为{@linkplain com.xlibao.common.constant.order.OrderRoleTypeEnum#CONSUMER} -- 消费者时
+     *                  <b>marketId</b> - long 店铺ID
+     *                  <b>marketName</b> - String 店铺名
+     *                  <b>marketFormatAddress</b> - String 店铺地址(格式化后)
+     *                  <b>actualPrice</b> - long 实收价格，单位：分
+     *                  <b>orderStatus</b> - int 订单状态，参考：{@link com.xlibao.common.constant.order.OrderStatusEnum}
+     *                  <b>orderStatusTitle</b> - String 订单状态标题
+     *                  <b>deliverType</b> - int 配送类型，参考：{@link com.xlibao.common.constant.order.DeliverTypeEnum}
+     *                  <b>deliverTitle</b> - String 配送标题
+     *                  <b>paymentTime</b> - long 支付时间，为0时表示未支付
+     *                  <b>totalItemQuantity</b> - int 商品数量
+     *                  <b>items</b> - JSONArray 商品信息，每个元素为JSONObject结构
+     *                      <b>itemSnapshotId</b> - long 商品快照ID
+     *                      <b>itemId</b> - long 商品ID
+     *                      <b>itemTemplateId</b> - long 商品模版ID
+     *                      <b>name</b> - String 商品名
+     *                      <b>image</b> - String 商品图片
+     *                      <b>price</b> - long 商品单价(原价)，单位：分
+     *                      <b>quantity</b> - int 商品数量
+     *                      <b>totalPrice</b> - long 商品总价(已计算了优惠)
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "showOrders")
     public JSONObject showOrders() {
         return orderService.showOrders();
     }
 
+    /**
+     * <pre>
+     *     <b>查看订单详情</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/order/orderDetail
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>访问参数：</b>
+     *          <b>passportId</b> - long 通行证ID，必填参数。
+     *          <b>roleType</b> - int 角色类型，必填参数；具体参考：{@linkplain com.xlibao.common.constant.order.OrderRoleTypeEnum}。
+     *          <b>orderId</b> - long 订单ID，必填参数。
+     *
+     *     <b>返回结果：</b>
+     *          <b>marketId</b>
+     *          <b>marketName</b>
+     *          <b>marketAddress</b>
+     *
+     *          <b>orderId</b> - long 订单ID
+     *          <b>sequenceNumber</b> - String 公用序号，预下单时生产
+     *          <b>orderSequenceNumber</b> - String 订单序列号
+     *          <b>createTime</b> - String 下单时间，格式：yyyy-MM-dd HH:mm:ss
+     *          <b>deliverType</b> - int 配送类型，参考：{@link com.xlibao.common.constant.order.DeliverTypeEnum#PICKED_UP} -- 自提
+     *                                              {@link com.xlibao.common.constant.order.DeliverTypeEnum#DISTRIBUTION} -- 配送
+     *          <b>deliverValue</b> - String 用于展示的配送方式；如："到店自提"、"小惠配送"
+     *          <b>orderStatus</b> - int 订单状态，具体参考：{@link com.xlibao.common.constant.order.OrderStatusEnum}中的key
+     *          <b>statusValue</b> - String 订单状态值，具体参考：{@link com.xlibao.common.constant.order.OrderStatusEnum}中的value
+     *          <b>refundReason</b> - String 退款原因(退款状态时有效)
+     *
+     *          <b>deliverTitle</b> - String 进度标题；如："配送进度"、"自提进度"
+     *          <b>deliverResult</b> - String 配送结果；如："已签收"、"已取货"
+     *
+     *          <b>actualPrice</b> - long 实收价格，单位：分
+     *          <b>distributionFee</b> - long 配送费用，单位：分
+     *          <b>discountPrice</b> - long 优惠费用，单位：分
+     *
+     *          <b>discountPrice</b> - long 优惠费用，单位：分
+     *          <b>discountPrice</b> - long 优惠费用，单位：分
+     *          <b>discountPrice</b> - long 优惠费用，单位：分
+     *          <b>discountPrice</b> - long 优惠费用，单位：分
+     *
+     *          <b>items</b> - JSONArray 商品信息，每个元素为JSONObject结构
+     *                  <b>itemSnapshotId</b> - long 商品快照ID
+     *                  <b>itemId</b> - long 商品ID
+     *                  <b>itemTemplateId</b> - long 商品模版ID
+     *                  <b>itemName</b> - String 商品名
+     *                  <b>image</b> - String 商品图片
+     *                  <b>price</b> - long 商品单价，单位：分
+     *                  <b>quantity</b> - int 商品数量
+     *
+     *          <b>totalItemQuantity</b> - int 商品数量
+
+     orderMsg.put("addressTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货地址：" : "收货地址：");
+     orderMsg.put("address", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? orderEntry.formatShippingAddress() : orderEntry.formatReceiptAddress());
+     orderMsg.put("targetTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货点：" : "收货人：");
+     orderMsg.put("targetName", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "小惠便利店" + CommonUtils.nullToEmpty(orderEntry.getShippingNickName()) : CommonUtils.nullToEmpty(orderEntry.getReceiptNickName()));
+     orderMsg.put("receiptPhone", CommonUtils.hideChar(orderEntry.getReceiptPhone(), 3, 7));
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "orderDetail")
     public JSONObject orderDetail() {
@@ -193,15 +297,31 @@ public class OrderOpenApiController {
     }
 
     /**
-     * <b>配送订单</b>
+     * <pre>
+     *     <b>配送订单</b>
      *
      *     <b>访问地址：</b>http://domainName/market/order/openapi/deliverOrder.do
      *     <b>访问方式：</b>GET/POST 推荐使用POST
+     * </pre>
      */
     @ResponseBody
     @RequestMapping(value = "deliverOrder")
     public JSONObject deliverOrder() {
         return orderService.deliverOrder();
+    }
+
+    /**
+     * <pre>
+     *     <b>送达订单</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/arriveOrder.do
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "arriveOrder")
+    public JSONObject arriveOrder() {
+        return orderService.arriveOrder();
     }
 
     /**

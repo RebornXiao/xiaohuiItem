@@ -155,6 +155,10 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         long marketId = getLongParameter("marketId");
         String barcode = getUTF("barcode");
 
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
+        if ((marketEntry.getStatus() & MarketStatusEnum.MAINTAIN.getKey()) != MarketStatusEnum.MAINTAIN.getKey()) {
+            return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("[扫描检测]商店[" + marketEntry.getName() + "]必须处于作业状态才能执行上下架操作");
+        }
         JSONArray response = new JSONArray();
         int remainTask = dataAccessFactory.getItemDataAccessManager().getRemainActionRows(marketId, ShelvesTaskTypeEnum.OFF_SHELVES.getKey(), VALID_ACTION_STATUS_SET);
         if (remainTask > 0) {
@@ -263,7 +267,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             return PlatformErrorCodeEnum.ILLEGAL_ARGUMENT.response("下架数量必须大于0");
         }
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
-        if (marketEntry.getStatus() != MarketStatusEnum.MAINTAIN.getKey()) {
+        if ((marketEntry.getStatus() & MarketStatusEnum.MAINTAIN.getKey()) != MarketStatusEnum.MAINTAIN.getKey()) {
             logger.error("[下架] " + passportId + "没有先将商店[" + marketEntry.getName() + "]设置为作业状态便执行了下架操作，系统已拦截该请求！");
             return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("[下架检测]商店[" + marketEntry.getName() + "]必须处于作业状态才能执行下架操作");
         }
@@ -331,7 +335,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             return PlatformErrorCodeEnum.ILLEGAL_ARGUMENT.response("上架数量必须大于0");
         }
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
-        if (marketEntry.getStatus() != MarketStatusEnum.MAINTAIN.getKey()) {
+        if ((marketEntry.getStatus() & MarketStatusEnum.MAINTAIN.getKey()) != MarketStatusEnum.MAINTAIN.getKey()) {
             logger.error("[上架] " + passportId + "没有先将商店[" + marketEntry.getName() + "]设置为作业状态便执行了上架操作，系统已拦截该请求！");
             return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("[上架检测]商店[" + marketEntry.getName() + "]必须处于作业状态才能执行上架操作");
         }
@@ -511,8 +515,9 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         response.put("type", prepareAction.getType());
         response.put("status", prepareAction.getStatus());
         response.put("hopeExecutorDate", formatDate);
+        response.put("completeTime", CommonUtils.dateFormat(prepareAction.getCompleteTime() == null ? 0 : prepareAction.getCompleteTime().getTime()));
 
-        if (prepareAction.getType() == ShelvesTaskTypeEnum.OFF_SHELVES.getKey()) {
+        if (prepareAction.getType() == ShelvesTaskTypeEnum.OFF_SHELVES.getKey() && prepareAction.getStatus() != PrepareActionStatusEnum.COMPLETE.getKey()) {
             MarketItemLocation itemLocation = dataAccessFactory.getItemDataAccessManager().getItemLocationForMarket(prepareAction.getMarketId(), prepareAction.getItemLocation());
             if (itemLocation == null) {
                 throw MarketErrorCodeEnum.SHELVES_LOCATION_ERROR.throwException("商店货架编码：" + prepareAction.getItemLocation() + "没有商品记录");
@@ -533,6 +538,8 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
     private void beforePrepareAction(long passportId, long marketId, JSONArray actionArray, String hopeExecutorDate) {
         StringBuilder locationSet = new StringBuilder();
         StringBuilder itemTemplateSet = new StringBuilder();
+
+        Map<String, Long> locationItemTemplateSet = new HashMap<>();
         for (int i = 0; i < actionArray.size(); i++) {
             JSONObject data = actionArray.getJSONObject(i);
 
@@ -544,6 +551,8 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             }
             locationSet.append("'").append(data.getString("location")).append("'").append(CommonUtils.SPLIT_COMMA);
             itemTemplateSet.append(itemTemplateId).append(CommonUtils.SPLIT_COMMA);
+
+            locationItemTemplateSet.put(data.getString("location"), data.getLongValue("itemTemplateId"));
         }
         locationSet.deleteCharAt(locationSet.length() - 1);
         itemTemplateSet.deleteCharAt(itemTemplateSet.length() - 1);
@@ -562,6 +571,13 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         // 建立下架任务
         List<MarketItemLocation> itemLocations = dataAccessFactory.getItemDataAccessManager().getItemLocationsForMarket(marketId, locationSet.toString());
         for (MarketItemLocation itemLocation : itemLocations) {
+            long itemTemplateId = locationItemTemplateSet.get(itemLocation.getLocationCode());
+            if (itemTemplateId == itemLocation.getItemTemplateId()) {
+                continue;
+            }
+            if (itemLocation.getStock() <= 0) {
+                continue;
+            }
             JSONObject prepareActionData = new JSONObject();
             prepareActionData.put("itemTemplateId", itemLocation.getItemTemplateId());
             prepareActionData.put("location", itemLocation.getLocationCode());

@@ -46,8 +46,10 @@
 
     <select id="getPrepareActions" resultMap="BaseResultMap">
         select * from market_prepare_action where market_id = #{marketId} and status in(${statusSet})
-        <if test="executorPassportId != 0"> and executor_passport_id = #{executorPassportId} </if>
-        order by hope_executor_date desc, type desc, has_complete_quantity, item_location limit #{pageStartIndex}, #{pageSize}
+        <if test="executorPassportId != 0"> and executor_passport_id = #{executorPassportId} </if> order by
+        <if test="statusSet == '4,2'"> complete_time desc </if>
+        <if test="statusSet == '1,3'"> hope_executor_date desc, type desc, has_complete_quantity, item_location </if>
+        limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="getPrepareActionsForLocationSet" resultMap="BaseResultMap">

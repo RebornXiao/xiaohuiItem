@@ -103,6 +103,18 @@ public class OrderRemoteService extends BasicRemoteService {
         return response;
     }
 
+    public static JSONObject arriveOrder(long orderId, long courierPassportId) {
+        Map<String, String> parameters = initialParameter();
+
+        parameters.put("orderId", String.valueOf(orderId));
+        parameters.put("courierPassportId", String.valueOf(courierPassportId));
+
+        JSONObject response = postOrderMsg("order/arriveOrder", parameters);
+        logger.info("送达结果：" + response);
+
+        return response;
+    }
+
     public static JSONObject confirmOrder(long orderId, long passportId, byte self) {
         Map<String, String> parameters = initialParameter();
 

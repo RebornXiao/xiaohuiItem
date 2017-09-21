@@ -161,6 +161,9 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         dataAccessFactory.getOrderDataAccessManager().modifyOrderRemoteStatusLogger(orderSequenceNumber, OrderNotifyTypeEnum.HARDWARE.getKey(), OrderStatusEnum.ORDER_STATUS_ARRIVE, GlobalAppointmentOptEnum.LOGIC_TRUE.getKey(), System.currentTimeMillis());
         // 刷新订单的取货货柜信息
         refreshOrderProperties(orderEntry, PropertiesKeyEnum.PICK_UP_CONTAINER_SET, statusCode + CommonUtils.SPLIT_UNDER_LINE + containerCode);
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) {
+            OrderRemoteService.confirmOrder(orderEntry.getId(), Long.parseLong(orderEntry.getPartnerUserId()), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
+        }
         return success();
     }
 

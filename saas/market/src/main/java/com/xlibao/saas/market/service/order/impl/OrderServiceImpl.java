@@ -177,8 +177,9 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         int pageSize = getPageSize();
 
         String statusSet = orderStatusSet(roleType, statusEnter);
-        // statusEnter == StatusEnterEnum.COURIER_WAIT_ACCEPT.getKey()
+        if (roleType == OrderRoleTypeEnum.COURIER.getKey() && statusEnter == StatusEnterEnum.COURIER_WAIT_ACCEPT.getKey()) {
 
+        }
         List<OrderEntry> orders = OrderRemoteService.showOrders(passportId, marketId, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), roleType, statusSet, orderType, pageIndex, pageSize);
         JSONArray response = fillShowOrderMsg(roleType, orders);
         return success(response);
@@ -233,10 +234,28 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         String orderSequenceNumber = getUTF("orderSequenceNumber");
 
         OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) {
+            return OrderErrorCodeEnum.ORDER_STATUS_ERROR.response("自提订单无需进行配送");
+        }
         if (orderEntry.getCourierPassportId() != passportId) {
             return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
         }
         return OrderRemoteService.distributionOrder(orderEntry.getId(), orderEntry.getCourierPassportId(), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), true);
+    }
+
+    @Override
+    public JSONObject arriveOrder() {
+        long passportId = getLongParameter("passportId");
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) {
+            return OrderErrorCodeEnum.ORDER_STATUS_ERROR.response("自提订单不能执行送达操作");
+        }
+        if (orderEntry.getCourierPassportId() != passportId) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+        }
+        return OrderRemoteService.confirmOrder(orderEntry.getId(), Long.parseLong(orderEntry.getPartnerUserId()), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
     }
 
     @Override

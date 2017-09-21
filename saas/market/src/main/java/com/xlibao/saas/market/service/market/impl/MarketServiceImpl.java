@@ -171,17 +171,21 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
 
     @Override
     public JSONObject marketResponse() {
+        long marketId = getLongParameter("marketId", 0);
         long passportId = getLongParameter("passportId");
         byte responseStatus = getByteParameter("responseStatus", GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
 
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarketForPassport(passportId);
+        MarketEntry marketEntry = marketId == 0 ? dataAccessFactory.getMarketDataCacheService().getMarketForPassport(passportId) : dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
         if (marketEntry == null) {
             return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response("找不到商店，通行证ID：" + passportId);
         }
         int status = (responseStatus == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()) ? (marketEntry.getStatus() | MarketStatusEnum.NO_RESPONSE.getKey()) :
                 ((marketEntry.getStatus() & MarketStatusEnum.NO_RESPONSE.getKey()) == MarketStatusEnum.NO_RESPONSE.getKey() ? (marketEntry.getStatus() ^ MarketStatusEnum.NO_RESPONSE.getKey()) : marketEntry.getStatus());
         dataAccessFactory.getMarketDataAccessManager().marketResponse(marketEntry.getId(), status, marketEntry.getStatus());
-        return success();
+
+        JSONObject response = new JSONObject();
+        response.put("status", status);
+        return success(response);
     }
 
     public JSONObject getAllMarkets() {
@@ -277,7 +281,13 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         if ((marketEntry.getStatus() & MarketStatusEnum.NO_RESPONSE.getKey()) == MarketStatusEnum.NO_RESPONSE.getKey()) {
             status = status | MarketStatusEnum.NO_RESPONSE.getKey();
         }
-        return dataAccessFactory.getMarketDataAccessManager().marketResponse(marketId, status, beforeStatus) > 0 ? success("修改成功") : fail("修改失败");
+        int result = dataAccessFactory.getMarketDataAccessManager().marketResponse(marketId, status, beforeStatus);
+        if (result > 0) {
+            JSONObject response = new JSONObject();
+            response.put("status", status);
+            return success(response);
+        }
+        return fail("修改商店状态失败");
     }
 
 
