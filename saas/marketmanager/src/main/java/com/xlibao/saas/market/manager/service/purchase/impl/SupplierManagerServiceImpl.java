@@ -14,7 +14,7 @@ import java.util.Map;
  * Created by user on 2017/9/20.
  */
 @Transactional
-@Service("passportManagerService")
+@Service("supplierManagerService")
 public class SupplierManagerServiceImpl extends BasicRemoteService implements SupplierManagerService {
 
 
