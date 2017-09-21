@@ -4,7 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.saas.market.manager.BaseController;
 import com.xlibao.saas.market.manager.config.LogicConfig;
-import com.xlibao.saas.market.manager.service.purchase.SupplierManagerService;
+import com.xlibao.saas.market.manager.service.purchasemanager.SupplierManagerService;
+import com.xlibao.saas.market.manager.service.purchasemanager.WarehouseManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -21,6 +22,9 @@ public class PurchaseManagerController extends BaseController {
 
     @Autowired
     SupplierManagerService supplierManagerService;
+
+    @Autowired
+    WarehouseManagerService warehouseManagerService;
         /**
          * 供应商列表
          * @param map
@@ -112,4 +116,148 @@ public class PurchaseManagerController extends BaseController {
         return jumpPage(map, LogicConfig.FTL_SUPPLIER_DETAIL, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_SUPPLIER_LIST);
     }
 
+    /**
+     * 仓库列表
+     * @param map
+     * @return
+     */
+    @RequestMapping("/warehousePage")
+    public String searchWarehousePage(ModelMap map) {
+        JSONObject warehouseJson =  warehouseManagerService.searchWarehousePage();
+        JSONObject response = warehouseJson.getJSONObject("response");
+        JSONArray warehouses = response.getJSONArray("data");
+        map.put("count", response.getIntValue("count"));
+
+        JSONObject warehousesJson =   warehouseManagerService.getAllWarehouse();
+        JSONObject warehouseResp = warehousesJson.getJSONObject("response");
+        JSONArray warehouseItem = warehouseResp.getJSONArray("datas");
+        /**下拉列表**/
+        map.put("warehouseItem", warehouseItem);
+
+        map.put("warehouseName", getUTF("warehouseName",null));
+        map.put("status", getIntParameter("status",-1));
+        int pageIndex = getIntParameter("pageIndex", 1);
+        map.put("pageIndex", pageIndex);
+        map.put("pageSize", getPageSize());
+        /*****分页数据**/
+        map.put("warehouses", warehouses);
+        return jumpPage(map, LogicConfig.FTL_HOUSE_LIST, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_HOUSE_LIST);
+    }
+
+    /**
+     * 跳转仓库添加
+     * @param map
+     * @return
+     */
+    @RequestMapping("/warehouseAdd")
+    public String warehouseAdd(ModelMap map) {
+        return jumpPage(map, LogicConfig.FTL_HOUSE_ADD, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_HOUSE_LIST);
+    }
+    /**
+     * 添加仓库
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/saveWarehouse")
+    public JSONObject saveWarehouse(ModelMap map) {
+        return warehouseManagerService.saveWarehouse();
+    }
+    /**
+     * 跳转仓库编辑
+     * @param map
+     * @return
+     */
+    @RequestMapping("/warehouseEdit")
+    public String warehouseEdit(ModelMap map) {
+        JSONObject jsonObject= warehouseManagerService.getWarehouse();
+        JSONObject warehouse = jsonObject.getJSONObject("response");
+        map.put("warehouse", warehouse);
+        return jumpPage(map, LogicConfig.FTL_HOUSE_EDIT, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_HOUSE_LIST);
+    }
+    /**
+     * 更新仓库
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/updateWarehouse")
+    public JSONObject updateWarehouse(ModelMap map) {
+        return warehouseManagerService.updateWarehouse();
+    }
+
+    /**
+     * 仓库详情
+     * @param map
+     * @return
+     */
+    @RequestMapping("/warehouseDetail")
+    public String warehouseDetail(ModelMap map) {
+        JSONObject jsonObject= warehouseManagerService.getWarehouse();
+        JSONObject warehouse = jsonObject.getJSONObject("response");
+        map.put("warehouse", warehouse);
+
+        /*************仓管员BEGIN*************/
+        JSONObject userJson= warehouseManagerService.getWarehouseUsers();
+        JSONObject userResp = jsonObject.getJSONObject("response");
+        JSONArray users = userResp.getJSONArray("datas");
+        map.put("users", users);
+        /*************仓管员END********/
+        return jumpPage(map, LogicConfig.FTL_HOUSE_DETAIL, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_HOUSE_LIST);
+    }
+
+    /**
+     * 启用停用仓库
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/updateWarehouseStatus")
+    public JSONObject updateWarehouseStatus(ModelMap map) {
+        return warehouseManagerService.updateWarehouseStatus();
+    }
+
+
+    /**
+     * 跳转仓管员添加
+     * @param map
+     * @return
+     */
+    @RequestMapping("/warehouseUserAdd")
+    public String warehouseUseradd(ModelMap map) {
+        return jumpPage(map, LogicConfig.FTL_HOUSE_ADDUSER, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_HOUSE_LIST);
+    }
+    /**
+     * 添加仓管员
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/saveWarehouseUser")
+    public JSONObject saveWarehouseUser(ModelMap map) {
+        return warehouseManagerService.saveWarehouseUser();
+    }
+
+    /**
+     * 删除仓管员
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/deleteWarehouseUser")
+    public JSONObject deleteWarehouseUser(ModelMap map) {
+        return warehouseManagerService.deleteWarehouseUser();
+    }
+
+
+    /**
+     * 初始化仓管员密码
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/resetWarehouseUserPwd")
+    public JSONObject resetWarehouseUserPwd(ModelMap map) {
+        return warehouseManagerService.updateWarehouseUserPassword();
+    }
 }

@@ -1,10 +1,10 @@
-package com.xlibao.saas.market.manager.service.purchase.impl;
+package com.xlibao.saas.market.manager.service.purchasemanager.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.support.BasicRemoteService;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
-import com.xlibao.saas.market.manager.service.purchase.SupplierManagerService;
+import com.xlibao.saas.market.manager.service.purchasemanager.SupplierManagerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

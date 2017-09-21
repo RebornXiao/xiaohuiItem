@@ -1,4 +1,4 @@
-package com.xlibao.saas.market.manager.service.purchase;
+package com.xlibao.saas.market.manager.service.purchasemanager;
 
 import com.alibaba.fastjson.JSONObject;
 
