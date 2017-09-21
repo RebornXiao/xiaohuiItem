@@ -14,6 +14,7 @@ public class MarketEntry {
     private String image;
     private Integer type;
     private Integer status;
+    private Integer onlineStatus;
     private String adminName;
     private String phoneNumber;
     private Long streetId;
@@ -78,6 +79,14 @@ public class MarketEntry {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getOnlineStatus() {
+        return onlineStatus;
+    }
+
+    public void setOnlineStatus(Integer onlineStatus) {
+        this.onlineStatus = onlineStatus;
     }
 
     public String getAdminName() {
@@ -242,6 +251,7 @@ public class MarketEntry {
         response.put("name", getName());
         response.put("type", getType());
         response.put("status", getStatus());
+        response.put("onlineStatus", getOnlineStatus());
         response.put("adminName", CommonUtils.nullToEmpty(getAdminName()));
         response.put("showPhoneNumber", CommonUtils.hideChar(getPhoneNumber(), 4, 7));
         response.put("hidePhoneNumber", getPhoneNumber());

@@ -1,6 +1,5 @@
 package com.xlibao.saas.market.manager;
 
-import com.xlibao.common.BasicWebService;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.support.PassportRemoteService;
@@ -9,12 +8,6 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.ModelAndView;
-
-import javax.security.auth.login.LoginContext;
-import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author chinahuangxc on 2017/7/21.
@@ -28,46 +21,44 @@ public class CheckLoginAop extends BaseController {
         Object[] args = point.getArgs();
         getHttpServletResponse().setHeader("content-type", "text/html");
         try {
+            long pid = getLongParameter("passportId", 0);
 
-            long passportId = getLongParameter("passportId", 0);
-
-            if(passportId == 0) {
-                //需要登录
-                //fali("请重新登录");
+            Object passportId = getSessionAttribute("passportId");
+            if (passportId != null) {
+                pid = Long.parseLong((String) passportId);
+            }
+            if (pid == 0) {
+                // 需要登录
                 return LogicConfig.FTL_LOGIN;
             }
 
-            String accessToken = getUTF("accessToken");
-
-            //检测 accessToken 有效期
+            // 检测 accessToken 有效期
+            Object accessToken = getSessionAttribute("accessToken");
+            if (accessToken == null) {
+                // 需要登录
+                return LogicConfig.FTL_LOGIN;
+            }
+            String token = (String) accessToken;
             try {
-                accessToken = PassportRemoteService.changeAccessToken(passportId, accessToken);
+                token = PassportRemoteService.changeAccessToken(pid, token);
             } catch (Exception ex) {
-                fali(ex.getMessage());
+                fail(ex.getMessage());
                 return LogicConfig.FTL_LOGIN;
             }
-
-            setAccessToken(accessToken);
-
+            setAccessToken(token);
             return point.proceed(args);
-
         } catch (XlibaoIllegalArgumentException ex) {
             ex.printStackTrace();
-            fali(ex.getMessage());
+            fail(ex.getMessage());
             return LogicConfig.FTL_ERROR;
         } catch (XlibaoRuntimeException ex) {
             ex.printStackTrace();
-            fali(ex.getMessage());
+            fail(ex.getMessage());
             return LogicConfig.FTL_ERROR;
         } catch (Throwable cause) {
             cause.printStackTrace();
-            fali("系统错误，请稍后重试！");
+            fail("系统错误，请稍后重试！");
             return LogicConfig.FTL_ERROR;
         }
-    }
-
-    void fali(String error) {
-        HttpServletRequest request = getHttpServletRequest();
-        request.setAttribute("error", error);
     }
 }

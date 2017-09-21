@@ -171,21 +171,24 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
 
     @Override
     public JSONObject marketResponse() {
-        long marketId = getLongParameter("marketId", 0);
         long passportId = getLongParameter("passportId");
         byte responseStatus = getByteParameter("responseStatus", GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
 
-        MarketEntry marketEntry = marketId == 0 ? dataAccessFactory.getMarketDataCacheService().getMarketForPassport(passportId) : dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarketForPassport(passportId);
         if (marketEntry == null) {
             return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response("找不到商店，通行证ID：" + passportId);
         }
-        int status = (responseStatus == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()) ? (marketEntry.getStatus() | MarketStatusEnum.NO_RESPONSE.getKey()) :
-                ((marketEntry.getStatus() & MarketStatusEnum.NO_RESPONSE.getKey()) == MarketStatusEnum.NO_RESPONSE.getKey() ? (marketEntry.getStatus() ^ MarketStatusEnum.NO_RESPONSE.getKey()) : marketEntry.getStatus());
-        dataAccessFactory.getMarketDataAccessManager().marketResponse(marketEntry.getId(), status, marketEntry.getStatus());
+        if (responseStatus == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey() && marketEntry.getOnlineStatus() == MarketOnlineStatusEnum.OFFLINE.getKey()) {
+            return success();
+        }
+        if (responseStatus == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey() && marketEntry.getOnlineStatus() == MarketOnlineStatusEnum.ONLINE.getKey()) {
+            return success();
+        }
+        int targetStatus = (responseStatus == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()) ? MarketOnlineStatusEnum.OFFLINE.getKey() : MarketOnlineStatusEnum.ONLINE.getKey();
+        int matchStatus = (responseStatus == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()) ? MarketOnlineStatusEnum.ONLINE.getKey() : MarketOnlineStatusEnum.OFFLINE.getKey();
 
-        JSONObject response = new JSONObject();
-        response.put("status", status);
-        return success(response);
+        dataAccessFactory.getMarketDataAccessManager().changeOnlineStatus(marketEntry.getId(), targetStatus, matchStatus);
+        return success();
     }
 
     public JSONObject getAllMarkets() {
@@ -277,9 +280,6 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
         if (marketEntry == null) {
             return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response();
-        }
-        if ((marketEntry.getStatus() & MarketStatusEnum.NO_RESPONSE.getKey()) == MarketStatusEnum.NO_RESPONSE.getKey()) {
-            status = status | MarketStatusEnum.NO_RESPONSE.getKey();
         }
         int result = dataAccessFactory.getMarketDataAccessManager().marketResponse(marketId, status, beforeStatus);
         if (result > 0) {

@@ -22,6 +22,8 @@ import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketOrderProperties;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.item.MarketItemErrorCodeEnum;
+import com.xlibao.saas.market.service.market.MarketErrorCodeEnum;
+import com.xlibao.saas.market.service.market.MarketStatusEnum;
 import com.xlibao.saas.market.service.order.MarketOrderErrorCodeEnum;
 import com.xlibao.saas.market.service.order.OrderEventListenerManager;
 import com.xlibao.saas.market.service.order.OrderService;
@@ -157,6 +159,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if ((order.getStatus() & OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) == OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) {
             throw new XlibaoRuntimeException("订单已支付！");
         }
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(order.getShippingPassportId());
+        if (marketEntry.getStatus() != MarketStatusEnum.NORMAL.getKey()) {
+            throw MarketErrorCodeEnum.MARKET_STATUS_ERROR.throwException("商店正在升级维护中，请稍后再来！");
+        }
         // 重新计价
         correctingOrderCost(passportId, deliverType, order);
         // 总共需要支付的费用
@@ -178,7 +184,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
         String statusSet = orderStatusSet(roleType, statusEnter);
         if (roleType == OrderRoleTypeEnum.COURIER.getKey() && statusEnter == StatusEnterEnum.COURIER_WAIT_ACCEPT.getKey()) {
-
+            // TODO 仅展示未接订单的记录
         }
         List<OrderEntry> orders = OrderRemoteService.showOrders(passportId, marketId, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), roleType, statusSet, orderType, pageIndex, pageSize);
         JSONArray response = fillShowOrderMsg(roleType, orders);
@@ -501,6 +507,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     }
 
     private List<OrderItemSnapshot> generateItemSnapshots(long passportId, long marketId, JSONObject buyItemTemplates) {
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
+        if (marketEntry.getStatus() != MarketStatusEnum.NORMAL.getKey()) {
+            throw MarketErrorCodeEnum.MARKET_STATUS_ERROR.throwException("商店正在升级维护中，请稍后再来！");
+        }
         String itemTemplateSet = processItemTemplateSet(buyItemTemplates);
 
         List<MarketItem> items = dataAccessFactory.getItemDataAccessManager().getItemForItemTemplates(marketId, itemTemplateSet);

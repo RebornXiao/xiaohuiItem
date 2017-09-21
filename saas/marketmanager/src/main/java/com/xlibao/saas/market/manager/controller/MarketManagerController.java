@@ -2,7 +2,6 @@ package com.xlibao.saas.market.manager.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.xlibao.common.CommonUtils;
 import com.xlibao.common.http.HttpRequest;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketItem;
@@ -93,20 +92,12 @@ public class MarketManagerController extends BaseController {
             //状态
             int marketStatus = ejson.getIntValue("status");
             //如果与硬件断连
-            if((marketStatus & 16) == 16) {
-                ejson.put("statusOffline", 1);//与硬件断连
-                ejson.put("nowStatus",marketStatus);//当前值
-                ejson.put("status", (marketStatus ^ 16));//原状态
-            } else {
-                ejson.put("statusOffline", 0);
-                ejson.put("nowStatus", marketStatus);//当前值
-                ejson.put("status", marketStatus);//原状态
-            }
+            ejson.put("statusOffline", 0);
+            ejson.put("nowStatus", marketStatus);//当前值
+            ejson.put("status", marketStatus);//原状态
         }
-
         map.put("markets", entrys);
         map.put("count", response.getIntValue("count"));
-
         //////////////////
         map.put("province", province);
         map.put("provinceId", provinceId);
@@ -117,7 +108,7 @@ public class MarketManagerController extends BaseController {
         map.put("street", street);
         map.put("streetId", streetId);
 
-        JSONObject streetJson = null;
+        JSONObject streetJson;
 
         if (districtId != 0) {
             streetJson = passportManagerService.getStreets(districtId);
@@ -125,14 +116,12 @@ public class MarketManagerController extends BaseController {
                 map.put("streets", streetJson.getJSONObject("response").getJSONArray("datas"));
             }
         }
-
         map.put("type", type);
         map.put("status", status);
         map.put("deliveryMode", deliveryMode);
 
         map.put("pageSize", pageSize);
         map.put("pageIndex", pageIndex);
-
         return jumpPage(map, LogicConfig.FTL_MARKET_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_LIST);
     }
 
@@ -153,7 +142,7 @@ public class MarketManagerController extends BaseController {
                 JSONObject streetJson = passportManagerService.getStreetJson(entry.getStreetId());
                 if (streetJson.getIntValue("code") == 0) {
                     PassportStreet street = parseObject(streetJson.getJSONObject("response").getString("data"), PassportStreet.class);
-                    if(street != null) {
+                    if (street != null) {
                         //拿所有数据
                         JSONObject streetsJson = passportManagerService.getStreets(street.getAreaId());
                         if (streetsJson.getIntValue("code") == 0) {
@@ -163,17 +152,17 @@ public class MarketManagerController extends BaseController {
                         }
                         //拿街道对应的区
                         PassportArea area = passportManagerService.getAreaById(street.getAreaId());
-                        if(area != null) {
+                        if (area != null) {
                             map.put("districtId", area.getId());
 
                             //拿区对应的市
                             PassportCity city = passportManagerService.getCityById(area.getCityId());
-                            if(city != null) {
+                            if (city != null) {
                                 map.put("cityId", city.getId());
 
                                 //拿市对应的省
                                 PassportProvince province = passportManagerService.getProvinceById(city.getProvinceId());
-                                if(province != null) {
+                                if (province != null) {
                                     map.put("provinceId", province.getId());
                                 }
                             }
@@ -579,8 +568,9 @@ public class MarketManagerController extends BaseController {
     @ResponseBody
     @RequestMapping("/cancelPrepareActionTask")
     public JSONObject cancelPrepareActionTask() {
+        long passportId = getLongParameter("passportId");
         long taskId = getLongParameter("taskId");
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/cancelPrepareActionTask.do?taskId=" + taskId);
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/cancelPrepareActionTask.do?taskId=" + taskId + "&passportId=" + passportId);
         return parseObject(json);
     }
 

@@ -27,20 +27,24 @@ public class XlibaoFilterChain implements Filter {
         request.setCharacterEncoding(encoding);
         response.setContentType("application/json; charset=" + encoding);
         response.setCharacterEncoding(encoding);
-        // 请求信息跟踪
-        requestInfoTrack((HttpServletRequest) request);
+
+        HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         // 每次会话的超时时间
-        ((HttpServletRequest) request).getSession().setMaxInactiveInterval(1200);
+        httpServletRequest.getSession().setMaxInactiveInterval(1200);
         // 获取浏览器访问访问服务器时传递过来的cookie数组
-        Cookie[] cookies = ((HttpServletRequest) request).getCookies();
+        Cookie[] cookies = httpServletRequest.getCookies();
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("accessToken".equals(cookie.getName())) {
-                    request.removeAttribute("accessToken");
-                    request.setAttribute("accessToken", cookie.getValue());
+                    httpServletRequest.getSession().setAttribute("accessToken", cookie.getValue());
+                }
+                if ("passportId".equals(cookie.getName())) {
+                    httpServletRequest.getSession().setAttribute("passportId", cookie.getValue());
                 }
             }
         }
+        // 请求信息跟踪
+        requestInfoTrack(httpServletRequest);
         // 逻辑处理
         filterChain.doFilter(request, response);
     }

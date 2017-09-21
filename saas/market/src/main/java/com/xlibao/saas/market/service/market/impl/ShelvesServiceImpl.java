@@ -156,7 +156,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         String barcode = getUTF("barcode");
 
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
-        if ((marketEntry.getStatus() & MarketStatusEnum.MAINTAIN.getKey()) != MarketStatusEnum.MAINTAIN.getKey()) {
+        if (marketEntry.getStatus() != MarketStatusEnum.MAINTAIN.getKey()) {
             return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("[扫描检测]商店[" + marketEntry.getName() + "]必须处于作业状态才能执行上下架操作");
         }
         JSONArray response = new JSONArray();
@@ -188,7 +188,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         String hopeExecutorDate = getUTF("hopeExecutorDate", CommonUtils.dateFormat(CommonUtils.getTodayEarlyMorningMillisecond()));
 
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
-        if ((marketEntry.getStatus() & MarketStatusEnum.MAINTAIN.getKey()) == MarketStatusEnum.MAINTAIN.getKey()) {
+        if (marketEntry.getStatus() == MarketStatusEnum.MAINTAIN.getKey()) {
             logger.error("[发布任务]商店[" + marketEntry.getName() + "]处于作业状态时不能执行发布任务操作，系统已拦截该请求！");
             return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("[发布检测]商店[" + marketEntry.getName() + "]正在作业中，暂时不能提交新的预操作任务");
         }
@@ -267,7 +267,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             return PlatformErrorCodeEnum.ILLEGAL_ARGUMENT.response("下架数量必须大于0");
         }
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
-        if ((marketEntry.getStatus() & MarketStatusEnum.MAINTAIN.getKey()) != MarketStatusEnum.MAINTAIN.getKey()) {
+        if (marketEntry.getStatus() != MarketStatusEnum.MAINTAIN.getKey()) {
             logger.error("[下架] " + passportId + "没有先将商店[" + marketEntry.getName() + "]设置为作业状态便执行了下架操作，系统已拦截该请求！");
             return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("[下架检测]商店[" + marketEntry.getName() + "]必须处于作业状态才能执行下架操作");
         }
@@ -335,7 +335,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             return PlatformErrorCodeEnum.ILLEGAL_ARGUMENT.response("上架数量必须大于0");
         }
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
-        if ((marketEntry.getStatus() & MarketStatusEnum.MAINTAIN.getKey()) != MarketStatusEnum.MAINTAIN.getKey()) {
+        if (marketEntry.getStatus() != MarketStatusEnum.MAINTAIN.getKey()) {
             logger.error("[上架] " + passportId + "没有先将商店[" + marketEntry.getName() + "]设置为作业状态便执行了上架操作，系统已拦截该请求！");
             return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("[上架检测]商店[" + marketEntry.getName() + "]必须处于作业状态才能执行上架操作");
         }
@@ -431,7 +431,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         String mark = getUTF("mark", "");
 
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
-        if ((marketEntry.getStatus() & MarketStatusEnum.MAINTAIN.getKey()) != MarketStatusEnum.MAINTAIN.getKey()) {
+        if (marketEntry.getStatus() != MarketStatusEnum.MAINTAIN.getKey()) {
             logger.error("[结案] " + passportId + "没有先将商店[" + marketEntry.getName() + "]设置为作业状态便执行了结案操作，系统已拦截该请求！");
             return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("[结案检测]商店[" + marketEntry.getName() + "]必须处于作业状态才能执行结案操作");
         }
@@ -463,12 +463,11 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         for (MarketShelvesDailyTaskLogger shelvesDailyTaskLogger : shelvesDailyTaskLoggers) {
             dataAccessFactory.getItemDataAccessManager().createShelvesDailyTaskLogger(shelvesDailyTaskLogger);
         }
-        if (marketEntry.getStatus() == MarketStatusEnum.MAINTAIN.getKey()) {
-            dataAccessFactory.getMarketDataAccessManager().marketResponse(marketId, MarketStatusEnum.NORMAL.getKey(), marketEntry.getStatus());
-        } else {
-            dataAccessFactory.getMarketDataAccessManager().marketResponse(marketId, marketEntry.getStatus() ^ MarketStatusEnum.MAINTAIN.getKey(), marketEntry.getStatus());
-        }
-        return success();
+        dataAccessFactory.getMarketDataAccessManager().marketResponse(marketId, MarketStatusEnum.NORMAL.getKey(), 0);
+
+        JSONObject response = new JSONObject();
+        response.put("status", MarketStatusEnum.NORMAL.getKey());
+        return success(response);
     }
 
     private void completePrepareActionTask(long passportId, long marketId, String location, int type, long executorPassportId, long itemTemplateId, int quantity, int hasCompleteQuantity, int hopeQuantity, String mark, int matchActionStatus, int hopeActionStatus) {

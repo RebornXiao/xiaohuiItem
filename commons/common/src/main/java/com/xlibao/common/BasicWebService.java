@@ -340,7 +340,7 @@ public class BasicWebService {
         getHttpSession().setAttribute(key, value);
     }
 
-    private static Object getSessionAttribute(String key) {
+    protected static Object getSessionAttribute(String key) {
         return getHttpSession().getAttribute(key);
     }
 

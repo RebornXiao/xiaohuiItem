@@ -47,6 +47,10 @@ public class MarketDataAccessManager {
         return entryMapper.marketResponse(marketId, status, matchStatus);
     }
 
+    public int changeOnlineStatus(long marketId, int targetStatus, int matchStatus) {
+        return entryMapper.changeOnlineStatus(marketId, targetStatus, matchStatus);
+    }
+
     public List<MarketEntry> searchMarkets(MarketEntry searchModel, int pageSize, int pageStartIndex) {
         return entryMapper.searchMarkets(searchModel, pageSize, pageStartIndex);
     }

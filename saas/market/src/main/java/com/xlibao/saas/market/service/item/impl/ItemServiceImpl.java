@@ -25,6 +25,7 @@ import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.activity.RecommendItemTypeEnum;
 import com.xlibao.saas.market.service.item.*;
 import com.xlibao.saas.market.service.market.MarketErrorCodeEnum;
+import com.xlibao.saas.market.service.market.MarketStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +129,10 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex(pageSize);
 
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
+        if (marketEntry.getStatus() != MarketStatusEnum.NORMAL.getKey()) {
+            return MarketErrorCodeEnum.MARKET_STATUS_ERROR.response("商店正在升级维护中，请稍后再来！");
+        }
         List<MarketItem> items;
         if (CommonUtils.isNotNullString(searchKeyValue)) {
             items = conditionPageItems(marketId, ItemDataCacheService.fuzzyQueryItemTemplates(searchKeyValue), sortType, sortValue, requestSource, pageStartIndex, pageSize);
