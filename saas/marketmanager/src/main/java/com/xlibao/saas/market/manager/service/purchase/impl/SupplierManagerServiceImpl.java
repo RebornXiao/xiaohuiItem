@@ -137,7 +137,7 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
         long id = getLongParameter("id",-1);
 
         int status = getIntParameter("status",-1);
-
+        String  stopRemark = getUTF("stopRemark",null);
         if(id==-1){
             return fail("缺少供应商ID");
         }else if(status==-1){
@@ -146,6 +146,9 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
         Map<String, String> parameters = new HashMap<>();
         parameters.put("id",String.valueOf(id));
         parameters.put("status",String.valueOf(status));
+        if(stopRemark == null || stopRemark.isEmpty()){
+            parameters.put("stopRemark",stopRemark);
+        }
         try{
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateSupplierStatus.do";
             JSONObject response = executor(url,parameters);
