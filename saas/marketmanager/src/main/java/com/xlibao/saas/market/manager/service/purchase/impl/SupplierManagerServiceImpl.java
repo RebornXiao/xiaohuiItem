@@ -146,7 +146,7 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
         Map<String, String> parameters = new HashMap<>();
         parameters.put("id",String.valueOf(id));
         parameters.put("status",String.valueOf(status));
-        if(stopRemark == null || stopRemark.isEmpty()){
+        if(stopRemark != null){
             parameters.put("stopRemark",stopRemark);
         }
         try{
