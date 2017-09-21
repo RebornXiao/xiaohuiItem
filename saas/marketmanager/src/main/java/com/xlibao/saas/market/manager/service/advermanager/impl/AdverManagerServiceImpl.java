@@ -343,5 +343,22 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         return response;
     }
 
+    @Override
+    public JSONObject updateAdvertScreenIsdown(){
+        String screenID =  getUTF("screenID","-1");
+        String advertID =  getUTF("advertID","-1");
+        String marketID = getUTF("marketID","-1");
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("screenID", screenID);
+        parameters.put("advertID", advertID);
+        parameters.put("marketID", marketID);
+        parameters.put("isDown", "0");
+
+        String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/advert/updateIsDown.do";
+        JSONObject response = executor(url, parameters);
+
+        return response;
+    }
 
 }

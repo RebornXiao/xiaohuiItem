@@ -1,6 +1,7 @@
 package com.xlibao.saas.market.manager.service.purchase.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.support.BasicRemoteService;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.service.purchase.SupplierManagerService;
@@ -34,18 +35,25 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
         parameters.put("pageSize", String.valueOf(pageSize));
         parameters.put("pageStartIndex", String.valueOf(pageStartIndex));
 
-        String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/searchSupplierPage.do";
-        JSONObject response = executor(url, parameters);
+        try {
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/searchSupplierPage.do";
+            JSONObject response = executor(url, parameters);
+            return response;
+        }catch (XlibaoRuntimeException ex){
+            throw new XlibaoRuntimeException("远程接口通信异常");
+        }
 
-        return response;
     }
     @Override
     public JSONObject getAllSupplier(){
         Map<String, String> parameters = new HashMap<>();
-        String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getAllSupplier.do";
-        JSONObject response = executor(url,parameters);
-
-        return response;
+        try{
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getAllSupplier.do";
+            JSONObject response = executor(url,parameters);
+             return response;
+         }catch (XlibaoRuntimeException ex){
+            throw new XlibaoRuntimeException("远程接口通信异常");
+          }
     }
     @Override
     public JSONObject saveSupplier(){
@@ -76,10 +84,13 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
         parameters.put("salesmanName",salesmanName);
         parameters.put("phone",phone);
         parameters.put("supplierType",String.valueOf(supplierType));
-
-        String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/saveSupplier.do";
-        JSONObject response = executor(url,parameters);
-        return response;
+        try{
+             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/saveSupplier.do";
+             JSONObject response = executor(url,parameters);
+             return response;
+        }catch (XlibaoRuntimeException ex){
+             throw new XlibaoRuntimeException("远程接口通信异常");
+         }
     }
     @Override
     public JSONObject updateSupplier(){
@@ -113,10 +124,13 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
         parameters.put("salesmanName",salesmanName);
         parameters.put("phone",phone);
         parameters.put("supplierType",String.valueOf(supplierType));
-
-        String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateSupplier.do";
-        JSONObject response = executor(url,parameters);
-        return response;
+        try{
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateSupplier.do";
+            JSONObject response = executor(url,parameters);
+            return response;
+        }catch (XlibaoRuntimeException ex){
+            throw new XlibaoRuntimeException("远程接口通信异常");
+        }
     }
 
     public JSONObject updateSupplierStatus(){
@@ -132,9 +146,13 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
         Map<String, String> parameters = new HashMap<>();
         parameters.put("id",String.valueOf(id));
         parameters.put("status",String.valueOf(status));
-        String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateSupplierStatus.do";
-        JSONObject response = executor(url,parameters);
-        return response;
+        try{
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateSupplierStatus.do";
+            JSONObject response = executor(url,parameters);
+            return response;
+        }catch (XlibaoRuntimeException ex){
+            throw new XlibaoRuntimeException("远程接口通信异常");
+        }
     }
 
     public JSONObject getSupplier(){
@@ -144,8 +162,12 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
         }
         Map<String, String> parameters = new HashMap<>();
         parameters.put("id",String.valueOf(id));
-        String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getSupplier.do";
-        JSONObject response = executor(url,parameters);
-        return response;
+        try{
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getSupplier.do";
+            JSONObject response = executor(url,parameters);
+            return response;
+        }catch (XlibaoRuntimeException ex){
+            throw new XlibaoRuntimeException("远程接口通信异常");
+        }
     }
 }

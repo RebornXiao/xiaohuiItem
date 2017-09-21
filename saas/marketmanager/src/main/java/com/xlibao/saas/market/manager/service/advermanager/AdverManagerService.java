@@ -108,4 +108,9 @@ public interface AdverManagerService {
      * @return
      */
     JSONObject getScreensByAdvertID();
+    /***
+     * 更新下载状态
+     * * @return
+     */
+    JSONObject updateAdvertScreenIsdown();
 }

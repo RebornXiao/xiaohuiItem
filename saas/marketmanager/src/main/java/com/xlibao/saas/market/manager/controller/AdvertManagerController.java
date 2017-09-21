@@ -370,4 +370,15 @@ public class AdvertManagerController extends BaseController {
        return adverManagerService.getScreenListBy();
     }
 
+    /**
+     * 更新下载状态
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/updateIsdown")
+    public JSONObject updateAdvertScreenIsdown(ModelMap map) {
+        return adverManagerService.updateAdvertScreenIsdown();
+    }
+
 }
