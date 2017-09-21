@@ -1,4 +1,4 @@
-<div class="content-page" style="background-color: #fff">
+<div class="content-page">
     <div class="content">
         <div class="container">
             <div class="row">
@@ -100,6 +100,14 @@
 </div>
 <script>
     $(document).ready(function () {
+        function checkInput (obj){//检查表单是否有空项，空格验证方法待加
+            var val = obj.val();
+            if(val == "") {
+                return false;
+            } else {
+                return true;
+            }
+        }
          //取url参数给表单赋值
         function GetQueryString(name) {
             var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
@@ -129,14 +137,6 @@
         //搜索
         //上传广告
         $("#uploadAdvertButton").on('click', function () {
-            function checkInput (obj){//检查表单是否有空项，空格验证方法待加
-                var val = obj.val();
-                if(val == "") {
-                    return false;
-                } else {
-                    return true;
-                }
-            }
             var form = new FormData($('#uploadForm')[0]);//表单数据，序列化
             console.log(form.get("file"));
             var input1 = checkInput($("#modalAdvertTitle"));
@@ -218,16 +218,23 @@
                     var e_title = $("#editTitle").val();
                     var e_time = $("#editTime").val();
                     var e_remark = $("#editRemark").val();
-                    $.post("${base}/advert/updateAdvert.do?title="+e_title+"&timeSize="+e_time+"&remark="+e_remark+"&advertID=" + $(that).attr("data_id"), function(data) {
-                        //重新刷新
-                        if(data.code == "0") {
-                            $("#editModel").modal('hide');
-                            swal("提示", "编辑成功", "success");
-                            setTimeout(function(){location.reload();},1000);
-                        } else {
-                            swal("提示", "编辑失败", "error");
-                        }
-                    }, "json");
+                    var input1 = checkInput($("#editTitle"));
+                    var input2 = checkInput($("#editTime"));
+                    var input3 = checkInput($("#editRemark"));
+                    if(input1&&input2&&input3){
+                        $.post("${base}/advert/updateAdvert.do?title="+e_title+"&timeSize="+e_time+"&remark="+e_remark+"&advertID=" + $(that).attr("data_id"), function(data) {
+                            //重新刷新
+                            if(data.code == "0") {
+                                $("#editModel").modal('hide');
+                                swal("提示", "编辑成功", "success");
+                                setTimeout(function(){location.reload();},1000);
+                            } else {
+                                swal("提示", "编辑失败", "error");
+                            }
+                        }, "json");
+                    }else{
+                        swal("提示", "请检查表单是否有漏填项！", "info");
+                    }
                 });
             });
         });

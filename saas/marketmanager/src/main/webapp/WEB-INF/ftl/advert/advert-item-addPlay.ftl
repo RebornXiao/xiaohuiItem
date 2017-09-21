@@ -1,4 +1,4 @@
-<div class="content-page" style="background-color: #fff">
+<div class="content-page">
     <div class="content">
         <div class="container">
             <div class="row">
@@ -35,12 +35,12 @@
                                     <label class="col-md-4 control-label">屏幕编号：</label>
                                     <div class="col-md-4">
                                         <select id="screenNumSelect" class="form-control">
-                                            <option value="000">该门店没有配置屏幕编号</option>
-                                        <#--<#if screens?exists >-->
-                                            <#--<#list screens as screen>-->
-                                                <#--<option value="${screen.screenID?c}">${screen.code}</option>-->
-                                            <#--</#list>-->
-                                        <#--</#if>-->
+                                            <#--<option value="000">该门店没有配置屏幕编号</option>-->
+                                        <#if screens?exists >
+                                            <#list screens as screen>
+                                                <option value="${screen.code}">${screen.code}</option>
+                                            </#list>
+                                        </#if>
                                         </select>
                                     </div>
                                 </div>
@@ -63,7 +63,7 @@
                                     </div>
                                     <div class="col-md-1">
                                         <span class="input-group-addon bg-default"
-                                              onClick="jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})">
+                                              onClick="jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD 00:00'})">
                                             <i class="fa fa-calendar"></i>
                                         </span>
                                     </div>
@@ -75,7 +75,7 @@
                                     </div>
                                     <div class="col-md-1">
                                         <span class="input-group-addon bg-default"
-                                              onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})">
+                                              onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD 00:00'})">
                                             <i class="fa fa-calendar"></i>
                                         </span>
                                     </div>
@@ -169,7 +169,7 @@
                         if((screenItem.length != 0)&& data) {//返回的数据不为空
                             select2.html("");
                             for(var i = 0; i < screenItem.length; i++) {
-                                $("<option value ='" + screenItem[i].screenID + "'> " + screenItem[i].code + "</option>").appendTo(select2);
+                                $("<option value ='" + screenItem[i].code + "'> " + screenItem[i].code + "</option>").appendTo(select2);
                             }
                             select2.parent().show();
                             select2.next().show();

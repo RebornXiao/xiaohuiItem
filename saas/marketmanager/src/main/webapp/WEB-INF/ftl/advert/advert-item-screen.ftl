@@ -1,4 +1,4 @@
-<div class="content-page" style="background-color: #fff">
+<div class="content-page">
     <div class="content">
         <div class="container">
             <div class="row">
@@ -110,7 +110,6 @@
                     </table>
                 </div>
             </div>
-
             <!--分页-->
             <div class="row small_page">
                 <div class="col-sm-12">
@@ -119,7 +118,6 @@
                 </div>
             </div>
             <!--/分页-->
-
         </div>
     </div>
 </div>
@@ -157,8 +155,8 @@
             var input3 = checkInput(screen.size);
             var input4 = checkInput(screen.mac);
             var input5 = checkInput(screen.requireTime);
-            var input6 = checkInput(screen.screenRemark);
-            if(input1&&input2&&input3&&input4&&input5&&input6){
+//            var input6 = checkInput(screen.screenRemark);
+            if(input1&&input2&&input3&&input4&&input5){
                 $.ajax({
                     type: "POST",
                     url: "${base}/advert/addScreen.do",
