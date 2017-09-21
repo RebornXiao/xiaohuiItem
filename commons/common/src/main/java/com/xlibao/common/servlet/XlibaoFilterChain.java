@@ -36,6 +36,7 @@ public class XlibaoFilterChain implements Filter {
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("accessToken".equals(cookie.getName())) {
+                    request.removeAttribute("accessToken");
                     request.setAttribute("accessToken", cookie.getValue());
                 }
             }
