@@ -29,25 +29,25 @@ public class CheckLoginAop extends BaseController {
         getHttpServletResponse().setHeader("content-type", "text/html");
         try {
 
-//            long passportId = getLongParameter("passportId", 0);
-//
-//            if(passportId == 0) {
-//                //需要登录
-//                //fali("请重新登录");
-//                return LogicConfig.FTL_LOGIN;
-//            }
-//
-//            String accessToken = getUTF("accessToken");
-//
-//            //检测 accessToken 有效期
-//            try {
-//                accessToken = PassportRemoteService.changeAccessToken(passportId, accessToken);
-//            } catch (Exception ex) {
-//                fali("登录有效期已过，请重新登录");
-//                return LogicConfig.FTL_LOGIN;
-//            }
-//
-//            setAccessToken(accessToken);
+            long passportId = getLongParameter("passportId", 0);
+
+            if(passportId == 0) {
+                //需要登录
+                //fali("请重新登录");
+                return LogicConfig.FTL_LOGIN;
+            }
+
+            String accessToken = getUTF("accessToken");
+
+            //检测 accessToken 有效期
+            try {
+                accessToken = PassportRemoteService.changeAccessToken(passportId, accessToken);
+            } catch (Exception ex) {
+                fali(ex.getMessage());
+                return LogicConfig.FTL_LOGIN;
+            }
+
+            setAccessToken(accessToken);
 
             return point.proceed(args);
 

@@ -358,6 +358,13 @@ public class MarketManagerController extends BaseController {
         return jumpPage(modelMap, LogicConfig.FTL_MARKET_TASK_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_TASK_LIST);
     }
 
+    //店铺异常任务记录
+    @RequestMapping("/marketErrorTasks")
+    public String marketErrorTasks(ModelMap map) {
+
+        return jumpPage(map, LogicConfig.FTL_MARKET_ERROR_TASK_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ERROR_TASK_LIST);
+    }
+
     //店铺商品
     @RequestMapping("/marketItems")
     public String marketItems(ModelMap map) {
