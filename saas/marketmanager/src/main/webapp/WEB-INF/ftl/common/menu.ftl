@@ -97,10 +97,22 @@
                     </li>
 
                     <li class="has_sub">
-                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="advert"> active </#if>"><i class="fa fa-youtube-play"></i>
-                            <span> 广告端管理 </span>
+                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="purchase"> active </#if>"><i class="fa fa-shopping-cart"></i>
+                            <span> 采购管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
-                        <ul class="list-unstyled" <#if tab=="store"> style="display: block;" </#if> >
+                        <ul class="list-unstyled" <#if tab=="purchase"> style="display: block;" </#if> >
+                            <li <#if tab_child=="purchases"> class="active" </#if> ><a href="${base}/purchase/purchaseList.do">采购单列表</a></li>
+                            <li <#if tab_child=="suppliers"> class="active" </#if> ><a href="${base}/purchase/supplierPage.do">供应商列表</a></li>
+                            <li <#if tab_child=="stocks"> class="active" </#if> ><a href="${base}/purchase/adverts.do">商品库存列表</a></li>
+                            <li <#if tab_child=="houses"> class="active" </#if> ><a href="${base}/purchase/advertScreens.do">仓库列表</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="has_sub">
+                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="advert"> active </#if>"><i class="fa fa-youtube-play"></i>
+                            <span> 广告管理 </span>
+                            <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
+                        <ul class="list-unstyled" <#if tab=="advert"> style="display: block;" </#if> >
                             <li <#if tab_child=="adverts"> class="active" </#if> ><a href="${base}/advert/adverts.do">广告管理</a></li>
                             <li <#if tab_child=="admanager"> class="active" </#if> ><a href="${base}/advert/advertScreens.do">投放管理</a></li>
                         </ul>

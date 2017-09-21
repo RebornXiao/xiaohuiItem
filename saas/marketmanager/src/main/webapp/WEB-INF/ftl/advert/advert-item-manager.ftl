@@ -1,4 +1,4 @@
-<div class="content-page" style="background-color: #fff">
+<div class="content-page">
     <div class="content">
         <div class="container">
             <div class="row">
@@ -46,14 +46,14 @@
                         <div class="input-group">
                             <input id="startTime" type="text" class="form-control" name="beginTime" readonly>
                             <span class="input-group-addon bg-default"
-                                  onClick="jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})"><i
+                                  onClick="jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD 00:00'})"><i
                                     class="fa fa-calendar"></i></span>
                         </div>
                         <label> &nbsp;至&nbsp; </label>
                         <div class="input-group">
                             <input id="endTime" type="text" class="form-control" name="endTime" readonly>
                             <span class="input-group-addon bg-default"
-                                  onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})"><i
+                                  onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD 00:00'})"><i
                                     class="fa fa-calendar"></i></span>
                         </div>
                     </div>
@@ -61,8 +61,8 @@
                         <label>是否下载:</label>
                         <select class="form-control" id="isdownSelect" name="isDown">
                             <option value="-1"<#if isDown == -1>selected</#if>>全部</option>
-                            <option value="0"<#if isDown == 0>selected</#if>>是</option>
-                            <option value="1"<#if isDown == 1>selected</#if>>否</option>
+                            <option value="0"<#if isDown == 0>selected</#if>>否</option>
+                            <option value="1"<#if isDown == 1>selected</#if>>是</option>
                         </select>
                     </div>
                     <div class="form-group m-l-35">
@@ -107,7 +107,7 @@
                             <th>广告标题</th>
                             <th>开始时间</th>
                             <th>结束时间</th>
-                            <th>是否下载</th>
+                            <th>下载状态</th>
                             <th>播放状态</th>
                             <th>操作</th>
                         </tr>
@@ -122,8 +122,9 @@
                                 <td>${advert.title}</td>
                                 <td>${advert.beginTime}</td>
                                 <td>${advert.endTime}</td>
-                                <#if advert.isDown=0><td><b>是</b></td>
-                                <#else><td class="text-danger"><b>否</b></td></#if>
+                                <#if advert.isDown=0><td><b>未下载</b></td>
+                                <#elseif advert.isDown=1><td><b>已下载</b></td>
+                                <#elseif advert.isDown=2><td class="text-danger"><b>下载失败</b></td></#if>
                                 <td>
                                     <#if advert.playStatus=0><span class="label label-primary">待播放</span>
                                     <#elseif advert.playOrder=1><span class="label label-danger">播放中</span>
@@ -131,18 +132,36 @@
                                     <#elseif advert.playOrder=3><span class="label label-default">已移除</span></#if>
                                 </td>
                                 <td>
-                                    <button id="lookBtn" type="button"
-                                            class="btn btn-primary btn-sm"
-                                            a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">查看
-                                    </button>
-                                    <button id="editBtn" type="button" data-target="#editModel"
-                                        class="btn btn-primary btn-sm" data-toggle="model"
-                                        a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">编辑
-                                    </button>
-                                    <button id="deleBtn" type="button" data-target="#deleModel"
-                                            class="btn btn-danger btn-sm" data-toggle="model"
-                                            a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">删除
-                                    </button>
+                                    <#if advert.isDown=2>
+                                        <button id="lookBtn" type="button"
+                                                class="btn btn-primary btn-sm"
+                                                a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">查看
+                                        </button>
+                                        <button id="editBtn" type="button" data-target="#editModel"
+                                            class="btn btn-primary btn-sm" data-toggle="model"
+                                            a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">编辑
+                                        </button>
+                                        <button id="updateBtn" type="button" class="btn btn-primary btn-sm"
+                                                a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">更新
+                                        </button>
+                                        <button id="deleBtn" type="button" data-target="#deleModel"
+                                                class="btn btn-danger btn-sm" data-toggle="model"
+                                                a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">删除
+                                        </button>
+                                    <#else>
+                                        <button id="lookBtn" type="button"
+                                                class="btn btn-primary btn-sm"
+                                                a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">查看
+                                        </button>
+                                        <button id="editBtn" type="button" data-target="#editModel"
+                                                class="btn btn-primary btn-sm" data-toggle="model"
+                                                a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">编辑
+                                        </button>
+                                        <button id="deleBtn" type="button" data-target="#deleModel"
+                                                class="btn btn-danger btn-sm" data-toggle="model"
+                                                a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">删除
+                                        </button>
+                                    </#if>
                                 </td>
                             </tr>
                             </#list>
@@ -173,6 +192,9 @@
 <script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
+        function checkInput (obj){//检查表单是否有空项，空格验证方法待加
+            if(obj == "") {return false;} else {return true;}
+        }
         //取url参数给表单赋值
         function GetQueryString(name) {
             var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
@@ -273,9 +295,6 @@
                             var input2 = checkInput(arr.e_etime);
                             var input3 = checkInput(arr.e_sort);
                             var input4 = checkInput(arr.e_pRemark);
-                            function checkInput (obj){//检查表单是否有空项，空格验证方法待加
-                                if(obj == "") {return false;} else {return true;}
-                            }
                             if(input1 && input2 && input3 && input4) {
                                 var url="${base}/advert/updateScreenAdvert.do?advertID=" +$(that).attr("a_id")+ "&screenID="
                                         +$(that).attr("s_id")+ "&marketID=" +$(that).attr("m_id")+ "&beginTime="+arr.e_stime+"&endTime="
@@ -331,6 +350,24 @@
                 var that = this;
                 $(this).on('click', function () {
                     location.href = "${base}/advert/goAdvertScreen.do?advertID="+$(that).attr("a_id")+"&screenID="+$(that).attr("s_id")+"&marketID="+$(that).attr("m_id");
+                });
+            });
+        </#if>
+        //更新
+        <#if (advertScreens?size > 0)>
+            $("#storeInfoListTable").find('button[id=updateBtn]').each(function () {
+                var that = this;
+                $(this).on('click', function () {
+                    $.post("${base}/advert/updateIsdown.do?advertID=" +$(that).attr("a_id")+ "&screenID=" +$(that).attr("s_id")+ "&marketID=" +$(that).attr("m_id"), function(data) {
+                        //重新刷新
+                        if(data.code == "0") {
+                            $("#deleModel").modal('hide');
+                            swal("提示", "更新成功", "success");
+                            setTimeout(function(){location.reload();},1000);
+                        } else {
+                            swal("提示", "更新失败", "error");
+                        }
+                    }, "json");
                 });
             });
         </#if>

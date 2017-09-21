@@ -1,4 +1,4 @@
-<div class="content-page" style="background-color: #fff">
+<div class="content-page">
     <div class="content">
         <div class="container">
             <div class="row">
@@ -26,12 +26,6 @@
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
                             <div class="table-responsive advert_detail_table">
                                 <table class="table table-bordered">
-                                    <colgroup>
-                                        <col class="col-xs-3">
-                                        <col class="col-xs-3">
-                                        <col class="col-xs-3">
-                                        <col class="col-xs-3">
-                                    </colgroup>
                                     <#if advert?exists>
                                         <tbody>
                                         <tr>
@@ -70,11 +64,6 @@
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
                             <div class="table-responsive advert_detail_table">
                                 <table class="table table-bordered">
-                                    <colgroup>
-                                        <col class="col-xs-4">
-                                        <col class="col-xs-4">
-                                        <col class="col-xs-4">
-                                    </colgroup>
                                     <thead>
                                     <tr>
                                         <th style="background-color: #f9f9f9">门店</th>

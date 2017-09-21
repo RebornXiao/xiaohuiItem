@@ -41,7 +41,7 @@
                                 <button id="saveBtn" type="button"
                                         class="btn waves-effect waves-light btn-primary col-md-2">确定
                                 </button>
-                                <button id="backBtn" type="button"
+                                <button id="backBtn" type="button" onclick="history.go(-1);"
                                         class="btn waves-effect waves-light btn-default col-md-2">返回
                                 </button>
                             </div>

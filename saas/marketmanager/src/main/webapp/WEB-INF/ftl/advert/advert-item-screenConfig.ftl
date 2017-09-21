@@ -1,4 +1,4 @@
-<div class="content-page" style="background-color: #fff">
+<div class="content-page">
     <div class="content">
         <div class="container">
             <div class="row">
