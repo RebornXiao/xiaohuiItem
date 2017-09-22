@@ -63,12 +63,12 @@
                                 <td>${house.warehouseName}</td>
                                 <td>${house.address}</td>
                                 <td>${house.userCount}</td>
-                                <#if house.status=0>
+                                <#if house.status=1>
                                     <td><b>正常</b></td>
                                 <#else>
                                     <td class="text-danger"><b>停用</b></td>
                                 </#if>
-                                <#if house.status=0>
+                                <#if house.status=1>
                                     <td>
                                         <button id="addBtn" type="button" class="btn btn-primary btn-sm" data_id="${house.id}">添加仓管</button>
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${house.id}">查看</button>
@@ -78,7 +78,7 @@
                                 <#else>
                                     <td>
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${house.id}">查看</button>
-                                        <button id="startBtn" type="button" class="btn btn-danger btn-sm" data_id="${house.id}" status="${house.status}">启用</button>
+                                        <button id="startBtn" type="button" class="btn btn-primary btn-sm" data_id="${house.id}" status="${house.status}">启用</button>
                                     </td>
                                 </#if>
                             </tr>
@@ -98,8 +98,8 @@
             <!--分页-->
             <div class="row small_page">
                 <div class="col-sm-12">
-                <#--<#include "../common/paginate.ftl">-->
-                    <#--<@paginate nowPage=pageIndex itemCount=count action="${base}"/>-->
+                <#include "../common/paginate.ftl">
+                    <#--<@paginate nowPage=pageIndex itemCount=count action="${base}/purchase/warehousePage.do?warehouseName=${warehouseName}&status=${status}"/>-->
                 </div>
             </div>
             <!--/分页-->
@@ -158,14 +158,14 @@
                 $("#stopModal").modal('show');
                 $("#stopOkBtn").on('click',function () {
                     var txt = $("#stopRemark").val();
-                    $.post("${base}/purchase/updateWarehouseStatus.do?id=" +$(that).attr("data_id")+ "&status=1&stopRemark=" +txt, function(data) {
+                    $.post("${base}/purchase/updateWarehouseStatus.do?id=" +$(that).attr("data_id")+ "&status=0&stopRemark=" +txt, function(data) {
                         //重新刷新
                         if(data.code == "0") {
                             $("#disableModal").modal('hide');
                             swal("提示", "更新成功", "success");
                             setTimeout(function(){location.reload();},1000);
                         } else {
-                            swal("提示", "更新失败", "error");
+                            swal("提示", data.msg, "error");
                         }
                     }, "json");
                 })
@@ -174,13 +174,13 @@
         $("#houseInfoTable").find('button[id=startBtn]').each(function () {//启用
             var that = this;
             $(this).on('click', function () {
-                $.post("${base}/purchase/updateWarehouseStatus.do?id=" +$(that).attr("data_id")+ "&status=0", function(data) {
+                $.post("${base}/purchase/updateWarehouseStatus.do?id=" +$(that).attr("data_id")+ "&status=1", function(data) {
                     //重新刷新
                     if(data.code == "0") {
                         swal("提示", "更新成功", "success");
                         setTimeout(function(){location.reload();},1000);
                     } else {
-                        swal("提示", "更新失败", "error");
+                        swal("提示", data.msg, "error");
                     }
                 }, "json");
             });

@@ -113,49 +113,58 @@
 <script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
+        function checkInput(obj) {
+            if (obj == "") {
+                return false;
+            } else {
+                return true;
+            }
+        }
         $("#saveBtn").on('click', function () {//确定
-            var adverts = {
-                "marketID":$("#storeSelect").val(),
-                "screenID":$("#screenNumSelect").val(),
-                "advertID":$("#advertTitle").val(),
-                "beginTime":$("#startTime").val(),
-                "endTime":$("#endTime").val(),
-                "playOrder":$("#sort").val(),
-                "remark":$("#playRemark").val(),
-            };
-            console.log(adverts.screenID);
-            var input1 = checkInput(adverts.marketID);
-            var input2 = checkInput(adverts.screenID);
-            var input3 = checkInput(adverts.advertID);
-            var input4 = checkInput(adverts.beginTime);
-            var input5 = checkInput(adverts.endTime);
-            var input6 = checkInput(adverts.playOrder);
-            var input7 = checkInput(adverts.remark);
-            function checkInput(obj) {
-                if(obj == "") {return false;} else {return true;}
-            }
-            if(input1&&input2&&input3&&input4&&input5&&input6&&input7){
-                $.ajax({
-                    type: "POST",
-                    url: "${base}/advert/addScreenAdvert.do",
-                    data: adverts,
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code =='0') {
-                            swal("提示", "添加成功", "success");
-                            setTimeout(function(){location.href="${base}/advert/advertScreens.do"},1000);
-                        } else {
-                            swal("提示", "添加失败", "error");
+            $(this).button('loading').delay(500).queue(function() {
+                $(this).button('reset'); //重置按钮
+                $(this).dequeue();
+                var adverts = {
+                    "marketID": $("#storeSelect").val(),
+                    "screenID": $("#screenNumSelect").val(),
+                    "advertID": $("#advertTitle").val(),
+                    "beginTime": $("#startTime").val(),
+                    "endTime": $("#endTime").val(),
+                    "playOrder": $("#sort").val(),
+                    "remark": $("#playRemark").val(),
+                };
+                console.log(adverts.screenID);
+                var input1 = checkInput(adverts.marketID);
+                var input2 = checkInput(adverts.screenID);
+                var input3 = checkInput(adverts.advertID);
+                var input4 = checkInput(adverts.beginTime);
+                var input5 = checkInput(adverts.endTime);
+                var input6 = checkInput(adverts.playOrder);
+                var input7 = checkInput(adverts.remark);
+                if (input1 && input2 && input3 && input4 && input5 && input6) {
+                    $.ajax({
+                        type: "POST",
+                        url: "${base}/advert/addScreenAdvert.do",
+                        data: adverts,
+                        success: function (data) {
+                            console.log(data);
+                            if (data.code == '0') {
+                                swal("提示", "添加成功", "success");
+                                setTimeout(function () {
+                                    location.href = "${base}/advert/advertScreens.do"
+                                }, 1000);
+                            } else {
+                                swal("提示", "添加失败", "error");
+                            }
+                        },
+                        error: function (data) {
+                            swal("提示", "服务器出错", "info");
                         }
-                    },
-                    error: function (data) {
-                        swal("提示", "服务器出错", "info");
-                    }
-                });
-            }else{
-                swal("提示", "请检查表单是否有漏填项！", "info");
-            }
-
+                    });
+                } else {
+                    swal("提示", "请检查表单是否有漏填项！", "info");
+                }
+            });
         });
         //下拉列表级联
         var select1 = $("#storeSelect");

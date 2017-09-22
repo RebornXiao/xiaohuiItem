@@ -164,7 +164,7 @@
                             swal("提示", "更新成功", "success");
                             setTimeout(function(){location.reload();},1000);
                         } else {
-                            swal("提示", "更新失败", "error");
+                            swal("提示", data.msg, "error");
                         }
                     }, "json");
                 });
@@ -182,7 +182,7 @@
                                 swal("提示", "更新成功", "success");
                                 setTimeout(function(){location.reload();},1000);
                             } else {
-                                swal("提示", "更新失败", "error");
+                                swal("提示", data.msg, "error");
                             }
                         }, "json");
                     })

@@ -19,22 +19,20 @@
                     <div class="advert_container">
                         <div>
                             <ol class="breadcrumb pull-right">
-                                <li><a href="#">添加仓管员</a></li>
+                                <#--<li><a href="#">添加仓管员</a></li>-->
                             </ol>
                             <h5 class="page-title" style="padding-top: 20px"><b>基本信息</b></h5>
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
                             <div class="table-responsive advert_detail_table">
                                 <table class="table table-bordered">
-                                    <#--<#if advert?exists>-->
-                                        <tbody>
-                                        <tr>
-                                            <td style="background-color: #f9f9f9">账号</td>
-                                            <td><input id="userName" type="text" class="form-control" placeholder="请输入账号"></td>
-                                            <td style="background-color: #f9f9f9">备注</td>
-                                            <td><input id="remark" type="text" class="form-control" placeholder="请输入相关说明"></td>
-                                        </tr>
-                                        </tbody>
-                                    <#--</#if>-->
+                                    <tbody>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">账号</td>
+                                        <td><input id="userName" type="text" class="form-control" placeholder="请输入账号"></td>
+                                        <td style="background-color: #f9f9f9">备注</td>
+                                        <td><input id="remark" type="text" class="form-control" placeholder="请输入相关说明"></td>
+                                    </tr>
+                                    </tbody>
                                 </table>
                             </div>
                             <div class="form-group m-t-20">
@@ -54,24 +52,32 @@
 </div>
 <script type="text/javascript">
     $(document).ready(function () {
+        //取url参数给表单赋值
+        function GetQueryString(name) {
+            var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+            var r = window.location.search.substr(1).match(reg);
+            if(r!=null)return  unescape(r[2]); return null;
+        }
         $("#saveBtn").on('click',function () {
-            var name = $("#userName").val();
-            var remark = $("#remark").val();
-            $.ajax({
-                type: "POST",
-                url: "${base}/purchase/saveWarehouseUser.do?warehouseID${house.id}&userName="+name+"&remark="+remark,
-                success: function (data) {
+            $(this).button('loading').delay(500).queue(function() {
+                $(this).button('reset'); //重置按钮
+                $(this).dequeue();
+                var _id = GetQueryString('id');
+                var name = $("#userName").val();
+                var remark = $("#remark").val();
+                var url = "${base}/purchase/saveWarehouseUser.do?warehouseID=" + _id + "&userName=" + name + "&remark=" + remark;
+                $.post(url, function (data) {
+                    //重新刷新
                     console.log(data);
-                    if (data.code =='0') {
+                    if (data.code == "0") {
                         swal("提示", "添加成功", "success");
-                        setTimeout(function(){location.href="${base}/purchase/warehousePage.do"},1000);
+                        setTimeout(function () {
+                            location.href = "${base}/purchase/warehousePage.do";
+                        }, 1000);
                     } else {
-                        swal("提示", "添加失败", "error");
+                        swal("提示", data.msg, "error");
                     }
-                },
-                error: function (data) {
-                    swal("提示", "服务器出错", "info");
-                }
+                }, "json");
             });
         });
     });

@@ -17,43 +17,37 @@
             <div class="row">
                 <div class="col-sm-12">
                     <div class="advert_container">
-                        <div>
-                            <ol class="breadcrumb pull-right">
-                                <#--<li><a href="#" data-toggle="modal" data-target="#editButton">编辑</a></li>-->
-                                <#--<li><a href="#" data-toggle="modal" data-target="#deleteButton">删除</a></li>-->
-                            </ol>
-                            <h5 class="page-title" style="padding-top: 20px"><b>基本信息</b></h5>
-                            <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
-                            <div class="table-responsive advert_detail_table">
-                                <table class="table table-bordered">
-                                    <#if warehouse?exists>
-                                        <tbody>
-                                        <tr>
-                                            <td style="background-color: #f9f9f9">仓库编码</td>
-                                            <td>${warehouse.warehouseCode}</td>
-                                            <td style="background-color: #f9f9f9">创建时间</td>
-                                            <td>${warehouse.createTime}</td>
-                                        </tr>
-                                        </tbody>
-                                        <tbody>
-                                        <tr>
-                                            <td style="background-color: #f9f9f9">仓库名称</td>
-                                            <td>${warehouse.warehouseName}</td>
-                                            <td style="background-color: #f9f9f9">仓库地址</td>
-                                            <td>${warehouse.address}</td>
-                                        </tr>
-                                        </tbody>
-                                        <tbody>
-                                        <tr>
-                                            <td style="background-color: #f9f9f9">状态</td>
-                                            <td>${warehouse.status}</td>
-                                            <td style="background-color: #f9f9f9">停用原因</td>
-                                            <td>${warehouse.stopRemark}</td>
-                                        </tr>
-                                        </tbody>
-                                    </#if>
-                                </table>
-                            </div>
+                        <h5 class="page-title" style="padding-top: 20px"><b>基本信息</b></h5>
+                        <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                        <div class="table-responsive advert_detail_table">
+                            <table class="table table-bordered">
+                                <#if warehouse?exists>
+                                    <tbody>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">仓库编码</td>
+                                        <td>${warehouse.warehouseCode}</td>
+                                        <td style="background-color: #f9f9f9">创建时间</td>
+                                        <td>${warehouse.createTime}</td>
+                                    </tr>
+                                    </tbody>
+                                    <tbody>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">仓库名称</td>
+                                        <td>${warehouse.warehouseName}</td>
+                                        <td style="background-color: #f9f9f9">仓库地址</td>
+                                        <td>${warehouse.address}</td>
+                                    </tr>
+                                    </tbody>
+                                    <tbody>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">状态</td>
+                                        <td>${warehouse.status}</td>
+                                        <td style="background-color: #f9f9f9">停用原因</td>
+                                        <td>${warehouse.stopRemark}</td>
+                                    </tr>
+                                    </tbody>
+                                </#if>
+                            </table>
                         </div>
                     </div>
                 </div>
