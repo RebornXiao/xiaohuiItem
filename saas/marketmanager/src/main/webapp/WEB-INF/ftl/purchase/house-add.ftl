@@ -15,55 +15,54 @@
             </div>
 
             <div class="row">
-                <div class="col-sm-12">
-                    <div class="row m-t-30">
-                        <div class="col-md-8">
-                        	<h5 class="page-title" style="padding-top: 20px"><b>基本信息</b></h5>
-                            <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
-                            <form class="form-horizontal" role="form">
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">仓库编码：</label>
-                                    <div class="col-md-8">
-                                        <input type="text" id="houseCode" class="form-control" placeholder="输入仓库编码">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">仓库名称：</label>
-                                    <div class="col-md-8">
-                                        <input type="text" id="houseName" class="form-control" placeholder="输入仓库名称">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">仓库地址：</label>
-                                    <div class="col-md-8">
-                                        <input type="text" id="houseAddress" class="form-control" placeholder="输入仓库地址">
-                                    </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">备注：</label>
-                                    <div class="col-md-8">
-                                        <textarea class="form-control" rows="6" id="remark"></textarea>
-                                    </div>
-                                </div>
-                                <h5 class="page-title" style="padding-top: 20px"><b>对接信息</b></h5>
-                                <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">Key：</label>
-                                    <div class="col-md-8">
-                                        <input type="text" id="keyInput" class="form-control" placeholder="请输入与WMS对接Key">
-                                    </div>
-                                </div>
-                                <div class="form-group m-t-20">
-                                    <div class="col-md-4">
-                                    </div>
-                                    <button id="saveBtn" type="button"
-                                            class="btn waves-effect waves-light btn-primary col-md-2">确定
-                                    </button>
-                                    <button id="backBtn" type="button" onclick="history.go(-1);"
-                                            class="btn waves-effect waves-light btn-default col-md-2">返回
-                                    </button>
-                                </div>
-                            </form>
+                <div class="col-sm-8">
+                    <div class="advert_container">
+                        <h5 class="page-title" style="padding-top: 20px"><b>基本信息</b></h5>
+                        <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                        <div class="table-responsive advert_detail_table">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td style="background-color: #f9f9f9">仓库编码:</td>
+                                    <td><input type="text" class="form-control" id="addHouseCode" placeholder="输入仓库编码"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #f9f9f9">仓库名称</td>
+                                    <td><input type="text" class="form-control" id="addHouseName" placeholder="输入仓库名称"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #f9f9f9">仓库地址</td>
+                                    <td><input type="text" class="form-control" id="addHouseAddress" placeholder="输入仓库地址"/></td>
+                                </tr>
+                                <tr>
+                                    <td style="background-color: #f9f9f9">备注</td>
+                                    <td><input type="text" class="form-control" id="remark" placeholder="请输入相关说明"/></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="advert_container">
+                        <h5 class="page-title" style="padding-top: 20px"><b>对接信息</b></h5>
+                        <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                        <div class="table-responsive advert_detail_table">
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr>
+                                    <td style="background-color: #f9f9f9">Key:</td>
+                                    <td><input type="text" class="form-control" id="keyInput" placeholder="请输入与WMS对接Key"/></td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="m-t-40">
+                            <button id="saveBtn" type="button" class="btn waves-effect waves-light btn-primary col-md-2">确定</button>
+                            <button id="backBtn" type="button" class="btn waves-effect waves-light btn-default col-md-2" onclick="history.go(-1);">返回</button>
                         </div>
                     </div>
                 </div>
@@ -78,37 +77,29 @@
         }
         $("#saveBtn").on('click', function () {//确定
             var arr = {
-                "code":$("#houseCode").val(),
-                "name":$("#houseName").val(),
-                "address":$("#houseAddress").val(),
+                "code":$("#addHouseCode").val(),
+                "name":$("#addHouseName").val(),
+                "address":$("#addHouseAddress").val(),
                 "remark":$("#remark").val(),
                 "key":$("#keyInput").val(),
             };
             var input1 = checkInput(arr.code);
             var input2 = checkInput(arr.name);
             var input3 = checkInput(arr.address);
-            var input4 = checkInput(arr.key);
-            if(input1&&input2&&input3&&input4){
-                var url="${base}/purchase/updateHouse.do?warehouseCode="
+            if(input1&&input2&&input3){
+                var url="${base}/purchase/saveWarehouse.do?warehouseCode="
                         +arr.code+ "&warehouseName=" +arr.name+ "&address=" +arr.address+ "&remark="
-                        +arr.remark+ "&key=" +arr.key;
-                $.ajax({
-                    type: "POST",
-                    url: "${base}/advert/addScreenAdvert.do",
-                    data: arr,
-                    success: function (data) {
-                        console.log(data);
-                        if (data.code =='0') {
-                            swal("提示", "更新成功", "success");
-                            setTimeout(function(){location.href="${base}/purchase/warehousePage.do"},1000);
-                        } else {
-                            swal("提示", "更新失败", "error");
-                        }
-                    },
-                    error: function (data) {
-                        swal("提示", "服务器出错", "info");
+                        +arr.remark;
+                $.post(url, function(data) {
+                    //重新刷新
+                    console.log(data);
+                    if(data.code == "0") {
+                        swal("提示", "添加成功", "success");
+                        setTimeout(function(){location.href="${base}/purchase/warehousePage.do";},1000);
+                    } else {
+                        swal("提示", "添加失败", "error");
                     }
-                });
+                }, "json");
             }else{
                 swal("提示", "请检查表单是否有漏填项！", "info");
             }

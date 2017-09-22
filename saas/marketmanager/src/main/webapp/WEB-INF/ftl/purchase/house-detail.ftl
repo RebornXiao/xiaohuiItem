@@ -26,32 +26,32 @@
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
                             <div class="table-responsive advert_detail_table">
                                 <table class="table table-bordered">
-                                    <#--<#if advert?exists>-->
+                                    <#if warehouse?exists>
                                         <tbody>
                                         <tr>
                                             <td style="background-color: #f9f9f9">仓库编码</td>
-                                            <td>11</td>
+                                            <td>${warehouse.warehouseCode}</td>
                                             <td style="background-color: #f9f9f9">创建时间</td>
-                                            <td>22</td>
+                                            <td>${warehouse.createTime}</td>
                                         </tr>
                                         </tbody>
                                         <tbody>
                                         <tr>
                                             <td style="background-color: #f9f9f9">仓库名称</td>
-                                            <td></td>
+                                            <td>${warehouse.warehouseName}</td>
                                             <td style="background-color: #f9f9f9">仓库地址</td>
-                                            <td></td>
+                                            <td>${warehouse.address}</td>
                                         </tr>
                                         </tbody>
                                         <tbody>
                                         <tr>
                                             <td style="background-color: #f9f9f9">状态</td>
-                                            <td></td>
+                                            <td>${warehouse.status}</td>
                                             <td style="background-color: #f9f9f9">停用原因</td>
-                                            <td></td>
+                                            <td>${warehouse.stopRemark}</td>
                                         </tr>
                                         </tbody>
-                                    <#--</#if>-->
+                                    </#if>
                                 </table>
                             </div>
                         </div>
@@ -95,22 +95,22 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <#--<#if (screens?size > 0)>-->
-                                        <#--<#list screens as screen>-->
-                                        <#--<tr>-->
-                                            <#--<td>${screen.marketName}</td>-->
-                                            <#--<td>${screen.code}</td>-->
-                                            <#--<td>${screen.marketName}</td>-->
-                                            <#--<td>${screen.code}</td>-->
-                                        <#--</tr>-->
-                                        <#--</#list>-->
-                                    <#--<#else>-->
-                                        <#--<tr>-->
-                                            <#--<td colSpan="11" height="100px">-->
-                                                <#--<p class="text-center" style="line-height: 100px">该仓库没有分配仓管员</p>-->
-                                            <#--</td>-->
-                                        <#--</tr>-->
-                                    <#--</#if>-->
+                                    <#if (users?size > 0)>
+                                        <#list users as user>
+                                        <tr>
+                                            <td>${user.createTime}</td>
+                                            <td>${user.userName}</td>
+                                            <td>${user.remark}</td>
+                                            <td><a>初始化密码</a><a>删除</a></td>
+                                        </tr>
+                                        </#list>
+                                    <#else>
+                                        <tr>
+                                            <td colSpan="11" height="100px">
+                                                <p class="text-center" style="line-height: 100px">该仓库没有分配仓管员</p>
+                                            </td>
+                                        </tr>
+                                    </#if>
                                     </tbody>
                                 </table>
                             </div>

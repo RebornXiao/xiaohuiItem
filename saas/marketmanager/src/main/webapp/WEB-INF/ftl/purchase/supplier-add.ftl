@@ -112,10 +112,10 @@
                     //重新刷新
                     console.log(data);
                     if(data.code == "0") {
-                        swal("提示", "更新成功", "success");
+                        swal("提示", "添加成功", "success");
                         setTimeout(function(){location.href="${base}/purchase/supplierPage.do";},1000);
                     } else {
-                        swal("提示", "更新失败", "error");
+                        swal("提示", "添加失败", "error");
                     }
                 }, "json");
             } else {
