@@ -276,7 +276,7 @@ public class PurchaseManagerController extends BaseController {
         JSONArray purchases = response.getJSONArray("data");
         map.put("count", response.getIntValue("count"));
 
-        JSONObject warehousesJson =   supplierManagerService.getAllSupplier();
+        JSONObject warehousesJson =   warehouseManagerService.getAllWarehouse();
         JSONObject warehouseResp = warehousesJson.getJSONObject("response");
         JSONArray warehouseItem = warehouseResp.getJSONArray("datas");
         /**下拉列表**/
