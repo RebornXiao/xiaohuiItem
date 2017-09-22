@@ -52,4 +52,27 @@
         </div>
     </div>
 </div>
-
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#saveBtn").on('click',function () {
+            var name = $("#userName").val();
+            var remark = $("#remark").val();
+            $.ajax({
+                type: "POST",
+                url: "${base}/purchase/saveWarehouseUser.do?warehouseID${house.id}&userName="+name+"&remark="+remark,
+                success: function (data) {
+                    console.log(data);
+                    if (data.code =='0') {
+                        swal("提示", "添加成功", "success");
+                        setTimeout(function(){location.href="${base}/purchase/warehousePage.do"},1000);
+                    } else {
+                        swal("提示", "添加失败", "error");
+                    }
+                },
+                error: function (data) {
+                    swal("提示", "服务器出错", "info");
+                }
+            });
+        });
+    });
+</script>

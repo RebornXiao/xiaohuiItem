@@ -18,11 +18,11 @@
                 <form class="form-inline" role="form" action="${base}/purchase/supplierPage.do">
                     <div class="form-group m-l-15">
                         <label>供应商名称：</label>
-                        <input type="text" class="form-control" id="supplierName" placeholder="输入供应商名称" name="title">
+                        <input type="text" class="form-control" id="supplierName" placeholder="输入供应商名称" name="supplierName">
                     </div>
                     <div class="form-group m-l-15">
                         <label>供应商属性：</label>
-                        <select id="supplierSelect" class="form-control" name="timeType">
+                        <select id="supplierSelect" class="form-control" name="supplier">
                             <option value="-1">选择供应商</option>
                             <option value="1">一级供应商</option>
                             <option value="2">二级供应商</option>
@@ -32,7 +32,7 @@
                     </div>
                     <div class="form-group m-l-15">
                         <label>状态：</label>
-                        <select id="status" class="form-control" name="timeType">
+                        <select id="status" class="form-control" name="status">
                             <option value="-1">全部</option>
                             <option value="0">停用</option>
                             <option value="1">正常</option>                     
@@ -65,7 +65,13 @@
                             <tr id="tr_${supplier_index}">
                                 <td>${supplier.id}</td>
                                 <td>${supplier.supplierName}</td>
-                                <td>${supplier.supplierType}</td>
+                                <td>
+                                    <#if supplier.supplierType=1>一级供应商
+                                    <#elseif supplier.supplierType=2>二级供应商
+                                    <#elseif supplier.supplierType=3>品牌供应商
+                                    <#elseif supplier.supplierType=4>超市供应商
+                                    </#if>
+                                </td>
                                 <td>${supplier.address}</td>
                                 <td>${supplier.createTime}</td>
                                 <#if supplier.status=1>
@@ -103,7 +109,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}"/>
+                    <#--<@paginate nowPage=pageIndex itemCount=count action="${base}/purchase/supplierPage.do?supplierName=${supplierName}&supplierType=${supplierType}&status=${status}"/>-->
                 </div>
             </div>
             <!--/分页-->
@@ -133,7 +139,7 @@
         //添加供应商
         $("#addSupplierBtn").on('click',function () {
             location.href = "${base}/purchase/supplierAdd.do";
-        })
+        });
 
         //查看,编辑,启用,停用
         <#if (suppliers?size > 0)>

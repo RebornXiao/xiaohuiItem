@@ -30,8 +30,6 @@
                                         <td style="background-color: #f9f9f9">供应商地址</td>
                                         <td><input type="text" class="form-control" id="editSupplierAddress" placeholder="输入供应商地址" value="${supplier.address}"/></td>
                                     </tr>
-                                    </tbody>
-                                    <tbody>
                                     <tr>
                                         <td style="background-color: #f9f9f9">供应商属性</td>
                                         <td>
@@ -108,6 +106,7 @@
                 "sname":$("#saleName").val(),
                 "phone":$("#salephone").val()
             };
+            alert(arr.phone);
             var input1 = checkInput(arr.name);
             var input2 = checkInput(arr.address);
             var input3 = checkInput(arr.select);

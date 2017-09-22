@@ -33,28 +33,32 @@
                                         <td style="background-color: #f9f9f9">供应商地址</td>
                                         <td>${supplier.address}</td>
                                     </tr>
-                                    </tbody>
-                                    <tbody>
                                     <tr>
                                         <td style="background-color: #f9f9f9">供应商属性</td>
-                                        <td>${supplier.supplierType}</td>
+                                        <td>
+                                            <#if supplier.supplierType=1>一级供应商
+                                            <#elseif supplier.supplierType=2>二级供应商
+                                            <#elseif supplier.supplierType=3>品牌供应商
+                                            <#elseif supplier.supplierType=4>超市供应商
+                                            </#if>
+                                        </td>
                                         <td style="background-color: #f9f9f9">出货周期</td>
                                         <td>${supplier.deliverPeriod}</td>
                                     </tr>
-                                    </tbody>
-                                    <tbody>
                                     <tr>
                                         <td style="background-color: #f9f9f9">状态</td>
-                                        <td>${supplier.status}</td>
+                                        <td>
+                                            <#if supplier.status=1>正常<#else>停用</#if>
+                                        </td>
                                         <td style="background-color: #f9f9f9">创建时间</td>
                                         <td>${supplier.createTime}</td>
                                     </tr>
-                                    </tbody>
-                                    <tbody>
-                                    <tr>
-                                        <td style="background-color: #f9f9f9">停止使用原因</td>
-                                        <td colspan="3"></td>
-                                    </tr>
+                                    <#if supplier.status=0>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">停止使用原因</td>
+                                            <td colspan="3"></td>
+                                        </tr>
+                                    </#if>
                                     </tbody>
                                 </#if>
                             </table>
