@@ -165,19 +165,16 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
     public JSONObject saveWarehouseUser() {
         long warehouseID = getLongParameter("warehouseID",-1);
         String username = getUTF("username",null);
-        String password = getUTF("password",null);
         String ramark = getUTF("ramark",null);
         if(warehouseID==-1){
             return fail("缺少仓库ID");
         }else if(username == null || username.isEmpty()){
             return fail("缺少仓库管理员用户名");
-        }else if(password == null || password.isEmpty()){
-            return fail("缺少管理员密码");
         }
         Map<String, String> parameters = new HashMap<>();
         parameters.put("warehouseID", String.valueOf(warehouseID));
         parameters.put("username", username);
-        parameters.put("password", password);
+        parameters.put("password", "xiaohui2017");
         parameters.put("ramark", ramark);
 
         try {
