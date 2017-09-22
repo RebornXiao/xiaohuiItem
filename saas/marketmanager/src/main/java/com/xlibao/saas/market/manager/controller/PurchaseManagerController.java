@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.saas.market.manager.BaseController;
 import com.xlibao.saas.market.manager.config.LogicConfig;
+import com.xlibao.saas.market.manager.service.purchasemanager.PurchaseManagerService;
 import com.xlibao.saas.market.manager.service.purchasemanager.SupplierManagerService;
 import com.xlibao.saas.market.manager.service.purchasemanager.WarehouseManagerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,13 +26,16 @@ public class PurchaseManagerController extends BaseController {
 
     @Autowired
     WarehouseManagerService warehouseManagerService;
+
+    @Autowired
+    PurchaseManagerService purchaseManagerService;
         /**
          * 供应商列表
          * @param map
          * @return
          */
         @RequestMapping("/supplierPage")
-        public String searchPurchasePage(ModelMap map) {
+        public String searchSupplierPage(ModelMap map) {
             JSONObject supplierJson =  supplierManagerService.searchSupplierPage();
             JSONObject response = supplierJson.getJSONObject("response");
             JSONArray suppliers = response.getJSONArray("data");
@@ -259,5 +263,113 @@ public class PurchaseManagerController extends BaseController {
     @RequestMapping("/resetWarehouseUserPwd")
     public JSONObject resetWarehouseUserPwd(ModelMap map) {
         return warehouseManagerService.updateWarehouseUserPassword();
+    }
+
+    /**
+     * 采购单列表
+     * @return
+     */
+    @RequestMapping("/purchasePage")
+    public String searchPurchasePage(ModelMap map) {
+        JSONObject purchaseJson =  purchaseManagerService.searchPurchasePage();
+        JSONObject response = purchaseJson.getJSONObject("response");
+        JSONArray purchases = response.getJSONArray("data");
+        map.put("count", response.getIntValue("count"));
+
+        JSONObject warehousesJson =   supplierManagerService.getAllSupplier();
+        JSONObject warehouseResp = warehousesJson.getJSONObject("response");
+        JSONArray warehouseItem = warehouseResp.getJSONArray("datas");
+        /**下拉列表**/
+        map.put("warehouseItem", warehouseItem);
+
+        map.put("supplierName", getUTF("supplierName",null));
+        map.put("warehouseID", getIntParameter("warehouseID",-1));
+        map.put("status", getIntParameter("status",-1));
+        int pageIndex = getIntParameter("pageIndex", 1);
+        map.put("pageIndex", pageIndex);
+        map.put("pageSize", getPageSize());
+        /*****分页数据**/
+        map.put("purchases", purchases);
+        return jumpPage(map, LogicConfig.FTL_PURCHASE_LIST, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_PURCHASE_LIST);
+    }
+
+    /**
+     * 采购单详情
+     * @param map
+     * @return
+     */
+    @RequestMapping("purchaseDetail")
+    public String purchaseDetail(ModelMap map) {
+        JSONObject purchaseJson= purchaseManagerService.getPurchase();
+        JSONObject purchase = purchaseJson.getJSONObject("response");
+        map.put("purchase", purchase);
+
+        /*************采购物品BEGIN*************/
+        JSONObject commoditysJson= purchaseManagerService.getPurchaseCommodityS();
+        JSONObject commoditysResponse = commoditysJson.getJSONObject("response");
+        JSONArray commoditys = commoditysResponse.getJSONArray("datas");
+        map.put("commoditys", commoditys);
+        /*************采购物品END********/
+        return jumpPage(map, LogicConfig.FTL_PURCHASE_DETAIL, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_PURCHASE_LIST);
+    }
+
+    /**
+     * 删除采购单
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/deletePurchase")
+    public JSONObject deletePurchase(ModelMap map) {
+        return purchaseManagerService.deletePurchase();
+    }
+
+    /**
+     * 跳转采购单添加
+     * @param map
+     * @return
+     */
+    @RequestMapping("/purchaseAdd")
+    public String purchaseAdd(ModelMap map) {
+        return jumpPage(map, LogicConfig.FTL_PURCHASE_ADD, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_PURCHASE_LIST);
+    }
+
+
+    /**
+     * 跳转采购单编辑
+     * @param map
+     * @return
+     */
+    @RequestMapping("/purchaseEdit")
+    public String purchaseEdit(ModelMap map) {
+        JSONObject purchaseJson= purchaseManagerService.getPurchase();
+        JSONObject purchase = purchaseJson.getJSONObject("response");
+        map.put("purchase", purchase);
+
+        /*************采购物品BEGIN*************/
+        JSONObject commoditysJson= purchaseManagerService.getPurchaseCommodityS();
+        JSONObject commoditysResponse = commoditysJson.getJSONObject("response");
+        JSONArray commoditys = commoditysResponse.getJSONArray("datas");
+        map.put("commoditys", commoditys);
+        /*************采购物品END********/
+        return jumpPage(map, LogicConfig.FTL_PURCHASE_EDIT, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_PURCHASE_LIST);
+    }
+    /**
+     * 添加采购单同时需要添加采购物品
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/savePurchase")
+    public JSONObject savePurchase(ModelMap map) {
+        return purchaseManagerService.savePurchase();
+    }
+
+    /**
+     * 更新采购单。删除采购物品再添加采购物品
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/updatePurchase")
+    public JSONObject updatePurchase(ModelMap map) {
+        return purchaseManagerService.updatePurchase();
     }
 }
