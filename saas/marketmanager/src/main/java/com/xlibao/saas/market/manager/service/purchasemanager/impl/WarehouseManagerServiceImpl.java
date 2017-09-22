@@ -48,7 +48,7 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
         String warehouseCode = getUTF("warehouseCode",null);
         String warehouseName = getUTF("warehouseName",null);
         String address = getUTF("address",null);
-        String ramark = getUTF("ramark",null);
+        String remark = getUTF("remark",null);
 
         if(warehouseCode == null || warehouseCode.isEmpty()){
             return fail("缺少仓库编码");
@@ -61,7 +61,7 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
         parameters.put("warehouseCode", warehouseCode);
         parameters.put("warehouseName", warehouseName);
         parameters.put("address", address);
-        parameters.put("ramark", ramark);
+        parameters.put("remark", remark);
 
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/saveWarehouse.do";
@@ -90,7 +90,7 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
         String warehouseCode = getUTF("warehouseCode",null);
         String warehouseName = getUTF("warehouseName",null);
         String address = getUTF("address",null);
-        String ramark = getUTF("ramark",null);
+        String remark = getUTF("remark",null);
         if(id==-1){
             return fail("缺少仓库ID");
         }else if(warehouseCode == null || warehouseCode.isEmpty()){
@@ -105,7 +105,7 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
         parameters.put("warehouseCode", warehouseCode);
         parameters.put("warehouseName", warehouseName);
         parameters.put("address", address);
-        parameters.put("ramark", ramark);
+        parameters.put("remark", remark);
 
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateWarehouse.do";
@@ -164,8 +164,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
     @Override
     public JSONObject saveWarehouseUser() {
         long warehouseID = getLongParameter("warehouseID",-1);
-        String username = getUTF("username",null);
-        String ramark = getUTF("ramark",null);
+        String username = getUTF("userName",null);
+        String remark = getUTF("remark",null);
         if(warehouseID==-1){
             return fail("缺少仓库ID");
         }else if(username == null || username.isEmpty()){
@@ -175,7 +175,7 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
         parameters.put("warehouseID", String.valueOf(warehouseID));
         parameters.put("username", username);
         parameters.put("password", "xiaohui2017");
-        parameters.put("ramark", ramark);
+        parameters.put("remark", remark);
 
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/saveWarehouseUser.do";
