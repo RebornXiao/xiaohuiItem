@@ -90,37 +90,43 @@
             if(obj == "") {return false;} else {return true;}
         }
         $("#addBtn").on('click',function () {
-            var arr = {
-                "name":$("#addSupplierName").val(),
-                "address":$("#addSupplierAddress").val(),
-                "select":$("#supplierSelect").val(),
-                "time":$("#addSupplierTime").val(),
-                "sname":$("#addSaleName").val(),
-                "phone":$("#addPhone").val()
-            };
-            var input1 = checkInput(arr.name);
-            var input2 = checkInput(arr.address);
-            var input3 = checkInput(arr.select);
-            var input4 = checkInput(arr.time);
-            var input5 = checkInput(arr.sname);
-            var input6 = checkInput(arr.phone);
-            if(input1 && input2 && input3 && input4 && input5 && input6) {
-                var url="${base}/purchase/saveSupplier.do?supplierName="
-                        +arr.name+ "&address=" +arr.address+ "&supplierType=" +arr.select+ "&deliverPeriod="
-                        +arr.time+ "&salesmanName=" +arr.sname+ "&phone=" +arr.phone;
-                $.post(url, function(data) {
-                    //重新刷新
-                    console.log(data);
-                    if(data.code == "0") {
-                        swal("提示", "添加成功", "success");
-                        setTimeout(function(){location.href="${base}/purchase/supplierPage.do";},1000);
-                    } else {
-                        swal("提示", "添加失败", "error");
-                    }
-                }, "json");
-            } else {
-                swal("提示", "请检查表单是否有漏填项！", "info");
-            }
+            $(this).button('loading').delay(500).queue(function() {
+                $(this).button('reset'); //重置按钮
+                $(this).dequeue();
+                var arr = {
+                    "name": $("#addSupplierName").val(),
+                    "address": $("#addSupplierAddress").val(),
+                    "select": $("#supplierSelect").val(),
+                    "time": $("#addSupplierTime").val(),
+                    "sname": $("#addSaleName").val(),
+                    "phone": $("#addPhone").val()
+                };
+                var input1 = checkInput(arr.name);
+                var input2 = checkInput(arr.address);
+                var input3 = checkInput(arr.select);
+                var input4 = checkInput(arr.time);
+                var input5 = checkInput(arr.sname);
+                var input6 = checkInput(arr.phone);
+                if (input1 && input2 && input3 && input4 && input5 && input6) {
+                    var url = "${base}/purchase/saveSupplier.do?supplierName="
+                            + arr.name + "&address=" + arr.address + "&supplierType=" + arr.select + "&deliverPeriod="
+                            + arr.time + "&salesmanName=" + arr.sname + "&phone=" + arr.phone;
+                    $.post(url, function (data) {
+                        //重新刷新
+                        console.log(data);
+                        if (data.code == "0") {
+                            swal("提示", "添加成功", "success");
+                            setTimeout(function () {
+                                location.href = "${base}/purchase/supplierPage.do";
+                            }, 1000);
+                        } else {
+                            swal("提示", data.msg, "error");
+                        }
+                    }, "json");
+                } else {
+                    swal("提示", "请检查表单是否有漏填项！", "info");
+                }
+            });
         });
     });
 </script>

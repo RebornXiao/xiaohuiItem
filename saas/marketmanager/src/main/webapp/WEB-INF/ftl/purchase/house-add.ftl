@@ -76,33 +76,39 @@
             if(obj == "") {return false;} else {return true;}
         }
         $("#saveBtn").on('click', function () {//确定
-            var arr = {
-                "code":$("#addHouseCode").val(),
-                "name":$("#addHouseName").val(),
-                "address":$("#addHouseAddress").val(),
-                "remark":$("#remark").val(),
-                "key":$("#keyInput").val(),
-            };
-            var input1 = checkInput(arr.code);
-            var input2 = checkInput(arr.name);
-            var input3 = checkInput(arr.address);
-            if(input1&&input2&&input3){
-                var url="${base}/purchase/saveWarehouse.do?warehouseCode="
-                        +arr.code+ "&warehouseName=" +arr.name+ "&address=" +arr.address+ "&remark="
-                        +arr.remark;
-                $.post(url, function(data) {
-                    //重新刷新
-                    console.log(data);
-                    if(data.code == "0") {
-                        swal("提示", "添加成功", "success");
-                        setTimeout(function(){location.href="${base}/purchase/warehousePage.do";},1000);
-                    } else {
-                        swal("提示", "添加失败", "error");
-                    }
-                }, "json");
-            }else{
-                swal("提示", "请检查表单是否有漏填项！", "info");
-            }
+            $(this).button('loading').delay(500).queue(function() {
+                $(this).button('reset'); //重置按钮
+                $(this).dequeue();
+                var arr = {
+                    "code": $("#addHouseCode").val(),
+                    "name": $("#addHouseName").val(),
+                    "address": $("#addHouseAddress").val(),
+                    "remark": $("#remark").val(),
+                    "key": $("#keyInput").val(),
+                };
+                var input1 = checkInput(arr.code);
+                var input2 = checkInput(arr.name);
+                var input3 = checkInput(arr.address);
+                if (input1 && input2 && input3) {
+                    var url = "${base}/purchase/saveWarehouse.do?warehouseCode="
+                            + arr.code + "&warehouseName=" + arr.name + "&address=" + arr.address + "&remark="
+                            + arr.remark;
+                    $.post(url, function (data) {
+                        //重新刷新
+                        console.log(data);
+                        if (data.code == "0") {
+                            swal("提示", "添加成功", "success");
+                            setTimeout(function () {
+                                location.href = "${base}/purchase/warehousePage.do";
+                            }, 1000);
+                        } else {
+                            swal("提示", data.msg, "error");
+                        }
+                    }, "json");
+                } else {
+                    swal("提示", "请检查表单是否有漏填项！", "info");
+                }
+            });
         });
     });
 </script>

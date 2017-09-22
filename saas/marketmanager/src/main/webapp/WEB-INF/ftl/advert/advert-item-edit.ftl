@@ -115,12 +115,6 @@
             if(r!=null)return  unescape(r[2]); return null;
         }
         var add_title = GetQueryString("title");
-        var add_timeType = GetQueryString("timeType");
-//        if(add_timeType=='-1'){
-//            $("#advertNavTime option:selected").text("选择时长");
-//        }else if(add_timeType=='0'){
-//            $("#advertNavTime option:selected").text("15s以内");
-//        }
 
         //鼠标经过效果
         $("tr[id^='tr_']").hover(
@@ -137,44 +131,50 @@
         //搜索
         //上传广告
         $("#uploadAdvertButton").on('click', function () {
-            var form = new FormData($('#uploadForm')[0]);//表单数据，序列化
-            console.log(form.get("file"));
-            var input1 = checkInput($("#modalAdvertTitle"));
-            var input2 = checkInput($("#modalAdvertTime"));
-            var input3 = checkInput($("#modalAdvertRemark"));
-            var input4 = checkInput($("#modalAdvertFile"));
-            if(input1 && input2 && input3 && input4){
-                swal({
-                    title: "文件正在上传中…",
-                    text: "文件越大,用时稍长,请耐心等待!",
-                    imageUrl: "${res}/assets/images/gif/timg1.gif",
-                    animation: "slide-from-top",
-                    showConfirmButton: false,
-                });
-                $.ajax({
-                    type: "POST",
-                    url:"${base}/advert/addAdvert.do",
-                    data:form,
-                    // 告诉jQuery不要去处理发送的数据
-                    processData : false,
-                    // 告诉jQuery不要去设置Content-Type请求头
-                    contentType : false,
-                    success: function(result){
-                        if('yes'==result){
-                            $("#uploadModel").modal('hide');
-                            swal("提示", "上传成功", "success");
-                            setTimeout(function(){location.reload();},1000);
-                        }else{
-                            swal("提示", "上传失败！请检查重试", "error");
+            $(this).button('loading').delay(500).queue(function() {
+                $(this).button('reset'); //重置按钮
+                $(this).dequeue();
+                var form = new FormData($('#uploadForm')[0]);//表单数据，序列化
+                console.log(form.get("file"));
+                var input1 = checkInput($("#modalAdvertTitle"));
+                var input2 = checkInput($("#modalAdvertTime"));
+                var input3 = checkInput($("#modalAdvertRemark"));
+                var input4 = checkInput($("#modalAdvertFile"));
+                if (input1 && input2 && input3 && input4) {
+                    swal({
+                        title: "文件正在上传中…",
+                        text: "文件越大,用时稍长,请耐心等待!",
+                        imageUrl: "${res}/assets/images/gif/timg1.gif",
+                        animation: "slide-from-top",
+                        showConfirmButton: false,
+                    });
+                    $.ajax({
+                        type: "POST",
+                        url: "${base}/advert/addAdvert.do",
+                        data: form,
+                        // 告诉jQuery不要去处理发送的数据
+                        processData: false,
+                        // 告诉jQuery不要去设置Content-Type请求头
+                        contentType: false,
+                        success: function (result) {
+                            if ('yes' == result) {
+                                $("#uploadModel").modal('hide');
+                                swal("提示", "上传成功", "success");
+                                setTimeout(function () {
+                                    location.reload();
+                                }, 1000);
+                            } else {
+                                swal("提示", "上传失败！请检查重试", "error");
+                            }
+                        },
+                        error: function (result) {
+                            swal("提示", "请求失败", "info");
                         }
-                    },
-                    error:function(result){
-                        swal("提示","请求失败","info" );
-                    }
-                });
-            }else{
-                swal("提示", "请检查表单是否有漏填项！", "info");
-            }
+                    });
+                } else {
+                    swal("提示", "请检查表单是否有漏填项！", "info");
+                }
+            });
         });
 
         //删除
@@ -215,26 +215,32 @@
                     $("#editModel").modal('hide');
                 });
                 $("#yesButton").on('click',function () {
-                    var e_title = $("#editTitle").val();
-                    var e_time = $("#editTime").val();
-                    var e_remark = $("#editRemark").val();
-                    var input1 = checkInput($("#editTitle"));
-                    var input2 = checkInput($("#editTime"));
-                    var input3 = checkInput($("#editRemark"));
-                    if(input1&&input2&&input3){
-                        $.post("${base}/advert/updateAdvert.do?title="+e_title+"&timeSize="+e_time+"&remark="+e_remark+"&advertID=" + $(that).attr("data_id"), function(data) {
-                            //重新刷新
-                            if(data.code == "0") {
-                                $("#editModel").modal('hide');
-                                swal("提示", "编辑成功", "success");
-                                setTimeout(function(){location.reload();},1000);
-                            } else {
-                                swal("提示", "编辑失败", "error");
-                            }
-                        }, "json");
-                    }else{
-                        swal("提示", "请检查表单是否有漏填项！", "info");
-                    }
+                    $(this).button('loading').delay(500).queue(function() {
+                        $(this).button('reset'); //重置按钮
+                        $(this).dequeue();
+                        var e_title = $("#editTitle").val();
+                        var e_time = $("#editTime").val();
+                        var e_remark = $("#editRemark").val();
+                        var input1 = checkInput($("#editTitle"));
+                        var input2 = checkInput($("#editTime"));
+                        var input3 = checkInput($("#editRemark"));
+                        if (input1 && input2 && input3) {
+                            $.post("${base}/advert/updateAdvert.do?title=" + e_title + "&timeSize=" + e_time + "&remark=" + e_remark + "&advertID=" + $(that).attr("data_id"), function (data) {
+                                //重新刷新
+                                if (data.code == "0") {
+                                    $("#editModel").modal('hide');
+                                    swal("提示", "编辑成功", "success");
+                                    setTimeout(function () {
+                                        location.reload();
+                                    }, 1000);
+                                } else {
+                                    swal("提示", "编辑失败", "error");
+                                }
+                            }, "json");
+                        } else {
+                            swal("提示", "请检查表单是否有漏填项！", "info");
+                        }
+                    });
                 });
             });
         });
