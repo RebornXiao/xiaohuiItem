@@ -87,16 +87,16 @@ public class MarketDataAccessManager {
         return shelvesManagerMapper.getClipDatas(marketId, groupCode, unitCode, floorCode, pageStartIndex, pageSize);
     }
 
-    public List<MarketRelationship> myFocusMarkets(long passportId, int type) {
-        return relationshipMapper.myFocusMarkets(passportId, type);
+    public List<MarketRelationship> myFocusMarkets(String k, int type) {
+        return relationshipMapper.myFocusMarkets(k, type);
     }
 
     public List<MarketRelationship> getRelationships(long marketId, int type) {
         return relationshipMapper.getRelationships(marketId, type);
     }
 
-    public MarketRelationship getRelationship(long passportId, long marketId, int type) {
-        return relationshipMapper.getRelationship(passportId, marketId, type);
+    public MarketRelationship getRelationship(String k, long marketId, int type) {
+        return relationshipMapper.getRelationship(k, marketId, type);
     }
 
     public List<MarketTaskLogger> getTaskLoggers(long passportId, long marketId, int pageStartIndex, int pageSize) {

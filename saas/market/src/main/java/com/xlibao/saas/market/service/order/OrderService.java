@@ -30,4 +30,6 @@ public interface OrderService {
     JSONObject refundOrder();
 
     JSONObject findContainerData();
+
+    JSONObject askOrderStatus();
 }

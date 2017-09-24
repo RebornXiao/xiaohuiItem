@@ -5,13 +5,11 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
+import com.xlibao.common.support.PassportRemoteService;
 import com.xlibao.datacache.location.LocationDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketRelationship;
-import com.xlibao.metadata.passport.PassportArea;
-import com.xlibao.metadata.passport.PassportCity;
-import com.xlibao.metadata.passport.PassportProvince;
-import com.xlibao.metadata.passport.PassportStreet;
+import com.xlibao.metadata.passport.*;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketAccessLogger;
 import com.xlibao.saas.market.service.market.*;
@@ -115,16 +113,6 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
     }
 
     @Override
-    public JSONObject initShelvesDatas() {
-        long marketId = getLongParameter("marketId");
-
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
-
-        marketShopRemoteService.shelvesMessage(marketEntry.getPassportId(), "CC");
-        return success();
-    }
-
-    @Override
     public JSONObject searchMarkets() {
         String province = getUTF("province", null);
         String city = getUTF("city", null);
@@ -202,7 +190,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
     @Override
     public JSONObject myFocusMarkets() {
         long passportId = getLongParameter("passportId");
-        List<MarketRelationship> marketRelationships = dataAccessFactory.getMarketDataAccessManager().myFocusMarkets(passportId, MarketRelationshipTypeEnum.FOCUS.getKey());
+        List<MarketRelationship> marketRelationships = dataAccessFactory.getMarketDataAccessManager().myFocusMarkets(String.valueOf(passportId), MarketRelationshipTypeEnum.FOCUS.getKey());
         if (CommonUtils.isEmpty(marketRelationships)) {
             return MarketErrorCodeEnum.CAN_NOT_FOUND_FOCUS_RELATIONSHIP.response("您的帐号未绑定任何商店，请联系管理员！");
         }
@@ -214,6 +202,31 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
             }
             response.add(marketEntry.message(Double.parseDouble(marketEntry.getLocation().split(CommonUtils.SPLIT_COMMA)[1]), Double.parseDouble(marketEntry.getLocation().split(CommonUtils.SPLIT_COMMA)[0])));
         }
+        return success(response);
+    }
+
+    @Override
+    public JSONObject macRelationMarket() {
+        String mac = getUTF("macAddress");
+
+        List<MarketRelationship> marketRelationships = dataAccessFactory.getMarketDataAccessManager().myFocusMarkets(mac, MarketRelationshipTypeEnum.MAC.getKey());
+        if (CommonUtils.isEmpty(marketRelationships)) {
+            return MarketErrorCodeEnum.CAN_NOT_FOUND_FOCUS_RELATIONSHIP.response("该Mac地址未绑定任何商店，请联系管理员！");
+        }
+        MarketRelationship marketRelationship = marketRelationships.get(0);
+
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketRelationship.getMarketId());
+        if (marketEntry == null) {
+            return MarketErrorCodeEnum.CAN_NOT_FOUND_FOCUS_RELATIONSHIP.response("该Mac地址关联的商店不存在，错误码：" + marketRelationship.getMarketId() + "；请联系管理员！");
+        }
+        Passport passport = PassportRemoteService.getPassport(marketEntry.getPassportId());
+        setAccessToken(passport.getAccessToken());
+
+        JSONObject response = new JSONObject();
+        response.put("marketId", marketEntry.getId());
+        response.put("marketName", marketEntry.getName());
+        response.put("marketPassportId", marketEntry.getPassportId());
+
         return success(response);
     }
 

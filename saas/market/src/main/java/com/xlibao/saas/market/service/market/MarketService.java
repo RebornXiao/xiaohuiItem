@@ -1,6 +1,5 @@
 package com.xlibao.saas.market.service.market;
 
-import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 
 /**
@@ -14,8 +13,6 @@ public interface MarketService {
 
     JSONObject showMarkets();
 
-    JSONObject initShelvesDatas();
-
     JSONObject searchMarkets();
 
     JSONObject getMarket();
@@ -25,6 +22,8 @@ public interface MarketService {
     JSONObject getAllMarkets();
 
     JSONObject myFocusMarkets();
+
+    JSONObject macRelationMarket();
 
     JSONObject marketEditSave();
 

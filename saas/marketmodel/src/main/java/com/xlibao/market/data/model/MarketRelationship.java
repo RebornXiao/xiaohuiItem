@@ -5,7 +5,7 @@ import java.util.Date;
 public class MarketRelationship {
 
     private Long id;
-    private Long passportId;
+    private String k;
     private Long marketId;
     private Integer type;
     private Integer status;
@@ -19,12 +19,12 @@ public class MarketRelationship {
         this.id = id;
     }
 
-    public Long getPassportId() {
-        return passportId;
+    public String getK() {
+        return k;
     }
 
-    public void setPassportId(Long passportId) {
-        this.passportId = passportId;
+    public void setK(String k) {
+        this.k = k;
     }
 
     public Long getMarketId() {

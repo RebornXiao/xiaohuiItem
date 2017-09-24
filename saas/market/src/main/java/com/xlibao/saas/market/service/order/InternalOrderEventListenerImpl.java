@@ -142,7 +142,7 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
         final String msgTitle = "您有一个新的配送订单";
         final String msgContent = "【" + orderEntry.getShippingNickName() + "】的订单";
         Runnable runnable = () -> {
-            List<MarketRelationship> marketRelationships = dataAccessFactory.getMarketDataAccessManager().getRelationships(orderEntry.getShippingPassportId(), MarketRelationshipTypeEnum.FOCUS.getKey());
+            List<MarketRelationship> marketRelationships = dataAccessFactory.getMarketDataAccessManager().getRelationships(orderEntry.getShippingPassportId(), MarketRelationshipTypeEnum.COURIER.getKey());
             if (CommonUtils.isEmpty(marketRelationships)) {
                 return;
             }
@@ -157,16 +157,16 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
             String[] targets = new String[marketRelationships.size()];
             for (int i = 0; i < marketRelationships.size(); i++) {
                 MarketRelationship marketRelationship = marketRelationships.get(i);
-                targets[i] = String.valueOf(marketRelationship.getPassportId());
+                targets[i] = marketRelationship.getK();
                 // 建立推送记录
-                dataAccessFactory.getOrderDataAccessManager().createUnAcceptLogger(orderEntry.getOrderSequenceNumber(), marketRelationship.getPassportId());
+                dataAccessFactory.getOrderDataAccessManager().createUnAcceptLogger(orderEntry.getOrderSequenceNumber(), Long.parseLong(marketRelationship.getK()));
             }
             // 执行推送
             JPushClient pushClient = JPushConfig.initialJPushClient(ConfigFactory.getXMarketConfig().getJPushAppSecret(), ConfigFactory.getXMarketConfig().getJPushAppKey());
             String pushResult = JPushService.pushMessage(pushClient, msgTitle, msgContent, null, messageEntry, targets);
 
             for (MarketRelationship marketRelationship : marketRelationships) {
-                dataAccessFactory.getOrderDataAccessManager().createOrderPushedLogger(orderEntry.getOrderSequenceNumber(), marketRelationship.getPassportId(), orderEntry.getType(), msgTitle, msgContent,
+                dataAccessFactory.getOrderDataAccessManager().createOrderPushedLogger(orderEntry.getOrderSequenceNumber(), Long.parseLong(marketRelationship.getK()), orderEntry.getType(), msgTitle, msgContent,
                         pushResult, date, GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
             }
         };

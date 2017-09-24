@@ -298,27 +298,67 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if (Long.parseLong(orderEntry.getPartnerUserId()) != passportId) {
             return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
         }
-        JSONObject response = new JSONObject();
+        MarketOrderProperties askProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.ASK_CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.ASK_CONTAINER_SET.getKey());
+        if (askProperties != null) {
+            return MarketOrderErrorCodeEnum.PICK_UP_DATA_ERROR.response("您已取货完成，请不要重复执行询问请求！");
+        }
         MarketOrderProperties orderContainerSetProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getKey());
         if (orderContainerSetProperties == null) {
-            return MarketOrderErrorCodeEnum.PICK_UP_DATA_ERROR.response("没有可以领取的商品");
+            return MarketOrderErrorCodeEnum.UN_SUCCESS_PICK_UP.response("商品未完成拣货，请稍候......");
         }
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
+
         String statusCode = orderContainerSetProperties.getV().split(CommonUtils.SPLIT_UNDER_LINE)[0];
         String value = orderContainerSetProperties.getV().split(CommonUtils.SPLIT_UNDER_LINE)[1];
+
+        JSONObject response = new JSONObject();
         response.put("mark", "请从" + marketEntry.getName() + "以下出货口取走商品");
         response.put("statusCode", statusCode);
 
         JSONArray containerData = new JSONArray();
-
         if ("00".equals(statusCode)) {
             for (int i = 0; i < value.length() / 2; i++) {
                 containerData.add(value.substring(i * 2, (i + 1) * 2));
             }
+            dataAccessFactory.getOrderDataAccessManager().createOrderProperties(orderEntry.getId(), orderEntry.getOrderSequenceNumber(), PropertiesKeyEnum.ASK_CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.ASK_CONTAINER_SET.getKey(), value);
         } else {
             containerData.add(value);
         }
         response.put("containerData", containerData);
+        return success(response);
+    }
+
+    @Override
+    public JSONObject askOrderStatus() {
+        long passportId = getLongParameter("passportId");
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+        int askType = getIntParameter("askType");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+        if (orderEntry == null) {
+            return OrderErrorCodeEnum.NOT_FOUND_ORDER.response("订单不存在，序列号：" + orderSequenceNumber);
+        }
+        if (Long.parseLong(orderEntry.getPartnerUserId()) != passportId) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+        }
+        if (orderEntry.getUserSource() != DeviceTypeEnum.DEVICE_TYPE_AUTO.getKey()) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response("现场订单才能执行此功能");
+        }
+        JSONObject response = new JSONObject();
+        response.put("statusTitle", orderStatusTitle(DeliverTypeEnum.PICKED_UP.getKey(), orderEntry.getStatus()));
+
+        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
+            response.put("afterAskStatus", OrderStatusEnum.ORDER_STATUS_DELIVER.getKey());
+            response.put("msg", askType == 1 ? "订单已支付成功" : "正在出货，请稍候......");
+        }
+        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey()) {
+            response.put("afterAskStatus", OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey());
+            response.put("msg", "订单已完成");
+        }
+        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_REFUND.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM_REFUND.getKey()) {
+            response.put("afterAskStatus", OrderStatusEnum.ORDER_STATUS_REFUND.getKey());
+            response.put("msg", "订单已申请退款");
+        }
         return success(response);
     }
 

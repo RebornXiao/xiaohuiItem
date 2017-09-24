@@ -3,7 +3,7 @@
 <mapper namespace="com.xlibao.saas.market.data.mapper.market.MarketRelationshipMapper">
     <resultMap id="BaseResultMap" type="com.xlibao.market.data.model.MarketRelationship">
         <id column="id" property="id" jdbcType="BIGINT"/>
-        <result column="passport_id" property="passportId" jdbcType="BIGINT"/>
+        <result column="k" property="k" jdbcType="VARCHAR"/>
         <result column="market_id" property="marketId" jdbcType="BIGINT"/>
         <result column="type" property="type" jdbcType="INTEGER"/>
         <result column="status" property="status" jdbcType="INTEGER"/>

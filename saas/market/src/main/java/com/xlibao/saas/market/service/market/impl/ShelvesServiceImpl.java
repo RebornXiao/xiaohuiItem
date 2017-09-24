@@ -246,7 +246,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         int pageStartIndex = getPageStartIndex(pageSize);
         if (status == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()) {
             // 未完成的列表
-            MarketRelationship marketRelationship = dataAccessFactory.getMarketDataAccessManager().getRelationship(passportId, marketId, MarketRelationshipTypeEnum.FOCUS.getKey());
+            MarketRelationship marketRelationship = dataAccessFactory.getMarketDataAccessManager().getRelationship(String.valueOf(passportId), marketId, MarketRelationshipTypeEnum.FOCUS.getKey());
             if (marketRelationship == null) {
                 return MarketErrorCodeEnum.CAN_NOT_FOUND_FOCUS_RELATIONSHIP.response("您没有权限查看该商店的任务，请联系管理员！");
             }
@@ -275,7 +275,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
         if (itemTemplate == null) {
             throw ItemErrorCodeEnum.BARCODE_NOT_EXIST.throwException("[下架检测]不存在条码为[" + barcode + "]的商品");
         }
-        MarketRelationship marketRelationship = dataAccessFactory.getMarketDataAccessManager().getRelationship(passportId, marketId, MarketRelationshipTypeEnum.FOCUS.getKey());
+        MarketRelationship marketRelationship = dataAccessFactory.getMarketDataAccessManager().getRelationship(String.valueOf(passportId), marketId, MarketRelationshipTypeEnum.FOCUS.getKey());
         if (marketRelationship == null) {
             return MarketErrorCodeEnum.CAN_NOT_FOUND_FOCUS_RELATIONSHIP.response("[下架检测]您没有权限执行该商店的任务，请联系管理员！");
         }
@@ -339,7 +339,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             logger.error("[上架] " + passportId + "没有先将商店[" + marketEntry.getName() + "]设置为作业状态便执行了上架操作，系统已拦截该请求！");
             return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("[上架检测]商店[" + marketEntry.getName() + "]必须处于作业状态才能执行上架操作");
         }
-        MarketRelationship marketRelationship = dataAccessFactory.getMarketDataAccessManager().getRelationship(passportId, marketId, MarketRelationshipTypeEnum.FOCUS.getKey());
+        MarketRelationship marketRelationship = dataAccessFactory.getMarketDataAccessManager().getRelationship(String.valueOf(passportId), marketId, MarketRelationshipTypeEnum.FOCUS.getKey());
         if (marketRelationship == null) {
             return MarketErrorCodeEnum.CAN_NOT_FOUND_FOCUS_RELATIONSHIP.response("[上架检测]您没有权限执行该商店的任务，请联系管理员！");
         }
@@ -435,7 +435,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
             logger.error("[结案] " + passportId + "没有先将商店[" + marketEntry.getName() + "]设置为作业状态便执行了结案操作，系统已拦截该请求！");
             return MarketErrorCodeEnum.DON_NOT_MAINTAIN.response("[结案检测]商店[" + marketEntry.getName() + "]必须处于作业状态才能执行结案操作");
         }
-        MarketRelationship marketRelationship = dataAccessFactory.getMarketDataAccessManager().getRelationship(passportId, marketId, MarketRelationshipTypeEnum.FOCUS.getKey());
+        MarketRelationship marketRelationship = dataAccessFactory.getMarketDataAccessManager().getRelationship(String.valueOf(passportId), marketId, MarketRelationshipTypeEnum.FOCUS.getKey());
         if (marketRelationship == null) {
             return MarketErrorCodeEnum.CAN_NOT_FOUND_FOCUS_RELATIONSHIP.response("[结案检测]您没有权限执行该商店的任务，请联系管理员！");
         }

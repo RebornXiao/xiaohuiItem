@@ -104,27 +104,21 @@ public class OrderOpenApiController {
      *          <b>distributionFee</b> - long 配送费用，单位：分
      *          <b>discountPrice</b> - long 优惠费用，单位：分
      *
-     *          <b>discountPrice</b> - long 优惠费用，单位：分
-     *          <b>discountPrice</b> - long 优惠费用，单位：分
-     *          <b>discountPrice</b> - long 优惠费用，单位：分
-     *          <b>discountPrice</b> - long 优惠费用，单位：分
-     *
+     *          <b>addressTitle</b> - String 地址标题，如： "取货地址：" : "收货地址："
+     *          <b>address</b> - String 具体地址，已格式化
+     *          <b>targetTitle</b> - String 目标标题，如："取货点：" : "收货人："
+     *          <b>targetName</b> - String 目标用户或商店名称
+     *          <b>receiptPhone</b> - String 收货人的电话号码，已隐藏信息
+     *          <b>totalItemQuantity</b> - int 商品总数量
      *          <b>items</b> - JSONArray 商品信息，每个元素为JSONObject结构
      *                  <b>itemSnapshotId</b> - long 商品快照ID
      *                  <b>itemId</b> - long 商品ID
      *                  <b>itemTemplateId</b> - long 商品模版ID
-     *                  <b>itemName</b> - String 商品名
+     *                  <b>name</b> - String 商品名
      *                  <b>image</b> - String 商品图片
      *                  <b>price</b> - long 商品单价，单位：分
      *                  <b>quantity</b> - int 商品数量
-     *
-     *          <b>totalItemQuantity</b> - int 商品数量
-
-     orderMsg.put("addressTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货地址：" : "收货地址：");
-     orderMsg.put("address", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? orderEntry.formatShippingAddress() : orderEntry.formatReceiptAddress());
-     orderMsg.put("targetTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货点：" : "收货人：");
-     orderMsg.put("targetName", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "小惠便利店" + CommonUtils.nullToEmpty(orderEntry.getShippingNickName()) : CommonUtils.nullToEmpty(orderEntry.getReceiptNickName()));
-     orderMsg.put("receiptPhone", CommonUtils.hideChar(orderEntry.getReceiptPhone(), 3, 7));
+     *                  <b>totalPrice</b> - long 商品的总费用
      * </pre>
      */
     @ResponseBody
@@ -366,5 +360,16 @@ public class OrderOpenApiController {
     @RequestMapping(value = "findContainerData")
     public JSONObject findContainerData() {
         return orderService.findContainerData();
+    }
+
+    /**
+     * <pre>
+     *     <b></b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "askOrderStatus")
+    public JSONObject askOrderStatus() {
+        return orderService.askOrderStatus();
     }
 }

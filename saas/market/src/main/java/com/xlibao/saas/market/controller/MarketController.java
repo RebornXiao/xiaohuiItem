@@ -152,11 +152,15 @@ public class MarketController {
      *          <b>locationCode</b> - String 弹夹的完整编码，如：01010101
      *          <b>itemTemplateId</b> - long 商品模版ID
      *          <b>itemName</b> - String 商品名
+     *          <b>unitName</b> - String 当前存放的商品单位
+     *          <b>hasCompleteQuantity</b> - int 执行完成的商品数量
      *          <b>itemQuantity</b> - int 商品数量
      *          <b>barcode</b> - String 商品的条码
-     *          <b>unitName</b> - String 当前存放的商品单位
+     *          <b>type</b> - int 任务类型，参考：{@link com.xlibao.saas.market.service.market.ShelvesTaskTypeEnum}
      *          <b>status</b> - int 任务状态，参考：{@link com.xlibao.saas.market.service.item.PrepareActionStatusEnum}
      *          <b>hopeExecutorDate</b> - String 期望执行的日期
+     *          <b>completeTime</b> - String 实际完成的时间点
+     *          <b>dateTitle</b> - String 用于展示的执行日期格式标题，如：今天、昨天、2017-09-18 周一
      * </pre>
      */
     @ResponseBody
@@ -224,14 +228,18 @@ public class MarketController {
      *     <b>返回：</b>
      *          <b>datas</b> - JSONArray 当前的任务列表，每个元素为JSONObject，结构为：
      *              <b>taskId</b> - long 任务ID
-     *              <b>locationCode</b> - String 位置信息
+     *              <b>locationCode</b> - String 弹夹的完整编码，如：01010101
+     *              <b>itemTemplateId</b> - long 商品模版ID
      *              <b>itemName</b> - String 商品名
-     *              <b>unitName</b> - String 单位名称
-     *              <b>hasCompleteQuantity</b> - int 已补货数量
-     *              <b>itemQuantity</b> - int 需补货数量
-     *              <b>barcode</b> - String 商品条码
-     *              <b>type</b> - int 任务列表，参考：{@link com.xlibao.saas.market.service.market.ShelvesTaskTypeEnum}
-     *              <b>status</b> - int 任务状态
+     *              <b>unitName</b> - String 当前存放的商品单位
+     *              <b>hasCompleteQuantity</b> - int 执行完成的商品数量
+     *              <b>itemQuantity</b> - int 商品数量
+     *              <b>barcode</b> - String 商品的条码
+     *              <b>type</b> - int 任务类型，参考：{@link com.xlibao.saas.market.service.market.ShelvesTaskTypeEnum}
+     *              <b>status</b> - int 任务状态，参考：{@link com.xlibao.saas.market.service.item.PrepareActionStatusEnum}
+     *              <b>hopeExecutorDate</b> - String 期望执行的日期
+     *              <b>completeTime</b> - String 实际完成的时间点
+     *              <b>dateTitle</b> - String 用于展示的执行日期格式标题，如：今天、昨天、2017-09-18 周一
      * </pre>
      */
     @ResponseBody
@@ -259,11 +267,14 @@ public class MarketController {
      *              <b>itemTemplateId</b> - long 商品模版ID
      *              <b>itemName</b> - String 商品名
      *              <b>unitName</b> - String 当前存放的商品单位
-     *              <b>hasCompleteQuantity</b> - int 已补货的数量
+     *              <b>hasCompleteQuantity</b> - int 执行完成的商品数量
      *              <b>itemQuantity</b> - int 商品数量
      *              <b>barcode</b> - String 商品的条码
+     *              <b>type</b> - int 任务类型，参考：{@link com.xlibao.saas.market.service.market.ShelvesTaskTypeEnum}
      *              <b>status</b> - int 任务状态，参考：{@link com.xlibao.saas.market.service.item.PrepareActionStatusEnum}
      *              <b>hopeExecutorDate</b> - String 期望执行的日期
+     *              <b>completeTime</b> - String 实际完成的时间点
+     *              <b>dateTitle</b> - String 用于展示的执行日期格式标题，如：今天、昨天、2017-09-18 周一
      * </pre>
      */
     @ResponseBody

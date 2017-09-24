@@ -16,8 +16,8 @@
     </resultMap>
 
     <insert id="createShelvesDailyTaskLogger">
-        insert into market_shelves_daily_task_logger(passport_id, passport_name, market_id, hope_total_item_quantity, actual_item_quantity, hope_total_barcode_quantity, actual_barcode_quantity, mark, create_time)
-        values(#{passportId}, #{passportName}, #{marketId}, #{hopeTotalItemQuantity}, #{actualItemQuantity}, #{hopeTotalBarcodeQuantity}, #{actualBarcodeQuantity}, #{mark}, #{createTime})
+        insert into market_shelves_daily_task_logger(passport_id, passport_name, market_id, hope_total_item_quantity, actual_item_quantity, hope_total_barcode_quantity, actual_barcode_quantity, mark, hope_executor_date, create_time)
+        values(#{passportId}, #{passportName}, #{marketId}, #{hopeTotalItemQuantity}, #{actualItemQuantity}, #{hopeTotalBarcodeQuantity}, #{actualBarcodeQuantity}, #{mark}, #{hopeExecutorData}, #{createTime})
     </insert>
 
     <select id="getShelvesDailyTaskLoggers" resultMap="BaseResultMap">

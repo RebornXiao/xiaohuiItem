@@ -18,7 +18,9 @@ public enum MarketOrderErrorCodeEnum {
     /** 3003 - 已不能退款 */
     CANNOT_REFUND(3003, "已不能退款"),
     /** 3004 -- 取货数据有误 */
-    PICK_UP_DATA_ERROR(3004, "取货数据有误")
+    PICK_UP_DATA_ERROR(3004, "取货数据有误"),
+    /** 3005 -- 未完成取货 */
+    UN_SUCCESS_PICK_UP(3005, "未完成取货"),
     ;
 
     private int key;

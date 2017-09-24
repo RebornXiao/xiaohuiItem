@@ -23,6 +23,7 @@ import com.xlibao.saas.market.service.item.ItemLockTypeEnum;
 import com.xlibao.saas.market.service.item.ItemStockLockStatusEnum;
 import com.xlibao.saas.market.service.item.ItemStockOffsetTypeEnum;
 import com.xlibao.saas.market.service.item.MarketItemErrorCodeEnum;
+import com.xlibao.saas.market.service.message.MessageService;
 import com.xlibao.saas.market.service.order.OrderNotifyTypeEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,8 @@ public class MarketShopRemoteService extends BasicRemoteService {
 
     @Autowired
     private DataAccessFactory dataAccessFactory;
+    @Autowired
+    private MessageService messageService;
 
     public void shipmentMessage(long passportId, String mark, String content, boolean repairShipment) {
         // 记录发送状态
@@ -132,6 +135,20 @@ public class MarketShopRemoteService extends BasicRemoteService {
         }
         // 释放锁定库存
         releaseItemLock(orderEntry);
+    }
+
+    public boolean autoPickupMessage(MarketEntry marketEntry, OrderEntry orderEntry) {
+        int errorCode = messageService.askOrderPickUp(orderEntry);
+        if (errorCode == 1) { // 已完成取货
+            return false;
+        }
+        if (errorCode == 2) { // 未完成配货，通知上层继续等待
+            return true;
+        }
+        String content = HardwareMessageType.PICK_UP + orderEntry.getOrderSequenceNumber();
+        // 可取货 并通知上层稍后继续询问
+        sendMessage(marketEntry.getPassportId(), content);
+        return true;
     }
 
     private void releaseItemLock(OrderEntry orderEntry) {
