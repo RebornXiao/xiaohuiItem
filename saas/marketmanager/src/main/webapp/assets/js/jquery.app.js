@@ -400,15 +400,17 @@ function checkVal(ui_name, info) {
 }
 
 function tokenPost(url, callback) {
-    var accessToken = $.cookie("accessToken") || "";
+    // var accessToken = $.cookie("accessToken") || "";
     var passportId = $.cookie("passportId") || "";
-    $.post(url + "&passportId=" + passportId + "&accessToken=" + accessToken, callback, "json");
+    $.post(url + "&passportId=" + passportId, callback, "json");
+    // $.post(url, callback, "json");
 }
 
 function tokenPresPost(url, pres, callback) {
-    var accessToken = $.cookie("accessToken") || "";
+    // var accessToken = $.cookie("accessToken") || "";
     var passportId = $.cookie("passportId") || "";
-    $.post(url + "?passportId=" + passportId + "&accessToken=" + accessToken, pres, callback, "json");
+    $.post(url + "?passportId=" + passportId, pres, callback, "json");
+    // $.post(url, pres, callback, "json");
 }
 
 function open(option) {
@@ -429,11 +431,12 @@ function open(option) {
     for (var Key in u.data) {
         form.append($('<input type="text" name="' + Key + '" value="' + u.data[Key] + '" />'));
     }
-    var accessToken = $.cookie("accessToken") || "";
-    var passportId = $.cookie("passportId") || "";
 
-    form.append($('<input type="text" name="accessToken" value="' + accessToken + '" />'));
-    form.append($('<input type="text" name="passportId" value="' + passportId + '" />'));
+    // var accessToken = $.cookie("accessToken") || "";
+    // var passportId = $.cookie("passportId") || "";
+    //
+    // form.append($('<input type="text" name="accessToken" value="' + accessToken + '" />'));
+    // form.append($('<input type="text" name="passportId" value="' + passportId + '" />'));
 
     // 提交表单
     form.appendTo("body").submit();

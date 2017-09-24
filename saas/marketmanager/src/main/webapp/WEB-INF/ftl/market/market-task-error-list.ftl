@@ -18,9 +18,9 @@
                         <ol class="breadcrumb pull-right">
                             <li><a href="#">首页</a></li>
                             <li><a href="#">店铺管理</a></li>
-                            <li class="active"><a href="#">店铺任务列表</a></li>
+                            <li class="active"><a href="#">店铺异常任务列表</a></li>
                         </ol>
-                        <h4 class="page-title"><b>店铺任务列表</b></h4>
+                        <h4 class="page-title"><b>店铺异常任务列表</b></h4>
                     </div>
                 </div>
             </div>
@@ -45,6 +45,15 @@
                                 </select>
                             </div>
 
+                            <div class="form-group m-l-15">
+                                <label>选择日期：</label>
+                                <div class="input-group">
+                                    <input id="startTime" type="text" class="form-control" readonly>
+                                    <span class="input-group-addon bg-default"
+                                          onClick="jeDate({dateCell:'#startTime',isTime:false,format:'YYYY-MM-DD'})"><i
+                                            class="fa fa-calendar"></i></span>
+                                </div>
+                            </div>
                         </form>
                     </div>
                 </div>
@@ -115,8 +124,8 @@
         </div>
 
 
+        <script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
         <script type="text/javascript">
-
 
             $(document).ready(function () {
 
@@ -127,29 +136,9 @@
                     var select_obj = _sMarket.find("option:selected");
                     var data_id = select_obj.attr("data_id");
 
-                    open({url:"${base}/market/marketTasks.do?marketId=" + data_id});
+                    open({url:"${base}/market/marketErrorTasks.do?marketId=" + data_id});
                     //location.href = "${base}/market/marketTasks.do?marketId=" + data_id;
                 });
 
-                //删除任务列表里的某项
-                $("#taskListTable").on("click", "button[id=editBtn]", function () {
-                    var task_id = $(this).attr("data_id");
-                    //2次确定
-                    showWarning("确定要取消这个任务吗？", function (isConfirm) {
-                        if (!isConfirm) {
-                            return;
-                        }
-                        //去取消
-                        tokenPost("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
-                            if (json.code != 0) {
-                                swal(json.msg);
-                            } else {
-                                var select_obj = _sMarket.find("option:selected");
-                                var data_id = select_obj.attr("data_id");
-                                open({url:"${base}/market/marketTasks.do?marketId=" + data_id});
-                            }
-                        }, "json");
-                    });
-                });
             });
         </script>

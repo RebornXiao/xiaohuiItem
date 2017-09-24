@@ -328,6 +328,7 @@ public class MarketManagerController extends BaseController {
             modelMap.put("markets", marketResponse.getJSONObject("response").getJSONArray("datas"));
         }
         if (marketId != 0) {
+
             //填充店铺数据
             Map map = new HashMap();
             map.put("marketId", marketId);
@@ -349,9 +350,45 @@ public class MarketManagerController extends BaseController {
 
     //店铺异常任务记录
     @RequestMapping("/marketErrorTasks")
-    public String marketErrorTasks(ModelMap map) {
+    public String marketErrorTasks(ModelMap modelMap) {
 
-        return jumpPage(map, LogicConfig.FTL_MARKET_ERROR_TASK_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ERROR_TASK_LIST);
+        long marketId = getLongParameter("marketId", 0);
+        String happenDate = getUTF("happenDate", "");
+        int pageSize = getPageSize();
+        int pageIndex = getPageStartIndex(pageSize);
+
+        //拿到所有店铺
+        JSONObject marketResponse = marketManagerService.getAllMarkets();
+        if (marketResponse.getIntValue("code") == 0) {
+            modelMap.put("markets", marketResponse.getJSONObject("response").getJSONArray("datas"));
+        }
+
+        modelMap.put("marketId", marketId);
+        modelMap.put("happenDate", happenDate);
+        modelMap.put("pageSize", pageSize);
+        modelMap.put("pageIndex", pageIndex);
+
+        if(marketId != 0) {
+
+            Map<String, String> map = new HashMap<>();
+            map.put("marketId", String.valueOf(marketId));
+            map.put("happenDate", happenDate);
+            map.put("pageSize", String.valueOf(pageSize));
+            map.put("pageIndex", String.valueOf(pageIndex));
+
+            String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/showExceptionTask.do", map);
+            JSONObject response = JSONObject.parseObject(json);
+
+            if (response.getIntValue("code") == 0) {
+                JSONArray array = response.getJSONObject("response").getJSONArray("data");
+                int count = response.getIntValue("maxSize");
+
+                modelMap.put("count", count);
+                modelMap.put("datas", array);
+            }
+        }
+
+        return jumpPage(modelMap, LogicConfig.FTL_MARKET_ERROR_TASK_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ERROR_TASK_LIST);
     }
 
     //店铺商品
@@ -553,6 +590,8 @@ public class MarketManagerController extends BaseController {
         String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/loaderClipDatas.do?marketId=" + marketId + "&groupCode=" + groupCode + "&unitCode=" + unitCode + "&floorCode=" + floorCode + "&pageSize=" + 1000 + "&pageStartIndex=" + pageStartIndex);
         return parseObject(json);
     }
+
+    //检测当天
 
     //检测并返回商品上架任务详情
     @ResponseBody
