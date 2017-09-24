@@ -49,3 +49,8 @@
         }
     </script>
 
+    <#if accessToken??>
+        <script type="text/javascript">
+            $.cookie("accessToken", "${accessToken}", { path: "/", expires: 365 });
+        </script>
+    </#if>

@@ -17,19 +17,14 @@ public class BaseFreeMarkerView extends FreeMarkerView {
     protected void exposeHelpers(Map<String, Object> model,
                                  HttpServletRequest request) throws Exception
     {
-//        //如果有登录过，则设置用户名，用户ID
-//        Object obj = request.getSession().getAttribute("userName");
-//        if(obj != null) {
-//            model.put("userName", (String)obj);
-//        } else {
-//            model.put("userName", "未登录");
-//        }
-//        obj = request.getSession().getAttribute("passportId");
-//        if(obj != null) {
-//            model.put("passportId", (String)obj);
-//        } else {
-//            model.put("passportId", "0");
-//        }
+        //如果有登录过，则设置accessToken
+
+        Object obj = request.getSession().getAttribute("accessToken");
+        if(obj != null) {
+            model.put("accessToken", (String)obj);
+        } else {
+            model.put("accessToken", "");
+        }
 
         //设置res地址
         model.put(RES_PATH, request.getContextPath());
