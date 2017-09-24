@@ -1,5 +1,6 @@
 package com.xlibao.common;
 
+import com.alibaba.fastjson.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -1055,6 +1056,24 @@ public class CommonUtils {
         }
     }
 
+    public static JSONObject fillPageMessage(int totalSize, int currentPageIndex, int pageSize) {
+        JSONObject response = new JSONObject();
+        boolean isLastPage = (currentPageIndex * pageSize + pageSize) >= totalSize;
+        int nextPage = isLastPage ? currentPageIndex : currentPageIndex + 1;
+        int prePage = currentPageIndex <= 1 ? 1 : currentPageIndex - 1;
+        int remain = totalSize % pageSize;
+        int totalPage = totalSize / pageSize + (remain > 0 ? 1 : 0);
+
+        response.put("isLastPage", isLastPage);
+        response.put("nextPage", nextPage);
+        response.put("prePage", prePage);
+        response.put("totalPage", totalPage);
+        response.put("currentPage", currentPageIndex);
+        response.put("pageSize", pageSize);
+        response.put("maxSize", totalSize);
+
+        return response;
+    }
 
     public static void main(String[] args) {
 //        System.out.println("今天是星期" + dayOfWeekForCh() + "(中国)");

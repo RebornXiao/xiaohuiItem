@@ -306,4 +306,36 @@ public class MarketOpenApiController {
     public JSONObject finishTodayPrepareActions() {
         return shelvesService.finishTodayPrepareActions();
     }
+
+    /**
+     * <pre>
+     *     <b>展示异常任务记录</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/open/showExceptionTask.do
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>marketId</b> - long 商店ID，必填参数。
+     *          <b>happenDate</b> - String 发生日期，非必填参数；指定时表示查看某天的任务详情列表。
+     *          <b>pageIndex</b> - int 页码，非必填参数；默认值为：{@link com.xlibao.common.GlobalConstantConfig#DEFAULT_PAGE_INDEX}
+     *          <b>pageSize</b> - int 单页数量，非必填参数；默认值为：{@link com.xlibao.common.GlobalConstantConfig#DEFAULT_PAGE_SIZE}
+     *
+     *     <b>返回：</b>
+     *          <b>isLastPage</b> - 是否最后一页
+     *          <b>nextPage</b> -
+     *          <b>prePage</b> -
+     *          <b>totalPage</b> -
+     *          <b>currentPage</b> -
+     *          <b>pageSize</b> -
+     *          <b>maxSize</b> -
+     *
+     *          当<b>happenDate</b>为空时：
+     *              <b></b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "showExceptionTask")
+    public JSONObject showExceptionTask() {
+        return shelvesService.showExceptionTask();
+    }
 }

@@ -6,6 +6,7 @@ public class MarketShelvesDailyTaskLogger {
 
     private Long id;
     private Long passportId;
+    private String passportName;
     private Long marketId;
     private Integer hopeTotalItemQuantity = 1;
     private Integer actualItemQuantity = 1;
@@ -29,6 +30,14 @@ public class MarketShelvesDailyTaskLogger {
 
     public void setPassportId(Long passportId) {
         this.passportId = passportId;
+    }
+
+    public String getPassportName() {
+        return passportName;
+    }
+
+    public void setPassportName(String passportName) {
+        this.passportName = passportName;
     }
 
     public Long getMarketId() {

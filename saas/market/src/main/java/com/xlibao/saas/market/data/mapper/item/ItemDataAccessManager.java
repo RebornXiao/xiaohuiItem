@@ -227,8 +227,12 @@ public class ItemDataAccessManager {
         return prepareActionMapper.getPrepareActionForBarcode(marketId, barcode, statusSet);
     }
 
-    public List<MarketPrepareAction> getPrepareActions(long executorPassportId, long marketId, String statusSet, int pageStartIndex, int pageSize) {
-        return prepareActionMapper.getPrepareActions(executorPassportId, marketId, statusSet, pageStartIndex, pageSize);
+    public List<MarketPrepareAction> getPrepareActions(long executorPassportId, long marketId, String statusSet, String happenDate, int pageStartIndex, int pageSize) {
+        return prepareActionMapper.getPrepareActions(executorPassportId, marketId, statusSet, happenDate, pageStartIndex, pageSize);
+    }
+
+    public int getPrepareActionSize(long executorPassportId, long marketId, String statusSet, String happenDate) {
+        return prepareActionMapper.getPrepareActionSize(executorPassportId, marketId, statusSet, happenDate);
     }
 
     public int getRemainActionRows(long marketId, int type, String validActionStatusSet) {
@@ -281,6 +285,14 @@ public class ItemDataAccessManager {
 
     public int createShelvesDailyTaskLogger(MarketShelvesDailyTaskLogger shelvesDailyTaskLogger) {
         return shelvesDailyTaskLoggerMapper.createShelvesDailyTaskLogger(shelvesDailyTaskLogger);
+    }
+
+    public List<MarketShelvesDailyTaskLogger> getShelvesDailyTaskLoggers(long marketId, int pageStartIndex, int pageSize) {
+        return shelvesDailyTaskLoggerMapper.getShelvesDailyTaskLoggers(marketId, pageStartIndex, pageSize);
+    }
+
+    public int getShelvesDailyTaskLoggerSize(long marketId) {
+        return shelvesDailyTaskLoggerMapper.getShelvesDailyTaskLoggerSize(marketId);
     }
 
     private void createItemLocationStockLogger(MarketItemLocationStockLogger itemLocationStockLogger) {

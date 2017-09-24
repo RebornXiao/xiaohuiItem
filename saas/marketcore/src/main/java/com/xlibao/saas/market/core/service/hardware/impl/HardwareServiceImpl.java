@@ -1,6 +1,5 @@
 package com.xlibao.saas.market.core.service.hardware.impl;
 
-import com.xlibao.common.CommonUtils;
 import com.xlibao.io.service.netty.NettySession;
 import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.saas.market.core.message.SessionManager;
@@ -24,7 +23,7 @@ public class HardwareServiceImpl implements HardwareService {
 
     @Override
     public void fromHardwareMessageExecute(NettySession session, String content) {
-        content = content.replaceAll(CommonUtils.SPACE, "");
+        content = content.trim();
         // 消息类型
         String messageType = content.substring(4, 8);
 
@@ -36,20 +35,22 @@ public class HardwareServiceImpl implements HardwareService {
         content = content.substring(8);
         NettySession marketSession = sessionManager.getMarketSession();
         switch (messageType) {
-            case HardwareMessageType.SHIPMENT:
+            case HardwareMessageType.SHIPMENT: // 配货
                 MarketApplicationRemoteService.notifyShipment((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 20));
                 break;
-            case HardwareMessageType.SHELVES:
+            case HardwareMessageType.SHELVES: // 货架信息
                 MarketApplicationRemoteService.notifyShelvesData((Long) marketSession.getAttribute("passportId"), content);
                 break;
-            case HardwareMessageType.ORDER:
+            case HardwareMessageType.ORDER: // 订单信息 16--17位如果是EE时 表示订单不存在
                 MarketApplicationRemoteService.notifyOrderData((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18), content.substring(18));
                 break;
-            case HardwareMessageType.REFUND:
-                MarketApplicationRemoteService.notifyRefund((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18));
+            case HardwareMessageType.REFUND: // 16--17位如果是EE时 表示订单不存在
+                MarketApplicationRemoteService.notifyRefund((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16));
                 break;
-            case HardwareMessageType.PICK_UP:
+            case HardwareMessageType.PICK_UP: // 16--17位如果是EE时 表示订单不存在
                 MarketApplicationRemoteService.notifyPickUp((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18), content.substring(18));
+                break;
+            case HardwareMessageType.WARN:
                 break;
         }
     }

@@ -110,6 +110,12 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         if ("01".equals(statusCode)) { // 正在配送中
             return success();
         }
+        if ("10".equals(statusCode)) { // 表示已完成
+            return success();
+        }
+        if("EE".equals("")) { // 表示
+
+        }
         refreshOrderProperties(orderEntry, PropertiesKeyEnum.CONTAINER_SET, containerCodeSet);
         return success();
     }

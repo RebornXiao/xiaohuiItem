@@ -197,6 +197,6 @@ public class BaiduWebAPI {
     }
 
     public static void main(String[] args) {
-        System.out.println(geocoding("广州市增城区中新镇恒大山水城"));
+        System.out.println(geocoding("广州市越秀区淘金南路110号"));
     }
 }

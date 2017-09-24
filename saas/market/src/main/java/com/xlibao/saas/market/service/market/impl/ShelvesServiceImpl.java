@@ -446,6 +446,8 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
                 throw MarketItemErrorCodeEnum.EXIST_PREPARE_ACTION_ERROR.throwException("[结案检测]存在" + remainRows + "个异常的任务，请如实填写异常信息");
             }
         }
+        Passport passport = PassportRemoteService.getPassport(passportId);
+
         List<MarketShelvesDailyTaskLogger> shelvesDailyTaskLoggers = dataAccessFactory.getItemDataAccessManager().preparedSummaryData(passportId, marketId, ShelvesTaskTypeEnum.ON_SHELVES.getKey(), VALID_ACTION_STATUS_SET + CommonUtils.SPLIT_COMMA + PrepareActionStatusEnum.COMMIT.getKey());
 
         for (MarketShelvesDailyTaskLogger shelvesDailyTaskLogger : shelvesDailyTaskLoggers) {
@@ -453,6 +455,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
                     CommonUtils.dateFormat(shelvesDailyTaskLogger.getHopeExecutorDate().getTime()));
 
             shelvesDailyTaskLogger.setPassportId(passportId);
+            shelvesDailyTaskLogger.setPassportName(passport.getShowName());
             shelvesDailyTaskLogger.setMarketId(marketId);
             shelvesDailyTaskLogger.setActualBarcodeQuantity(distinctItemBarcodeQuantity);
             shelvesDailyTaskLogger.setMark(mark);
@@ -467,6 +470,55 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
 
         JSONObject response = new JSONObject();
         response.put("status", MarketStatusEnum.NORMAL.getKey());
+        return success(response);
+    }
+
+    @Override
+    public JSONObject showExceptionTask() {
+        long marketId = getLongParameter("marketId");
+        String happenDate = getUTF("happenDate", null);
+
+        int pageSize = getPageSize();
+        int pageStartIndex = getPageStartIndex(pageSize);
+
+        JSONObject response;
+        if (CommonUtils.isNullString(happenDate)) {
+            List<MarketShelvesDailyTaskLogger> shelvesDailyTaskLoggers = dataAccessFactory.getItemDataAccessManager().getShelvesDailyTaskLoggers(marketId, pageStartIndex, pageSize);
+            int size = dataAccessFactory.getItemDataAccessManager().getShelvesDailyTaskLoggerSize(marketId);
+
+            response = CommonUtils.fillPageMessage(size, pageStartIndex, pageSize);
+
+            JSONArray data = new JSONArray();
+            for (MarketShelvesDailyTaskLogger shelvesDailyTaskLogger : shelvesDailyTaskLoggers) {
+                JSONObject taskMsg = new JSONObject();
+
+                taskMsg.put("id", shelvesDailyTaskLogger.getId());
+                taskMsg.put("executorPassportId", shelvesDailyTaskLogger.getPassportId());
+                taskMsg.put("executorPassportName", shelvesDailyTaskLogger.getPassportName());
+
+                taskMsg.put("hopeTotalItemQuantity", shelvesDailyTaskLogger.getHopeTotalItemQuantity());
+                taskMsg.put("actualItemQuantity", shelvesDailyTaskLogger.getActualItemQuantity());
+
+                taskMsg.put("hopeTotalBarcodeQuantity", shelvesDailyTaskLogger.getHopeTotalBarcodeQuantity());
+                taskMsg.put("actualBarcodeQuantity", shelvesDailyTaskLogger.getActualBarcodeQuantity());
+                taskMsg.put("happenDate", CommonUtils.defineDateFormat(shelvesDailyTaskLogger.getHopeExecutorDate().getTime(), CommonUtils.Y_M_D));
+                taskMsg.put("submitTime", CommonUtils.dateFormat(shelvesDailyTaskLogger.getCreateTime().getTime()));
+
+                data.add(taskMsg);
+            }
+            response.put("data", data);
+            return success(response);
+        }
+        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActions(0, marketId,
+                VALID_ACTION_STATUS_SET + CommonUtils.SPLIT_COMMA + PrepareActionStatusEnum.INVALID.getKey() + CommonUtils.SPLIT_COMMA + PrepareActionStatusEnum.COMPLETE.getKey() + CommonUtils.SPLIT_COMMA + PrepareActionStatusEnum.COMMIT.getKey(),
+                happenDate, pageStartIndex, pageSize);
+        int size = dataAccessFactory.getItemDataAccessManager().getPrepareActionSize(0, marketId, VALID_ACTION_STATUS_SET + CommonUtils.SPLIT_COMMA + PrepareActionStatusEnum.INVALID.getKey()
+                + CommonUtils.SPLIT_COMMA + PrepareActionStatusEnum.COMPLETE.getKey() + CommonUtils.SPLIT_COMMA + PrepareActionStatusEnum.COMMIT.getKey(), happenDate);
+
+        response = CommonUtils.fillPageMessage(size, pageStartIndex, pageSize);
+        JSONArray data = prepareActions.stream().map(this::fillPrepareActionMsg).collect(Collectors.toCollection(JSONArray::new));
+
+        response.put("data", data);
         return success(response);
     }
 
@@ -487,7 +539,7 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
     }
 
     private JSONObject showShelvesTask(long passportId, long marketId, String statusSet, int pageStartIndex, int pageSize) {
-        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActions(passportId, marketId, statusSet, pageStartIndex, pageSize);
+        List<MarketPrepareAction> prepareActions = dataAccessFactory.getItemDataAccessManager().getPrepareActions(passportId, marketId, statusSet, null, pageStartIndex, pageSize);
 
         if (CommonUtils.isEmpty(prepareActions)) {
             throw MarketErrorCodeEnum.SHELVES_LOCATION_TASK_ERROR.throwException("没有存在未执行的任务");

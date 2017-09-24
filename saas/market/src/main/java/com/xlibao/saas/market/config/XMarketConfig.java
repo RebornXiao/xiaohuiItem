@@ -17,16 +17,6 @@ public class XMarketConfig {
     @Value("${orderAppkey}")
     private String orderAppkey;
 
-    @Value("${paymentAppId}")
-    private String paymentAppId;
-    @Value("${paymentAppkey}")
-    private String paymentAppkey;
-
-    @Value("${itemAppId}")
-    private String itemAppId;
-    @Value("${itemAppkey}")
-    private String itemAppkey;
-
     @Value("${marketShopAppId}")
     private String marketShopAppId;
     @Value("${marketShopAppkey}")
@@ -47,22 +37,6 @@ public class XMarketConfig {
 
     public String getOrderAppkey() {
         return orderAppkey;
-    }
-
-    public String getPaymentAppId() {
-        return paymentAppId;
-    }
-
-    public String getPaymentAppkey() {
-        return paymentAppkey;
-    }
-
-    public String getItemAppId() {
-        return itemAppId;
-    }
-
-    public String getItemAppkey() {
-        return itemAppkey;
     }
 
     public String getMarketShopAppId() {

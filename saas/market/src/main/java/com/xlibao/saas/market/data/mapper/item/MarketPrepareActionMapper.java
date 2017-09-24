@@ -12,7 +12,11 @@ public interface MarketPrepareActionMapper {
 
     MarketPrepareAction getPrepareAction(@Param("marketId") long marketId, @Param("itemLocation") String itemLocation, @Param("type") int type, @Param("statusSet") String statusSet);
 
-    List<MarketPrepareAction> getPrepareActions(@Param("executorPassportId") long executorPassportId, @Param("marketId") long marketId, @Param("statusSet") String statusSet, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
+    List<MarketPrepareAction> getPrepareActions(@Param("executorPassportId") long executorPassportId, @Param("marketId") long marketId, @Param("statusSet") String statusSet,
+                                                @Param("happenDate") String happenDate, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
+
+    int getPrepareActionSize(@Param("executorPassportId") long executorPassportId, @Param("marketId") long marketId, @Param("statusSet") String statusSet,
+                             @Param("happenDate") String happenDate);
 
     List<MarketPrepareAction> getPrepareActionsForLocationSet(@Param("marketId") long marketId, @Param("locationSet") String locationSet, @Param("statusSet") String  statusSet);
 

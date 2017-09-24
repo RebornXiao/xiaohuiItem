@@ -33,4 +33,6 @@ public interface ShelvesService {
     JSONObject finishTodayPrepareActions();
 
     JSONObject findValidTasks();
+
+    JSONObject showExceptionTask();
 }
