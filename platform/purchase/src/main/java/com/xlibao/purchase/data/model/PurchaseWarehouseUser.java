@@ -17,7 +17,7 @@ public class PurchaseWarehouseUser {
 
     private Integer status;
 
-    private String remark;
+    private String remark="";
 
     private String updateTime;
 

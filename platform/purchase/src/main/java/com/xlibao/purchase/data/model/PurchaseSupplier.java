@@ -24,9 +24,9 @@ public class PurchaseSupplier {
 
     private Integer status;
 
-    private String stopRemark;
+    private String stopRemark="";
 
-    private String remark;
+    private String remark="";
 
     private String updateTime;
 

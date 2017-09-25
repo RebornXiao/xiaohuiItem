@@ -13,7 +13,7 @@ public class PurchaseEntry {
 
     private String depositTime;
 
-    private String exceptionRemark;
+    private String exceptionRemark="";
 
     private String updateTime;
 

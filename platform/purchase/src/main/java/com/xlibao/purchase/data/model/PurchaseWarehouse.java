@@ -9,13 +9,13 @@ public class PurchaseWarehouse {
 
     private String warehouseName;
 
-    private String address;
+    private String address="";
 
     private Integer status;
 
-    private String stopRemark;
+    private String stopRemark="";
 
-    private String remark;
+    private String remark="";
 
     private String updateTime;
 
