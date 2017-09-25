@@ -68,12 +68,24 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
     @Override
     public JSONObject getPurchaseCommodityS() {
         long purchaseID = getLongParameter("purchaseID",-1);
-        long supplierID = getLongParameter("id",-1);
         Map<String, String> parameters = new HashMap<>();
         parameters.put("purchaseID", String.valueOf(purchaseID));
-        parameters.put("supplierID", String.valueOf(supplierID));
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getPurchaseCommodityS.do";
+            JSONObject response = executor(url, parameters);
+            return response;
+        }catch (XlibaoRuntimeException ex){
+            throw new XlibaoRuntimeException("远程接口通信异常");
+        }
+    }
+
+    @Override
+    public JSONObject getSupplierCommodityS() {
+        long supplierID = getLongParameter("id",-1);
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("supplierID", String.valueOf(supplierID));
+        try {
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getSupplierCommodityS.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoRuntimeException ex){

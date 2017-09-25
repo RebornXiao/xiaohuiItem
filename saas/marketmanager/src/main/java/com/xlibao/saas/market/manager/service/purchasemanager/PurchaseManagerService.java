@@ -27,6 +27,12 @@ public interface PurchaseManagerService {
     JSONObject getPurchaseCommodityS();
 
     /**
+     * 供应商产品list数据
+     * @return
+     */
+    JSONObject getSupplierCommodityS();
+
+    /**
      * 删除采购单
      * @return
      */

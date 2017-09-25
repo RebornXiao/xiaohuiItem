@@ -120,7 +120,7 @@ public class PurchaseManagerController extends BaseController {
         map.put("supplier", supplier);
 
         /*************采购信息BEGIN*************/
-        JSONObject commoditysJson= purchaseManagerService.getPurchaseCommodityS();
+        JSONObject commoditysJson= purchaseManagerService.getSupplierCommodityS();
         JSONObject commoditysResponse = commoditysJson.getJSONObject("response");
         JSONArray commoditys = commoditysResponse.getJSONArray("datas");
         map.put("commoditys", commoditys);
