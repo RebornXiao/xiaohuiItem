@@ -15,6 +15,7 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
   </resultMap>
   <sql id="Base_Column_List">
     id, purchase_id, item_id,item_name,item_type_id,item_type_title, purchase_time, purchase_number, deposit_time, deposit_number,
@@ -25,10 +26,12 @@
     <if test="purchaseId != -1">
       AND purchase_id = #{purchaseId}
     </if>
+  </select>
+  <select id="getSupplierCommodityS" resultMap="BaseResultMap">
+    SELECT w.warehouse_name, c.* from purchase_entry e join purchase_commodity c on e.id = c.purchase_id  join purchase_warehouse w on w.id  = e.warehouse_id where e.is_delete !=1 and c.is_delete!=1 and w.is_delete!=1
     <if test="supplierId != -1">
       AND e.supplier_id = #{supplierId}
     </if>
-
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select

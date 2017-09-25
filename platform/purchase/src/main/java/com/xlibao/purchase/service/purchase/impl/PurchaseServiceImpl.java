@@ -385,11 +385,15 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
     @Override
     public JSONObject getPurchaseCommodityS() {
         long purchaseID = getLongParameter("purchaseID",-1);
-        long supplierID = getLongParameter("supplierID",-1);
-        List<PurchaseCommodity> purchaseCommodityS = purchaseDataAccessManager.getPurchaseCommodityS(purchaseID,supplierID);
+        List<PurchaseCommodity> purchaseCommodityS = purchaseDataAccessManager.getPurchaseCommodityS(purchaseID);
         return success(purchaseCommodityS);
     }
-
+    @Override
+    public JSONObject getSupplierCommodityS() {
+        long supplierID = getLongParameter("supplierID",-1);
+        List supplierCommodityS = purchaseDataAccessManager.getSupplierCommodityS(supplierID);
+        return success(supplierCommodityS);
+    }
     @Override
     public JSONObject deletePurchase() {
         long id = getLongParameter("id",-1);

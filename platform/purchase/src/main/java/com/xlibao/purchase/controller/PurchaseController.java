@@ -208,6 +208,16 @@ public class PurchaseController {
     }
 
     /**
+     * 供应商产品list数据
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("getSupplierCommodityS")
+    public JSONObject getSupplierCommodityS(){
+        return purchaseService.getSupplierCommodityS();
+    }
+
+    /**
      * 采购单删除
      * @return
      */

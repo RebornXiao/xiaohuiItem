@@ -11,7 +11,14 @@ public interface PurchaseCommodityMapper {
       * @param purchaseId
      * @return
      */
-   List<PurchaseCommodity> getPurchaseCommodityS(@Param("purchaseId") Long purchaseId,@Param("supplierId") Long supplierId);
+   List<PurchaseCommodity> getPurchaseCommodityS(@Param("purchaseId") Long purchaseId);
+    /**
+     * 供应商产品数据
+     * @param supplierId
+     * @return
+     */
+    List<PurchaseCommodity> getSupplierCommodityS(@Param("supplierId") Long supplierId);
+
 
    int deleteByPrimaryKey(@Param("purchaseId") Long purchaseId);
 

@@ -122,6 +122,12 @@ public interface PurchaseService {
     JSONObject getPurchaseCommodityS();
 
     /**
+     * 供应商产品订单
+     * @return
+     */
+    JSONObject getSupplierCommodityS();
+
+    /**
      * 删除采购单
      * @return
      */

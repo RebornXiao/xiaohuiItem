@@ -29,6 +29,8 @@ public class PurchaseCommodity {
 
     private Integer isDelete;
 
+    private String warehouseName;
+
     public Long getId() {
         return id;
     }
@@ -131,5 +133,13 @@ public class PurchaseCommodity {
 
     public void setIsDelete(Integer isDelete) {
         this.isDelete = isDelete;
+    }
+
+    public String getWarehouseName() {
+        return warehouseName;
+    }
+
+    public void setWarehouseName(String warehouseName) {
+        this.warehouseName = warehouseName;
     }
 }

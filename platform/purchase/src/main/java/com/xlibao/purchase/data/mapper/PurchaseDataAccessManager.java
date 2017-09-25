@@ -104,8 +104,11 @@ public class PurchaseDataAccessManager {
         return entryMapper.getPurchase(id);
     }
 
-    public List<PurchaseCommodity> getPurchaseCommodityS(Long purchaseID,Long supplierID){
-       return  commodityMapper.getPurchaseCommodityS(purchaseID,supplierID);
+    public List<PurchaseCommodity> getPurchaseCommodityS(Long purchaseID){
+       return  commodityMapper.getPurchaseCommodityS(purchaseID);
+    }
+    public List getSupplierCommodityS(Long supplierID){
+        return  commodityMapper.getSupplierCommodityS(supplierID);
     }
 
     public int updatePurchase(PurchaseEntry purchaseEntry){
