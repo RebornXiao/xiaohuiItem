@@ -55,6 +55,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
             return fail("缺少采购单ID");
         }
         Map<String, String> parameters = new HashMap<>();
+        parameters.put("id",String.valueOf(id));
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getPurchase.do";
             JSONObject response = executor(url, parameters);
@@ -67,8 +68,10 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
     @Override
     public JSONObject getPurchaseCommodityS() {
         long purchaseID = getLongParameter("purchaseID",-1);
+        long supplierID = getLongParameter("id",-1);
         Map<String, String> parameters = new HashMap<>();
         parameters.put("purchaseID", String.valueOf(purchaseID));
+        parameters.put("supplierID", String.valueOf(supplierID));
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getPurchaseCommodityS.do";
             JSONObject response = executor(url, parameters);

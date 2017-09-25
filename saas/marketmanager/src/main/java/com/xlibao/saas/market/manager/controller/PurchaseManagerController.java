@@ -116,6 +116,10 @@ public class PurchaseManagerController extends BaseController {
         map.put("supplier", supplier);
 
         /*************采购信息BEGIN*************/
+        JSONObject commoditysJson= purchaseManagerService.getPurchaseCommodityS();
+        JSONObject commoditysResponse = commoditysJson.getJSONObject("response");
+        JSONArray commoditys = commoditysResponse.getJSONArray("datas");
+        map.put("commoditys", commoditys);
         /*************采购信息*****END********/
         return jumpPage(map, LogicConfig.FTL_SUPPLIER_DETAIL, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_SUPPLIER_LIST);
     }
