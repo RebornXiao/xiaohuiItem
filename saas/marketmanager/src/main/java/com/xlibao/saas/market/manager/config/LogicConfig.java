@@ -60,7 +60,7 @@ public class LogicConfig {
 
     public static final String FTL_MARKET_TASK_LIST = "market/market-task-list";
     public static final String FTL_MARKET_ERROR_TASK_LIST = "market/market-task-error-list";
-    public static final String FTL_MARKET_ERROR_TASK_LIST_2 = "market/market-task-error-list";
+    public static final String FTL_MARKET_ERROR_TASK_LIST_2 = "market/market-task-error-list-2";
 
     public static final String FTL_MARKET_STREET_EDIT = "market/street-edit";
     public static final String FTL_MARKET_STREET_LIST = "market/street-list";
