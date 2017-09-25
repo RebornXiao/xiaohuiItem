@@ -174,28 +174,31 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
             logger.error("登录失败，登录帐号(" + username + ")、登录密码(" + password + ")错误，用户 -- " + passport);
             throw new XlibaoIllegalArgumentException("帐号或密码错误");
         }
-        if (passport.getStatus() == PassportStatusEnum.FORBID_LOGIN.getKey()) {
-            logger.error("登录失败，账户(" + passport + ")的状态类型不正常，目前状态：" + passport.getStatus());
-            throw new XlibaoRuntimeException("您的帐号已被禁止登录系统，如有疑问，请联系我司客服");
-        }
-        if (passport.getStatus() == PassportStatusEnum.BACK_LIST.getKey()) {
-            logger.error("登录失败，账户(" + passport + ")的状态类型不正常，目前状态：" + passport.getStatus());
-            throw new XlibaoRuntimeException("您的帐号目前处于黑名单状态，暂时不能登录");
-        }
-        // 客户端的权限控制
-        String roleValue = clientPowerControl(passport, clientType);
-        // 设置新的访问密令
-        changeAccessToken(passport);
+        return afterLogin(passport, deviceType, clientType, versionIndex);
+    }
 
-        passport.setVersionIndex(versionIndex);
-        // 版本检测
-        JSONObject versionMessage = versionControl(deviceType, clientType, versionIndex);
-        JSONObject response = fillLoginMessage(passport, roleValue);
-        response.put("versionMessage", versionMessage);
+    @Override
+    public JSONObject loginForVerificationCode() {
+        String phone = getUTF("phone");
+        String smsCode = getUTF("smsCode");
 
-        // 通知监听系统登录成功
-        passportEventListenerManager.notifyLoginPassport(passport);
-        return success(response);
+        int deviceType = getIntParameter("deviceType", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey());
+        int clientType = getIntParameter("clientType", ClientTypeEnum.CONSUMER.getKey());
+        // 当前版本号
+        int versionIndex = getIntParameter("versionIndex");
+
+        if (!CommonUtils.isMobileNum(phone)) {
+            return PlatformErrorCodeEnum.PHONE_NUMBER_ERROR.response("手机号[" + phone + "]无效");
+        }
+        // 短信验证码验证 错误时抛 XlibaoIllegalArgumentException异常
+        smsService.verifySmsCode(phone, smsCode, SmsCodeTypeEnum.LOGIN.getKey());
+
+        Passport passport = passportDataManager.getPassport(phone);
+        if (passport == null) {
+            logger.error("登录失败，手机号不存在 -- " + phone);
+            throw new XlibaoIllegalArgumentException("手机号：" + phone + "未注册！");
+        }
+        return afterLogin(passport, deviceType, clientType, versionIndex);
     }
 
     @Override
@@ -396,6 +399,31 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         return result <= 0 ? fail() : success();
     }
 
+    private JSONObject afterLogin(Passport passport, int deviceType, int clientType, int versionIndex) {
+        if (passport.getStatus() == PassportStatusEnum.FORBID_LOGIN.getKey()) {
+            logger.error("登录失败，账户(" + passport + ")的状态类型不正常，目前状态：" + passport.getStatus());
+            throw new XlibaoRuntimeException("您的帐号已被禁止登录系统，如有疑问，请联系我司客服");
+        }
+        if (passport.getStatus() == PassportStatusEnum.BACK_LIST.getKey()) {
+            logger.error("登录失败，账户(" + passport + ")的状态类型不正常，目前状态：" + passport.getStatus());
+            throw new XlibaoRuntimeException("您的帐号目前处于黑名单状态，暂时不能登录");
+        }
+        // 客户端的权限控制
+        String roleValue = clientPowerControl(passport, clientType);
+        // 设置新的访问密令
+        changeAccessToken(passport);
+
+        passport.setVersionIndex(versionIndex);
+        // 版本检测
+        JSONObject versionMessage = versionControl(deviceType, clientType, versionIndex);
+        JSONObject response = fillLoginMessage(passport, roleValue);
+        response.put("versionMessage", versionMessage);
+
+        // 通知监听系统登录成功
+        passportEventListenerManager.notifyLoginPassport(passport);
+        return success(response);
+    }
+
     private JSONObject fillLoginMessage(Passport passport, String roleValue) {
         PassportProperties properties = passportDataManager.getPassportProperties(passport.getId(), PropertiesTypeEnum.PERSONAL.getKey(), PersonalKeyEnum.HEAD_IMAGE.getKey());
 
@@ -474,6 +502,4 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         changeAccessToken(passport);
         return passport;
     }
-
-
 }

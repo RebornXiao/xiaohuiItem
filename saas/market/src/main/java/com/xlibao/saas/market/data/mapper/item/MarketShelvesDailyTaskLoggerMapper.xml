@@ -11,7 +11,7 @@
         <result column="hope_total_barcode_quantity" property="hopeTotalBarcodeQuantity" jdbcType="INTEGER"/>
         <result column="actual_barcode_quantity" property="actualBarcodeQuantity" jdbcType="INTEGER"/>
         <result column="mark" property="mark" jdbcType="VARCHAR"/>
-        <result column="hope_executor_date" property="hopeExecutorData" jdbcType="TIMESTAMP"/>
+        <result column="hope_executor_date" property="hopeExecutorDate" jdbcType="TIMESTAMP"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 

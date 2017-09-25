@@ -14,6 +14,8 @@ public interface PassportService {
 
     JSONObject loginPassport();
 
+    JSONObject loginForVerificationCode();
+
     JSONObject logoutPassport();
 
     JSONObject modifyPassword();
