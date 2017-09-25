@@ -18,6 +18,7 @@
         <module>order</module>
         <module>item</module>
         <module>advert</module>
+        <module>purchase</module>
     </modules>
 
     <dependencies>
