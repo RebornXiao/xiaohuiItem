@@ -1155,12 +1155,12 @@ public class CommonUtils {
 //            System.out.println(lastDayOfMonthForCH(i));
 //        }
 
-        System.out.println(daysForMonth());
-        System.out.println(luhn("4392250033791558"));
-        System.out.println(luhn("6222023602013173927"));
-        System.out.println(formatNumber(1023 / 100f, "0.00"));
-        System.out.println(isLegalChar("bjhnanhai", 6, 12));
-
-        System.out.println(shuffleString("123456"));
+//        System.out.println(daysForMonth());
+        System.out.println(luhn("6225768618540437"));
+//        System.out.println(luhn("6222023602013173927"));
+//        System.out.println(formatNumber(1023 / 100f, "0.00"));
+//        System.out.println(isLegalChar("bjhnanhai", 6, 12));
+//
+//        System.out.println(shuffleString("123456"));
     }
 }

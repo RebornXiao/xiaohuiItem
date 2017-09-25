@@ -45,15 +45,19 @@
                                 </select>
                             </div>
 
-                            <div class="form-group m-l-15">
-                                <label>选择日期：</label>
-                                <div class="input-group">
-                                    <input id="startTime" type="text" class="form-control" readonly>
-                                    <span class="input-group-addon bg-default"
-                                          onClick="jeDate({dateCell:'#startTime',isTime:false,format:'YYYY-MM-DD'})"><i
-                                            class="fa fa-calendar"></i></span>
-                                </div>
-                            </div>
+                            <#--<div class="form-group m-l-15">-->
+                                <#--<label>选择日期：</label>-->
+                                <#--<div class="input-group">-->
+                                    <#--<input id="startTime" type="text" class="form-control" readonly>-->
+                                    <#--<span class="input-group-addon bg-default"-->
+                                          <#--onClick="jeDate({dateCell:'#startTime',isTime:false,format:'YYYY-MM-DD'})"><i-->
+                                            <#--class="fa fa-calendar"></i></span>-->
+                                <#--</div>-->
+                            <#--</div>-->
+
+                            <#--<button id="searchBtn" type="button"-->
+                                    <#--class="btn waves-effect waves-light btn-primary" >搜索-->
+                            <#--</button>-->
                         </form>
                     </div>
                 </div>
@@ -65,15 +69,13 @@
                     <table class="table table-striped table-bordered">
                         <thead class="table_head">
                         <tr>
-                            <th>任务ID</th>
-                            <th>弹夹编码</th>
-                            <th>商品模版ID</th>
-                            <th>商品名称</th>
-                            <th>商品数量</th>
-                            <th>商品条码</th>
-                            <th>商品单位</th>
-                            <th>任务状态</th>
-                            <th>期望执行的日期</th>
+                            <th>执行者</th>
+                            <th>期望上架数量</th>
+                            <th>实际执行上架数量</th>
+                            <th>期望上架(SKU数)</th>
+                            <th>实际执行上架(SKU数)</th>
+                            <th>期望执行日期</th>
+                            <th>提交的时间</th>
                             <th>操作</th>
                         </tr>
                         </thead>
@@ -82,27 +84,24 @@
                         <#if tasks?exists && (tasks?size > 0)>
                             <#list tasks as task>
                             <tr>
-                                <td>${task.taskId?c}</td>
-                                <td>${task.locationCode}</td>
-                                <td>${task.itemTemplateId?c}</td>
-                                <td>${task.itemName}</td>
-                                <td>${task.itemQuantity}</td>
-                                <td>${task.barcode}</td>
-                                <td>${task.unitName}</td>
-                                <td><#if task.status == 1><span class="label label-primary">有效(未完成)</span></#if>
-                                    <#if task.status == 2><span class="label label-success">已执行</span></#if></td>
-                                <td>${task.hopeExecutorDate}</td>
+                                <td>${task.executorPassportName}</td>
+                                <td>${task.hopeTotalItemQuantity?c}</td>
+                                <td>${task.actualItemQuantity?c}</td>
+                                <td>${task.hopeTotalBarcodeQuantity?c}</td>
+                                <td>${task.actualBarcodeQuantity?c}</td>
+                                <td>${task.happenDate}</td>
+                                <td>${task.submitTime}</td>
                                 <td>
-                                    <button id="editBtn" type="button"
+                                    <button id="seeBtn" type="button"
                                             class="btn waves-effect waves-light btn-danger btn-sm"
-                                            data_id="${task.taskId?c}">取消
+                                            data_id="${task.happenDate}">查看任务
                                     </button>
                                 </td>
                             </tr>
                             </#list>
                         <#else>
                         <tr>
-                            <td colSpan="10" height="200px">
+                            <td colSpan="11" height="200px">
                                 <p class="text-center">暂无任何数据</p>
                             </td>
                         </tr>
@@ -116,15 +115,13 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                     <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/marketTasks.do" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/marketErrorTasks.do?marketId=${marketId}" />
                 </div>
             </div>
         </#if>
             <!-- end container -->
         </div>
 
-
-        <script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
         <script type="text/javascript">
 
             $(document).ready(function () {
@@ -140,5 +137,18 @@
                     //location.href = "${base}/market/marketTasks.do?marketId=" + data_id;
                 });
 
+                seeBtn
+
+        <#if tasks?exists && (tasks?size > 0) >
+            //单项编辑
+            $("#taskListTable").find('button[id=seeBtn]').each(function () {
+                $(this).on('click', function () {
+                    open({url:"${base}/market/marketItemEdit.do?id=" + $(this).attr("data_id")
+                    +"&searchType="+s_searchType+"&searchKey="+s_searchKey
+                    +"&pageSize=${pageSize}&pageIndex=${pageIndex}"
+                    });
+                });
+            });
+        </#if>
             });
         </script>

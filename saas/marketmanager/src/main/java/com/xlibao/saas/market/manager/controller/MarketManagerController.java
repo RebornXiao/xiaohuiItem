@@ -376,7 +376,7 @@ public class MarketManagerController extends BaseController {
             map.put("pageSize", String.valueOf(pageSize));
             map.put("pageIndex", String.valueOf(pageIndex));
 
-            String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/manager/showExceptionTask.do", map);
+            String json = HttpRequest.post(ConfigFactory.getDomainNameConfig().marketRemoteURL + "/market/openapi/showExceptionTask.do", map);
             JSONObject response = JSONObject.parseObject(json);
 
             if (response.getIntValue("code") == 0) {
@@ -384,11 +384,15 @@ public class MarketManagerController extends BaseController {
                 int count = response.getIntValue("maxSize");
 
                 modelMap.put("count", count);
-                modelMap.put("datas", array);
+                modelMap.put("tasks", array);
             }
         }
 
+        if(happenDate.length() > 0 && marketId != 0) {
+            return jumpPage(modelMap, LogicConfig.FTL_MARKET_ERROR_TASK_LIST_2, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ERROR_TASK_LIST);
+        } else {
         return jumpPage(modelMap, LogicConfig.FTL_MARKET_ERROR_TASK_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ERROR_TASK_LIST);
+        }
     }
 
     //店铺商品

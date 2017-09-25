@@ -9,6 +9,8 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
+
 /**
  * @author chinahuangxc on 2017/7/21.
  */
@@ -42,23 +44,28 @@ public class CheckLoginAop extends BaseController {
             try {
                 token = PassportRemoteService.changeAccessToken(pid, token);
             } catch (Exception ex) {
-                fail(ex.getMessage());
+                faliError(ex.getMessage());
                 return LogicConfig.FTL_LOGIN;
             }
             setAccessToken(token);
             return point.proceed(args);
         } catch (XlibaoIllegalArgumentException ex) {
             ex.printStackTrace();
-            fail(ex.getMessage());
+            faliError(ex.getMessage());
             return LogicConfig.FTL_ERROR;
         } catch (XlibaoRuntimeException ex) {
             ex.printStackTrace();
-            fail(ex.getMessage());
+            faliError(ex.getMessage());
             return LogicConfig.FTL_ERROR;
         } catch (Throwable cause) {
             cause.printStackTrace();
-            fail("系统错误，请稍后重试！");
+            faliError("系统错误，请稍后重试！");
             return LogicConfig.FTL_ERROR;
         }
+    }
+
+    void faliError(String error) {
+        HttpServletRequest request = getHttpServletRequest();
+        request.setAttribute("error", error);
     }
 }

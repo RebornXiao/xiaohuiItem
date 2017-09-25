@@ -99,14 +99,16 @@
                             <span> 店铺管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="store"> style="display: block;" </#if>>
-                            <li <#if tab_child=="markets"> class="active" </#if>><a href="javascript:open({url:'${base}/market/markets.do'})">店铺列表</a>
+                            <li <#if tab_child=="markets"> class="active" </#if>><a
+                                    href="javascript:open({url:'${base}/market/markets.do'})">店铺列表</a>
                             </li>
                             <li <#if tab_child=="mitems"> class="active" </#if>><a href="${base}/market/marketItems.do">店铺商品</a>
                             </li>
                             <li <#if tab_child=="shelves"> class="active" </#if>><a
                                     href="${base}/market/marketShelves.do">货架商品</a></li>
                             <li <#if tab_child=="stasks"> class="active" </#if>><a href="${base}/market/marketTasks.do">店铺任务</a>
-                            <li <#if tab_child=="staskerrors"> class="active" </#if>><a href="${base}/market/marketErrorTasks.do">店铺异常任务</a>
+                            <li <#if tab_child=="staskerrors"> class="active" </#if>><a
+                                    href="${base}/market/marketErrorTasks.do">店铺异常任务</a>
                             </li>
                             <li <#if tab_child=="streets"> class="active" </#if>><a href="${base}/market/streets.do">街道信息</a>
                             </li>
@@ -153,7 +155,13 @@
 
     <script type="text/javascript">
 
+            <#--<#if accessToken?? >-->
+            <#--alert("accessToken=${accessToken}");-->
+                <#--$.cookie("accessToken", ${accessToken}, {expires: 365});-->
+            <#--</#if>-->
+
         $(document).ready(function () {
+
             var loginShowName = $.cookie("loginShowName");
             if (loginShowName != null) {
                 $("#loginUserUi").html(loginShowName + " <span class=\"caret\"></span>");
