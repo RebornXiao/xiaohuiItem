@@ -364,7 +364,10 @@ public class OrderOpenApiController {
 
     /**
      * <pre>
-     *     <b></b>
+     *     <b>询问当前订单状态</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/order/openapi/askOrderStatus.do
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
      * </pre>
      */
     @ResponseBody
