@@ -17,7 +17,7 @@
     is_delete
   </sql>
   <select id="searchPurchasePage" resultType="java.util.Map">
-    select p.id,w.warehouse_name,w.address,s.supplier_name,s.salesman_name,s.phone,p.status,p.create_time from purchase_entry p JOIN purchase_supplier s on p.supplier_id = s.id JOIN purchase_warehouse w ON p.warehouse_id = w.id where p.is_delete != 1 and s.is_delete!=1 and w.is_delete!=1
+    select p.id,w.warehouse_name,w.address,s.supplier_name,s.salesman_name,s.phone,p.status,date_format(p.create_time, '%Y-%c-%d %h:%i:%s' ) as create_time from purchase_entry p JOIN purchase_supplier s on p.supplier_id = s.id JOIN purchase_warehouse w ON p.warehouse_id = w.id where p.is_delete != 1 and s.is_delete!=1 and w.is_delete!=1
     <if test="supplierName!=null">
       AND s.supplier_name  LIKE "%"#{supplierName}"%"
     </if>
