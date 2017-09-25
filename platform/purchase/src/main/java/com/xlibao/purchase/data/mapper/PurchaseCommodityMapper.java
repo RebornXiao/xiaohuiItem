@@ -1,9 +1,19 @@
-package com.xlibao.advert.data.dao;
+package com.xlibao.purchase.data.mapper;
 
-import com.xlibao.metadata.purchase.PurchaseCommodity;
+import com.xlibao.purchase.data.model.PurchaseCommodity;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface PurchaseCommodityMapper {
-    int deleteByPrimaryKey(Long id);
+    /**
+     * 采购单数据
+      * @param purchaseId
+     * @return
+     */
+   List<PurchaseCommodity> getPurchaseCommodityS(@Param("purchaseId") Long purchaseId,@Param("supplierId") Long supplierId);
+
+   int deleteByPrimaryKey(@Param("purchaseId") Long purchaseId);
 
     int insert(PurchaseCommodity record);
 
@@ -12,6 +22,8 @@ public interface PurchaseCommodityMapper {
     PurchaseCommodity selectByPrimaryKey(Long id);
 
     int updateByPrimaryKeySelective(PurchaseCommodity record);
+
+    int updatePurchaseCommodity(PurchaseCommodity record);
 
     int updateByPrimaryKey(PurchaseCommodity record);
 }

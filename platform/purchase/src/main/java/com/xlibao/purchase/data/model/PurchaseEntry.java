@@ -1,21 +1,23 @@
-package com.xlibao.metadata.purchase;
+package com.xlibao.purchase.data.model;
 
 import java.util.Date;
 
 public class PurchaseEntry {
     private Long id;
 
+    private  Long warehouseId;
+
     private Long supplierId;
 
     private Integer status;
 
-    private Date depositTime;
+    private String depositTime;
 
     private String exceptionRemark;
 
-    private Date updateTime;
+    private String updateTime;
 
-    private Date createTime;
+    private String createTime;
 
     private Integer isDelete;
 
@@ -43,11 +45,11 @@ public class PurchaseEntry {
         this.status = status;
     }
 
-    public Date getDepositTime() {
+    public String getDepositTime() {
         return depositTime;
     }
 
-    public void setDepositTime(Date depositTime) {
+    public void setDepositTime(String depositTime) {
         this.depositTime = depositTime;
     }
 
@@ -59,19 +61,19 @@ public class PurchaseEntry {
         this.exceptionRemark = exceptionRemark == null ? null : exceptionRemark.trim();
     }
 
-    public Date getUpdateTime() {
+    public String getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 
@@ -81,5 +83,13 @@ public class PurchaseEntry {
 
     public void setIsDelete(Integer isDelete) {
         this.isDelete = isDelete;
+    }
+
+    public Long getWarehouseId() {
+        return warehouseId;
+    }
+
+    public void setWarehouseId(Long warehouseId) {
+        this.warehouseId = warehouseId;
     }
 }

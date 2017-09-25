@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xlibao.advert.data.dao.PurchaseCommodityStoresMapper">
-  <resultMap id="BaseResultMap" type="com.xlibao.metadata.purchase.PurchaseCommodityStores">
+<mapper namespace="com.xlibao.purchase.data.mapper.PurchaseCommodityStoresMapper">
+  <resultMap id="BaseResultMap" type="com.xlibao.purchase.data.model.PurchaseCommodityStores">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="commodity_id" jdbcType="BIGINT" property="commodityId" />
@@ -14,11 +14,11 @@
     <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, warehouse_id, commodity_id, commodity_name, commodity_code, stores_number, warn_number, 
+    id, warehouse_id, commodity_id, commodity_name, commodity_code, stores_number, warn_number,
     update_time, create_time, is_delete
   </sql>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from purchase_commodity_stores
     where id = #{id,jdbcType=BIGINT}
@@ -27,17 +27,17 @@
     delete from purchase_commodity_stores
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.xlibao.metadata.purchase.PurchaseCommodityStores">
-    insert into purchase_commodity_stores (id, warehouse_id, commodity_id, 
-      commodity_name, commodity_code, stores_number, 
-      warn_number, update_time, create_time, 
-      is_delete)
-    values (#{id,jdbcType=BIGINT}, #{warehouseId,jdbcType=BIGINT}, #{commodityId,jdbcType=BIGINT}, 
-      #{commodityName,jdbcType=VARCHAR}, #{commodityCode,jdbcType=VARCHAR}, #{storesNumber,jdbcType=INTEGER}, 
-      #{warnNumber,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{isDelete,jdbcType=INTEGER})
+  <insert id="insert" parameterType="com.xlibao.purchase.data.model.PurchaseCommodityStores">
+    insert into purchase_commodity_stores (id, warehouse_id, commodity_id,
+    commodity_name, commodity_code, stores_number,
+    warn_number, update_time, create_time,
+    is_delete)
+    values (#{id,jdbcType=BIGINT}, #{warehouseId,jdbcType=BIGINT}, #{commodityId,jdbcType=BIGINT},
+    #{commodityName,jdbcType=VARCHAR}, #{commodityCode,jdbcType=VARCHAR}, #{storesNumber,jdbcType=INTEGER},
+    #{warnNumber,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP},
+    #{isDelete,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.xlibao.metadata.purchase.PurchaseCommodityStores">
+  <insert id="insertSelective" parameterType="com.xlibao.purchase.data.model.PurchaseCommodityStores">
     insert into purchase_commodity_stores
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -104,7 +104,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xlibao.metadata.purchase.PurchaseCommodityStores">
+  <update id="updateByPrimaryKeySelective" parameterType="com.xlibao.purchase.data.model.PurchaseCommodityStores">
     update purchase_commodity_stores
     <set>
       <if test="warehouseId != null">
@@ -137,17 +137,17 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.xlibao.metadata.purchase.PurchaseCommodityStores">
+  <update id="updateByPrimaryKey" parameterType="com.xlibao.purchase.data.model.PurchaseCommodityStores">
     update purchase_commodity_stores
     set warehouse_id = #{warehouseId,jdbcType=BIGINT},
-      commodity_id = #{commodityId,jdbcType=BIGINT},
-      commodity_name = #{commodityName,jdbcType=VARCHAR},
-      commodity_code = #{commodityCode,jdbcType=VARCHAR},
-      stores_number = #{storesNumber,jdbcType=INTEGER},
-      warn_number = #{warnNumber,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      is_delete = #{isDelete,jdbcType=INTEGER}
+    commodity_id = #{commodityId,jdbcType=BIGINT},
+    commodity_name = #{commodityName,jdbcType=VARCHAR},
+    commodity_code = #{commodityCode,jdbcType=VARCHAR},
+    stores_number = #{storesNumber,jdbcType=INTEGER},
+    warn_number = #{warnNumber,jdbcType=INTEGER},
+    update_time = #{updateTime,jdbcType=TIMESTAMP},
+    create_time = #{createTime,jdbcType=TIMESTAMP},
+    is_delete = #{isDelete,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

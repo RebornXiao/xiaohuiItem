@@ -1,6 +1,6 @@
-package com.xlibao.advert.data.dao;
+package com.xlibao.purchase.data.mapper;
 
-import com.xlibao.metadata.purchase.PurchaseCommodityStores;
+import com.xlibao.purchase.data.model.PurchaseCommodityStores;
 
 public interface PurchaseCommodityStoresMapper {
     int deleteByPrimaryKey(Long id);

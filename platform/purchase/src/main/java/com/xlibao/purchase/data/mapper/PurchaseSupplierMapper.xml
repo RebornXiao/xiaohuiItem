@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xlibao.advert.data.dao.PurchaseSupplierMapper">
-  <resultMap id="BaseResultMap" type="com.xlibao.metadata.purchase.PurchaseSupplier">
+<mapper namespace="com.xlibao.purchase.data.mapper.PurchaseSupplierMapper">
+  <resultMap id="BaseResultMap" type="com.xlibao.purchase.data.model.PurchaseSupplier">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="supplier_name" jdbcType="VARCHAR" property="supplierName" />
     <result column="abbreviation" jdbcType="VARCHAR" property="abbreviation" />
@@ -18,11 +18,41 @@
     <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, supplier_name, abbreviation, address, supplier_type, deliver_period, salesman_name, 
+    id, supplier_name, abbreviation, address, supplier_type, deliver_period, salesman_name,
     phone, status, stop_remark, remark, update_time, create_time, is_delete
   </sql>
+
+  <select id="searchSupplierPage" resultMap="BaseResultMap">
+    SELECT * FROM purchase_supplier WHERE is_delete!=1
+    <if test="supplierName!=null">
+      AND supplier_name LIKE "%"#{supplierName}"%"
+    </if>
+    <if test="supplierType!=-1">
+      AND supplier_type = #{supplierType}
+    </if>
+    <if test="status!=-1">
+      AND status = #{status}
+    </if>
+    order by create_time desc limit #{pageStartIndex}, #{pageSize}
+  </select>
+  <select id="getAllSupplier" resultMap="BaseResultMap">
+    SELECT * FROM purchase_supplier WHERE is_delete!=1 AND status=1 order by create_time
+  </select>
+
+  <select id="searchSupplierPageCount" resultType="int">
+    SELECT count(1) FROM purchase_supplier WHERE is_delete!=1
+    <if test="supplierName!=null">
+      AND supplier_name LIKE "%"#{supplierName}"%"
+    </if>
+    <if test="supplierType!=-1">
+      AND supplier_type = #{supplierType}
+    </if>
+    <if test="status!=-1">
+      AND status = #{status}
+    </if>
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from purchase_supplier
     where id = #{id,jdbcType=BIGINT}
@@ -31,19 +61,19 @@
     delete from purchase_supplier
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.xlibao.metadata.purchase.PurchaseSupplier">
-    insert into purchase_supplier (id, supplier_name, abbreviation, 
-      address, supplier_type, deliver_period, 
-      salesman_name, phone, status, 
-      stop_remark, remark, update_time, 
+  <insert id="insert" parameterType="com.xlibao.purchase.data.model.PurchaseSupplier" useGeneratedKeys="true" keyProperty="id">
+    insert into purchase_supplier ( supplier_name, abbreviation,
+      address, supplier_type, deliver_period,
+      salesman_name, phone, status,
+      stop_remark, remark, update_time,
       create_time, is_delete)
-    values (#{id,jdbcType=BIGINT}, #{supplierName,jdbcType=VARCHAR}, #{abbreviation,jdbcType=VARCHAR}, 
-      #{address,jdbcType=VARCHAR}, #{supplierType,jdbcType=INTEGER}, #{deliverPeriod,jdbcType=VARCHAR}, 
-      #{salesmanName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
-      #{stopRemark,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
+    values ( #{supplierName,jdbcType=VARCHAR}, #{abbreviation,jdbcType=VARCHAR},
+      #{address,jdbcType=VARCHAR}, #{supplierType,jdbcType=INTEGER}, #{deliverPeriod,jdbcType=VARCHAR},
+      #{salesmanName,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER},
+      #{stopRemark,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{updateTime,jdbcType=VARCHAR},
       #{createTime,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.xlibao.metadata.purchase.PurchaseSupplier">
+  <insert id="insertSelective" parameterType="com.xlibao.purchase.data.model.PurchaseSupplier" useGeneratedKeys="true" keyProperty="id">
     insert into purchase_supplier
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -134,7 +164,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xlibao.metadata.purchase.PurchaseSupplier">
+  <update id="updateByPrimaryKeySelective" parameterType="com.xlibao.purchase.data.model.PurchaseSupplier">
     update purchase_supplier
     <set>
       <if test="supplierName != null">
@@ -168,7 +198,7 @@
         remark = #{remark,jdbcType=VARCHAR},
       </if>
       <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+        update_time = #{updateTime,jdbcType=VARCHAR},
       </if>
       <if test="createTime != null">
         create_time = #{createTime,jdbcType=TIMESTAMP},
@@ -179,7 +209,7 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.xlibao.metadata.purchase.PurchaseSupplier">
+  <update id="updateByPrimaryKey" parameterType="com.xlibao.purchase.data.model.PurchaseSupplier">
     update purchase_supplier
     set supplier_name = #{supplierName,jdbcType=VARCHAR},
       abbreviation = #{abbreviation,jdbcType=VARCHAR},
@@ -191,7 +221,7 @@
       status = #{status,jdbcType=INTEGER},
       stop_remark = #{stopRemark,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=VARCHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       is_delete = #{isDelete,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}

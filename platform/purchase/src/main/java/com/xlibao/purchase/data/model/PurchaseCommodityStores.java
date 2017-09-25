@@ -1,4 +1,4 @@
-package com.xlibao.metadata.purchase;
+package com.xlibao.purchase.data.model;
 
 import java.util.Date;
 

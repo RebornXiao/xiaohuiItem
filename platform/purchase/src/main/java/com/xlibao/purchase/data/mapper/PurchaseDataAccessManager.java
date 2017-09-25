@@ -1,257 +1,133 @@
-package com.xlibao.order.data.mapper.order;
-
-import com.xlibao.common.CommonUtils;
-import com.xlibao.common.GlobalAppointmentOptEnum;
-import com.xlibao.common.constant.order.OrderSequenceNumberStatusEnum;
-import com.xlibao.common.constant.order.OrderStatusEnum;
-import com.xlibao.common.constant.order.OrderTypeEnum;
-import com.xlibao.metadata.order.*;
+package com.xlibao.purchase.data.mapper;
+import com.xlibao.purchase.data.model.*;
+import org.apache.ibatis.annotations.ResultMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+
 
 /**
  * @author chinahuangxc on 2017/01/26
  */
 @Component
-public class OrderDataAccessManager {
+public class PurchaseDataAccessManager {
 
     @Autowired
-    private OrderSequenceMapper sequenceMapper;
+    private PurchaseCommodityMapper commodityMapper;
+
     @Autowired
-    private OrderEntryMapper entryMapper;
+    private PurchaseCommodityStoresMapper commodityStoresMapper;
+
     @Autowired
-    private OrderStateLoggerMapper stateLoggerMapper;
+    private  PurchaseEntryMapper entryMapper;
+
     @Autowired
-    private OrderItemSnapshotMapper itemSnapshotMapper;
+    private  PurchaseSupplierMapper supplierMapper;
+
     @Autowired
-    private OrderPushedLoggerMapper pushedLoggerMapper;
+    private  PurchaseWarehouseMapper warehouseMapper;
+
     @Autowired
-    private OrderUnacceptLoggerMapper unacceptLoggerMapper;
-    @Autowired
-    private OrderStatusListenerMapper statusListenerMapper;
+    private  PurchaseWarehouseUserMapper warehouseUserMapper;
 
-    // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 订单序列号访问接口(orderSequenceMapper) ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    public int createOrderSequence(OrderSequence orderSequence) {
-        return sequenceMapper.createOrderSequence(orderSequence);
+
+    public List<PurchaseSupplier> searchSupplierPage(String supplierName,int supplierType, int status,int pageSize, int pageStartIndex){
+        return supplierMapper.searchSupplierPage(supplierName,supplierType,status,pageSize,pageStartIndex);
     }
 
-    public OrderSequence lastOrderSequence(String partnerId, String partnerUserId, OrderTypeEnum orderTypeEnum) {
-        return sequenceMapper.lastOrderSequence(partnerId, partnerUserId, orderTypeEnum.getKey());
+    public int searchSupplierPageCount(String supplierName,int supplierType, int status){
+        return supplierMapper.searchSupplierPageCount(supplierName,supplierType,status);
     }
 
-    public OrderSequence findOrderSequence(String sequenceNumber) {
-        return sequenceMapper.findOrderSequence(sequenceNumber);
+    public List<PurchaseSupplier> getAllSupplier(){
+        return supplierMapper.getAllSupplier();
     }
 
-    public int updateOrderSequence(String sequenceNumber, OrderSequenceNumberStatusEnum statusEnum) {
-        return sequenceMapper.updateOrderSequence(sequenceNumber, statusEnum.getKey());
-    }
-    // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 订单序列号访问接口(orderSequenceMapper) ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-    // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 订单访问接口(orderEntryMapper) ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    public int createOrderEntry(OrderEntry orderEntry) {
-        int result = entryMapper.createOrderEntry(orderEntry);
-        if (result <= 0) {
-            return result;
-        }
-        List<OrderItemSnapshot> itemSnapshots = orderEntry.getItemSnapshots();
-        if (!CommonUtils.isEmpty(itemSnapshots)) {
-            for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
-                itemSnapshot.setOrderId(orderEntry.getId());
-                itemSnapshotMapper.createOrderItemSnapshot(itemSnapshot);
-            }
-        }
-        return result;
+    public int saveSupplier(PurchaseSupplier supplier){
+        return supplierMapper.insertSelective(supplier);
     }
 
-    public int modifyReceivingData(String orderSequenceNumber, String currentLocation, byte collectingFees, String receiptProvince, String receiptCity, String receiptDistrict, String receiptAddress, String receiptNickName, String receiptPhone, String receiptLocation, String remark) {
-        return entryMapper.modifyReceivingData(orderSequenceNumber, currentLocation, collectingFees, receiptProvince, receiptCity, receiptDistrict, receiptAddress, receiptNickName, receiptPhone, receiptLocation, remark);
+    public int updateSupplier(PurchaseSupplier supplier){
+        return supplierMapper.updateByPrimaryKeySelective(supplier);
     }
 
-    public OrderEntry getOrder(long orderId) {
-        return entryMapper.getOrderEntry(orderId);
+    public  PurchaseSupplier getSupplier(long id){
+        return supplierMapper.selectByPrimaryKey(id);
+    }
+    /**仓库**/
+    public List<ResultMap> searchWarehousePage(String warehouseName, int status, int pageSize, int pageStartIndex){
+        return warehouseMapper.searchWarehousePage(warehouseName,status,pageSize,pageStartIndex);
     }
 
-    public OrderEntry getOrder(String orderSequenceNumber) {
-        return entryMapper.getOrderEntryForSequenceNumber(orderSequenceNumber);
+    public int searchWarehousePageCount(String warehouseName, int status){
+        return warehouseMapper.searchWarehousePageCount(warehouseName,status);
     }
 
-    public List<OrderEntry> getOrders(String sequenceNumber) {
-        return entryMapper.getOrderEntrys(sequenceNumber);
+    public List<PurchaseWarehouse> getAllWarehouse(){
+        return warehouseMapper.getAllWarehouse();
+    }
+    public int saveWarehouse(PurchaseWarehouse warehouse){
+        return warehouseMapper.insertSelective(warehouse);
     }
 
-    public List<OrderEntry> showConsumerOrders(String partnerId, String partnerUserId, byte target, String orderStatusSet, int type, int pageStartIndex, int pageSize) {
-        return entryMapper.showConsumerOrders(partnerId, partnerUserId, target, orderStatusSet, type, pageStartIndex, pageSize);
+    public int updateWarehouse(PurchaseWarehouse warehouse){
+        return warehouseMapper.updateByPrimaryKeySelective(warehouse);
     }
 
-    public List<OrderEntry> showMerchantOrders(String partnerId, long shippingPassportId, String orderStatusSet, int type, int pageStartIndex, int pageSize) {
-        return entryMapper.showMerchantOrders(partnerId, shippingPassportId, orderStatusSet, type, pageStartIndex, pageSize);
+    public  PurchaseWarehouse getWarehouse(long id){
+        return warehouseMapper.selectByPrimaryKey(id);
     }
 
-    public List<OrderEntry> showCourierOrders(String partnerId, long courierPassportId, String orderStatusSet, int type, int pageStartIndex, int pageSize) {
-        return entryMapper.showCourierOrders(partnerId, courierPassportId, orderStatusSet, type, pageStartIndex, pageSize);
+    /****仓库管理员***/
+    public int saveWarehouseUser(PurchaseWarehouseUser warehouseUser){
+        return warehouseUserMapper.insertSelective(warehouseUser);
     }
 
-    public List<OrderEntry> searchOrders(String partnerId, long passportId, String searchKeyValue, int type, int roleType, int pageStartIndex, int pageSize) {
-        return entryMapper.searchOrders(partnerId, passportId, searchKeyValue, type, roleType, pageStartIndex, pageSize);
+    public List<PurchaseWarehouseUser> getAllWarehouseUser(long warehouseId){
+        return warehouseUserMapper.getAllWarehouseUser(warehouseId);
     }
 
-    public int paymentOrder(long orderId, OrderStatusEnum orderStatusEnum, int matchBeforeStatus, String transType, int daySortNumber) {
-        return entryMapper.paymentOrder(orderId, orderStatusEnum.getKey(), matchBeforeStatus, transType, daySortNumber);
+    public int updateWarehouseUser(PurchaseWarehouseUser warehouseUser){
+        return warehouseUserMapper.updateByPrimaryKeySelective(warehouseUser);
+    }
+    /**采购单**/
+    public List<ResultMap> searchPurchasePage(String supplierName,int warehouseID, int status, int pageSize, int pageStartIndex){
+        return entryMapper.searchPurchasePage(supplierName,warehouseID,status,pageSize,pageStartIndex);
     }
 
-    public int acceptOrder(long orderId, long courierPassportId, String courierNickName, String courierPhone, OrderStatusEnum orderStatusEnum, int matchBeforeStatus) {
-        return entryMapper.acceptOrder(orderId, courierPassportId, courierNickName, courierPhone, orderStatusEnum.getKey(), matchBeforeStatus);
+    public int searchPurchasePageCount(String supplierName,int warehouseID, int status){
+        return entryMapper.searchPurchasePageCount(supplierName,warehouseID,status);
+    }
+    public HashMap getPurchase(Long id){
+        return entryMapper.getPurchase(id);
     }
 
-    public int updateOrderStatus(long orderId, int orderStatus, int matchBeforeStatus, int deliverStatus, int beforeDeliverStatus) {
-        return entryMapper.updateOrderStatus(orderId, orderStatus, matchBeforeStatus, deliverStatus, beforeDeliverStatus);
+    public List<PurchaseCommodity> getPurchaseCommodityS(Long purchaseID,Long supplierID){
+       return  commodityMapper.getPurchaseCommodityS(purchaseID,supplierID);
     }
 
-    public int correctOrderPrice(long orderId, long actualPrice, long totalPrice, long discountPrice, long distributionFee, int deliverType) {
-        return entryMapper.correctOrderPrice(orderId, actualPrice, totalPrice, discountPrice, distributionFee, deliverType);
+    public int updatePurchase(PurchaseEntry purchaseEntry){
+        return entryMapper.updateByPrimaryKeySelective(purchaseEntry);
+    }
+    public int delPurchaseCommodity(PurchaseCommodity purchaseCommodity){
+        return commodityMapper.updatePurchaseCommodity(purchaseCommodity);
+    }
+    public int updatePurchaseCommodity(PurchaseCommodity purchaseCommodity){
+        return commodityMapper.updateByPrimaryKeySelective(purchaseCommodity);
     }
 
-    public int fillDailyRowSort(long orderId, int daySortNumber) {
-        return entryMapper.fillDailyRowSort(orderId, daySortNumber);
+    public int savePurchase(PurchaseEntry purchaseEntry){
+        return entryMapper.insertSelective(purchaseEntry);
     }
 
-    public int refreshRefundStatus(long orderId, int refundStatus) {
-        return entryMapper.refreshRefundStatus(orderId, refundStatus);
+    public int savePurchaseCommodity(PurchaseCommodity purchaseCommodity){
+        return commodityMapper.insertSelective(purchaseCommodity);
     }
 
-    public int findInvalidOrderSize(String partnerId, int orderType, int matchStatus, String timeout) {
-        return entryMapper.findInvalidOrderSize(partnerId, orderType, matchStatus, timeout);
+    public int delPurchaseCommodity(Long purchaseID){
+       return commodityMapper.deleteByPrimaryKey(purchaseID);
     }
 
-    public List<OrderEntry> findInvalidOrders(String partnerId, int orderType, int matchStatus, String timeout) {
-        return entryMapper.findInvalidOrders(partnerId, orderType, matchStatus, timeout);
-    }
-
-    public int refreshOrderStatus(String orderSequenceNumber, int targetStatus, String validStatusSet) {
-        return entryMapper.refreshOrderStatus(orderSequenceNumber, targetStatus, validStatusSet);
-    }
-    // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 订单访问接口(orderEntryMapper) ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-    // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 订单商品快照(orderItemSnapshotMapper) ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    public int modifyItemSnapshot(long orderId, long itemId, long normalPrice, long discountPrice, int normalQuantity, int discountQuantity, long totalPrice) {
-        return itemSnapshotMapper.modifyItemSnapshot(orderId, itemId, normalPrice, discountPrice, normalQuantity, discountQuantity, totalPrice);
-    }
-
-    public int shippingItem(long itemSnapshotId, int shippingQuantity) {
-        return itemSnapshotMapper.shippingItem(itemSnapshotId, shippingQuantity);
-    }
-
-    public int totalDistributionItems(long itemSnapshotId) {
-        return itemSnapshotMapper.totalDistributionItems(itemSnapshotId);
-    }
-
-    public int distributionItem(long itemSnapshotId, int distributionCount) {
-        return itemSnapshotMapper.distributionItem(itemSnapshotId, distributionCount);
-    }
-
-    public int arriveItem(long itemSnapshotId) {
-        return itemSnapshotMapper.arriveItem(itemSnapshotId);
-    }
-
-
-    public List<OrderItemSnapshot> getOrderItemSnapshots(long orderId) {
-        return itemSnapshotMapper.getOrderItemSnapshots(orderId);
-    }
-
-    public List<OrderItemSnapshot> batchGetOrderItemSnapshots(String orderSet) {
-        return itemSnapshotMapper.batchGetOrderItemSnapshots(orderSet);
-    }
-
-    public int receiptItem(long itemSnapshotId, int receiptQuantity) {
-        return itemSnapshotMapper.receiptItem(itemSnapshotId, receiptQuantity);
-    }
-    // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 订单商品快照(orderItemSnapshotMapper) ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-    // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 订单状态日志(orderStateLoggerMapper) ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    public int createOrderStateLogger(OrderStateLogger orderStateLogger) {
-        return stateLoggerMapper.createOrderStateLogger(orderStateLogger);
-    }
-
-    public OrderStateLogger getOrderStateLogger(long orderId, int status) {
-        return stateLoggerMapper.getOrderStateLogger(orderId, status);
-    }
-
-    public List<OrderStateLogger> getOrderStateLoggers(long orderId) {
-        return stateLoggerMapper.getOrderStateLoggers(orderId);
-    }
-
-    public int getRowSortStatistics(long shippingPassportId, int orderType, int status, String matchTime, long id) {
-        return stateLoggerMapper.getRowSortStatistics(shippingPassportId, orderType, status, matchTime, id);
-    }
-
-    // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 订单状态日志(orderStateLoggerMapper) ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-    // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 订单推送记录(pushedLoggerMapper) ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    public int createPushedLogger(long orderId, long targetPassportId, int pushType, String pushTitle, String pushContent) {
-        OrderPushedLogger pushedLogger = new OrderPushedLogger();
-        pushedLogger.setOrderId(orderId);
-        pushedLogger.setTargetPassportId(targetPassportId);
-        pushedLogger.setPushType(pushType);
-        pushedLogger.setPushTitle(pushTitle);
-        pushedLogger.setPushMsgContent(pushContent);
-        pushedLogger.setPushTime(new Date());
-        pushedLogger.setPushResult("success");
-        pushedLogger.setStatus(GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
-        pushedLogger.setFeedbackMsgContent("");
-        pushedLogger.setFeedbackStatus((int) GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
-        pushedLogger.setFeedbackTime(new Date());
-        return pushedLoggerMapper.createPushedLogger(pushedLogger);
-    }
-    // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 订单推送记录(pushedLoggerMapper) ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-    // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 未接订单日志(orderUnacceptLoggerMapper) ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    public int createUnacceptLogger(long orderId, long targetPassportId) {
-        OrderUnacceptLogger unacceptLogger = new OrderUnacceptLogger();
-        unacceptLogger.setOrderId(orderId);
-        unacceptLogger.setTargetPassportId(targetPassportId);
-        unacceptLogger.setPushedCount(1);
-        unacceptLogger.setPushedTime(new Date());
-        unacceptLogger.setLastModifyTime(new Date());
-
-        return unacceptLoggerMapper.createUnacceptLogger(unacceptLogger);
-    }
-
-    public int unAcceptOrderSize(long courierPassportId) {
-        return unacceptLoggerMapper.unAcceptOrderSize(courierPassportId);
-    }
-
-    public OrderUnacceptLogger getNewestUnacceptLogger(long courierPassportId) {
-        return unacceptLoggerMapper.getNewestUnacceptLogger(courierPassportId);
-    }
-
-    public OrderUnacceptLogger getUnacceptLogger(long orderId, long passportId) {
-        return unacceptLoggerMapper.getUnacceptLogger(orderId, passportId);
-    }
-
-    public List<OrderUnacceptLogger> getUnacceptLoggers(long passportId, int pageStartIndex, int pageSize) {
-        return unacceptLoggerMapper.getUnacceptLoggers(passportId, pageStartIndex, pageSize);
-    }
-
-    public int removeUnacceptLoggers(long orderId) {
-        return unacceptLoggerMapper.removeUnacceptLoggers(orderId);
-    }
-    // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 未接订单日志(orderUnacceptLoggerMapper) ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-    // ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓ 订单状态监听(statusListenerMapper) ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
-    public OrderStatusListener getOrderStatusListener(String partnerId, int eventType) {
-        return statusListenerMapper.getOrderStatusListener(partnerId, eventType);
-    }
-    // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 订单状态监听(statusListenerMapper) ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
-
-
-    public List<OrderEntry> searchPageOrders(long marketId, int orderState, String startTime, String endTime, String searchType, String searchKey, int pageSize, int pageStartIndex) {
-        return entryMapper.searchPageOrders(marketId, orderState, startTime, endTime, searchType, searchKey, pageSize, pageStartIndex);
-    }
-    public int searchPageOrderCount(long marketId, int orderState, String startTime, String endTime, String searchType, String searchKey, int pageSize, int pageStartIndex) {
-        return entryMapper.searchPageOrderCount(marketId, orderState, startTime, endTime, searchType, searchKey, pageSize, pageStartIndex);
-    }
 }

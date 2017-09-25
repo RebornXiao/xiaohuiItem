@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xlibao.advert.data.dao.PurchaseWarehouseUserMapper">
-  <resultMap id="BaseResultMap" type="com.xlibao.metadata.purchase.PurchaseWarehouseUser">
+<mapper namespace="com.xlibao.purchase.data.mapper.PurchaseWarehouseUserMapper">
+  <resultMap id="BaseResultMap" type="com.xlibao.purchase.data.model.PurchaseWarehouseUser">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
@@ -15,11 +15,18 @@
     <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, warehouse_id, name, username, password, phone, status, remark, update_time, create_time, 
+    id, warehouse_id, name, username, password, phone, status, remark, update_time, create_time,
     is_delete
   </sql>
+  <select id="getAllWarehouseUser" resultMap="BaseResultMap">
+    SELECT * FROM purchase_warehouse_user WHERE is_delete!=1 AND status=1
+    <if test="warehouseId != -1">
+      AND warehouse_id = #{warehouseId}
+    </if>
+    order by create_time
+  </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select
     <include refid="Base_Column_List" />
     from purchase_warehouse_user
     where id = #{id,jdbcType=BIGINT}
@@ -28,17 +35,17 @@
     delete from purchase_warehouse_user
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <insert id="insert" parameterType="com.xlibao.metadata.purchase.PurchaseWarehouseUser">
-    insert into purchase_warehouse_user (id, warehouse_id, name, 
-      username, password, phone, 
-      status, remark, update_time, 
-      create_time, is_delete)
-    values (#{id,jdbcType=BIGINT}, #{warehouseId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, 
-      #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR}, 
-      #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=INTEGER})
+  <insert id="insert" parameterType="com.xlibao.purchase.data.model.PurchaseWarehouseUser">
+    insert into purchase_warehouse_user (id, warehouse_id, name,
+    username, password, phone,
+    status, remark, update_time,
+    create_time, is_delete)
+    values (#{id,jdbcType=BIGINT}, #{warehouseId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR},
+    #{username,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{phone,jdbcType=VARCHAR},
+    #{status,jdbcType=INTEGER}, #{remark,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP},
+    #{createTime,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.xlibao.metadata.purchase.PurchaseWarehouseUser">
+  <insert id="insertSelective" parameterType="com.xlibao.purchase.data.model.PurchaseWarehouseUser">
     insert into purchase_warehouse_user
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">
@@ -111,7 +118,7 @@
       </if>
     </trim>
   </insert>
-  <update id="updateByPrimaryKeySelective" parameterType="com.xlibao.metadata.purchase.PurchaseWarehouseUser">
+  <update id="updateByPrimaryKeySelective" parameterType="com.xlibao.purchase.data.model.PurchaseWarehouseUser">
     update purchase_warehouse_user
     <set>
       <if test="warehouseId != null">
@@ -147,18 +154,18 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.xlibao.metadata.purchase.PurchaseWarehouseUser">
+  <update id="updateByPrimaryKey" parameterType="com.xlibao.purchase.data.model.PurchaseWarehouseUser">
     update purchase_warehouse_user
     set warehouse_id = #{warehouseId,jdbcType=BIGINT},
-      name = #{name,jdbcType=VARCHAR},
-      username = #{username,jdbcType=VARCHAR},
-      password = #{password,jdbcType=VARCHAR},
-      phone = #{phone,jdbcType=VARCHAR},
-      status = #{status,jdbcType=INTEGER},
-      remark = #{remark,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      create_time = #{createTime,jdbcType=TIMESTAMP},
-      is_delete = #{isDelete,jdbcType=INTEGER}
+    name = #{name,jdbcType=VARCHAR},
+    username = #{username,jdbcType=VARCHAR},
+    password = #{password,jdbcType=VARCHAR},
+    phone = #{phone,jdbcType=VARCHAR},
+    status = #{status,jdbcType=INTEGER},
+    remark = #{remark,jdbcType=VARCHAR},
+    update_time = #{updateTime,jdbcType=TIMESTAMP},
+    create_time = #{createTime,jdbcType=TIMESTAMP},
+    is_delete = #{isDelete,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

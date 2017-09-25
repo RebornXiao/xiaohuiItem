@@ -1,4 +1,4 @@
-package com.xlibao.metadata.purchase;
+package com.xlibao.purchase.data.model;
 
 import java.util.Date;
 
@@ -15,13 +15,15 @@ public class PurchaseWarehouse {
 
     private String stopRemark;
 
-    private String ramark;
+    private String remark;
 
-    private Date updateTime;
+    private String updateTime;
 
-    private Date createTime;
+    private String createTime;
 
     private Integer isDelete;
+
+    private Integer userCount;
 
     public Long getId() {
         return id;
@@ -71,27 +73,27 @@ public class PurchaseWarehouse {
         this.stopRemark = stopRemark == null ? null : stopRemark.trim();
     }
 
-    public String getRamark() {
-        return ramark;
+    public String getRemark() {
+        return remark;
     }
 
-    public void setRamark(String ramark) {
-        this.ramark = ramark == null ? null : ramark.trim();
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 
-    public Date getUpdateTime() {
+    public String getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 
@@ -101,5 +103,13 @@ public class PurchaseWarehouse {
 
     public void setIsDelete(Integer isDelete) {
         this.isDelete = isDelete;
+    }
+
+    public Integer getUserCount() {
+        return userCount;
+    }
+
+    public void setUserCount(Integer userCount) {
+        this.userCount = userCount;
     }
 }

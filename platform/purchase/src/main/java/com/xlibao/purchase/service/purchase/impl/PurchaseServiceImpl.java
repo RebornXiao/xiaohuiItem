@@ -4,15 +4,17 @@ package com.xlibao.purchase.service.purchase.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
-import com.xlibao.common.GlobalConstantConfig;
 import com.xlibao.purchase.data.mapper.PurchaseDataAccessManager;
-import com.xlibao.purchase.data.model.PurchaseSupplier;
+import com.xlibao.purchase.data.model.*;
 import com.xlibao.purchase.service.purchase.PurchaseService;
+import com.xlibao.purchase.utils.DateUtil;
+import org.apache.ibatis.annotations.ResultMap;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 
@@ -36,7 +38,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
 
         List<PurchaseSupplier> purchaseSuppliers = purchaseDataAccessManager.searchSupplierPage(supplierName,supplierType,status,pageSize,pageStartIndex);
-        int count = purchaseDataAccessManager.searchSupplierPageCount(supplierName,supplierType,status,pageSize,pageStartIndex);
+        int count = purchaseDataAccessManager.searchSupplierPageCount(supplierName,supplierType,status);
 
         JSONObject response = new JSONObject();
         response.put("data", purchaseSuppliers);
@@ -48,9 +50,6 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
     @Override
     public JSONObject getAllSupplier(){
         List<PurchaseSupplier> uppliers = purchaseDataAccessManager.getAllSupplier();
-        if (CommonUtils.isEmpty(uppliers)) {
-            return fail("系统不存在供应商记录，请联系管理员！");
-        }
         return success(uppliers);
     }
     @Override
@@ -118,7 +117,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         supplier.setSalesmanName(salesmanName);
         supplier.setPhone(phone);
         supplier.setSupplierType(supplierType);
-        supplier.setUpdateTime(new Date());
+        supplier.setUpdateTime(DateUtil.getNowDate());
         if (purchaseDataAccessManager.updateSupplier(supplier) > 0) {
             return success("修改成功");
         }
@@ -129,16 +128,21 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         long id = getLongParameter("id",-1);
 
         int status = getIntParameter("status",-1);
+        String  stopRemark = getUTF("stopRemark",null);
 
         if(id==-1){
             return fail("缺少供应商ID");
         }else if(status==-1){
             return fail("缺少状态参数");
         }
+
         PurchaseSupplier supplier = new PurchaseSupplier();
         supplier.setId(id);
         supplier.setStatus(status);
-        supplier.setUpdateTime(new Date());
+        if(stopRemark != null && !stopRemark.isEmpty()){
+            supplier.setStopRemark(stopRemark);
+        }
+        supplier.setUpdateTime(DateUtil.getNowDate());
         if (purchaseDataAccessManager.updateSupplier(supplier) > 0) {
             return success("修改成功");
         }
@@ -157,4 +161,361 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         JSONObject response = JSONObject.parseObject(JSONObject.toJSONString(supplier));
         return success(response);
     }
+
+    @Override
+    public JSONObject searchWarehousePage() {
+        String warehouseName = getUTF("warehouseName", null);
+        int status = getIntParameter("status", -1);
+        int pageSize = getPageSize();
+        int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
+
+        List<ResultMap> purchaseWarehouses = purchaseDataAccessManager.searchWarehousePage(warehouseName,status,pageSize,pageStartIndex);
+        int count = purchaseDataAccessManager.searchWarehousePageCount(warehouseName,status);
+
+        JSONObject response = new JSONObject();
+        response.put("data", purchaseWarehouses);
+        response.put("count", count);
+        response.put("pageIndex", getIntParameter("pageIndex", 1) - 1);
+        return success(response);
+    }
+
+    @Override
+    public JSONObject saveWarehouse() {
+        String warehouseCode = getUTF("warehouseCode",null);
+        String warehouseName = getUTF("warehouseName",null);
+        String address = getUTF("address",null);
+        String remark = getUTF("remark",null);
+
+        if(warehouseCode == null || warehouseCode.isEmpty()){
+            return fail("缺少仓库编码");
+        }else if(warehouseName == null || warehouseName.isEmpty()){
+            return fail("缺少仓库名称");
+        }else if(address == null || address.isEmpty()){
+            return fail("缺少仓库地址");
+        }
+        PurchaseWarehouse warehouse = new PurchaseWarehouse();
+        warehouse.setWarehouseCode(warehouseCode);
+        warehouse.setWarehouseName(warehouseName);
+        warehouse.setAddress(address);
+        warehouse.setRemark(remark);
+        if (purchaseDataAccessManager.saveWarehouse(warehouse) > 0) {
+            return success("添加成功");
+        }
+        return fail("添加失败");
+    }
+
+    @Override
+    public JSONObject getAllWarehouse() {
+        List<PurchaseWarehouse> warehouses = purchaseDataAccessManager.getAllWarehouse();
+        return success(warehouses);
+    }
+
+    @Override
+    public JSONObject updateWarehouse() {
+        long id = getLongParameter("id",-1);
+        String warehouseCode = getUTF("warehouseCode",null);
+        String warehouseName = getUTF("warehouseName",null);
+        String address = getUTF("address",null);
+        String remark = getUTF("remark",null);
+        if(id==-1){
+            return fail("缺少仓库ID");
+        }else if(warehouseCode == null || warehouseCode.isEmpty()){
+            return fail("缺少仓库编码");
+        }else if(warehouseName == null || warehouseName.isEmpty()){
+            return fail("缺少仓库名称");
+        }else if(address == null || address.isEmpty()){
+            return fail("缺少仓库地址");
+        }
+        PurchaseWarehouse warehouse = new PurchaseWarehouse();
+        warehouse.setId(id);
+        warehouse.setWarehouseCode(warehouseCode);
+        warehouse.setWarehouseName(warehouseName);
+        warehouse.setAddress(address);
+        warehouse.setRemark(remark);
+        warehouse.setUpdateTime(DateUtil.getNowDate());
+        if (purchaseDataAccessManager.updateWarehouse(warehouse) > 0) {
+            return success("修改成功");
+        }
+        return fail("修改失败");
+    }
+
+    @Override
+    public JSONObject updateWarehouseStatus() {
+        long id = getLongParameter("id",-1);
+
+        int status = getIntParameter("status",-1);
+        String  stopRemark = getUTF("stopRemark",null);
+
+        if(id==-1){
+            return fail("缺少仓库ID");
+        }else if(status==-1){
+            return fail("缺少状态参数");
+        }
+
+        PurchaseWarehouse warehouse = new PurchaseWarehouse();
+        warehouse.setId(id);
+        warehouse.setStatus(status);
+        if(stopRemark != null && !stopRemark.isEmpty()){
+            warehouse.setStopRemark(stopRemark);
+        }
+        warehouse.setUpdateTime(DateUtil.getNowDate());
+        if (purchaseDataAccessManager.updateWarehouse(warehouse) > 0) {
+            return success("修改成功");
+        }
+        return fail("修改失败");
+    }
+
+    @Override
+    public JSONObject getWarehouse() {
+        long id = getLongParameter("id",-1);
+        if(id==-1){
+            return fail("缺少仓库ID");
+        }
+        PurchaseWarehouse warehouse =purchaseDataAccessManager.getWarehouse(id);
+        if (warehouse == null) {
+            return fail("找不到仓库信息");
+        }
+        JSONObject response = JSONObject.parseObject(JSONObject.toJSONString(warehouse));
+        return success(response);
+    }
+
+    @Override
+    public JSONObject saveWarehouseUser() {
+        long warehouseID = getLongParameter("warehouseID",-1);
+        String username = getUTF("username",null);
+        String password = getUTF("password",null);
+        String remark = getUTF("remark",null);
+        if(warehouseID==-1){
+            return fail("缺少仓库ID");
+        }else if(username == null || username.isEmpty()){
+            return fail("缺少仓库管理员用户名");
+        }else if(password == null || password.isEmpty()){
+            return fail("缺少管理员密码");
+        }
+        PurchaseWarehouseUser warehouseUser = new PurchaseWarehouseUser();
+        warehouseUser.setWarehouseId(warehouseID);
+        warehouseUser.setUsername(username);
+        warehouseUser.setPassword(password);
+        warehouseUser.setRemark(remark);
+
+        if (purchaseDataAccessManager.saveWarehouseUser(warehouseUser) > 0) {
+            return success("添加成功");
+        }
+        return fail("添加失败");
+    }
+
+    @Override
+    public JSONObject getWarehouseUsers() {
+        long warehouseID = getLongParameter("warehouseID",-1);
+        List<PurchaseWarehouseUser> warehouseUsers = purchaseDataAccessManager.getAllWarehouseUser(warehouseID);
+        return success(warehouseUsers);
+    }
+
+    @Override
+    public JSONObject updateWarehouseUserPassword() {
+        long id = getLongParameter("id",-1);
+        String password = getUTF("password",null);
+
+        if(id==-1){
+            return fail("缺少仓库管理员ID");
+        }if(password == null || password.isEmpty()){
+            return fail("缺少管理员密码");
+        }
+
+        PurchaseWarehouseUser warehouseUser = new PurchaseWarehouseUser();
+        warehouseUser.setId(id);
+        warehouseUser.setPassword(password);
+        warehouseUser.setUpdateTime(DateUtil.getNowDate());
+        if (purchaseDataAccessManager.updateWarehouseUser(warehouseUser) > 0) {
+            return success("修改成功");
+        }
+        return fail("修改失败");
+    }
+
+    @Override
+    public JSONObject deleteWarehouseUser() {
+        long id = getLongParameter("id",-1);
+
+        if(id==-1){
+            return fail("缺少仓库管理员ID");
+        }
+
+        PurchaseWarehouseUser warehouseUser = new PurchaseWarehouseUser();
+        warehouseUser.setId(id);
+        warehouseUser.setIsDelete(1);
+        warehouseUser.setUpdateTime(DateUtil.getNowDate());
+        if (purchaseDataAccessManager.updateWarehouseUser(warehouseUser) > 0) {
+            return success("删除成功");
+        }
+        return fail("删除失败");
+    }
+
+
+    @Override
+    public JSONObject searchPurchasePage() {
+        String supplierName = getUTF("supplierName", null);
+        int warehouseID = getIntParameter("warehouseID", -1);
+        int status = getIntParameter("status", -1);
+        int pageSize = getPageSize();
+        int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
+
+        List<ResultMap> purchaseWarehouses = purchaseDataAccessManager.searchPurchasePage(supplierName,warehouseID,status,pageSize,pageStartIndex);
+        int count = purchaseDataAccessManager.searchPurchasePageCount(supplierName,warehouseID,status);
+
+        JSONObject response = new JSONObject();
+        response.put("data", purchaseWarehouses);
+        response.put("count", count);
+        response.put("pageIndex", getIntParameter("pageIndex", 1) - 1);
+        return success(response);
+    }
+
+    @Override
+    public JSONObject getPurchase() {
+        long id = getLongParameter("id",-1);
+        if(id==-1){
+            return fail("缺少采购单ID");
+        }
+        HashMap purchase =purchaseDataAccessManager.getPurchase(id);
+        if (purchase == null) {
+            return fail("找不到采购单信息");
+        }
+        JSONObject response = JSONObject.parseObject(JSONObject.toJSONString(purchase));
+        return success(response);
+    }
+    @Override
+    public JSONObject getPurchaseCommodityS() {
+        long purchaseID = getLongParameter("purchaseID",-1);
+        long supplierID = getLongParameter("supplierID",-1);
+        List<PurchaseCommodity> purchaseCommodityS = purchaseDataAccessManager.getPurchaseCommodityS(purchaseID,supplierID);
+        return success(purchaseCommodityS);
+    }
+
+    @Override
+    public JSONObject deletePurchase() {
+        long id = getLongParameter("id",-1);
+
+        if(id==-1){
+            return fail("缺少采购单ID");
+        }
+
+        PurchaseCommodity purchaseCommodity = new PurchaseCommodity();
+        purchaseCommodity.setPurchaseId(id);
+        purchaseCommodity.setIsDelete(1);
+        purchaseCommodity.setUpdateTime(DateUtil.getNowDate());
+        if (purchaseDataAccessManager.delPurchaseCommodity(purchaseCommodity) > 0) {
+            PurchaseEntry purchaseEntry = new PurchaseEntry();
+            purchaseEntry.setId(id);
+            purchaseEntry.setIsDelete(1);
+            purchaseEntry.setUpdateTime(DateUtil.getNowDate());
+            if (purchaseDataAccessManager.updatePurchase(purchaseEntry) > 0) {
+                return success("删除成功");
+            }
+        }
+        return fail("删除失败");
+    }
+
+    @Override
+    public JSONObject savePurchase() {
+        long warehouseID = getLongParameter("warehouseID",-1);
+        long supplierID = getLongParameter("supplierID",-1);
+        int status = getIntParameter("status", -1);
+
+        if(warehouseID == -1){
+            return fail("缺少仓库ID");
+        }else if(supplierID == -1){
+            return fail("缺少供应商ID");
+        }else if(status==-1){
+            return fail("缺少状态");
+        }
+        PurchaseEntry purchaseEntry = new PurchaseEntry();
+        purchaseEntry.setWarehouseId(warehouseID);
+        purchaseEntry.setSupplierId(warehouseID);
+        purchaseEntry.setStatus(status);
+
+        if (purchaseDataAccessManager.savePurchase(purchaseEntry) > 0) {
+            return success("添加成功");
+        }
+        return fail("添加失败");
+    }
+
+    @Override
+    public JSONObject savePurchaseCommodity() {
+        long purchaseID = getLongParameter("purchaseID",-1);
+        long itemID = getLongParameter("itemID",-1);
+        long itemTypeID = getLongParameter("itemTypeID",-1);
+        String itemName = getUTF("itemName",null);
+        String itemTypeTitle = getUTF("itemTypeTitle",null);
+        String purchaseTime = getUTF("purchaseTime",null);
+        int purchaseNumber = getIntParameter("purchaseNumber",-1);
+
+        if(purchaseID == -1){
+            return fail("缺少采购单ID");
+        }else if(itemID == -1){
+            return fail("缺少商品ID");
+        }else if(itemTypeID==-1){
+            return fail("缺少商品类型ID");
+        }else if(purchaseNumber==-1){
+            return fail("缺少采购数量");
+        }else if(itemName == null || itemName.isEmpty()){
+            return fail("缺少商品名称");
+        }else if(itemTypeTitle == null || itemTypeTitle.isEmpty()){
+            return fail("缺少商品类型");
+        }else if(purchaseTime == null || purchaseTime.isEmpty()){
+            return fail("缺少采购日期");
+        }
+        PurchaseCommodity purchaseCommodity = new PurchaseCommodity();
+        purchaseCommodity.setPurchaseId(purchaseID);
+        purchaseCommodity.setItemId(itemID);
+        purchaseCommodity.setItemName(itemName);
+        purchaseCommodity.setItemTypeId(itemTypeID);
+        purchaseCommodity.setItemTypeTitle(itemTypeTitle);
+        purchaseCommodity.setPurchaseNumber(purchaseNumber);
+        purchaseCommodity.setPurchaseTime(purchaseTime);
+
+        if (purchaseDataAccessManager.savePurchaseCommodity(purchaseCommodity) > 0) {
+            return success("添加成功");
+        }
+        return fail("添加失败");
+    }
+
+    @Override
+    public JSONObject updatePurchase() {
+        long id = getLongParameter("id",-1);
+        long warehouseID = getLongParameter("warehouseID",-1);
+        long supplierID = getLongParameter("supplierID",-1);
+        int status = getIntParameter("status", -1);
+
+        if(id == -1){
+            return fail("缺少采购单ID");
+        }else if(warehouseID == -1){
+            return fail("缺少仓库ID");
+        }else if(supplierID == -1){
+            return fail("缺少供应商ID");
+        }else if(status==-1){
+            return fail("缺少状态");
+        }
+        PurchaseEntry purchaseEntry = new PurchaseEntry();
+        purchaseEntry.setId(id);
+        purchaseEntry.setWarehouseId(warehouseID);
+        purchaseEntry.setSupplierId(warehouseID);
+        purchaseEntry.setStatus(status);
+        purchaseEntry.setUpdateTime(DateUtil.getNowDate());
+
+        if (purchaseDataAccessManager.updatePurchase(purchaseEntry) > 0) {
+            return success("修改成功");
+        }
+        return fail("修改失败");
+    }
+    @Override
+    public JSONObject delPurchaseCommodity() {
+        long purchaseID = getLongParameter("purchaseID", -1);
+        if(purchaseID == -1){
+            return fail("缺少采购单ID");
+        }
+        if (purchaseDataAccessManager.delPurchaseCommodity(purchaseID) > 0) {
+            return success("删除成功");
+        }
+        return fail("删除失败");
+    }
+
 }

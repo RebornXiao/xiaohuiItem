@@ -1,4 +1,4 @@
-package com.xlibao.metadata.purchase;
+package com.xlibao.purchase.data.model;
 
 import java.util.Date;
 
@@ -7,19 +7,25 @@ public class PurchaseCommodity {
 
     private Long purchaseId;
 
-    private Long commodityId;
+    private Long itemId;
 
-    private Date purchaseTime;
+    private String itemName;
+
+    private Long itemTypeId;
+
+    private String itemTypeTitle;
+
+    private String purchaseTime;
 
     private Integer purchaseNumber;
 
-    private Date depositTime;
+    private String depositTime;
 
     private Integer depositNumber;
 
-    private Date updateTime;
+    private String updateTime;
 
-    private Date createTime;
+    private String createTime;
 
     private Integer isDelete;
 
@@ -39,19 +45,43 @@ public class PurchaseCommodity {
         this.purchaseId = purchaseId;
     }
 
-    public Long getCommodityId() {
-        return commodityId;
+    public Long getItemId() {
+        return itemId;
     }
 
-    public void setCommodityId(Long commodityId) {
-        this.commodityId = commodityId;
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
     }
 
-    public Date getPurchaseTime() {
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
+    }
+
+    public Long getItemTypeId() {
+        return itemTypeId;
+    }
+
+    public void setItemTypeId(Long itemTypeId) {
+        this.itemTypeId = itemTypeId;
+    }
+
+    public String getItemTypeTitle() {
+        return itemTypeTitle;
+    }
+
+    public void setItemTypeTitle(String itemTypeTitle) {
+        this.itemTypeTitle = itemTypeTitle;
+    }
+
+    public String getPurchaseTime() {
         return purchaseTime;
     }
 
-    public void setPurchaseTime(Date purchaseTime) {
+    public void setPurchaseTime(String purchaseTime) {
         this.purchaseTime = purchaseTime;
     }
 
@@ -63,11 +93,11 @@ public class PurchaseCommodity {
         this.purchaseNumber = purchaseNumber;
     }
 
-    public Date getDepositTime() {
+    public String getDepositTime() {
         return depositTime;
     }
 
-    public void setDepositTime(Date depositTime) {
+    public void setDepositTime(String depositTime) {
         this.depositTime = depositTime;
     }
 
@@ -79,19 +109,19 @@ public class PurchaseCommodity {
         this.depositNumber = depositNumber;
     }
 
-    public Date getUpdateTime() {
+    public String getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 
