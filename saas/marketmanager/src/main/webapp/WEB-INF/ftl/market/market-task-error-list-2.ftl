@@ -30,12 +30,12 @@
                     <div class="col-sm-12">
                         <form class="form-inline" role="form">
 
-                            <button id="searchBtn" type="button"
+                            <button id="backBtn" type="button"
                                 class="btn waves-effect waves-light btn-primary" >返回
                             </button>
 
                             <div class="form-group">
-                                <label>店铺 ${marketName} 的所有异常任务</label>
+                                <label>店铺 ${marketName} 的任务情况</label>
                             </div>
 
                         </form>
@@ -59,7 +59,6 @@
                             <th>任务状态</th>
                             <th>期望执行的日期</th>
                             <th>实际完成日期</th>
-                            <th>操作</th>
                         </tr>
                         </thead>
                         <tbody id="taskListTable">
@@ -73,23 +72,22 @@
                                 <td>${task.unitName}</td>
                                 <td>${task.itemQuantity}</td>
                                 <td>${task.barcode}</td>
-                                <td><#if task.type == 1><span class="label label-primary">有效(未完成)</span></#if>
-                                    <#if task.type == 2><span class="label label-success">已执行</span></#if></td>
-                                <td><#if task.status == 1><span class="label label-primary">有效(未完成)</span></#if>
-                                    <#if task.status == 2><span class="label label-success">已执行</span></#if></td>
+                                <td><#if task.type == 1><span class="label label-primary">上架任务</span></#if>
+                                    <#if task.type == 2><span class="label label-success">下架任务</span></#if></td>
+                                <td>
+                                    <#if task.status == 0><span class="label label-inverse">失效</span></#if>
+                                    <#if task.status == 1><span class="label label-inverse">未执行</span></#if>
+                                    <#if task.status == 2><span class="label label-success">完成</span></#if>
+                                    <#if task.status == 3><span class="label label-danger">异常(执行一半)</span></#if>
+                                    <#if task.status == 4><span class="label label-success">已执行</span></#if>
+                                </td>
                                 <td>${task.hopeExecutorDate}</td>
                                 <td>${task.completeTime}</td>
-                                <td>
-                                    <button id="editBtn" type="button"
-                                            class="btn waves-effect waves-light btn-danger btn-sm"
-                                            data_id="${task.taskId?c}">查看详情
-                                    </button>
-                                </td>
                             </tr>
                             </#list>
                         <#else>
                         <tr>
-                            <td colSpan="11" height="200px">
+                            <td colSpan="10" height="200px">
                                 <p class="text-center">暂无任何数据</p>
                             </td>
                         </tr>
@@ -103,9 +101,21 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                     <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/marketErrorTasks.do?marketId=${marketId}&happenDate=${happenDate}" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/marketErrorTasks.do?marketId=${marketId?c}&happenDate=${happenDate}" />
                 </div>
             </div>
         </#if>
             <!-- end container -->
         </div>
+
+        <script type="text/javascript">
+
+            $(document).ready(function () {
+
+                $("#backBtn").on('click', function () {
+                    open({url: "${base}/market/marketErrorTasks.do?marketId=${marketId?c}"});
+                });
+
+            });
+
+        </script>

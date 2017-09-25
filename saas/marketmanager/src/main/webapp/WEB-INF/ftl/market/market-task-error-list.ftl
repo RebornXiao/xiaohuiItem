@@ -36,7 +36,7 @@
                                     <option data_id="0" selected>选择店铺</option>
                                 <#if markets?exists && (markets?size > 0)>
                                     <#list markets as market>
-                                        <option data_id="${market.id?c}" <#if marketId == market.id>
+                                        <option data_v="${market.name}" data_id="${market.id?c}" <#if marketId == market.id>
                                                 selected </#if>>
                                         ${market.name}
                                         </option>
@@ -115,7 +115,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                     <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/marketErrorTasks.do?marketId=${marketId}" />
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/market/marketErrorTasks.do?marketId=${marketId?c}" />
                 </div>
             </div>
         </#if>
@@ -137,16 +137,17 @@
                     //location.href = "${base}/market/marketTasks.do?marketId=" + data_id;
                 });
 
-                seeBtn
-
         <#if tasks?exists && (tasks?size > 0) >
             //单项编辑
             $("#taskListTable").find('button[id=seeBtn]').each(function () {
                 $(this).on('click', function () {
-                    open({url:"${base}/market/marketItemEdit.do?id=" + $(this).attr("data_id")
-                    +"&searchType="+s_searchType+"&searchKey="+s_searchKey
-                    +"&pageSize=${pageSize}&pageIndex=${pageIndex}"
-                    });
+                    var select_obj = _sMarket.find("option:selected");
+                    var data_id = select_obj.attr("data_id");
+                    var data_v = select_obj.attr("data_v");
+
+                    var happenDate = $(this).attr("data_id");
+                    var target_url = "${base}/market/marketErrorTasks.do?marketId=" + data_id + "&happenDate=" + happenDate + "&marketName=" + data_v;
+                    open({url: target_url});
                 });
             });
         </#if>

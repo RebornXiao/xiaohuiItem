@@ -389,6 +389,8 @@ public class MarketManagerController extends BaseController {
         }
 
         if(happenDate.length() > 0 && marketId != 0) {
+            String marketName = getUTF("marketName", "");
+            modelMap.put("marketName", marketName);
             return jumpPage(modelMap, LogicConfig.FTL_MARKET_ERROR_TASK_LIST_2, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ERROR_TASK_LIST);
         } else {
         return jumpPage(modelMap, LogicConfig.FTL_MARKET_ERROR_TASK_LIST, LogicConfig.TAB_MARKET, LogicConfig.TAB_MARKET_ERROR_TASK_LIST);
