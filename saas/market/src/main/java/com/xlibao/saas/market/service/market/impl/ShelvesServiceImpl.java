@@ -11,6 +11,7 @@ import com.xlibao.common.exception.code.ItemErrorCodeEnum;
 import com.xlibao.common.support.PassportRemoteService;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.market.data.model.*;
+import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemUnit;
 import com.xlibao.metadata.passport.Passport;
@@ -49,10 +50,13 @@ public class ShelvesServiceImpl extends BasicWebService implements ShelvesServic
 
     @Override
     public void builderShelvesData(MarketEntry marketEntry, String content) {
-        String[] contentArray = content.split("\r\n");
+        String[] contentArray = content.split("]");
         for (String c : contentArray) {
             String dataType = c.substring(0, 4);
-            String data = c.substring(4).replaceAll("\\[", "").replaceAll("]", "");
+            if (dataType.endsWith(HardwareMessageType.ERROR_MSG)) { // 表示没有此货架信息 直接跳过
+                continue;
+            }
+            String data = c.substring(4).replaceAll("\\[", "");
             if ("0000".equals(dataType)) { // 反馈整个店铺有多少个组，每组有多少个单元的信息
                 // 清空原来的货架数据
                 dataAccessFactory.getMarketDataAccessManager().clearShelves(marketEntry.getId());

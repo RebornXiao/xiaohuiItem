@@ -10,6 +10,9 @@ public interface HardwareMessageType {
     /** 硬件消息结束符 */
     String HARDWARE_MSG_END = "FFFF";
 
+    /** 错误标志位 */
+    String ERROR_MSG = "EE";
+
     /** 发送配货货命令（将商品放到预存箱）即：出货 */
     String SHIPMENT = "0001";
 

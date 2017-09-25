@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
+import com.xlibao.common.constant.passport.ClientTypeEnum;
 import com.xlibao.common.support.PassportRemoteService;
 import com.xlibao.datacache.location.LocationDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
@@ -190,7 +191,9 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
     @Override
     public JSONObject myFocusMarkets() {
         long passportId = getLongParameter("passportId");
-        List<MarketRelationship> marketRelationships = dataAccessFactory.getMarketDataAccessManager().myFocusMarkets(String.valueOf(passportId), MarketRelationshipTypeEnum.FOCUS.getKey());
+        int roleType = getIntParameter("roleType", ClientTypeEnum.WAREHOUSE.getKey());
+        List<MarketRelationship> marketRelationships = dataAccessFactory.getMarketDataAccessManager().myFocusMarkets(String.valueOf(passportId),
+                roleType == ClientTypeEnum.WAREHOUSE.getKey() ? MarketRelationshipTypeEnum.FOCUS.getKey() : MarketRelationshipTypeEnum.COURIER.getKey());
         if (CommonUtils.isEmpty(marketRelationships)) {
             return MarketErrorCodeEnum.CAN_NOT_FOUND_FOCUS_RELATIONSHIP.response("您的帐号未绑定任何商店，请联系管理员！");
         }

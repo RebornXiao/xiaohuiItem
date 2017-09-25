@@ -426,7 +426,6 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
 
     private JSONObject fillLoginMessage(Passport passport, String roleValue) {
         PassportProperties properties = passportDataManager.getPassportProperties(passport.getId(), PropertiesTypeEnum.PERSONAL.getKey(), PersonalKeyEnum.HEAD_IMAGE.getKey());
-
         // 填充登录消息
         JSONObject response = new JSONObject();
         response.put("passportId", passport.getId());
@@ -435,7 +434,6 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         response.put("showPhoneNumber", CommonUtils.hideChar(passport.getPhoneNumber(), 3, 7));
         response.put("headImage", properties == null ? "" : CommonUtils.nullToEmpty(properties.getV()));
         response.put("roleValue", roleValue);
-        response.put("accessToken", passport.getAccessToken());
         return response;
     }
 

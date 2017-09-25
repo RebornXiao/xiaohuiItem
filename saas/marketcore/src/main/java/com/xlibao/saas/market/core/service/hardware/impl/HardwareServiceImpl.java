@@ -42,13 +42,13 @@ public class HardwareServiceImpl implements HardwareService {
                 MarketApplicationRemoteService.notifyShelvesData((Long) marketSession.getAttribute("passportId"), content);
                 break;
             case HardwareMessageType.ORDER: // 订单信息 16--17位如果是EE时 表示订单不存在
-                MarketApplicationRemoteService.notifyOrderData((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18), content.substring(18));
+                MarketApplicationRemoteService.notifyOrderData((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16));
                 break;
             case HardwareMessageType.REFUND: // 16--17位如果是EE时 表示订单不存在
                 MarketApplicationRemoteService.notifyRefund((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16));
                 break;
             case HardwareMessageType.PICK_UP: // 16--17位如果是EE时 表示订单不存在
-                MarketApplicationRemoteService.notifyPickUp((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18), content.substring(18));
+                MarketApplicationRemoteService.notifyPickUp((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16));
                 break;
             case HardwareMessageType.WARN:
                 break;

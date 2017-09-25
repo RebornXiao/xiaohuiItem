@@ -10,6 +10,7 @@ import com.xlibao.common.constant.order.OrderStatusEnum;
 import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.market.data.model.MarketEntry;
+import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketOrderProperties;
@@ -56,7 +57,7 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         JSONObject containerData = JSONObject.parseObject(orderProperties.getV());
         // 已出货完成的副单记录
         JSONArray containers = containerData.getJSONArray("containers");
-
+        // TODO 这里会出现多线程问题 需要优化 具体出现的原因为：业务发起出货操作，由于可能存在多个副单，实际硬件回调业务时，可能会同时到达
         if (!containers.contains(serialNumber)) {
             containers.add(serialNumber);
             containerData.put("containers", containers);
@@ -95,9 +96,15 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         // 状态码 --------- 00表示订单还未执行
         //        --------- 01表示订单正在配送中
         //        --------- 10表示已完成
+        //        --------- EE表示订单不存在
         String statusCode = getUTF("statusCode");
+        if (HardwareMessageType.ERROR_MSG.equals(statusCode)) { // 表示订单不存在
+            return success();
+        }
+        // 实际状态码
+        statusCode = statusCode.substring(0, 2);
         // 预存货柜的编号，当订单未完成时，反馈00
-        String containerCodeSet = getUTF("containerCodeSet");
+        String containerCodeSet = statusCode.substring(2);
 
         OrderEntry orderEntry = checkOrderAdministrators(orderSequenceNumber, passportId);
 
@@ -113,9 +120,6 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         if ("10".equals(statusCode)) { // 表示已完成
             return success();
         }
-        if ("EE".equals(statusCode)) { // 表示订单不存在
-
-        }
         refreshOrderProperties(orderEntry, PropertiesKeyEnum.CONTAINER_SET, containerCodeSet);
         return success();
     }
@@ -128,8 +132,11 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         String orderSequenceNumber = getUTF("orderSequenceNumber");
         // 状态码 --------- 00表示退货完成
         //        --------- 01表示退货发生了故障
+        //        --------- EE表示订单不存在
         String statusCode = getUTF("statusCode");
-
+        if (HardwareMessageType.ERROR_MSG.equals(statusCode)) { // 表示订单不存在
+            return success("订单不存在");
+        }
         OrderEntry orderEntry = checkOrderAdministrators(orderSequenceNumber, passportId);
         if ("01".equals(statusCode)) {
             return success("机器故障，无法完成退货操作");
@@ -150,15 +157,20 @@ public class MessageServiceImpl extends BasicWebService implements MessageServic
         //        --------- 02表示还没有配送完成
         //        --------- EE表示订单不存在
         String statusCode = getUTF("statusCode");
+        if (HardwareMessageType.ERROR_MSG.equals(statusCode)) { // 表示订单不存在
+            return success();
+        }
+        // 实际状态码
+        statusCode = statusCode.substring(0, 2);
         // 预存货柜的编号，当订单未完成时，反馈00
-        String containerCode = getUTF("containerCode");
+        String containerCode = statusCode.substring(2);
 
         // 订单记录
         OrderEntry orderEntry = checkOrderAdministrators(orderSequenceNumber, passportId);
-        boolean success = true;
-        if ("EE".equals(statusCode)) {
-            containerCode = "订单不存在";
+        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey()) {
+            return success();
         }
+        boolean success = true;
         if ("01".equals(statusCode)) {
             containerCode = "柜门发生故障，请联系工作人员";
             success = false;
