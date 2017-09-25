@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.saas.market.manager.BaseController;
 import com.xlibao.saas.market.manager.config.LogicConfig;
+import com.xlibao.saas.market.manager.service.itemmanager.ItemManagerService;
 import com.xlibao.saas.market.manager.service.purchasemanager.PurchaseManagerService;
 import com.xlibao.saas.market.manager.service.purchasemanager.SupplierManagerService;
 import com.xlibao.saas.market.manager.service.purchasemanager.WarehouseManagerService;
@@ -29,6 +30,9 @@ public class PurchaseManagerController extends BaseController {
 
     @Autowired
     PurchaseManagerService purchaseManagerService;
+
+    @Autowired
+    private ItemManagerService itemManagerService;
         /**
          * 供应商列表
          * @param map
@@ -345,6 +349,9 @@ public class PurchaseManagerController extends BaseController {
         JSONArray supperlierItem = supperlierResp.getJSONArray("datas");
         /**供应商下拉列表**/
         map.put("supperlierItem", supperlierItem);
+
+        //商品类型
+        map.put("itemTypes", itemManagerService.getSelectItemTypes());
 
         return jumpPage(map, LogicConfig.FTL_PURCHASE_ADD, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_PURCHASE_LIST);
     }
