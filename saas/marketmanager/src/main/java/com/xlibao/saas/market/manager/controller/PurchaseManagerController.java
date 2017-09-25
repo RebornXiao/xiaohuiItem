@@ -211,7 +211,7 @@ public class PurchaseManagerController extends BaseController {
 
         /*************仓管员BEGIN*************/
         JSONObject userJson= warehouseManagerService.getWarehouseUsers();
-        JSONObject userResp = jsonObject.getJSONObject("response");
+        JSONObject userResp = userJson.getJSONObject("response");
         JSONArray users = userResp.getJSONArray("datas");
         map.put("users", users);
         /*************仓管员END********/
