@@ -334,6 +334,18 @@ public class PurchaseManagerController extends BaseController {
      */
     @RequestMapping("/purchaseAdd")
     public String purchaseAdd(ModelMap map) {
+        JSONObject warehousesJson =   warehouseManagerService.getAllWarehouse();
+        JSONObject warehouseResp = warehousesJson.getJSONObject("response");
+        JSONArray warehouseItem = warehouseResp.getJSONArray("datas");
+        /**仓库下拉列表**/
+        map.put("warehouseItem", warehouseItem);
+
+        JSONObject supperlierJson = supplierManagerService.getAllSupplier();
+        JSONObject supperlierResp = supperlierJson.getJSONObject("response");
+        JSONArray supperlierItem = supperlierResp.getJSONArray("datas");
+        /**供应商下拉列表**/
+        map.put("supperlierItem", supperlierItem);
+
         return jumpPage(map, LogicConfig.FTL_PURCHASE_ADD, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_PURCHASE_LIST);
     }
 
@@ -347,7 +359,20 @@ public class PurchaseManagerController extends BaseController {
     public String purchaseEdit(ModelMap map) {
         JSONObject purchaseJson= purchaseManagerService.getPurchase();
         JSONObject purchase = purchaseJson.getJSONObject("response");
+        /**采购单信息*/
         map.put("purchase", purchase);
+
+        JSONObject warehousesJson =   warehouseManagerService.getAllWarehouse();
+        JSONObject warehouseResp = warehousesJson.getJSONObject("response");
+        JSONArray warehouseItem = warehouseResp.getJSONArray("datas");
+        /**仓库下拉列表**/
+        map.put("warehouseItem", warehouseItem);
+
+        JSONObject supperlierJson = supplierManagerService.getAllSupplier();
+        JSONObject supperlierResp = supperlierJson.getJSONObject("response");
+        JSONArray supperlierItem = supperlierResp.getJSONArray("datas");
+        /**供应商下拉列表**/
+        map.put("supperlierItem", supperlierItem);
 
         /*************采购物品BEGIN*************/
         JSONObject commoditysJson= purchaseManagerService.getPurchaseCommodityS();
