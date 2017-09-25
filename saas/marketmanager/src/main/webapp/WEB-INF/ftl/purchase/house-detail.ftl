@@ -29,21 +29,21 @@
                                         <td style="background-color: #f9f9f9">创建时间</td>
                                         <td>${warehouse.createTime}</td>
                                     </tr>
-                                    </tbody>
-                                    <tbody>
                                     <tr>
                                         <td style="background-color: #f9f9f9">仓库名称</td>
                                         <td>${warehouse.warehouseName}</td>
                                         <td style="background-color: #f9f9f9">仓库地址</td>
                                         <td>${warehouse.address}</td>
                                     </tr>
-                                    </tbody>
-                                    <tbody>
                                     <tr>
                                         <td style="background-color: #f9f9f9">状态</td>
-                                        <td>${warehouse.status}</td>
-                                        <td style="background-color: #f9f9f9">停用原因</td>
-                                        <td>${warehouse.stopRemark}</td>
+                                        <td>
+                                            <#if warehouse.status=1>正常<#else>停用</#if>
+                                        </td>
+                                        <#if warehouse.status=0>
+                                            <td style="background-color: #f9f9f9">停用原因</td>
+                                            <td>${warehouse.stopRemark}</td>
+                                        </#if>
                                     </tr>
                                     </tbody>
                                 </#if>
@@ -76,7 +76,7 @@
                 <div class="col-sm-12">
                     <div class="advert_container">
                         <div>
-                            <h5 class="page-title" style="padding-top: 20px"><b>采购信息</b></h5>
+                            <h5 class="page-title" style="padding-top: 20px"><b>仓管员信息</b></h5>
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
                             <div class="table-responsive advert_detail_table">
                                 <table class="table table-bordered">

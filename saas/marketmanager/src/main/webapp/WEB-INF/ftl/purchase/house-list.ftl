@@ -65,10 +65,6 @@
                                 <td>${house.userCount}</td>
                                 <#if house.status=1>
                                     <td><b>正常</b></td>
-                                <#else>
-                                    <td class="text-danger"><b>停用</b></td>
-                                </#if>
-                                <#if house.status=1>
                                     <td>
                                         <button id="addBtn" type="button" class="btn btn-primary btn-sm" data_id="${house.id}">添加仓管</button>
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${house.id}">查看</button>
@@ -76,6 +72,7 @@
                                         <button id="stopBtn" type="button" class="btn btn-danger btn-sm" data_id="${house.id}" status="${house.status}">停用</button>
                                     </td>
                                 <#else>
+                                    <td class="text-danger"><b>停用</b></td>
                                     <td>
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${house.id}">查看</button>
                                         <button id="startBtn" type="button" class="btn btn-primary btn-sm" data_id="${house.id}" status="${house.status}">启用</button>

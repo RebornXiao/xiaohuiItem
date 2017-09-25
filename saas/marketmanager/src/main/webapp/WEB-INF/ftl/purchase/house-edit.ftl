@@ -37,7 +37,7 @@
                                 </tr>
                                 <tr>
                                     <td style="background-color: #f9f9f9">备注</td>
-                                    <td><input type="text" class="form-control" id="remark" placeholder="请输入相关说明" value="${warehouse.remark}"/></td>
+                                    <#--<td><input type="text" class="form-control" id="remark" placeholder="请输入相关说明" value="${warehouse.address}"/></td>-->
                                 </tr>
                                 </tbody>
                             </#if>
@@ -58,7 +58,7 @@
                                 <tbody>
                                 <tr>
                                     <td style="background-color: #f9f9f9">Key:</td>
-                                    <td><input type="text" class="form-control" id="keyInput" placeholder="请输入与WMS对接Key" value=""/></td>
+                                    <td><input type="text" class="form-control" id="keyInput" placeholder="请输入与WMS对接Key，没有暂时不写" value=""/></td>
                                 </tr>
                                 </tbody>
                             <#--</#if>-->

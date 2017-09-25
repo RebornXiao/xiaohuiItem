@@ -76,16 +76,13 @@
                                 <td>${supplier.createTime}</td>
                                 <#if supplier.status=1>
                                     <td><b>正常</b></td>
-                                <#else>
-                                    <td class="text-danger"><b>停用</b></td>
-                                </#if>
-                                <#if supplier.status=1>
                                     <td>
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${supplier.id}">查看</button>
                                         <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${supplier.id}">编辑</button>
                                         <button id="disableBtn" type="button" class="btn btn-danger btn-sm" data_id="${supplier.id}">停用</button>
                                     </td>
                                 <#else>
+                                    <td class="text-danger"><b>停用</b></td>
                                     <td>
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${supplier.id}">查看</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                                         <button id="enableBtn" type="button" class="btn btn-primary btn-sm" data_id="${supplier.id}">启用</button>
@@ -185,7 +182,7 @@
                                 swal("提示", data.msg, "error");
                             }
                         }, "json");
-                    })
+                    });
                 });
             });
         </#if>
