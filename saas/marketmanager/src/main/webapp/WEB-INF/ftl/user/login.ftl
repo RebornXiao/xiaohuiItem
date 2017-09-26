@@ -164,7 +164,7 @@
                             //记录这个passportId
                             $.cookie("passportId", passport.passportId, { path: "/", expires: 365 });
                             $.cookie("showName", passport.showName, { path: "/", expires: 365 });
-                            $.cookie("accessToken", passport.accessToken, { path: "/", expires: 365 });
+                            $.cookie("accessToken", data.accessToken, { path: "/", expires: 365 });
 
                             open({url:"${base}/passport/main.do?passportId="+passport.passportId})
                             //location.href = "${base}/passport/main.do?passportId="+passport.id;
