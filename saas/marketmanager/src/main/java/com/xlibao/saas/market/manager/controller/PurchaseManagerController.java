@@ -414,7 +414,7 @@ public class PurchaseManagerController extends BaseController {
 
 
     /**
-     * 采购单列表
+     * 商品库存列表
      * @return
      */
     @RequestMapping("/commodityStoresPage")
@@ -450,7 +450,5 @@ public class PurchaseManagerController extends BaseController {
     public JSONObject updateCommodityStores(ModelMap map) {
         return warehouseManagerService.updateCommodityStores();
     }
-
-
 
 }
