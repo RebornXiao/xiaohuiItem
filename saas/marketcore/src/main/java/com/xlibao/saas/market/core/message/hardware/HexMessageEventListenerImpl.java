@@ -2,6 +2,7 @@ package com.xlibao.saas.market.core.message.hardware;
 
 import com.xlibao.io.entry.MessageInputStream;
 import com.xlibao.io.service.netty.MessageEventListener;
+import com.xlibao.io.service.netty.NettyConfig;
 import com.xlibao.io.service.netty.NettySession;
 import com.xlibao.io.service.netty.filter.HexMessageDecoder;
 import com.xlibao.io.service.netty.filter.HexMessageEncoder;
@@ -70,6 +71,14 @@ public class HexMessageEventListenerImpl implements MessageEventListener {
 
     @Override
     public void notifySessionIdle(NettySession session, int idleType, int idleTimes) {
+        if (idleType == NettyConfig.TIME_OUT_BOTH && idleTimes >= 20) {
+            logger.error("【硬件健康】心跳空闲次数已达20次，暂时关闭硬件通讯通道，将于1分钟后发起重连");
+            try {
+                session.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void initShelvesDatas() {

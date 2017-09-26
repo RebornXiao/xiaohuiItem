@@ -22,7 +22,7 @@ public class SmsController extends BasicWebService {
      * <pre>
      *     <b>获取验证码</b>
      *
-     *     访问地址：http://domainName/sms/requestVerificationCode
+     *     访问地址：http://domainName/passport/sms/requestVerificationCode
      *     访问方式：POST/GET(推荐使用POST)
      *
      *     <b>phoneNumber</b> - String 手机号 必填参数
