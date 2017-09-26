@@ -402,14 +402,20 @@ function checkVal(ui_name, info) {
 function tokenPost(url, callback) {
     // var accessToken = $.cookie("accessToken") || "";
     var passportId = $.cookie("passportId") || "";
-    $.post(url + "&passportId=" + passportId, callback, "json");
+    $.post(url + "&passportId=" + passportId, function (data) {
+        $.cookie("accessToken", data.accessToken, { path: "/", expires: 365 });
+        callback(data);
+    }, "json");
     // $.post(url, callback, "json");
 }
 
 function tokenPresPost(url, pres, callback) {
     // var accessToken = $.cookie("accessToken") || "";
     var passportId = $.cookie("passportId") || "";
-    $.post(url + "?passportId=" + passportId, pres, callback, "json");
+    $.post(url + "?passportId=" + passportId, pres, function (data) {
+        $.cookie("accessToken", data.accessToken, { path: "/", expires: 365 });
+        callback(data);
+    }, "json");
     // $.post(url, pres, callback, "json");
 }
 
@@ -439,7 +445,9 @@ function open(option) {
     // form.append($('<input type="text" name="passportId" value="' + passportId + '" />'));
 
     // 提交表单
-    form.appendTo("body").submit();
+    form.appendTo("body");
+    form.submit();
+
     // 注意return false取消链接的默认动作
     return false;
 }
