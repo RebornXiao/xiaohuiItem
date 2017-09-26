@@ -21,7 +21,7 @@
     <if test="supplierName!=null">
       AND s.supplier_name  LIKE "%"#{supplierName}"%"
     </if>
-    <if test="warehouseCode!=-1">
+    <if test="warehouseCode!=null">
       AND p.warehouse_code = #{warehouseCode}
     </if>
     <if test="status!=-1">
