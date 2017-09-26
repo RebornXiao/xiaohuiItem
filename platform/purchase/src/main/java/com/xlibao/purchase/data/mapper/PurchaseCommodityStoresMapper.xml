@@ -23,7 +23,7 @@
 
   <select id="searchCommodityStoresPage" resultMap="BaseResultMap">
     SELECT * FROM purchase_commodity_stores WHERE is_delete!=1
-    <if test="warehouseCode!=-1">
+    <if test="warehouseCode!=null">
       AND warehouse_code = #{warehouseCode}
     </if>
     <if test="itemName!=null">
@@ -37,7 +37,7 @@
 
   <select id="searchCommodityStoresPageCount" resultType="int">
     SELECT count(1) FROM purchase_commodity_stores WHERE is_delete!=1
-    <if test="warehouseCode!=-1">
+    <if test="warehouseCode!=null">
       AND warehouse_code = #{warehouseCode}
     </if>
     <if test="itemName!=null">
