@@ -381,6 +381,9 @@ public class PurchaseManagerController extends BaseController {
         /**供应商下拉列表**/
         map.put("supperlierItem", supperlierItem);
 
+        //商品类型
+        map.put("itemTypes", itemManagerService.getSelectItemTypes());
+
         /*************采购物品BEGIN*************/
         JSONObject commoditysJson= purchaseManagerService.getPurchaseCommodityS();
         JSONObject commoditysResponse = commoditysJson.getJSONObject("response");
