@@ -26,7 +26,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
     @Override
     public JSONObject searchPurchasePage() {
         String supplierName = getUTF("supplierName", null);
-        int warehouseID = getIntParameter("warehouseID", -1);
+        String warehouseCode = getUTF("warehouseCode", null);
         int status = getIntParameter("status", -1);
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
@@ -34,7 +34,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("supplierName", supplierName);
-        parameters.put("warehouseID", String.valueOf(warehouseID));
+        parameters.put("warehouseCode", String.valueOf(warehouseCode));
         parameters.put("status", String.valueOf(status));
         parameters.put("pageSize", String.valueOf(pageSize));
         parameters.put("pageStartIndex", String.valueOf(pageStartIndex));
@@ -113,7 +113,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
 
     @Override
     public JSONObject savePurchase() {
-        long warehouseID = getLongParameter("warehouseID",-1);
+        String warehouseCode = getUTF("warehouseCode",null);
         long supplierID = getLongParameter("supplierID",-1);
         int status = getIntParameter("status", -1);
         //String [] purchaseID= getHttpServletRequest().getParameterValues("purchaseID");
@@ -124,8 +124,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
         String [] purchaseTimes= getHttpServletRequest().getParameterValues("purchaseTime");
         String [] purchaseNumbers= getHttpServletRequest().getParameterValues("purchaseNumber");
 
-        if(warehouseID == -1){
-            return fail("缺少仓库ID");
+        if(warehouseCode == null){
+            return fail("缺少仓库编码");
         }else if(supplierID == -1){
             return fail("缺少供应商ID");
         }else if(status==-1){
@@ -134,7 +134,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("supplierID", String.valueOf(supplierID));
-        parameters.put("warehouseID", String.valueOf(warehouseID));
+        parameters.put("warehouseCode", warehouseCode);
         parameters.put("status", String.valueOf(status));
 
         try {
@@ -207,7 +207,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
     @Override
     public JSONObject updatePurchase() {
         long id = getLongParameter("id",-1);
-        long warehouseID = getLongParameter("warehouseID",-1);
+        String warehouseCode = getUTF("warehouseCode",null);
         long supplierID = getLongParameter("supplierID",-1);
         int status = getIntParameter("status", -1);
         //String [] purchaseID= getHttpServletRequest().getParameterValues("purchaseID");
@@ -221,8 +221,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
 
         if(id == -1){
             return fail("缺少采购单ID");
-        }else if(warehouseID == -1){
-            return fail("缺少仓库ID");
+        }else if(warehouseCode == null){
+            return fail("缺少仓库编码");
         }else if(supplierID == -1){
             return fail("缺少供应商ID");
         }else if(status==-1){
@@ -232,7 +232,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
         Map<String, String> parameters = new HashMap<>();
         parameters.put("id", String.valueOf(id));
         parameters.put("supplierID", String.valueOf(supplierID));
-        parameters.put("warehouseID", String.valueOf(warehouseID));
+        parameters.put("warehouseCode", warehouseCode);
         parameters.put("status", String.valueOf(status));
 
         try {

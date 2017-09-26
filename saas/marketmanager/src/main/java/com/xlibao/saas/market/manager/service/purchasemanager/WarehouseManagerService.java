@@ -65,4 +65,16 @@ public interface WarehouseManagerService {
      * @return
      */
     JSONObject deleteWarehouseUser();
+
+    /***
+     * 商品库存列表
+     * @return
+     */
+    JSONObject searchCommodityStoresPage();
+
+    /**
+     * 修改预警库存数量
+     * @return
+     */
+    JSONObject updateCommodityStores();
 }

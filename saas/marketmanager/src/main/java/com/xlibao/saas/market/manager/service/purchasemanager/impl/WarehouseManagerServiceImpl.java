@@ -240,4 +240,53 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             throw new XlibaoRuntimeException("远程接口通信异常");
         }
     }
+    @Override
+    public JSONObject searchCommodityStoresPage() {
+
+        String warehouseCode = getUTF("warehouseCode", null);
+        String itemName = getUTF("itemName", null);
+        String barcode = getUTF("barcode", null);
+        int pageSize = getPageSize();
+        int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("warehouseCode", warehouseCode);
+        parameters.put("itemName", itemName);
+        parameters.put("barcode", barcode);
+        parameters.put("pageSize", String.valueOf(pageSize));
+        parameters.put("pageStartIndex", String.valueOf(pageStartIndex));
+
+        try {
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/searchCommodityStoresPage.do";
+            JSONObject response = executor(url, parameters);
+            return response;
+        }catch (XlibaoRuntimeException ex){
+            throw new XlibaoRuntimeException("远程接口通信异常");
+        }
+    }
+
+    @Override
+    public JSONObject updateCommodityStores() {
+        long id = getLongParameter("id",-1);
+        int warnNumber = getIntParameter("warnNumber", -1);
+
+        if(id == -1){
+            return fail("缺少商品库存ID");
+        }else if(warnNumber==-1){
+            return fail("缺少预警数量");
+        }
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("id", String.valueOf(id));
+        parameters.put("warnNumber", String.valueOf(warnNumber));
+
+        try {
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateCommodityStores.do";
+            JSONObject response = executor(url, parameters);
+            return response;
+        }catch (XlibaoRuntimeException ex){
+            throw new XlibaoRuntimeException("远程接口通信异常");
+        }
+    }
+
 }

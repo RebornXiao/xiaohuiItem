@@ -411,4 +411,46 @@ public class PurchaseManagerController extends BaseController {
     public JSONObject updatePurchase(ModelMap map) {
         return purchaseManagerService.updatePurchase();
     }
+
+
+    /**
+     * 采购单列表
+     * @return
+     */
+    @RequestMapping("/commodityStoresPage")
+    public String searchCommodityStoresPage(ModelMap map) {
+        JSONObject purchaseJson =  purchaseManagerService.searchPurchasePage();
+        JSONObject response = purchaseJson.getJSONObject("response");
+        JSONArray purchases = response.getJSONArray("data");
+        map.put("count", response.getIntValue("count"));
+
+        JSONObject warehousesJson =   warehouseManagerService.getAllWarehouse();
+        JSONObject warehouseResp = warehousesJson.getJSONObject("response");
+        JSONArray warehouseItem = warehouseResp.getJSONArray("datas");
+        /**下拉列表**/
+        map.put("warehouseItem", warehouseItem);
+
+        map.put("warehouseCode", getUTF("warehouseCode",null));
+        map.put("itemName", getUTF("itemName",null));
+        map.put("barcode", getUTF("barcode",null));
+        int pageIndex = getIntParameter("pageIndex", 1);
+        map.put("pageIndex", pageIndex);
+        map.put("pageSize", getPageSize());
+        /*****分页数据**/
+        map.put("purchases", purchases);
+        return jumpPage(map, LogicConfig.FTL_STOCK_LIST, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_STOCK_LIST);
+    }
+
+    /**
+     * 修改预警库存数量
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/updateCommodityStores")
+    public JSONObject updateCommodityStores(ModelMap map) {
+        return warehouseManagerService.updateCommodityStores();
+    }
+
+
+
 }
