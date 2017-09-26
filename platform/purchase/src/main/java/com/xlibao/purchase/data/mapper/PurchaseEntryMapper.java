@@ -18,14 +18,14 @@ public interface PurchaseEntryMapper {
      * @param pageStartIndex
      * @return
      */
-    List<ResultMap> searchPurchasePage(@Param("supplierName")String supplierName,@Param("warehouseID") int warehouseID, @Param("status") int status, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
+    List<ResultMap> searchPurchasePage(@Param("supplierName")String supplierName,@Param("warehouseCode") String warehouseCode, @Param("status") int status, @Param("pageSize") int pageSize, @Param("pageStartIndex") int pageStartIndex);
     /**
      * 采购count
      * @param supplierName
      * @param status
      * @return
      */
-    int searchPurchasePageCount(@Param("supplierName")String supplierName,@Param("warehouseID") int warehouseID, @Param("status") int status);
+    int searchPurchasePageCount(@Param("supplierName")String supplierName,@Param("warehouseCode") String warehouseCode, @Param("status") int status);
 
     /**
      * 采购单

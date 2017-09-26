@@ -5,7 +5,7 @@ import java.util.Date;
 public class PurchaseEntry {
     private Long id;
 
-    private  Long warehouseId;
+    private  String warehouseCode;
 
     private Long supplierId;
 
@@ -85,11 +85,11 @@ public class PurchaseEntry {
         this.isDelete = isDelete;
     }
 
-    public Long getWarehouseId() {
-        return warehouseId;
+    public String getWarehouseCode() {
+        return warehouseCode;
     }
 
-    public void setWarehouseId(Long warehouseId) {
-        this.warehouseId = warehouseId;
+    public void setWarehouseCode(String warehouseCode) {
+        this.warehouseCode = warehouseCode;
     }
 }

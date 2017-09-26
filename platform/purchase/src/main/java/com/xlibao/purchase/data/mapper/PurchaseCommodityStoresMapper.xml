@@ -3,10 +3,13 @@
 <mapper namespace="com.xlibao.purchase.data.mapper.PurchaseCommodityStoresMapper">
   <resultMap id="BaseResultMap" type="com.xlibao.purchase.data.model.PurchaseCommodityStores">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
-    <result column="commodity_id" jdbcType="BIGINT" property="commodityId" />
-    <result column="commodity_name" jdbcType="VARCHAR" property="commodityName" />
-    <result column="commodity_code" jdbcType="VARCHAR" property="commodityCode" />
+    <result column="warehouse_code" jdbcType="BIGINT" property="warehouseCode" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="item_type_id" jdbcType="BIGINT" property="itemTypeId" />
+    <result column="item_type_name" jdbcType="VARCHAR" property="itemTypeName" />
+    <result column="item_id" jdbcType="BIGINT" property="itemId" />
+    <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
     <result column="stores_number" jdbcType="INTEGER" property="storesNumber" />
     <result column="warn_number" jdbcType="INTEGER" property="warnNumber" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -14,26 +17,62 @@
     <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, warehouse_id, commodity_id, commodity_name, commodity_code, stores_number, warn_number,
-    update_time, create_time, is_delete
+    id, warehouse_code, warehouse_name, item_type_id, item_type_name, item_id, item_name,
+    barcode, stores_number, warn_number, update_time, create_time, is_delete
   </sql>
+
+  <select id="searchCommodityStoresPage" resultMap="BaseResultMap">
+    SELECT * FROM purchase_commodity_stores WHERE is_delete!=1
+    <if test="warehouseCode!=-1">
+      AND warehouse_code = #{warehouseCode}
+    </if>
+    <if test="itemName!=null">
+      AND item_name = "%"#{itemName}"%"
+    </if>
+    <if test="barcode!=null">
+      AND barcode = #{barcode}
+    </if>
+    order by create_time desc limit #{pageStartIndex}, #{pageSize}
+  </select>
+
+  <select id="searchCommodityStoresPageCount" resultMap="BaseResultMap">
+    SELECT count(1) FROM purchase_commodity_stores WHERE is_delete!=1
+    <if test="warehouseCode!=-1">
+      AND warehouse_code = #{warehouseCode}
+    </if>
+    <if test="itemName!=null">
+      AND item_name = "%"#{itemName}"%"
+    </if>
+    <if test="barcode!=null">
+      AND barcode = #{barcode}
+    </if>
+  </select>
+
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from purchase_commodity_stores
     where id = #{id,jdbcType=BIGINT}
   </select>
+  <select id="getByParameterID" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from purchase_commodity_stores
+    where warehouse_Code = #{warehouseCode,jdbcType=BIGINT} and item_id = #{itemId,jdbcType=BIGINT}
+  </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from purchase_commodity_stores
     where id = #{id,jdbcType=BIGINT}
   </delete>
   <insert id="insert" parameterType="com.xlibao.purchase.data.model.PurchaseCommodityStores">
-    insert into purchase_commodity_stores (id, warehouse_id, commodity_id,
-    commodity_name, commodity_code, stores_number,
+    insert into purchase_commodity_stores (id, warehouse_code, warehouse_name,
+    item_type_id, item_type_name, item_id,
+    item_name, barcode, stores_number,
     warn_number, update_time, create_time,
     is_delete)
-    values (#{id,jdbcType=BIGINT}, #{warehouseId,jdbcType=BIGINT}, #{commodityId,jdbcType=BIGINT},
-    #{commodityName,jdbcType=VARCHAR}, #{commodityCode,jdbcType=VARCHAR}, #{storesNumber,jdbcType=INTEGER},
+    values (#{id,jdbcType=BIGINT}, #{warehouseCode,jdbcType=BIGINT}, #{warehouseName,jdbcType=VARCHAR},
+    #{itemTypeId,jdbcType=BIGINT}, #{itemTypeName,jdbcType=VARCHAR}, #{itemId,jdbcType=BIGINT},
+    #{itemName,jdbcType=VARCHAR}, #{barcode,jdbcType=VARCHAR}, #{storesNumber,jdbcType=INTEGER},
     #{warnNumber,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP},
     #{isDelete,jdbcType=INTEGER})
   </insert>
@@ -43,17 +82,26 @@
       <if test="id != null">
         id,
       </if>
-      <if test="warehouseId != null">
-        warehouse_id,
+      <if test="warehouseCode != null">
+        warehouse_code,
       </if>
-      <if test="commodityId != null">
-        commodity_id,
+      <if test="warehouseName != null">
+        warehouse_name,
       </if>
-      <if test="commodityName != null">
-        commodity_name,
+      <if test="itemTypeId != null">
+        item_type_id,
       </if>
-      <if test="commodityCode != null">
-        commodity_code,
+      <if test="itemTypeName != null">
+        item_type_name,
+      </if>
+      <if test="itemId != null">
+        item_id,
+      </if>
+      <if test="itemName != null">
+        item_name,
+      </if>
+      <if test="barcode != null">
+        barcode,
       </if>
       <if test="storesNumber != null">
         stores_number,
@@ -75,17 +123,26 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="warehouseId != null">
-        #{warehouseId,jdbcType=BIGINT},
+      <if test="warehouseCode != null">
+        #{warehouseCode,jdbcType=BIGINT},
       </if>
-      <if test="commodityId != null">
-        #{commodityId,jdbcType=BIGINT},
+      <if test="warehouseName != null">
+        #{warehouseName,jdbcType=VARCHAR},
       </if>
-      <if test="commodityName != null">
-        #{commodityName,jdbcType=VARCHAR},
+      <if test="itemTypeId != null">
+        #{itemTypeId,jdbcType=BIGINT},
       </if>
-      <if test="commodityCode != null">
-        #{commodityCode,jdbcType=VARCHAR},
+      <if test="itemTypeName != null">
+        #{itemTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null">
+        #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="itemName != null">
+        #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null">
+        #{barcode,jdbcType=VARCHAR},
       </if>
       <if test="storesNumber != null">
         #{storesNumber,jdbcType=INTEGER},
@@ -107,17 +164,26 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.xlibao.purchase.data.model.PurchaseCommodityStores">
     update purchase_commodity_stores
     <set>
-      <if test="warehouseId != null">
-        warehouse_id = #{warehouseId,jdbcType=BIGINT},
+      <if test="warehouseCode != null">
+        warehouse_code = #{warehouseCode,jdbcType=BIGINT},
       </if>
-      <if test="commodityId != null">
-        commodity_id = #{commodityId,jdbcType=BIGINT},
+      <if test="warehouseName != null">
+        warehouse_name = #{warehouseName,jdbcType=VARCHAR},
       </if>
-      <if test="commodityName != null">
-        commodity_name = #{commodityName,jdbcType=VARCHAR},
+      <if test="itemTypeId != null">
+        item_type_id = #{itemTypeId,jdbcType=BIGINT},
       </if>
-      <if test="commodityCode != null">
-        commodity_code = #{commodityCode,jdbcType=VARCHAR},
+      <if test="itemTypeName != null">
+        item_type_name = #{itemTypeName,jdbcType=VARCHAR},
+      </if>
+      <if test="itemId != null">
+        item_id = #{itemId,jdbcType=BIGINT},
+      </if>
+      <if test="itemName != null">
+        item_name = #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null">
+        barcode = #{barcode,jdbcType=VARCHAR},
       </if>
       <if test="storesNumber != null">
         stores_number = #{storesNumber,jdbcType=INTEGER},
@@ -139,10 +205,13 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.xlibao.purchase.data.model.PurchaseCommodityStores">
     update purchase_commodity_stores
-    set warehouse_id = #{warehouseId,jdbcType=BIGINT},
-    commodity_id = #{commodityId,jdbcType=BIGINT},
-    commodity_name = #{commodityName,jdbcType=VARCHAR},
-    commodity_code = #{commodityCode,jdbcType=VARCHAR},
+    set warehouse_code = #{warehouseCode,jdbcType=BIGINT},
+    warehouse_name = #{warehouseName,jdbcType=VARCHAR},
+    item_type_id = #{itemTypeId,jdbcType=BIGINT},
+    item_type_name = #{itemTypeName,jdbcType=VARCHAR},
+    item_id = #{itemId,jdbcType=BIGINT},
+    item_name = #{itemName,jdbcType=VARCHAR},
+    barcode = #{barcode,jdbcType=VARCHAR},
     stores_number = #{storesNumber,jdbcType=INTEGER},
     warn_number = #{warnNumber,jdbcType=INTEGER},
     update_time = #{updateTime,jdbcType=TIMESTAMP},

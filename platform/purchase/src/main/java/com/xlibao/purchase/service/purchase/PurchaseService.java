@@ -156,4 +156,22 @@ public interface PurchaseService {
      * @return
      */
     JSONObject delPurchaseCommodity();
+
+    /***
+     * 入库
+     * @return
+     */
+    JSONObject purchasePutIn();
+
+    /**
+     * 商品库存列表
+     * @return
+     */
+    JSONObject searchCommodityStoresPage();
+
+    /**
+     * 修改预警库存数
+     * @return
+     */
+    JSONObject updateCommodityStores();
 }

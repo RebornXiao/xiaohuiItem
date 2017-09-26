@@ -93,12 +93,12 @@ public class PurchaseDataAccessManager {
         return warehouseUserMapper.updateByPrimaryKeySelective(warehouseUser);
     }
     /**采购单**/
-    public List<ResultMap> searchPurchasePage(String supplierName,int warehouseID, int status, int pageSize, int pageStartIndex){
-        return entryMapper.searchPurchasePage(supplierName,warehouseID,status,pageSize,pageStartIndex);
+    public List<ResultMap> searchPurchasePage(String supplierName,String warehouseCode, int status, int pageSize, int pageStartIndex){
+        return entryMapper.searchPurchasePage(supplierName,warehouseCode,status,pageSize,pageStartIndex);
     }
 
-    public int searchPurchasePageCount(String supplierName,int warehouseID, int status){
-        return entryMapper.searchPurchasePageCount(supplierName,warehouseID,status);
+    public int searchPurchasePageCount(String supplierName,String warehouseCode, int status){
+        return entryMapper.searchPurchasePageCount(supplierName,warehouseCode,status);
     }
     public HashMap getPurchase(Long id){
         return entryMapper.getPurchase(id);
@@ -120,6 +120,9 @@ public class PurchaseDataAccessManager {
     public int updatePurchaseCommodity(PurchaseCommodity purchaseCommodity){
         return commodityMapper.updateByPrimaryKeySelective(purchaseCommodity);
     }
+    public PurchaseCommodity getPurchaseCommodity(Long id){
+        return  commodityMapper.selectByPrimaryKey(id);
+    }
 
     public int savePurchase(PurchaseEntry purchaseEntry){
         return entryMapper.insertSelective(purchaseEntry);
@@ -131,6 +134,31 @@ public class PurchaseDataAccessManager {
 
     public int delPurchaseCommodity(Long purchaseID){
        return commodityMapper.deleteByPrimaryKey(purchaseID);
+    }
+
+    /**商品库存*/
+    public  List<PurchaseCommodityStores> searchCommodityStoresPage(String warehouseCode, String itemName,String barcode,int pageSize,int pageStartIndex){
+        return commodityStoresMapper.searchCommodityStoresPage(warehouseCode,itemName,barcode,pageSize,pageStartIndex);
+    }
+
+    public int searchCommodityStoresPageCount(String warehouseCode, String itemName,String barcode){
+        return commodityStoresMapper.searchCommodityStoresPageCount(warehouseCode,itemName,barcode);
+    }
+
+
+    public int updateCommodityStores(PurchaseCommodityStores purchaseCommodityStores){
+        return commodityStoresMapper.updateByPrimaryKeySelective(purchaseCommodityStores);
+    }
+
+    public PurchaseCommodityStores getByParameterID(String warehouseCode, Long itemId){
+        return commodityStoresMapper.getByParameterID(warehouseCode,itemId);
+    }
+
+    public int savePurchaseCommodityStores(PurchaseCommodityStores purchaseCommodityStores){
+        return commodityStoresMapper.insertSelective(purchaseCommodityStores);
+    }
+    public int updatePurchaseCommodityStores(PurchaseCommodityStores purchaseCommodityStores){
+        return commodityStoresMapper.updateByPrimaryKeySelective(purchaseCommodityStores);
     }
 
 }

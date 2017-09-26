@@ -6,6 +6,7 @@
     <result column="purchase_id" jdbcType="BIGINT" property="purchaseId" />
     <result column="item_id" jdbcType="BIGINT" property="itemId" />
     <result column="item_name" jdbcType="VARCHAR" property="itemName" />
+    <result column="barcode" jdbcType="VARCHAR" property="barcode" />
     <result column="item_type_id" jdbcType="BIGINT" property="itemTypeId" />
     <result column="item_type_title" jdbcType="VARCHAR" property="itemTypeTitle" />
     <result column="purchase_time" jdbcType="DATE" property="purchaseTime" />
@@ -15,10 +16,11 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
-    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="itemName" />
+
   </resultMap>
   <sql id="Base_Column_List">
-    id, purchase_id, item_id,item_name,item_type_id,item_type_title, purchase_time, purchase_number, deposit_time, deposit_number,
+    id, purchase_id, item_id,item_name,barcode,item_type_id,item_type_title, purchase_time, purchase_number, deposit_time, deposit_number,
     update_time, create_time, is_delete
   </sql>
   <select id="getPurchaseCommodityS" resultMap="BaseResultMap">
@@ -39,10 +41,6 @@
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-
-
-
-
     delete from purchase_commodity
     where purchase_id = #{purchaseId}
   </delete>
@@ -71,6 +69,9 @@
       </if>
       <if test="itemName != null">
         item_name,
+      </if>
+      <if test="barcode != null">
+        barcode,
       </if>
       <if test="itemTypeId != null">
         item_type_id,
@@ -112,7 +113,9 @@
       </if>
       <if test="itemName != null">
         #{itemName,jdbcType=VARCHAR},
-
+      </if>
+      <if test="barcode != null">
+         #{barcode,jdbcType=VARCHAR},
       </if>
       <if test="itemTypeId != null">
         #{itemTypeId,jdbcType=BIGINT},
@@ -154,6 +157,9 @@
       </if>
       <if test="itemName != null">
         item_name =  #{itemName,jdbcType=VARCHAR},
+      </if>
+      <if test="barcode != null">
+        barcode = #{barcode,jdbcType=VARCHAR},
       </if>
       <if test="itemTypeId != null">
         item_type_id = #{itemTypeId,jdbcType=BIGINT},

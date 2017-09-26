@@ -263,4 +263,36 @@ public class PurchaseController {
         return purchaseService.delPurchaseCommodity();
     }
 
+    /**
+     * 入库
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("purchasePutIn")
+    public JSONObject purchasePutIn(){
+        return purchaseService.purchasePutIn();
+    }
+
+
+    /**
+     * 商品库存列表查询
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("searchCommodityStoresPage")
+    public JSONObject searchcommodityStoresPage(){
+        return purchaseService.searchCommodityStoresPage();
+    }
+
+    /**
+     * 设置商品库存预警数
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("updateCommodityStores")
+    public JSONObject updateCommodityStores(){
+        return purchaseService.updateCommodityStores();
+    }
+
+
 }

@@ -5,23 +5,27 @@ import java.util.Date;
 public class PurchaseCommodityStores {
     private Long id;
 
-    private Long warehouseId;
+    private String warehouseCode;
 
-    private Long commodityId;
+    private String warehouseName;
 
-    private String commodityName;
+    private Long itemTypeId;
 
-    private String commodityCode;
+    private String itemTypeName;
+
+    private Long itemId;
+
+    private String itemName;
+
+    private String barcode;
 
     private Integer storesNumber;
 
     private Integer warnNumber;
 
-    private Date updateTime;
+    private String updateTime;
 
-    private Date createTime;
-
-    private Integer isDelete;
+    private String createTime;
 
     public Long getId() {
         return id;
@@ -31,36 +35,52 @@ public class PurchaseCommodityStores {
         this.id = id;
     }
 
-    public Long getWarehouseId() {
-        return warehouseId;
+    public String getWarehouseCode() {
+        return warehouseCode;
     }
 
-    public void setWarehouseId(Long warehouseId) {
-        this.warehouseId = warehouseId;
+    public void setWarehouseCode(String warehouseCode) {
+        this.warehouseCode = warehouseCode;
     }
 
-    public Long getCommodityId() {
-        return commodityId;
+    public String getWarehouseName() {
+        return warehouseName;
     }
 
-    public void setCommodityId(Long commodityId) {
-        this.commodityId = commodityId;
+    public void setWarehouseName(String warehouseName) {
+        this.warehouseName = warehouseName;
     }
 
-    public String getCommodityName() {
-        return commodityName;
+    public Long getItemTypeId() {
+        return itemTypeId;
     }
 
-    public void setCommodityName(String commodityName) {
-        this.commodityName = commodityName == null ? null : commodityName.trim();
+    public void setItemTypeId(Long itemTypeId) {
+        this.itemTypeId = itemTypeId;
     }
 
-    public String getCommodityCode() {
-        return commodityCode;
+    public String getItemTypeName() {
+        return itemTypeName;
     }
 
-    public void setCommodityCode(String commodityCode) {
-        this.commodityCode = commodityCode == null ? null : commodityCode.trim();
+    public void setItemTypeName(String itemTypeName) {
+        this.itemTypeName = itemTypeName;
+    }
+
+    public Long getItemId() {
+        return itemId;
+    }
+
+    public void setItemId(Long itemId) {
+        this.itemId = itemId;
+    }
+
+    public String getItemName() {
+        return itemName;
+    }
+
+    public void setItemName(String itemName) {
+        this.itemName = itemName;
     }
 
     public Integer getStoresNumber() {
@@ -79,19 +99,19 @@ public class PurchaseCommodityStores {
         this.warnNumber = warnNumber;
     }
 
-    public Date getUpdateTime() {
+    public String getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 
@@ -101,5 +121,15 @@ public class PurchaseCommodityStores {
 
     public void setIsDelete(Integer isDelete) {
         this.isDelete = isDelete;
+    }
+
+    private Integer isDelete;
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 }

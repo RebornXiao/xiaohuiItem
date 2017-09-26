@@ -11,6 +11,8 @@ public class PurchaseCommodity {
 
     private String itemName;
 
+    private String barcode;
+
     private Long itemTypeId;
 
     private String itemTypeTitle;
@@ -49,6 +51,14 @@ public class PurchaseCommodity {
 
     public Long getItemId() {
         return itemId;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 
     public void setItemId(Long itemId) {

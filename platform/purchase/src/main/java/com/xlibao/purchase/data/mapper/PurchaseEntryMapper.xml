@@ -3,7 +3,7 @@
 <mapper namespace="com.xlibao.purchase.data.mapper.PurchaseEntryMapper">
   <resultMap id="BaseResultMap" type="com.xlibao.purchase.data.model.PurchaseEntry">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="warehouse_id" jdbcType="BIGINT" property="warehouseId" />
+    <result column="warehouse_code" jdbcType="BIGINT" property="warehouseCode" />
     <result column="supplier_id" jdbcType="BIGINT" property="supplierId" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="deposit_time" jdbcType="TIMESTAMP" property="depositTime" />
@@ -13,7 +13,7 @@
     <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, supplier_id, status, deposit_time, exception_remark, update_time, create_time,
+    id,warehouse_code, supplier_id, status, deposit_time, exception_remark, update_time, create_time,
     is_delete
   </sql>
   <select id="searchPurchasePage" resultType="java.util.Map">
@@ -21,8 +21,8 @@
     <if test="supplierName!=null">
       AND s.supplier_name  LIKE "%"#{supplierName}"%"
     </if>
-    <if test="warehouseID!=-1">
-      AND p.warehouse_id LIKE "%"#{warehouseID}"%"
+    <if test="warehouseCode!=-1">
+      AND p.warehouse_code = #{warehouseCode}
     </if>
     <if test="status!=-1">
       AND p.status = #{status}
@@ -34,8 +34,8 @@
     <if test="supplierName!=null">
       AND s.supplier_name  LIKE "%"#{supplierName}"%"
     </if>
-    <if test="warehouseID!=-1">
-      AND p.warehouse_id LIKE "%"#{warehouseID}"%"
+    <if test="warehouseCode!=-1">
+      AND p.warehouse_code = #{warehouseCode}
     </if>
     <if test="status!=-1">
       AND p.status = #{status}
@@ -71,8 +71,8 @@
       <if test="id != null">
         id,
       </if>
-      <if test="warehouseId != null">
-        warehouse_id,
+      <if test="warehouseCode != null">
+        warehouse_code,
       </if>
       <if test="supplierId != null">
         supplier_id,
@@ -100,8 +100,8 @@
       <if test="id != null">
         #{id,jdbcType=BIGINT},
       </if>
-      <if test="warehouseId != null">
-        #{warehouseId,jdbcType=BIGINT},
+      <if test="warehouseCode != null">
+        #{warehouseCode,jdbcType=BIGINT},
       </if>
       <if test="supplierId != null">
         #{supplierId,jdbcType=BIGINT},
@@ -129,8 +129,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.xlibao.purchase.data.model.PurchaseEntry">
     update purchase_entry
     <set>
-      <if test="warehouseId != null">
-        warehouse_id = #{warehouseId,jdbcType=BIGINT},
+      <if test="warehouseCode != null">
+         warehouse_code= #{warehouseCode,jdbcType=BIGINT},
       </if>
       <if test="supplierId != null">
         supplier_id = #{supplierId,jdbcType=BIGINT},

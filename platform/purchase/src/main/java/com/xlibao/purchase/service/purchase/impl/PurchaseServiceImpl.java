@@ -4,6 +4,7 @@ package com.xlibao.purchase.service.purchase.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
+import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.purchase.data.mapper.PurchaseDataAccessManager;
 import com.xlibao.purchase.data.model.*;
 import com.xlibao.purchase.service.purchase.PurchaseService;
@@ -354,13 +355,13 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
     @Override
     public JSONObject searchPurchasePage() {
         String supplierName = getUTF("supplierName", null);
-        int warehouseID = getIntParameter("warehouseID", -1);
+        String warehouseCode = getUTF("warehouseCode", null);
         int status = getIntParameter("status", -1);
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
 
-        List<ResultMap> purchaseWarehouses = purchaseDataAccessManager.searchPurchasePage(supplierName,warehouseID,status,pageSize,pageStartIndex);
-        int count = purchaseDataAccessManager.searchPurchasePageCount(supplierName,warehouseID,status);
+        List<ResultMap> purchaseWarehouses = purchaseDataAccessManager.searchPurchasePage(supplierName,warehouseCode,status,pageSize,pageStartIndex);
+        int count = purchaseDataAccessManager.searchPurchasePageCount(supplierName,warehouseCode,status);
 
         JSONObject response = new JSONObject();
         response.put("data", purchaseWarehouses);
@@ -420,20 +421,20 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
 
     @Override
     public JSONObject savePurchase() {
-        long warehouseID = getLongParameter("warehouseID",-1);
+        String warehouseCode = getUTF("warehouseCode",null);
         long supplierID = getLongParameter("supplierID",-1);
         int status = getIntParameter("status", -1);
 
-        if(warehouseID == -1){
-            return fail("缺少仓库ID");
+        if(warehouseCode == null){
+            return fail("缺少仓库编码");
         }else if(supplierID == -1){
             return fail("缺少供应商ID");
         }else if(status==-1){
             return fail("缺少状态");
         }
         PurchaseEntry purchaseEntry = new PurchaseEntry();
-        purchaseEntry.setWarehouseId(warehouseID);
-        purchaseEntry.setSupplierId(warehouseID);
+        purchaseEntry.setWarehouseCode(warehouseCode);
+        purchaseEntry.setSupplierId(supplierID);
         purchaseEntry.setStatus(status);
 
         if (purchaseDataAccessManager.savePurchase(purchaseEntry) > 0) {
@@ -485,13 +486,13 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
     @Override
     public JSONObject updatePurchase() {
         long id = getLongParameter("id",-1);
-        long warehouseID = getLongParameter("warehouseID",-1);
+        String warehouseCode = getUTF("warehouseCode",null);
         long supplierID = getLongParameter("supplierID",-1);
         int status = getIntParameter("status", -1);
 
         if(id == -1){
             return fail("缺少采购单ID");
-        }else if(warehouseID == -1){
+        }else if(warehouseCode == null){
             return fail("缺少仓库ID");
         }else if(supplierID == -1){
             return fail("缺少供应商ID");
@@ -500,8 +501,8 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         }
         PurchaseEntry purchaseEntry = new PurchaseEntry();
         purchaseEntry.setId(id);
-        purchaseEntry.setWarehouseId(warehouseID);
-        purchaseEntry.setSupplierId(warehouseID);
+        purchaseEntry.setWarehouseCode(warehouseCode);
+        purchaseEntry.setSupplierId(supplierID);
         purchaseEntry.setStatus(status);
         purchaseEntry.setUpdateTime(DateUtil.getNowDate());
 
@@ -521,5 +522,123 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         }
         return fail("删除失败");
     }
+
+    @Override
+    public JSONObject purchasePutIn() {
+        long id = getLongParameter("id",-1);
+        int status = getIntParameter("status", -1);
+        String exceptionRemark = getUTF("exceptionRemark",null);
+
+        String [] commodityIds= getHttpServletRequest().getParameterValues("commodityId");
+        String [] depositNumbers= getHttpServletRequest().getParameterValues("depositNumber");
+
+        if(id == -1){
+            return fail("缺少采购单ID");
+        }else if(status==-1){
+            return fail("缺少状态");
+        }
+        PurchaseEntry purchaseEntry = new PurchaseEntry();
+        purchaseEntry.setId(id);
+        purchaseEntry.setStatus(status);
+        purchaseEntry.setExceptionRemark(exceptionRemark);
+        purchaseEntry.setDepositTime(DateUtil.getNowDate());
+        purchaseEntry.setUpdateTime(DateUtil.getNowDate());
+
+        if (purchaseDataAccessManager.updatePurchase(purchaseEntry) > 0) {
+            for (int i=0;i<commodityIds.length;i++) {
+                if(depositNumbers[i]!=null&&!depositNumbers[i].isEmpty()) {
+                    PurchaseCommodity purchaseCommodity = new PurchaseCommodity();
+                    purchaseCommodity.setId(Long.parseLong(commodityIds[i]));
+                    purchaseCommodity.setDepositTime(DateUtil.getNowDate());
+                    purchaseCommodity.setDepositNumber(Integer.parseInt(depositNumbers[i]));
+                    purchaseCommodity.setUpdateTime(DateUtil.getNowDate());
+
+                    int result = purchaseDataAccessManager.updatePurchaseCommodity(purchaseCommodity) ;
+                    if (result <= 0) {
+                        throw new XlibaoRuntimeException("产品入库数量失败");
+                    }else {
+                        //获取入库产品信息
+                        PurchaseCommodity commodity = purchaseDataAccessManager.getPurchaseCommodity(Long.parseLong(commodityIds[i]));
+                        //更新商品库存
+                        updateStockNumber(null,commodity.getItemTypeId(),commodity.getItemTypeTitle(),commodity.getItemId(),commodity.getItemName(),commodity.getBarcode(),1,Integer.parseInt(depositNumbers[i]));
+                    }
+
+                }
+            }
+        }else {
+            throw new XlibaoRuntimeException("入库失败");
+        }
+        return success("入库成功");
+    }
+
+    public JSONObject updateStockNumber(String warehouseCode,long itemTypeId,String itemTypeName,long itemId,String itemName,String  barcode,int stockType,int number){
+        PurchaseCommodityStores purchaseCommodityStores =  purchaseDataAccessManager.getByParameterID(warehouseCode,itemId);
+        if(purchaseCommodityStores==null){
+            PurchaseCommodityStores purchaseCommodityStoresa = new PurchaseCommodityStores();
+            purchaseCommodityStoresa.setWarehouseCode(warehouseCode);
+            purchaseCommodityStoresa.setItemTypeId(itemTypeId);
+            purchaseCommodityStoresa.setItemTypeName(itemTypeName);
+            purchaseCommodityStoresa.setItemId(itemId);
+            purchaseCommodityStoresa.setItemName(itemName);
+            purchaseCommodityStoresa.setBarcode(barcode);
+            purchaseCommodityStoresa.setStoresNumber(number);
+            int result =  purchaseDataAccessManager.savePurchaseCommodityStores(purchaseCommodityStoresa);
+            //添加库存信息
+        }else{
+            int storesNumber=purchaseCommodityStores.getStoresNumber();
+            //更新库存数量stockType:0出库1入库
+            if(stockType==0) {
+                purchaseCommodityStores.setStoresNumber(storesNumber-number);
+            }else {
+                purchaseCommodityStores.setStoresNumber(storesNumber+number);
+            }
+            int result = purchaseDataAccessManager.updateCommodityStores(purchaseCommodityStores);
+        }
+
+        return success("商品库存更新");
+    }
+
+    @Override
+    public JSONObject searchCommodityStoresPage() {
+        //long warehouseId, String itemName,String barcode
+
+        String warehouseCode = getUTF("warehouseCode", null);
+        String itemName = getUTF("itemName", null);
+        String barcode = getUTF("barcode", null);
+        int pageSize = getPageSize();
+        int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
+
+        List<PurchaseCommodityStores> purchaseCommodityStores = purchaseDataAccessManager.searchCommodityStoresPage(warehouseCode,itemName,barcode,pageSize,pageStartIndex);
+        int count = purchaseDataAccessManager.searchCommodityStoresPageCount(warehouseCode,itemName,barcode);
+
+        JSONObject response = new JSONObject();
+        response.put("data", purchaseCommodityStores);
+        response.put("count", count);
+        response.put("pageIndex", getIntParameter("pageIndex", 1) - 1);
+        return success(response);
+
+    }
+
+    @Override
+    public JSONObject updateCommodityStores() {
+        long id = getLongParameter("id",-1);
+        int warnNumber = getIntParameter("warnNumber", -1);
+
+        if(id == -1){
+            return fail("缺少商品库存ID");
+        }else if(warnNumber==-1){
+            return fail("缺少预警数量");
+        }
+        PurchaseCommodityStores purchaseCommodityStores = new PurchaseCommodityStores();
+        purchaseCommodityStores.setId(id);
+        purchaseCommodityStores.setWarnNumber(warnNumber);
+        purchaseCommodityStores.setUpdateTime(DateUtil.getNowDate());
+
+        if (purchaseDataAccessManager.updateCommodityStores(purchaseCommodityStores)> 0) {
+            return success("修改成功");
+        }
+        return fail("修改失败");
+    }
+
 
 }
