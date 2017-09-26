@@ -419,9 +419,9 @@ public class PurchaseManagerController extends BaseController {
      */
     @RequestMapping("/commodityStoresPage")
     public String searchCommodityStoresPage(ModelMap map) {
-        JSONObject purchaseJson =  purchaseManagerService.searchPurchasePage();
-        JSONObject response = purchaseJson.getJSONObject("response");
-        JSONArray purchases = response.getJSONArray("data");
+        JSONObject stockJson =  warehouseManagerService.searchCommodityStoresPage();
+        JSONObject response = stockJson.getJSONObject("response");
+        JSONArray stock = response.getJSONArray("data");
         map.put("count", response.getIntValue("count"));
 
         JSONObject warehousesJson =   warehouseManagerService.getAllWarehouse();
@@ -437,7 +437,7 @@ public class PurchaseManagerController extends BaseController {
         map.put("pageIndex", pageIndex);
         map.put("pageSize", getPageSize());
         /*****分页数据**/
-        map.put("purchases", purchases);
+        map.put("stocks", stock);
         return jumpPage(map, LogicConfig.FTL_STOCK_LIST, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_STOCK_LIST);
     }
 
