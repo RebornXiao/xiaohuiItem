@@ -35,7 +35,7 @@
     order by create_time desc limit #{pageStartIndex}, #{pageSize}
   </select>
 
-  <select id="searchCommodityStoresPageCount" resultMap="BaseResultMap">
+  <select id="searchCommodityStoresPageCount" resultType="int">
     SELECT count(1) FROM purchase_commodity_stores WHERE is_delete!=1
     <if test="warehouseCode!=-1">
       AND warehouse_code = #{warehouseCode}
