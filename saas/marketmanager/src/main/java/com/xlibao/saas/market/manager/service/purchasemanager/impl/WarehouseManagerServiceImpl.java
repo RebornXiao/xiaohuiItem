@@ -23,7 +23,7 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
 
     @Override
     public JSONObject searchWarehousePage() {
-        String warehouseName = getUTF("warehouseName", null);
+        String warehouseName = getUTF("warehouseName", "");
         int status = getIntParameter("status", -1);
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
@@ -45,16 +45,16 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
 
     @Override
     public JSONObject saveWarehouse() {
-        String warehouseCode = getUTF("warehouseCode",null);
-        String warehouseName = getUTF("warehouseName",null);
-        String address = getUTF("address",null);
-        String remark = getUTF("remark",null);
+        String warehouseCode = getUTF("warehouseCode","");
+        String warehouseName = getUTF("warehouseName","");
+        String address = getUTF("address","");
+        String remark = getUTF("remark","");
 
-        if(warehouseCode == null || warehouseCode.isEmpty()){
+        if(warehouseCode == "" || warehouseCode.isEmpty()){
             return fail("缺少仓库编码");
-        }else if(warehouseName == null || warehouseName.isEmpty()){
+        }else if(warehouseName == "" || warehouseName.isEmpty()){
             return fail("缺少仓库名称");
-        }else if(address == null || address.isEmpty()){
+        }else if(address == "" || address.isEmpty()){
             return fail("缺少仓库地址");
         }
         Map<String, String> parameters = new HashMap<>();
@@ -87,17 +87,17 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
     @Override
     public JSONObject updateWarehouse() {
         long id = getLongParameter("id",-1);
-        String warehouseCode = getUTF("warehouseCode",null);
-        String warehouseName = getUTF("warehouseName",null);
-        String address = getUTF("address",null);
-        String remark = getUTF("remark",null);
+        String warehouseCode = getUTF("warehouseCode","");
+        String warehouseName = getUTF("warehouseName","");
+        String address = getUTF("address","");
+        String remark = getUTF("remark","");
         if(id==-1){
             return fail("缺少仓库ID");
-        }else if(warehouseCode == null || warehouseCode.isEmpty()){
+        }else if(warehouseCode == "" || warehouseCode.isEmpty()){
             return fail("缺少仓库编码");
-        }else if(warehouseName == null || warehouseName.isEmpty()){
+        }else if(warehouseName == "" || warehouseName.isEmpty()){
             return fail("缺少仓库名称");
-        }else if(address == null || address.isEmpty()){
+        }else if(address == "" || address.isEmpty()){
             return fail("缺少仓库地址");
         }
         Map<String, String> parameters = new HashMap<>();
@@ -121,7 +121,7 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
         long id = getLongParameter("id",-1);
 
         int status = getIntParameter("status",-1);
-        String  stopRemark = getUTF("stopRemark",null);
+        String  stopRemark = getUTF("stopRemark","");
 
         if(id==-1){
             return fail("缺少仓库ID");
@@ -164,11 +164,11 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
     @Override
     public JSONObject saveWarehouseUser() {
         long warehouseID = getLongParameter("warehouseID",-1);
-        String username = getUTF("userName",null);
-        String remark = getUTF("remark",null);
+        String username = getUTF("userName","");
+        String remark = getUTF("remark","");
         if(warehouseID==-1){
             return fail("缺少仓库ID");
-        }else if(username == null || username.isEmpty()){
+        }else if(username == "" || username.isEmpty()){
             return fail("缺少仓库管理员用户名");
         }
         Map<String, String> parameters = new HashMap<>();
@@ -243,9 +243,9 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
     @Override
     public JSONObject searchCommodityStoresPage() {
 
-        String warehouseCode = getUTF("warehouseCode", null);
-        String itemName = getUTF("itemName", null);
-        String barcode = getUTF("barcode", null);
+        String warehouseCode = getUTF("warehouseCode", "");
+        String itemName = getUTF("itemName", "");
+        String barcode = getUTF("barcode", "");
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
 

@@ -22,7 +22,7 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
     @Override
     public JSONObject searchSupplierPage() {
 
-        String supplierName = getUTF("supplierName", null);
+        String supplierName = getUTF("supplierName", "");
         int supplierType = getIntParameter("supplierType", -1);
         int status = getIntParameter("status", -1);
         int pageSize = getPageSize();
@@ -57,21 +57,21 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
     }
     @Override
     public JSONObject saveSupplier(){
-        String supplierName = getUTF("supplierName",null);
-        String address = getUTF("address",null);
+        String supplierName = getUTF("supplierName","");
+        String address = getUTF("address","");
         int supplierType = getIntParameter("supplierType",-1);
-        String deliverPeriod = getUTF("deliverPeriod",null);
-        String salesmanName = getUTF("salesmanName",null);
-        String phone = getUTF("phone",null);
-        if(supplierName == null || supplierName.isEmpty()){
+        String deliverPeriod = getUTF("deliverPeriod","");
+        String salesmanName = getUTF("salesmanName","");
+        String phone = getUTF("phone","");
+        if(supplierName == "" || supplierName.isEmpty()){
             return fail("缺少供应商名称");
-        }else if(address == null || address.isEmpty()){
+        }else if(address == "" || address.isEmpty()){
             return fail("缺少供应商地址");
-        }else if(deliverPeriod == null || deliverPeriod.isEmpty()){
+        }else if(deliverPeriod == "" || deliverPeriod.isEmpty()){
             return fail("缺少供货周期");
-        }else if(salesmanName == null || salesmanName.isEmpty()){
+        }else if(salesmanName == "" || salesmanName.isEmpty()){
             return fail("缺少供业务员");
-        }else if(phone == null || phone.isEmpty()){
+        }else if(phone == "" || phone.isEmpty()){
             return fail("缺少业务员联系电话");
         }else if(supplierType==-1){
             return fail("缺少供应商级别");
@@ -95,23 +95,23 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
     @Override
     public JSONObject updateSupplier(){
         long id = getLongParameter("id",-1);
-        String supplierName = getUTF("supplierName",null);
-        String address = getUTF("address",null);
+        String supplierName = getUTF("supplierName","");
+        String address = getUTF("address","");
         int supplierType = getIntParameter("supplierType",-1);
-        String deliverPeriod = getUTF("deliverPeriod",null);
-        String salesmanName = getUTF("salesmanName",null);
-        String phone = getUTF("phone",null);
+        String deliverPeriod = getUTF("deliverPeriod","");
+        String salesmanName = getUTF("salesmanName","");
+        String phone = getUTF("phone","");
         if(id==-1){
             return fail("缺少供应商ID");
-        }else if(supplierName == null || supplierName.isEmpty()){
+        }else if(supplierName == "" || supplierName.isEmpty()){
             return fail("缺少供应商名称");
-        }else if(address == null || address.isEmpty()){
+        }else if(address == "" || address.isEmpty()){
             return fail("缺少供应商地址");
-        }else if(deliverPeriod == null || deliverPeriod.isEmpty()){
+        }else if(deliverPeriod == "" || deliverPeriod.isEmpty()){
             return fail("缺少供货周期");
-        }else if(salesmanName == null || salesmanName.isEmpty()){
+        }else if(salesmanName == "" || salesmanName.isEmpty()){
             return fail("缺少供业务员");
-        }else if(phone == null || phone.isEmpty()){
+        }else if(phone == "" || phone.isEmpty()){
             return fail("缺少业务员联系电话");
         }else if(supplierType==-1){
             return fail("缺少供应商级别");
@@ -137,7 +137,7 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
         long id = getLongParameter("id",-1);
 
         int status = getIntParameter("status",-1);
-        String  stopRemark = getUTF("stopRemark",null);
+        String  stopRemark = getUTF("stopRemark","");
         if(id==-1){
             return fail("缺少供应商ID");
         }else if(status==-1){

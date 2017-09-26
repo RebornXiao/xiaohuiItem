@@ -45,7 +45,7 @@ public class PurchaseManagerController extends BaseController {
             JSONArray suppliers = response.getJSONArray("data");
             map.put("count", response.getIntValue("count"));
 
-            map.put("supplierName", getUTF("supplierName",null));
+            map.put("supplierName", getUTF("supplierName",""));
             map.put("supplierType", getIntParameter("supplierType",-1));
             map.put("status", getIntParameter("status",-1));
             int pageIndex = getIntParameter("pageIndex", 1);
@@ -146,7 +146,7 @@ public class PurchaseManagerController extends BaseController {
         /**下拉列表**/
         map.put("warehouseItem", warehouseItem);
 
-        map.put("warehouseName", getUTF("warehouseName",null));
+        map.put("warehouseName", getUTF("warehouseName",""));
         map.put("status", getIntParameter("status",-1));
         int pageIndex = getIntParameter("pageIndex", 1);
         map.put("pageIndex", pageIndex);
@@ -290,8 +290,8 @@ public class PurchaseManagerController extends BaseController {
         /**下拉列表**/
         map.put("warehouseItem", warehouseItem);
 
-        map.put("supplierName", getUTF("supplierName",null));
-        map.put("warehouseID", getIntParameter("warehouseID",-1));
+        map.put("supplierName", getUTF("supplierName",""));
+        map.put("warehouseCode", getUTF("warehouseCode",""));
         map.put("status", getIntParameter("status",-1));
         int pageIndex = getIntParameter("pageIndex", 1);
         map.put("pageIndex", pageIndex);
@@ -430,9 +430,9 @@ public class PurchaseManagerController extends BaseController {
         /**下拉列表**/
         map.put("warehouseItem", warehouseItem);
 
-        map.put("warehouseCode", getUTF("warehouseCode",null));
-        map.put("itemName", getUTF("itemName",null));
-        map.put("barcode", getUTF("barcode",null));
+        map.put("warehouseCode", getUTF("warehouseCode",""));
+        map.put("itemName", getUTF("itemName",""));
+        map.put("barcode", getUTF("barcode",""));
         int pageIndex = getIntParameter("pageIndex", 1);
         map.put("pageIndex", pageIndex);
         map.put("pageSize", getPageSize());
