@@ -174,4 +174,10 @@ public interface PurchaseService {
      * @return
      */
     JSONObject updateCommodityStores();
+
+    /**
+     * 更新商品库存
+     * @return
+     */
+    JSONObject updateStock();
 }

@@ -295,4 +295,14 @@ public class PurchaseController {
     }
 
 
+    /**
+     * 商品出库更新库存
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("updateStock")
+    public JSONObject updateStock(){
+        return purchaseService.updateStock();
+    }
+
 }

@@ -54,11 +54,9 @@
     from purchase_commodity_stores
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <select id="getByParameterID" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select
-    <include refid="Base_Column_List" />
-    from purchase_commodity_stores
-    where warehouse_Code = #{warehouseCode,jdbcType=BIGINT} and item_id = #{itemId,jdbcType=BIGINT}
+  <select id="getByParameterID" resultMap="BaseResultMap">
+    select *   from purchase_commodity_stores
+    WHERE is_delete!=1 and  warehouse_code = #{warehouseCode} and item_id = #{itemId}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
     delete from purchase_commodity_stores
@@ -70,7 +68,7 @@
     item_name, barcode, stores_number,
     warn_number, update_time, create_time,
     is_delete)
-    values (#{id,jdbcType=BIGINT}, #{warehouseCode,jdbcType=BIGINT}, #{warehouseName,jdbcType=VARCHAR},
+    values (#{id,jdbcType=BIGINT}, #{warehouseCode,jdbcType=VARCHAR}, #{warehouseName,jdbcType=VARCHAR},
     #{itemTypeId,jdbcType=BIGINT}, #{itemTypeName,jdbcType=VARCHAR}, #{itemId,jdbcType=BIGINT},
     #{itemName,jdbcType=VARCHAR}, #{barcode,jdbcType=VARCHAR}, #{storesNumber,jdbcType=INTEGER},
     #{warnNumber,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP},
@@ -124,7 +122,7 @@
         #{id,jdbcType=BIGINT},
       </if>
       <if test="warehouseCode != null">
-        #{warehouseCode,jdbcType=BIGINT},
+        #{warehouseCode,jdbcType=VARCHAR},
       </if>
       <if test="warehouseName != null">
         #{warehouseName,jdbcType=VARCHAR},
@@ -165,7 +163,7 @@
     update purchase_commodity_stores
     <set>
       <if test="warehouseCode != null">
-        warehouse_code = #{warehouseCode,jdbcType=BIGINT},
+        warehouse_code = #{warehouseCode,jdbcType=VARCHAR},
       </if>
       <if test="warehouseName != null">
         warehouse_name = #{warehouseName,jdbcType=VARCHAR},
@@ -205,7 +203,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.xlibao.purchase.data.model.PurchaseCommodityStores">
     update purchase_commodity_stores
-    set warehouse_code = #{warehouseCode,jdbcType=BIGINT},
+    set warehouse_code = #{warehouseCode,jdbcType=VARCHAR},
     warehouse_name = #{warehouseName,jdbcType=VARCHAR},
     item_type_id = #{itemTypeId,jdbcType=BIGINT},
     item_type_name = #{itemTypeName,jdbcType=VARCHAR},
