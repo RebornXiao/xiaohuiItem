@@ -438,7 +438,9 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         purchaseEntry.setStatus(status);
 
         if (purchaseDataAccessManager.savePurchase(purchaseEntry) > 0) {
-            return success("添加成功");
+            JSONObject response = new JSONObject();
+            response.put("purchaseID",purchaseEntry.getId());
+            return success("添加成功",response);
         }
         return fail("添加失败");
     }
