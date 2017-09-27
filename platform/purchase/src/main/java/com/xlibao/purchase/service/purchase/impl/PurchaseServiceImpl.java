@@ -533,8 +533,8 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         int status = getIntParameter("status", -1);
         String exceptionRemark = getUTF("exceptionRemark",null);
 
-        String [] commodityIds= getHttpServletRequest().getParameterValues("commodityId");
-        String [] depositNumbers= getHttpServletRequest().getParameterValues("depositNumber");
+        String commodityIds= getUTF("commodityIds",null);
+        String  depositNumbers= getUTF("depositNumbers",null);
 
         if(id == -1){
             return fail("缺少采购单ID");
@@ -544,7 +544,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
             return fail("缺少仓库编码");
         }else if(warehouseName == null){
             return fail("缺少仓库名称");
-        }else if(commodityIds.length<=0||depositNumbers.length<=0){
+        }else if(commodityIds== null||depositNumbers== null){
             return fail("缺少入库商品信息");
         }
 
@@ -556,12 +556,14 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         purchaseEntry.setUpdateTime(DateUtil.getNowDate());
 
         if (purchaseDataAccessManager.updatePurchase(purchaseEntry) > 0) {
-            for (int i=0;i<commodityIds.length;i++) {
-                if(depositNumbers[i]!=null&&!depositNumbers[i].isEmpty()) {
+            String[] commodityIdList = commodityIds.split(CommonUtils.SPLIT_COMMA);
+            String[] depositNumberList = depositNumbers.split(CommonUtils.SPLIT_COMMA);
+            for (int i=0;i<commodityIdList.length;i++) {
+                if(depositNumberList[i]!=null&&!depositNumberList[i].isEmpty()) {
                     PurchaseCommodity purchaseCommodity = new PurchaseCommodity();
-                    purchaseCommodity.setId(Long.parseLong(commodityIds[i]));
+                    purchaseCommodity.setId(Long.parseLong(commodityIdList[i]));
                     purchaseCommodity.setDepositTime(DateUtil.getNowDate());
-                    purchaseCommodity.setDepositNumber(Integer.parseInt(depositNumbers[i]));
+                    purchaseCommodity.setDepositNumber(Integer.parseInt(depositNumberList[i]));
                     purchaseCommodity.setUpdateTime(DateUtil.getNowDate());
 
                     int result = purchaseDataAccessManager.updatePurchaseCommodity(purchaseCommodity) ;
@@ -569,9 +571,9 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
                         throw new XlibaoRuntimeException("产品入库数量失败");
                     }else {
                         //获取入库产品信息
-                        PurchaseCommodity commodity = purchaseDataAccessManager.getPurchaseCommodity(Long.parseLong(commodityIds[i]));
+                        PurchaseCommodity commodity = purchaseDataAccessManager.getPurchaseCommodity(Long.parseLong(commodityIdList[i]));
                         //更新商品库存
-                        updateStockNumber(warehouseCode,warehouseName,commodity.getItemTypeId(),commodity.getItemTypeTitle(),commodity.getItemId(),commodity.getItemName(),commodity.getBarcode(),1,Integer.parseInt(depositNumbers[i]));
+                        updateStockNumber(warehouseCode,warehouseName,commodity.getItemTypeId(),commodity.getItemTypeTitle(),commodity.getItemId(),commodity.getItemName(),commodity.getBarcode(),1,Integer.parseInt(depositNumberList[i]));
                     }
 
                 }
