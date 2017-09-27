@@ -65,7 +65,7 @@
     #{depositTime,jdbcType=TIMESTAMP}, #{exceptionRemark,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP},
     #{createTime,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.xlibao.purchase.data.model.PurchaseEntry">
+  <insert id="insertSelective" parameterType="com.xlibao.purchase.data.model.PurchaseEntry" useGeneratedKeys="true" keyProperty="id">
     insert into purchase_entry
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="id != null">

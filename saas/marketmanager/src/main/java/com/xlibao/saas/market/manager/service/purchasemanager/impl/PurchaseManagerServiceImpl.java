@@ -2,6 +2,7 @@ package com.xlibao.saas.market.manager.service.purchasemanager.impl;
 
 
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.CommonUtils;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.support.BasicRemoteService;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
@@ -117,12 +118,12 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
         long supplierID = getLongParameter("supplierID",-1);
         int status = getIntParameter("status", -1);
         //String [] purchaseID= getHttpServletRequest().getParameterValues("purchaseID");
-        String [] itemIDs= getHttpServletRequest().getParameterValues("itemID");
-        String [] itemTypeIDs= getHttpServletRequest().getParameterValues("itemTypeID");
-        String [] itemNames= getHttpServletRequest().getParameterValues("itemName");
-        String [] itemTypeTitles= getHttpServletRequest().getParameterValues("itemTypeTitle");
-        String [] purchaseTimes= getHttpServletRequest().getParameterValues("purchaseTime");
-        String [] purchaseNumbers= getHttpServletRequest().getParameterValues("purchaseNumber");
+        String  itemIDs= getUTF("itemIDs","");
+        String  itemTypeIDs= getUTF("itemTypeIDs","");
+        String  itemNames= getUTF("itemNames","");
+        String  itemTypeTitles= getUTF("itemTypeTitles","");
+        String  purchaseTimes= getUTF("purchaseTimes","");
+        String  purchaseNumbers= getUTF("purchaseNumbers","");
 
         if(warehouseCode == ""){
             return fail("缺少仓库编码");
@@ -142,15 +143,23 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
             JSONObject response = executor(url, parameters);
             //添加采购单成功再添加采购物品
             if (response.getIntValue("code")==0) {
-                for (int i = 0; i < itemIDs.length; i++) {
+                JSONObject purchaseResp = response.getJSONObject("response");
+                long purchaseID = purchaseResp.getLongValue("purchaseID");
+                String []  itemIDList= itemIDs.split(CommonUtils.SPLIT_COMMA);
+                String [] itemTypeIDList= itemTypeIDs.split(CommonUtils.SPLIT_COMMA);
+                String [] itemNameList= itemNames.split(CommonUtils.SPLIT_COMMA);
+                String [] itemTypeTitleList= itemTypeTitles.split(CommonUtils.SPLIT_COMMA);
+                String [] purchaseTimeList= purchaseTimes.split(CommonUtils.SPLIT_COMMA);
+                String [] purchaseNumberList=purchaseNumbers.split(CommonUtils.SPLIT_COMMA);
+                for (int i = 0; i < itemIDList.length; i++) {
                     Map<String, String> parameters2 = new HashMap<>();
-                    parameters2.put("purchaseID", String.valueOf("purchaseID"));
-                    parameters2.put("itemIDs", itemIDs[i]);
-                    parameters2.put("itemTypeIDs", itemTypeIDs[i]);
-                    parameters2.put("itemNames", itemNames[i]);
-                    parameters2.put("itemTypeTitles", itemTypeTitles[i]);
-                    parameters2.put("purchaseTimes", purchaseTimes[i]);
-                    parameters2.put("purchaseNumbers", purchaseNumbers[i]);
+                    parameters2.put("purchaseID", String.valueOf(purchaseID));
+                    parameters2.put("itemID", itemIDList[i]);
+                    parameters2.put("itemTypeID", itemTypeIDList[i]);
+                    parameters2.put("itemName", itemNameList[i]);
+                    parameters2.put("itemTypeTitle", itemTypeTitleList[i]);
+                    parameters2.put("purchaseTime", purchaseTimeList[i]);
+                    parameters2.put("purchaseNumber", purchaseNumberList[i]);
                     //调用添加接口
                     savePurchaseCommodity(parameters2);
                 }
@@ -211,12 +220,12 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
         long supplierID = getLongParameter("supplierID",-1);
         int status = getIntParameter("status", -1);
         //String [] purchaseID= getHttpServletRequest().getParameterValues("purchaseID");
-        String [] itemIDs= getHttpServletRequest().getParameterValues("itemID");
-        String [] itemTypeIDs= getHttpServletRequest().getParameterValues("itemTypeID");
-        String [] itemNames= getHttpServletRequest().getParameterValues("itemName");
-        String [] itemTypeTitles= getHttpServletRequest().getParameterValues("itemTypeTitle");
-        String [] purchaseTimes= getHttpServletRequest().getParameterValues("purchaseTime");
-        String [] purchaseNumbers= getHttpServletRequest().getParameterValues("purchaseNumber");
+        String  itemIDs= getUTF("itemIDs","");
+        String  itemTypeIDs= getUTF("itemTypeIDs","");
+        String  itemNames= getUTF("itemNames","");
+        String  itemTypeTitles= getUTF("itemTypeTitles","");
+        String  purchaseTimes= getUTF("purchaseTimes","");
+        String  purchaseNumbers= getUTF("purchaseNumbers","");
 
 
         if(id == -1){
@@ -242,15 +251,21 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
             delPurchaseCommodity(id);
             //添加采购单成功再添加采购物品
             if (response.getIntValue("code")==0) {
-                for (int i = 0; i < itemIDs.length; i++) {
+                String []  itemIDList= itemIDs.split(CommonUtils.SPLIT_COMMA);
+                String [] itemTypeIDList= itemTypeIDs.split(CommonUtils.SPLIT_COMMA);
+                String [] itemNameList= itemNames.split(CommonUtils.SPLIT_COMMA);
+                String [] itemTypeTitleList= itemTypeTitles.split(CommonUtils.SPLIT_COMMA);
+                String [] purchaseTimeList= purchaseTimes.split(CommonUtils.SPLIT_COMMA);
+                String [] purchaseNumberList=purchaseNumbers.split(CommonUtils.SPLIT_COMMA);
+                for (int i = 0; i < itemIDList.length; i++) {
                     Map<String, String> parameters2 = new HashMap<>();
-                    parameters2.put("purchaseID", String.valueOf("purchaseID"));
-                    parameters2.put("itemIDs", itemIDs[i]);
-                    parameters2.put("itemTypeIDs", itemTypeIDs[i]);
-                    parameters2.put("itemNames", itemNames[i]);
-                    parameters2.put("itemTypeTitles", itemTypeTitles[i]);
-                    parameters2.put("purchaseTimes", purchaseTimes[i]);
-                    parameters2.put("purchaseNumbers", purchaseNumbers[i]);
+                    parameters2.put("purchaseID", String.valueOf(id));
+                    parameters2.put("itemID", itemIDList[i]);
+                    parameters2.put("itemTypeID", itemTypeIDList[i]);
+                    parameters2.put("itemName", itemNameList[i]);
+                    parameters2.put("itemTypeTitle", itemTypeTitleList[i]);
+                    parameters2.put("purchaseTime", purchaseTimeList[i]);
+                    parameters2.put("purchaseNumber", purchaseNumberList[i]);
                     //调用添加接口
                     savePurchaseCommodity(parameters2);
                 }

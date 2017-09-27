@@ -38,7 +38,7 @@ public interface PurchaseCommodityStoresMapper {
     PurchaseCommodityStores selectByPrimaryKey(Long id);
 
 
-    PurchaseCommodityStores getByParameterID(String warehouseId, Long itemId);
+    PurchaseCommodityStores getByParameterID(@Param("warehouseCode")String warehouseCode,@Param("itemId") Long itemId);
 
     int updateByPrimaryKeySelective(PurchaseCommodityStores record);
 
