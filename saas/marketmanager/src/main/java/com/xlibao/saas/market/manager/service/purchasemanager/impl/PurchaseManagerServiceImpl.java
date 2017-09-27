@@ -101,7 +101,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
             return fail("缺少采购单ID");
         }
         Map<String, String> parameters = new HashMap<>();
-        parameters.put("id","id");
+        parameters.put("id",String.valueOf(id));
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/deletePurchase.do";
             JSONObject response = executor(url, parameters);
