@@ -118,11 +118,11 @@
 <script type="text/javascript">
     function addTr2(tab, row){
         var trHtml="<tr><td>" +
-                "<select class='form-control s1' id='listSelect'>" +
+                "<select class='form-control s1'>" +
                 "<option value='-1'>请选择商品分类</option>" +
                 "<#if (itemTypes?size > 0)><#list itemTypes as iType> <option value='${iType.id?c}' <#if item?exists && iType.id == item.typeId>selected </#if>><#if iType.parentId == 0>${iType.title}<#else>&nbsp;&nbsp;&nbsp;&nbsp;${iType.title}</#if></option></#list><#else><option value='0'>无</option></#if>" +
                 "</select>" +
-                "</td><td><select class='form-control' id='nameSelect'><option value='-1'>请选择商品名称</option></select></td>" +
+                "</td><td><select class='form-control s2'><option value='-1'>请选择商品名称</option></select></td>" +
                 "<td><input id='endTime' type='text' class='form-control'  placeholder='如：2017-10-10'></td>" +
                 "<td><input type='text' class='form-control' id='purchaseCount' placeholder='输入采购数量'></td>" +
                 "<td><button class='btn-danger' onclick='deleTr(this);'>删除</button></td>" +
@@ -164,13 +164,14 @@
         //级联下拉列表
         $(document).on('change','.s1',function () {
             var $s1 = $(this);
-            var $s2 = $("#nameSelect");
+            var $s2 = $(".s2");
             var _id = $(this).val();
-            alert(_id);
             if(_id !=""){//当商品分类不为空时
                 if(!$s1.data(_id)){//不在缓冲区中,需要向服务器请求
-                    $.get("http://192.168.1.166:17777/item/item/getItemTemplateIdAndNames.do?itemTypeId=" + _id,function(data) {
+                    $.get("http://192.168.1.166:17777/item/item/getItemTemplateIdAndNames.do?itemTypeId=100022",function(data) {
+                        console.log(data)
                         var obj = data.response.datas;
+
                         if((obj.length != 0)&& data) {//返回的数据不为空
                             $s2.html("");
                             for(var i = 0; i < obj.length; i++) {

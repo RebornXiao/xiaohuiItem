@@ -66,9 +66,16 @@
                                 <td>${stock.itemName}</td>
                                 <td>${stock.storesNumber}</td>
                                 <td>${stock.warnNumber}</td>
-                                <td>${stock.updateTime}</td>
+                                <#--<td><#if stock.updateTime!="">${html('${(stock.updateTime)!}')}<#else>无</#if></td>-->
+                                <#--<#if stock.updateTime="">-->
+                                    <#--<td>无</td>-->
+                                <#--<#else>-->
+                                    <#--<td>${stock.updateTime}</td>-->
+                                <#--</#if>-->
+                                <td>无</td>
                                 <td>
-                                    <button id="editBtn" type="button" class="btn btn-primary btn-sm">编辑</button>
+                                    <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${stock.id}" data_no="${stock.warnNumber}">编辑</button>
+                                    <#--<button id="saveBtn_${stock_index+1}" type="button" class="btn btn-warning btn-sm" style="display: none" data_id="${stock.id}">保存</button>-->
                                 </td>
                             </tr>
                             </#list>
@@ -96,6 +103,18 @@
     </div>
 </div>
 <script>
+    var update = function(btn){
+        var tr = btn.parentElement.parentElement;
+        console.log(tr);
+        var td = tr.cells[5];
+        console.log(td);
+        var txt = document.createElement("input");
+        txt.type="text";
+        txt.className="form-control";
+        txt.value = td.innerHTML;
+        td.innerHTML = "";
+        td.appendChild(txt);
+    }
     $(document).ready(function () {
          //取url参数给表单赋值
         function GetQueryString(name) {
@@ -118,13 +137,101 @@
         );
 
 	//编辑
-    <#--<#if (stockList?size > 0)>-->
-        <#--$("#stockInfoTable").find('button[id=editBtn]').each(function () {-->
-            <#--var that = this;-->
-            <#--$(this).on('click', function () {-->
-                <#--location.href = "${base}"+$(that).attr("data_id");-->
-            <#--});-->
-        <#--});-->
-    <#--</#if>-->
+    <#if (stocks?size > 0)>
+        $("#stockInfoTable").find('button[id=editBt]').each(function () {
+            $(this).on('click', function () {
+                var col = $(this).parent().index() + 1;
+                var row =  $(this).parent().parent().index()+1;
+                alert(row);
+                var $btn = '#saveBtn_'+ col;
+//                alert($btn);
+                var tr = $(this).parent().parent();
+                var td = tr.find("td:eq(5)");
+                var td7 = tr.find("td:eq(7)").find('button');
+                var tdTxt = td.text();
+                td7.text("保存");
+                $(".btn-primary").hide();
+                $($btn).show();
+                td.addClass('input').html('<input type="text" class="form-control" value="'+ tdTxt +'" />');
+                if(!td.is('.input')){
+                    td.addClass('input').html('<input type="text" class="form-control" value="'+ tdTxt +'" />').find('input').focus().blur(function(){
+                        $(this).parent().removeClass('input').html($(this).val() || 0);
+                    });
+                }
+            });
+        });
+    </#if>
+        //保存
+    <#if (stocks?size > 0)>
+        $("#stockInfoTable").find('button[id=saveBtn]').each(function () {
+            $(this).on('click', function () {
+                var $tr = $(this).parent().parent();
+                var $txt = $tr.find("td:eq(5)").text();
+                $.post("${base}/purchase/updateCommodityStores.do?id="+$(this).attr("data_id")+"&warnNumber="+$txt , function (data) {
+                //重新刷新
+                console.log(data);
+                if (data.code == "0") {
+                swal("提示", "保存成功", "success");
+                setTimeout(function () {location.reload()}, 1000);
+                } else {
+                swal("提示", data.msg, "error");
+                }
+                }, "json");
+            });
+        });
+    </#if>
+
+        //弹窗保存
+    <#if (stocks?size > 0)>
+        $("#stockInfoTable").find('button[id=editBtn]').each(function () {
+            var that = this;
+            $(this).on('click', function () {
+                var txt = $(this).attr("data_no");
+                $("#editModal").modal('show');
+                $("#editCount").val(txt);
+                $("#yesBtn").on('click',function () {
+                    var count = $("#editCount").val();
+                    $.post("${base}/purchase/updateCommodityStores.do?id="+$(that).attr("data_id")+"&warnNumber="+count , function (data) {
+                        //重新刷新
+                        console.log(data);
+                        if (data.code == "0") {
+                            swal("提示", "保存成功", "success");
+                            setTimeout(function () {location.reload()}, 1000);
+                        } else {
+                            swal("提示", data.msg, "error");
+                        }
+                    }, "json");
+                });
+            });
+        });
+    </#if>
+
     });
 </script>
+<!--编辑弹窗-->
+<div class="modal fade" id="editModal" tabindex="-1" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel">编辑库存预警</h4>
+            </div>
+            <div class="modal-body">
+                <div class="modalAdvertStyle">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-md-4 control-label">库存预警：</label>
+                            <div class="col-md-6">
+                                <input type="text" class="form-control" id="editCount"/>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            <div class="modal-footer" style="text-align: center">
+                <button id="noBtn" type="Button" class="btn btn-primary" style="padding:10px 30px" data-dismiss="modal">取消</button>
+                <button id="yesBtn" type="Button" class="btn btn-primary" style="padding:10px 30px">确定</button>
+            </div>
+        </div>
+    </div>
+</div>
