@@ -14,10 +14,10 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-sm-8">
-                    <div class="advert_container">
-                        <div>
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="advert_container">
                             <h5 class="page-title" style="padding-top: 20px"><b>基本信息</b></h5>
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
                             <div class="table-responsive advert_detail_table">
@@ -50,11 +50,9 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="advert_container">
-                        <div>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="advert_container">
                             <h5 class="page-title" style="padding-top: 20px"><b>联系信息</b></h5>
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
                             <div class="table-responsive">
@@ -109,7 +107,6 @@
                     "sname": $("#saleName").val(),
                     "phone": $("#salephone").val()
                 };
-                alert(arr.phone);
                 var input1 = checkInput(arr.name);
                 var input2 = checkInput(arr.address);
                 var input3 = checkInput(arr.select);

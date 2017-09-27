@@ -15,21 +15,25 @@
             </div>
 
             <div class="card-box">
-                <form class="form-inline" role="form" action="${base}">
+                <form class="form-inline" role="form" action="${base}/purchase/commodityStoresPage.do">
                     <div class="form-group m-l-15">
                         <label>仓库名称：</label>
-                        <select id="houseSelect" class="form-control" name="timeType">
-                            <option value="-1">选择仓库</option>
-                            <option value="0">淘金仓</option>
+                        <select id="houseSelect" class="form-control" name="warehouseCode">
+                            <option value="">选择仓库</option>
+                        <#if warehouseItem?exists >
+                            <#list warehouseItem as warehouse>
+                                <option value="${warehouse.warehouseCode}">${warehouse.warehouseName}</option>
+                            </#list>
+                        </#if>
                         </select>
                     </div>
                     <div class="form-group m-l-15">
                         <label>商品名称：</label>
-                        <input type="text" class="form-control" id="goodsName" placeholder="输入商品名称" name="title">
+                        <input type="text" class="form-control" id="goodsName" placeholder="输入商品名称" name="itemName">
                     </div>
                     <div class="form-group m-l-15">
                         <label>条形码：</label>
-                        <input type="text" class="form-control" id="goodsCode" placeholder="输入商品条形码" name="title">
+                        <input type="text" class="form-control" id="goodsCode" placeholder="输入商品条形码" name="barcode">
                     </div>
                     <div class="form-group m-l-15">
                         <button type="submit" class="btn btn-primary" id="searchBtn"><i class="fa fa-search"></i> 搜索</button>
@@ -57,13 +61,12 @@
                             <#list stocks as stock>
                             <tr id="tr_${stock_index}">
                                 <td>${stock.id}</td>
-                                <td>${stock.warehouseID}</td>
-                                <td>商品分类</td>
-                                <td>${stock.commodityName}</td>
-                                <td>${stock.commodityCode}</td>
+                                <td>${stock.warehouseName}</td>
+                                <td>${stock.itemTypeName}</td>
+                                <td>${stock.itemName}</td>
                                 <td>${stock.storesNumber}</td>
                                 <td>${stock.warnNumber}</td>
-                                <td>${stock.createTime}</td>
+                                <td>${stock.updateTime}</td>
                                 <td>
                                     <button id="editBtn" type="button" class="btn btn-primary btn-sm">编辑</button>
                                 </td>

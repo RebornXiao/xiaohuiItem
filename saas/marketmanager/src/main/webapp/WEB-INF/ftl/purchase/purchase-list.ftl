@@ -18,11 +18,11 @@
                 <form class="form-inline" role="form" action="${base}/purchase/purchasePage.do">
                     <div class="form-group m-l-15">
                         <label>仓库名称：</label>
-                        <select id="houseSelect" class="form-control" name="warehouseID">
-                            <option value="-1">全部仓库</option>
+                        <select id="houseSelect" class="form-control" name="warehouseCode">
+                            <option value="">全部仓库</option>
                             <#if warehouseItem?exists >
                                 <#list warehouseItem as warehouse>
-                                    <option value="${warehouse.id}">${warehouse.warehouseName}</option>
+                                    <option value="${warehouse.warehouseCode}">${warehouse.warehouseName}</option>
                                 </#list>
                             </#if>
                         </select>
@@ -117,15 +117,14 @@
         </div>
     </div>
 </div>
-<script>
+<script type="text/javascript">
+    //取url参数给表单赋值
+    function GetQueryString(name) {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]); return null;
+    }
     $(document).ready(function () {
-         //取url参数给表单赋值
-        function GetQueryString(name) {
-            var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-            var r = window.location.search.substr(1).match(reg);
-            if(r!=null)return  unescape(r[2]); return null;
-        }
-
         //鼠标经过效果
         $("tr[id^='tr_']").hover(
             function(){ // onmouseover
@@ -190,16 +189,6 @@
             </div>
             <div class="modal-body">
                 <p style="text-align: center">确定要删除该条记录吗？</p>
-                <#--<form class="form-horizontal" role="form">-->
-                	<#--<div class="form-group">-->
-                        <#--<label class="col-md-4 control-label">请说明停用仓库的原因：</label>                    -->
-                    <#--</div>-->
-                    <#--<div class="form-group">-->
-                        <#--<div class="col-md-6">-->
-                            <#--<textarea class="form-control" rows="4" id="stopRemark"></textarea>-->
-                        <#--</div>-->
-                    <#--</div>-->
-                <#--</form>-->
             </div>
             <div class="modal-footer" style="text-align: center">
                 <button id="deleNoBtn" type="button" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
