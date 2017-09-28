@@ -103,7 +103,7 @@
                         <ul class="list-unstyled" <#if tab=="purchase"> style="display: block;" </#if> >
                             <li <#if tab_child=="purchases"> class="active" </#if> ><a href="${base}/purchase/purchasePage.do">采购单列表</a></li>
                             <li <#if tab_child=="suppliers"> class="active" </#if> ><a href="${base}/purchase/supplierPage.do">供应商列表</a></li>
-                            <li <#if tab_child=="stocks"> class="active" </#if> ><a href="${base}/purchase/stockPage.do">商品库存列表</a></li>
+                            <li <#if tab_child=="stocks"> class="active" </#if> ><a href="${base}/purchase/commodityStoresPage.do">商品库存列表</a></li>
                             <li <#if tab_child=="houses"> class="active" </#if> ><a href="${base}/purchase/warehousePage.do">仓库列表</a></li>
                         </ul>
                     </li>

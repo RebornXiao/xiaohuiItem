@@ -184,9 +184,6 @@
             $(this).on('click', function () {
                 console.log($(that).attr("data_id"));
                 $("#deleModel").modal('show');
-                $("#deleNoBtn").on('click',function () {
-                    $("#deleModel").modal('hide');
-                });
                 $("#deleOkBtn").on('click',function () {
                     $.post("${base}/advert/delAdvert.do?advertID=" + $(that).attr("data_id"), function(data) {
                         //重新刷新

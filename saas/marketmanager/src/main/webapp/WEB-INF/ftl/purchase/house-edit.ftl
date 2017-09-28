@@ -75,10 +75,10 @@
     </div>
 </div>
 <script type="text/javascript">
+    function checkInput (obj){//检查表单是否有空项，空格验证方法待加
+        if(obj == "") {return false;} else {return true;}
+    }
     $(document).ready(function () {
-        function checkInput (obj){//检查表单是否有空项，空格验证方法待加
-            if(obj == "") {return false;} else {return true;}
-        }
         $("#saveBtn").on('click', function () {//确定
             $(this).button('loading').delay(500).queue(function() {
                 $(this).button('reset'); //重置按钮
