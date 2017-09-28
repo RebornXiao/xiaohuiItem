@@ -1,22 +1,31 @@
 package com.xlibao.purchase.service.purchase.impl;
 
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
-import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.exception.XlibaoIllegalArgumentException;
+import com.xlibao.common.http.HttpRequest;
+import com.xlibao.purchase.config.ConfigFactory;
 import com.xlibao.purchase.data.mapper.PurchaseDataAccessManager;
 import com.xlibao.purchase.data.model.*;
 import com.xlibao.purchase.service.purchase.PurchaseService;
 import com.xlibao.purchase.utils.DateUtil;
 import org.apache.ibatis.annotations.ResultMap;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
+
+import static com.alibaba.fastjson.JSON.parseObject;
 
 
 /**
@@ -25,6 +34,8 @@ import java.util.List;
 @Transactional
 @Service("advertService")
 public class PurchaseServiceImpl extends BasicWebService implements PurchaseService {
+
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PurchaseServiceImpl.class);
 
     @Autowired
     private PurchaseDataAccessManager purchaseDataAccessManager;
@@ -532,9 +543,11 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String warehouseName = getUTF("warehouseName",null);
         int status = getIntParameter("status", -1);
         String exceptionRemark = getUTF("exceptionRemark",null);
-
+        /**保留一*/
+        String datas = getUTF("datas",null);
+        /***删除二
         String commodityIds= getUTF("commodityIds",null);
-        String  depositNumbers= getUTF("depositNumbers",null);
+        String  depositNumbers= getUTF("depositNumbers",null);*/
 
         if(id == -1){
             return fail("缺少采购单ID");
@@ -544,8 +557,8 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
             return fail("缺少仓库编码");
         }else if(warehouseName == null){
             return fail("缺少仓库名称");
-        }else if(commodityIds== null||depositNumbers== null){
-            return fail("缺少入库商品信息");
+        }else if(datas== null){
+            return fail("缺少入库产品明细信息");
         }
 
         PurchaseEntry purchaseEntry = new PurchaseEntry();
@@ -556,6 +569,31 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         purchaseEntry.setUpdateTime(DateUtil.getNowDate());
 
         if (purchaseDataAccessManager.updatePurchase(purchaseEntry) > 0) {
+           /**保留一*/
+            if(datas!=null){
+                JSONArray dataArray = JSONObject.parseArray(datas);
+                for(int i=0;i<dataArray.size();i++){
+                    JSONObject object = dataArray.getJSONObject(i);
+                    Long commodityId = object.getLong("id");
+                    int depositNumber = object.getInteger("depositNumber");
+                    PurchaseCommodity purchaseCommodity = new PurchaseCommodity();
+                    purchaseCommodity.setId(commodityId);
+                    purchaseCommodity.setDepositTime(DateUtil.getNowDate());
+                    purchaseCommodity.setDepositNumber(depositNumber);
+                    purchaseCommodity.setUpdateTime(DateUtil.getNowDate());
+
+                    int result = purchaseDataAccessManager.updatePurchaseCommodity(purchaseCommodity) ;
+                    if (result <= 0) {
+                        throw new XlibaoIllegalArgumentException("产品入库数量失败");
+                    }else {
+                        //获取入库产品信息
+                        PurchaseCommodity commodity = purchaseDataAccessManager.getPurchaseCommodity(commodityId);
+                        //更新商品库存
+                        updateStockNumber(warehouseCode,warehouseName,commodity.getItemTypeId(),commodity.getItemTypeTitle(),commodity.getItemId(),commodity.getItemName(),commodity.getBarcode(),1,depositNumber);
+                    }
+                }
+            }
+            /***删除二
             String[] commodityIdList = commodityIds.split(CommonUtils.SPLIT_COMMA);
             String[] depositNumberList = depositNumbers.split(CommonUtils.SPLIT_COMMA);
             for (int i=0;i<commodityIdList.length;i++) {
@@ -568,7 +606,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
 
                     int result = purchaseDataAccessManager.updatePurchaseCommodity(purchaseCommodity) ;
                     if (result <= 0) {
-                        throw new XlibaoRuntimeException("产品入库数量失败");
+                        throw new XlibaoIllegalArgumentException("产品入库数量失败");
                     }else {
                         //获取入库产品信息
                         PurchaseCommodity commodity = purchaseDataAccessManager.getPurchaseCommodity(Long.parseLong(commodityIdList[i]));
@@ -577,12 +615,68 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
                     }
 
                 }
-            }
+            }*/
+            /****/
+            putInWMS(datas);
             //将入库信息推送至WMS系统
         }else {
-            throw new XlibaoRuntimeException("入库失败");
+            throw new XlibaoIllegalArgumentException("入库失败");
         }
         return success("入库成功");
+    }
+
+    public void putInWMS(String datas){
+        String url = ConfigFactory.getDomainNameConfig().wmsRemoteURL+"/sycnInputPlan.do";
+        String appkey = "111111";
+        String sessionkey = "222222";
+        String version = "1.0";
+        String param = "";
+        String ownercode ="beibei";
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("sourceno","11");
+        jsonObject.put("planno","22");
+        jsonObject.put("title","测试");
+        jsonObject.put("ownercode","beibei");
+        jsonObject.put("whcode","beibei");
+        jsonObject.put("type","21");
+
+        JSONArray array = new JSONArray();
+
+        JSONArray dataArray = JSONObject.parseArray(datas);
+        for(int i=0;i<dataArray.size();i++) {
+            JSONObject object = dataArray.getJSONObject(i);
+            String commodityId = object.getString("id");
+            String itemId = object.getString("itemId");
+            String itemName = object.getString("itemName");
+            String itemTypeId = object.getString("itemTypeId");
+            String itemTypeTitle = object.getString("itemTypeTitle");
+            String barcode = object.getString("barcode");
+            String depositNumber = object.getString("depositNumber");
+            JSONObject dataMap = new JSONObject();
+            dataMap.put("procode", itemId);
+            dataMap.put("proname", itemName);
+            dataMap.put("skucode", itemTypeId);
+            dataMap.put("skuname", itemTypeTitle);
+            dataMap.put("skuoid", barcode);
+            dataMap.put("skucount", depositNumber);
+            array.add(dataMap);
+        }
+
+        jsonObject.put("details",array);
+        String jsonStr = jsonObject.toString();
+
+        param = "appkey="+ URLEncoder.encode(appkey)
+                +"&"+"sessionkey="+URLEncoder.encode(sessionkey)+"&"+"version="+URLEncoder.encode(version)+"&ownercode="+URLEncoder.encode(ownercode)
+                +"&body="+URLEncoder.encode(jsonStr);
+
+        String json = HttpRequest.get(url+"?"+param);
+        JSONObject response = parseObject(json);
+        if(response.getBoolean("success")==true){
+            logger.info("WMS入库成功！入库码："+response.getString("data"));
+        }else {
+            throw new XlibaoIllegalArgumentException("WMS入库失败");
+        }
+
     }
 
     @Override
@@ -601,22 +695,27 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         }else if(number==-1){
             return fail("缺少商品数量");
         }
-        updateStockNumber(warehouseCode,null,-1,null,itemId,null,null,stockType,number);
-        return success("商品库存更新");
+       JSONObject response = updateStockNumber(warehouseCode,null,-1,null,itemId,null,null,stockType,number);
+        return success("商品库存更新",response);
     }
 
     public JSONObject updateStockNumber(String warehouseCode,String warehouseName,long itemTypeId,String itemTypeName,long itemId,String itemName,String  barcode,int stockType,int number){
+        int stockNumber=number;
         //更新库存数量stockType:0出库1入库
         if(stockType == 0){
             PurchaseCommodityStores purchaseCommodityStore =  purchaseDataAccessManager.getByParameterID(warehouseCode,itemId);
             if(purchaseCommodityStore!=null){
                 int storesNumber=purchaseCommodityStore.getStoresNumber();
+                stockNumber=storesNumber-number;
                 purchaseCommodityStore.setStoresNumber(storesNumber-number);
                 purchaseCommodityStore.setUpdateTime(DateUtil.getNowDate());
                 if(purchaseDataAccessManager.updateCommodityStores(purchaseCommodityStore)>0){
-                    return success("更新商品库存");
+                    JSONObject response = new JSONObject();
+                    response.put("itemId",itemId);
+                    response.put("stockNumber",stockNumber);
+                    return success(response);
                 }else {
-                    throw new XlibaoRuntimeException("更新商品库存失败");
+                    throw new XlibaoIllegalArgumentException("更新商品库存失败");
                 }
             }else{
                 return fail("商品库存不存在");
@@ -635,22 +734,50 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
                 purchaseCommodityStoresa.setStoresNumber(number);
                 //添加库存信息
                 if(purchaseDataAccessManager.savePurchaseCommodityStores(purchaseCommodityStoresa)>0){
-                    return success("新增商品库存");
+                    JSONObject response = new JSONObject();
+                    response.put("itemId",itemId);
+                    response.put("stockNumber",stockNumber);
+                    return success(response);
                 }else {
-                    throw new XlibaoRuntimeException("新增商品库存失败");
+                    throw new XlibaoIllegalArgumentException("新增商品库存失败");
                 }
             }else{
                 int storesNumber=purchaseCommodityStores.getStoresNumber();
+                stockNumber=storesNumber+number;
                 purchaseCommodityStores.setStoresNumber(storesNumber+number);
                 purchaseCommodityStores.setUpdateTime(DateUtil.getNowDate());
                 if(purchaseDataAccessManager.updateCommodityStores(purchaseCommodityStores)>0){
-                    return success("更新商品库存");
+                    JSONObject response = new JSONObject();
+                    response.put("itemId",itemId);
+                    response.put("stockNumber",stockNumber);
+                    return success(response);
                 }else {
-                    throw new XlibaoRuntimeException("更新商品库存失败");
+                    throw new XlibaoIllegalArgumentException("更新商品库存失败");
                 }
             }
+        }else if(stockType==2){
+            PurchaseCommodityStores purchaseCommodityStore =  purchaseDataAccessManager.getByParameterID(warehouseCode,itemId);
+            if(purchaseCommodityStore!=null){
+                int storesNumber=purchaseCommodityStore.getStoresNumber();
+                stockNumber=storesNumber+number;
+                purchaseCommodityStore.setStoresNumber(storesNumber+number);
+                purchaseCommodityStore.setUpdateTime(DateUtil.getNowDate());
+                if(purchaseDataAccessManager.updateCommodityStores(purchaseCommodityStore)>0){
+                    JSONObject response = new JSONObject();
+                    response.put("itemId",itemId);
+                    response.put("stockNumber",stockNumber);
+                    return success(response);
+                }else {
+                    throw new XlibaoIllegalArgumentException("更新商品库存失败");
+                }
+            }else{
+                return fail("商品库存不存在");
+            }
         }
-        return success("更新商品库存");
+        JSONObject response = new JSONObject();
+        response.put("itemId",itemId);
+        response.put("stockNumber",stockNumber);
+        return success(response);
     }
 
     @Override
