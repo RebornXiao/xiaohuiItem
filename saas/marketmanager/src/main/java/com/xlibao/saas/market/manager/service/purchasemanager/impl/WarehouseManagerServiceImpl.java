@@ -2,7 +2,7 @@ package com.xlibao.saas.market.manager.service.purchasemanager.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.CommonUtils;
-import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.support.BasicRemoteService;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.service.purchasemanager.SupplierManagerService;
@@ -38,8 +38,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/searchWarehousePage.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -67,8 +67,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/saveWarehouse.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -79,8 +79,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getAllWarehouse.do";
             JSONObject response = executor(url,parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -111,8 +111,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateWarehouse.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -138,8 +138,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateWarehouseStatus.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -156,8 +156,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getWarehouse.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -181,8 +181,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/saveWarehouseUser.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -195,8 +195,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getWarehouseUsers.do";
             JSONObject response = executor(url,parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -217,8 +217,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateWarehouseUserPwd.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -236,8 +236,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/deleteWarehouseUser.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
     @Override
@@ -260,8 +260,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/searchCommodityStoresPage.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -284,8 +284,8 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateCommodityStores.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 

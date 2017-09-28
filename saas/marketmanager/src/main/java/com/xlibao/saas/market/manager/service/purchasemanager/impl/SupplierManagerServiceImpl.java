@@ -1,7 +1,7 @@
 package com.xlibao.saas.market.manager.service.purchasemanager.impl;
 
 import com.alibaba.fastjson.JSONObject;
-import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.support.BasicRemoteService;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.service.purchasemanager.SupplierManagerService;
@@ -39,8 +39,8 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/searchSupplierPage.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
 
     }
@@ -51,8 +51,8 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getAllSupplier.do";
             JSONObject response = executor(url,parameters);
              return response;
-         }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+         }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
           }
     }
     @Override
@@ -88,8 +88,8 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
              String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/saveSupplier.do";
              JSONObject response = executor(url,parameters);
              return response;
-        }catch (XlibaoRuntimeException ex){
-             throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+             throw new XlibaoIllegalArgumentException("远程接口通信异常");
          }
     }
     @Override
@@ -128,8 +128,8 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateSupplier.do";
             JSONObject response = executor(url,parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -153,8 +153,8 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateSupplierStatus.do";
             JSONObject response = executor(url,parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -169,8 +169,8 @@ public class SupplierManagerServiceImpl extends BasicRemoteService implements Su
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getSupplier.do";
             JSONObject response = executor(url,parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 }

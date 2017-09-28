@@ -3,7 +3,7 @@ package com.xlibao.saas.market.manager.service.purchasemanager.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.CommonUtils;
-import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.support.BasicRemoteService;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.service.purchasemanager.PurchaseManagerService;
@@ -44,8 +44,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/searchPurchasePage.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -61,8 +61,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getPurchase.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -75,8 +75,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getPurchaseCommodityS.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -89,8 +89,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/getSupplierCommodityS.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -107,8 +107,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/deletePurchase.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
 
@@ -164,8 +164,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
                     savePurchaseCommodity(parameters2);
                 }
             }
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
         return success("添加成功");
     }
@@ -207,8 +207,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/savePurchaseCommodity.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
 
     }
@@ -270,8 +270,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
                     savePurchaseCommodity(parameters2);
                 }
             }
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
         return success("添加成功");
     }
@@ -288,8 +288,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/delPurchaseCommodity.do";
             JSONObject response = executor(url, parameters);
             return response;
-        }catch (XlibaoRuntimeException ex){
-            throw new XlibaoRuntimeException("远程接口通信异常");
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
 
     }
