@@ -169,7 +169,7 @@ function set_upload_param(up, filename)
     now = timestamp = Date.parse(new Date()) / 1000;
     if (expire < now + 3) {
         //重新获取
-        $.post(serverUrl, function (data) {
+        tokenPost(serverUrl, function (data) {
             handler_signature(data);
             handler_start(up, filename);
         });

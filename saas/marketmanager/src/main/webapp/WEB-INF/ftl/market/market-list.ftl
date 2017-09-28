@@ -322,7 +322,7 @@
                         <#if districtId?exists >${districtId?c}<#else>0</#if> ,
                         <#if streetId?exists >${streetId?c}<#else>0</#if> ,
                         _streets, function (id, func) {
-                            $.post("${base}/market/getStreets.do?districtId=" + id, function (data) {
+                            tokenPost("${base}/market/getStreets.do?districtId=" + id, function (data) {
                                 func(id, data);
                             }, "json");
                         });

@@ -397,7 +397,7 @@
                         });
                     } else {
                         //从网络获取
-                        $.post("${base}/item/idNameItems.do?itemTypeId=" + data_id, function (json) {
+                        tokenPost("${base}/item/idNameItems.do?itemTypeId=" + data_id, function (json) {
                             if (json.code != 0) {
                                 swal(json.msg);
                             } else {
@@ -537,7 +537,7 @@
                     var data_id = td.attr("data_id");
                     var data_code = td.attr("data_code");
                     //取得任务数据
-                    $.post("${base}/market/checkPrepareActionTask.do?taskId=" + task_id, function (json) {
+                    tokenPost("${base}/market/checkPrepareActionTask.do?taskId=" + task_id, function (json) {
                         if (json.code != 0) {
                             swal(json.msg);
                         } else {
@@ -639,7 +639,7 @@
                             return;
                         }
                         //去取消
-                        $.post("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
+                        tokenPost("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
                             if (json.code != 0) {
                                 swal(json.msg);
                             } else {
