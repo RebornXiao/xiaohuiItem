@@ -10,6 +10,7 @@ import com.lzy.okgo.convert.StringConvert;
 import com.lzy.okgo.request.BaseRequest;
 import com.zhumg.anlib.AfinalActivityHttpLife;
 import com.zhumg.anlib.utils.JsonUtils;
+import com.zhumg.anlib.utils.SpUtils;
 
 import org.json.JSONObject;
 
@@ -87,6 +88,8 @@ public class Callback extends AbsCallback implements Runnable {
             String access = json.optString("accessToken");
             if(access != null && access.length() > 0) {
                 ACCESS_KEY = access;
+                //保存
+                SpUtils.saveValue("accessToken", access);
             }
 
             if(json.optString("code").equals("SUCCESS")){
@@ -99,7 +102,6 @@ public class Callback extends AbsCallback implements Runnable {
                     httpCallback.code = -1000;
                     ex.printStackTrace();
                 }
-
             }
 
             httpCallback.msg = json.optString("msg");

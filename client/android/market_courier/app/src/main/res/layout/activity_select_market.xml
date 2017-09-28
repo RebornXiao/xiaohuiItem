@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <include layout="@layout/widget_titlebar_base" />
 
     <FrameLayout
+        android:background="@color/bg_f2"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
@@ -26,8 +29,8 @@
                 android:id="@+id/fr_listview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:divider="#00000000"
-                android:dividerHeight="0dp"
+                android:divider="@color/line_d2"
+                android:dividerHeight="1px"
                 android:listSelector="#00000000" />
 
         </in.srain.cube.views.ptr.PtrClassicFrameLayout>
