@@ -74,8 +74,7 @@
                                 <#--</#if>-->
                                 <td>无</td>
                                 <td>
-                                    <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${stock.id}" data_no="${stock.warnNumber}">编辑</button>
-                                    <#--<button id="saveBtn_${stock_index+1}" type="button" class="btn btn-warning btn-sm" style="display: none" data_id="${stock.id}">保存</button>-->
+                                    <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${stock.id}" data_no="${stock.warnNumber}" onclick="update(this)">编辑</button>
                                 </td>
                             </tr>
                             </#list>
@@ -102,27 +101,41 @@
         </div>
     </div>
 </div>
-<script>
-    var update = function(btn){
-        var tr = btn.parentElement.parentElement;
-        console.log(tr);
-        var td = tr.cells[5];
-        console.log(td);
-        var txt = document.createElement("input");
-        txt.type="text";
-        txt.className="form-control";
-        txt.value = td.innerHTML;
-        td.innerHTML = "";
-        td.appendChild(txt);
+<script type="text/javascript">
+    //取url参数给表单赋值
+    function GetQueryString(name) {
+        var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
+        var r = window.location.search.substr(1).match(reg);
+        if(r!=null)return  unescape(r[2]); return null;
+    }
+    function update(obj){
+        var xg=$(obj).html();
+        var $tr = $(obj).parent().parent();
+        var $td = $tr.find("td:eq(5)");
+        var tdTxt = $td.text();
+        if(xg=='编辑'){
+            $($td).html("<input type='text' name='editname' class='form-control' value="+tdTxt+" >");
+            $(obj).addClass('btn-warning');
+            $(obj).removeClass('btn-primary');
+            $(obj).html('保存');
+        }else if(xg=='保存'){
+            var inputTxt  = $td.find('input').val();
+            $.post("${base}/purchase/updateCommodityStores.do?id="+$(obj).attr("data_id")+"&warnNumber="+inputTxt , function (data) {
+            //重新刷新
+            console.log(data);
+            if (data.code == "0") {
+                swal("提示", "保存成功", "success");
+                setTimeout(function () {location.reload()}, 1000);
+            } else {
+                swal("提示", data.msg, "error");
+            }
+            }, "json");
+            $(obj).addClass('btn-primary');
+            $(obj).removeClass('btn-warning');
+            $(obj).html('编辑');
+        }
     }
     $(document).ready(function () {
-         //取url参数给表单赋值
-        function GetQueryString(name) {
-            var reg = new RegExp("(^|&)"+ name +"=([^&]*)(&|$)");
-            var r = window.location.search.substr(1).match(reg);
-            if(r!=null)return  unescape(r[2]); return null;
-        }
-
         //鼠标经过效果
         $("tr[id^='tr_']").hover(
             function(){ // onmouseover
@@ -136,75 +149,30 @@
             }
         );
 
-	//编辑
-    <#if (stocks?size > 0)>
-        $("#stockInfoTable").find('button[id=editBt]').each(function () {
-            $(this).on('click', function () {
-                var col = $(this).parent().index() + 1;
-                var row =  $(this).parent().parent().index()+1;
-                alert(row);
-                var $btn = '#saveBtn_'+ col;
-//                alert($btn);
-                var tr = $(this).parent().parent();
-                var td = tr.find("td:eq(5)");
-                var td7 = tr.find("td:eq(7)").find('button');
-                var tdTxt = td.text();
-                td7.text("保存");
-                $(".btn-primary").hide();
-                $($btn).show();
-                td.addClass('input').html('<input type="text" class="form-control" value="'+ tdTxt +'" />');
-                if(!td.is('.input')){
-                    td.addClass('input').html('<input type="text" class="form-control" value="'+ tdTxt +'" />').find('input').focus().blur(function(){
-                        $(this).parent().removeClass('input').html($(this).val() || 0);
-                    });
-                }
-            });
-        });
-    </#if>
-        //保存
-    <#if (stocks?size > 0)>
-        $("#stockInfoTable").find('button[id=saveBtn]').each(function () {
-            $(this).on('click', function () {
-                var $tr = $(this).parent().parent();
-                var $txt = $tr.find("td:eq(5)").text();
-                $.post("${base}/purchase/updateCommodityStores.do?id="+$(this).attr("data_id")+"&warnNumber="+$txt , function (data) {
-                //重新刷新
-                console.log(data);
-                if (data.code == "0") {
-                swal("提示", "保存成功", "success");
-                setTimeout(function () {location.reload()}, 1000);
-                } else {
-                swal("提示", data.msg, "error");
-                }
-                }, "json");
-            });
-        });
-    </#if>
-
         //弹窗保存
-    <#if (stocks?size > 0)>
-        $("#stockInfoTable").find('button[id=editBtn]').each(function () {
-            var that = this;
-            $(this).on('click', function () {
-                var txt = $(this).attr("data_no");
-                $("#editModal").modal('show');
-                $("#editCount").val(txt);
-                $("#yesBtn").on('click',function () {
-                    var count = $("#editCount").val();
-                    $.post("${base}/purchase/updateCommodityStores.do?id="+$(that).attr("data_id")+"&warnNumber="+count , function (data) {
-                        //重新刷新
-                        console.log(data);
-                        if (data.code == "0") {
-                            swal("提示", "保存成功", "success");
-                            setTimeout(function () {location.reload()}, 1000);
-                        } else {
-                            swal("提示", data.msg, "error");
-                        }
-                    }, "json");
-                });
-            });
-        });
-    </#if>
+    <#--<#if (stocks?size > 0)>-->
+        <#--$("#stockInfoTable").find('button[id=editBtn]').each(function () {-->
+            <#--var that = this;-->
+            <#--$(this).on('click', function () {-->
+                <#--var txt = $(this).attr("data_no");-->
+                <#--$("#editModal").modal('show');-->
+                <#--$("#editCount").val(txt);-->
+                <#--$("#yesBtn").on('click',function () {-->
+                    <#--var count = $("#editCount").val();-->
+                    <#--$.post("${base}/purchase/updateCommodityStores.do?id="+$(that).attr("data_id")+"&warnNumber="+count , function (data) {-->
+                        <#--//重新刷新-->
+                        <#--console.log(data);-->
+                        <#--if (data.code == "0") {-->
+                            <#--swal("提示", "保存成功", "success");-->
+                            <#--setTimeout(function () {location.reload()}, 1000);-->
+                        <#--} else {-->
+                            <#--swal("提示", data.msg, "error");-->
+                        <#--}-->
+                    <#--}, "json");-->
+                <#--});-->
+            <#--});-->
+        <#--});-->
+    <#--</#if>-->
 
     });
 </script>
