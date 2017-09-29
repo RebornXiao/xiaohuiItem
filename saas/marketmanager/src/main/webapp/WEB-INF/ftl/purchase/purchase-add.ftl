@@ -77,7 +77,7 @@
                                         </tr>
                                     </thead>
                                     <tbody id="tab">
-                                    <tr>
+                                    <tr id="tr_1">
                                         <td>
                                             <select class="form-control" onchange="changeSelect(this)">
                                                 <option value="">请选择商品分类</option>
@@ -133,12 +133,16 @@
                 "<#if (itemTypes?size > 0)><#list itemTypes as iType> <option value='${iType.id?c}' <#if item?exists && iType.id == item.typeId>selected </#if>>" +
                 "<#if iType.parentId == 0>${iType.title}<#else>&nbsp;&nbsp;&nbsp;&nbsp;${iType.title}</#if></option></#list><#else><option value='0'>无</option></#if>" +
                 "</select></td>" +
-                "<td><select class='form-control' onchange='addCode(this)'></select></td>" +
+                "<td><select class='form-control' onchange='addCode(this)'><option value=''>请选择商品名称</option></select></td>" +
                 "<td><fieldset disabled><input type='text' class='form-control'></fieldset></td>" +
                 "<td><input id='endTime' type='text' class='form-control' placeholder='如：2017-10-10'></td>" +
                 "<td><input type='text' class='form-control' placeholder='输入采购数量'></td>" +
                 "<td><button class='btn-danger' onclick='deleTr(this);'>删除</button></td>" +
                 "</tr>";
+        setTimeout(function(){
+            var len = $('#tab tr').length;
+            $("#tab").children().last().attr("id",'tr_' + len);
+        },100);
         addTr(tab, row, trHtml);
     }
     function addTr(tab, row, trHtml){
@@ -210,6 +214,7 @@
        $($se).parent().parent().find("td:eq(2)").find('input').val(_code);
     }
     $(document).ready(function () {
+
         //提交
         $(".statusBtn").click(function () {
             var warehouseID = $("#houseSelect").val();//仓库id
