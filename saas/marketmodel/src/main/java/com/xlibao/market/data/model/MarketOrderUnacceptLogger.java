@@ -7,6 +7,7 @@ public class MarketOrderUnacceptLogger {
     private Long id;
     private String orderSequenceNumber;
     private Long targetPassportId;
+    private Long marketId;
     private Date pushedTime = new Date();
 
     public Long getId() {
@@ -31,6 +32,14 @@ public class MarketOrderUnacceptLogger {
 
     public void setTargetPassportId(Long targetPassportId) {
         this.targetPassportId = targetPassportId;
+    }
+
+    public Long getMarketId() {
+        return marketId;
+    }
+
+    public void setMarketId(Long marketId) {
+        this.marketId = marketId;
     }
 
     public Date getPushedTime() {

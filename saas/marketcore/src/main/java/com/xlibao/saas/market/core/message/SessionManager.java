@@ -35,6 +35,21 @@ public class SessionManager {
         return marketSession;
     }
 
+    public NettySession getHardwareSession() {
+        return hardwareSession;
+    }
+
+    public void closeMarketSession() {
+        if (marketSession == null) {
+            return;
+        }
+        try {
+            marketSession.close();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public void sendHardwareMessage(String content) {
         if (hardwareSession == null) {
             // 无法发送，需记录内容后在硬件连接成功时补发
@@ -44,12 +59,16 @@ public class SessionManager {
         hardwareSession.send(content);
     }
 
-    public void sendMarketMessage(MessageOutputStream message) {
+    public boolean sendMarketMessage(MessageOutputStream message) {
         if (marketSession == null) {
+            if (MessageEventFactory.isHexOffline()) {
+                logger.error("----------- 由于硬件连接已断开，本次发送请求已被拒绝 -----------");
+                return false;
+            }
             // 发起建立链接的请求
-            messageService.connectorMarketServer();
-            return;
+            messageService.reconnector(null);
+            return false;
         }
-        marketSession.send(message);
+        return marketSession.send(message);
     }
 }

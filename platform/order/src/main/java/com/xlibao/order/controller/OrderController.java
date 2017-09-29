@@ -162,6 +162,12 @@ public class OrderController {
         return orderService.getOrderForSequenceNumber();
     }
 
+    @ResponseBody
+    @RequestMapping(value = "getOrderForSequenceSet")
+    public JSONObject getOrderForSequenceSet() {
+        return orderService.getOrderForSequenceSet();
+    }
+
     /**
      * <pre>
      *     <b>获取订单详情</b>

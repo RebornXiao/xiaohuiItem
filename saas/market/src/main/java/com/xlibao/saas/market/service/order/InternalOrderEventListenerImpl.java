@@ -159,7 +159,7 @@ public class InternalOrderEventListenerImpl implements OrderEventListener {
                 MarketRelationship marketRelationship = marketRelationships.get(i);
                 targets[i] = marketRelationship.getK();
                 // 建立推送记录
-                dataAccessFactory.getOrderDataAccessManager().createUnAcceptLogger(orderEntry.getOrderSequenceNumber(), Long.parseLong(marketRelationship.getK()));
+                dataAccessFactory.getOrderDataAccessManager().createUnAcceptLogger(orderEntry.getOrderSequenceNumber(), Long.parseLong(marketRelationship.getK()), orderEntry.getShippingPassportId());
             }
             // 执行推送
             JPushClient pushClient = JPushConfig.initialJPushClient(ConfigFactory.getXMarketConfig().getJPushAppSecret(), ConfigFactory.getXMarketConfig().getJPushAppKey());

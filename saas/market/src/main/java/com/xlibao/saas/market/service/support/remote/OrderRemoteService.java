@@ -2,6 +2,7 @@ package com.xlibao.saas.market.service.support.remote;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.support.ShareOrderRemoteService;
@@ -126,6 +127,18 @@ public class OrderRemoteService extends BasicRemoteService {
                 ConfigFactory.getDomainNameConfig().orderRemoteURL, orderSequenceNumber);
     }
 
+    public static List<OrderEntry> getOrders(List<String> orderSequences) {
+        StringBuilder orderSequenceSet = new StringBuilder();
+        for (String sequenceNumber : orderSequences) {
+            orderSequenceSet.append("'").append(sequenceNumber).append("'").append(CommonUtils.SPLIT_COMMA);
+        }
+        if (orderSequenceSet.toString().endsWith(CommonUtils.SPLIT_COMMA)) {
+            orderSequenceSet.deleteCharAt(orderSequenceSet.length() - 1);
+        }
+        return ShareOrderRemoteService.getOrderForSequenceSet(ConfigFactory.getXMarketConfig().getPartnerId(), ConfigFactory.getXMarketConfig().getOrderAppId(), ConfigFactory.getXMarketConfig().getOrderAppkey(),
+                ConfigFactory.getDomainNameConfig().orderRemoteURL, orderSequenceSet.toString());
+    }
+
     public static List<OrderEntry> showOrders(long passportId, long appointFriendPassportId, byte target, int roleType, String orderStatusSet, int type, int pageIndex, int pageSize) {
         Map<String, String> parameters = initialParameter();
 
@@ -142,28 +155,6 @@ public class OrderRemoteService extends BasicRemoteService {
 
         response = response.getJSONObject("response");
         JSONArray orderArray = response.getJSONArray("orderArray");
-        List<OrderEntry> orders = new ArrayList<>();
-        for (int i = 0; i < orderArray.size(); i++) {
-            orders.add(JSONObject.parseObject(orderArray.getString(i), OrderEntry.class));
-        }
-        return orders;
-    }
-
-    public static List<OrderEntry> searchOrders(long passportId, int roleType, String searchKeyValue, int orderType, int pageIndex, int pageSize) {
-        Map<String, String> parameters = initialParameter();
-        parameters.put("passportId", String.valueOf(passportId));
-        parameters.put("roleType", String.valueOf(roleType));
-        parameters.put("searchKeyValue", searchKeyValue);
-        parameters.put("orderType", String.valueOf(orderType));
-        parameters.put("pageIndex", String.valueOf(pageIndex));
-        parameters.put("pageSize", String.valueOf(pageSize));
-
-        JSONObject response = postOrderMsg("order/searchOrders", parameters);
-
-        logger.info("搜索订单结果：" + response);
-
-        response = response.getJSONObject("response");
-        JSONArray orderArray = response.getJSONArray("datas");
         List<OrderEntry> orders = new ArrayList<>();
         for (int i = 0; i < orderArray.size(); i++) {
             orders.add(JSONObject.parseObject(orderArray.getString(i), OrderEntry.class));
@@ -233,11 +224,12 @@ public class OrderRemoteService extends BasicRemoteService {
         return postOrderMsg("order/batchResetOverdueOrderStatus", parameters);
     }
 
-    public static JSONObject acceptOrder(long passportId, long orderId) {
+    public static JSONObject acceptOrder(long passportId, long orderId, int forceAppoint) {
         Map<String, String> parameters = initialParameter();
 
         parameters.put("courierPassportId", String.valueOf(passportId));
         parameters.put("orderId", String.valueOf(orderId));
+        parameters.put("forceAppoint", String.valueOf(forceAppoint));
 
         return postOrderMsg("order/acceptOrder", parameters);
     }

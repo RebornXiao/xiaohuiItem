@@ -5,7 +5,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.servlet.*;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
@@ -31,18 +30,6 @@ public class XlibaoFilterChain implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         // 每次会话的超时时间
         httpServletRequest.getSession().setMaxInactiveInterval(1200);
-        // 获取浏览器访问访问服务器时传递过来的cookie数组
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("accessToken".equals(cookie.getName())) {
-                    httpServletRequest.getSession().setAttribute("accessToken", cookie.getValue());
-                }
-                if ("passportId".equals(cookie.getName())) {
-                    httpServletRequest.getSession().setAttribute("passportId", cookie.getValue());
-                }
-            }
-        }
         // 请求信息跟踪
         requestInfoTrack(httpServletRequest);
         // 逻辑处理

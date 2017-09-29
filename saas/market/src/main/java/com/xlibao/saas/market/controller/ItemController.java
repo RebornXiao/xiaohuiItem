@@ -205,7 +205,7 @@ public class ItemController {
      * <pre>
      *     <b>加载热门搜索标签</b>
      *
-     *     <b>访问地址：</b>http://domainName/market/item/openapi/fuzzyMatchItemName.do
+     *     <b>访问地址：</b>http://domainName/market/item/openapi/loaderHotSearch.do
      *     <b>访问方式：</b>GET/POST；推荐使用POST
      *
      *     <b>参数：</b>

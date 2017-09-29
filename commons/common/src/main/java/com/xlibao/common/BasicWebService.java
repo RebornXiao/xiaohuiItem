@@ -87,9 +87,6 @@ public class BasicWebService {
         message.put("code", code);
         message.put("msg", msg);
         message.put("response", response);
-
-        Object accessToken = getSessionAttribute("accessToken");
-        message.put("accessToken", accessToken == null ? "" : (String) accessToken);
         return message;
     }
 

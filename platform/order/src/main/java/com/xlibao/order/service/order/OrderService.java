@@ -42,6 +42,8 @@ public interface OrderService {
      */
     JSONObject getOrders();
 
+    JSONObject getOrderForSequenceSet();
+
     /**
      * <pre>
      *     <b>取消订单</b>

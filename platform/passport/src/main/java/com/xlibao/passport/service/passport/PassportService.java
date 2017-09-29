@@ -32,6 +32,8 @@ public interface PassportService {
 
     JSONObject changeAccessToken();
 
+    JSONObject extendAccessToken();
+
     void changeAccessToken(Passport passport);
 
     Passport getPassport(long passportId);

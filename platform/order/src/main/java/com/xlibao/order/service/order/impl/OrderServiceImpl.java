@@ -203,6 +203,21 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     }
 
     @Override
+    public JSONObject getOrderForSequenceSet() {
+        String orderSequenceSet = getUTF("orderSequenceSet");
+
+        List<OrderEntry> orderEntries = getOrderForSequenceSet(orderSequenceSet);
+
+        fillOrdersItemSnapshots(orderEntries);
+
+        JSONArray orderArray = orderEntries.stream().map(orderEntry -> JSONObject.parseObject(JSONObject.toJSONString(orderEntry))).collect(Collectors.toCollection(JSONArray::new));
+
+        JSONObject response = new JSONObject();
+        response.put("orderArray", orderArray);
+        return success(response);
+    }
+
+    @Override
     public JSONObject cancelOrder() {
         long orderId = getLongParameter("orderId");
         String partnerId = getUTF("partnerId");
@@ -320,13 +335,17 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     public JSONObject acceptOrder() {
         long courierPassportId = getLongParameter("courierPassportId");
         long orderId = getLongParameter("orderId", 0);
+        int forceAppoint = getIntParameter("forceAppoint", GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
 
-        OrderUnacceptLogger unacceptLogger = (orderId == 0) ? orderDataAccessManager.getNewestUnacceptLogger(courierPassportId) : orderDataAccessManager.getUnacceptLogger(orderId, courierPassportId);
-        if (unacceptLogger == null) {
-            return fail("没有可接取的订单记录");
+        if (forceAppoint == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()) {
+            OrderUnacceptLogger unacceptLogger = (orderId == 0) ? orderDataAccessManager.getNewestUnacceptLogger(courierPassportId) : orderDataAccessManager.getUnacceptLogger(orderId, courierPassportId);
+            if (unacceptLogger == null) {
+                return fail("没有可接取的订单记录");
+            }
+            orderId = unacceptLogger.getOrderId();
         }
         // 获取订单记录
-        OrderEntry orderEntry = getOrder(unacceptLogger.getOrderId());
+        OrderEntry orderEntry = getOrder(orderId);
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CANCEL.getKey()) {
             return fail("订单已被取消");
         }
@@ -1001,6 +1020,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             throw new XlibaoRuntimeException("订单不存在或已被删除，订单序列号：" + sequenceNumber);
         }
         return orders;
+    }
+
+    private List<OrderEntry> getOrderForSequenceSet(String orderSequenceSet) {
+        return orderDataAccessManager.getOrderForSequenceSet(orderSequenceSet);
     }
 
     private OrderSequence usePreparedOrder(String partnerId, String partnerUserId, String sequenceNumber) {

@@ -11,7 +11,9 @@ public interface PassportMapper {
 
     int modifyPassportPassword(@Param("id") long id, @Param("password") String password);
 
-    int modifyAccessToken(@Param("id") long id, @Param("accessToken") String accessToken);
+    int modifyAccessToken(@Param("id") long id, @Param("accessToken") String accessToken, @Param("appointTime") String appointTime);
+
+    int extendAccessToken(@Param("passportId") long passportId, @Param("accessToken") String accessToken, @Param("appointTime") String appointTime);
 
     int modifyPhoneNumber(@Param("passportId") long passportId, @Param("mobileNumber") String mobileNumber);
 
