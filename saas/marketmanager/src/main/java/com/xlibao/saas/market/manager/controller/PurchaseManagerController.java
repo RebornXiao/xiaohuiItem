@@ -2,7 +2,9 @@ package com.xlibao.saas.market.manager.controller;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.http.HttpRequest;
 import com.xlibao.saas.market.manager.BaseController;
+import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.config.LogicConfig;
 import com.xlibao.saas.market.manager.service.itemmanager.ItemManagerService;
 import com.xlibao.saas.market.manager.service.purchasemanager.PurchaseManagerService;
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import static com.alibaba.fastjson.JSON.parseObject;
 
 /**
  * Created by admin on 2017/09/20.
@@ -451,4 +455,22 @@ public class PurchaseManagerController extends BaseController {
         return warehouseManagerService.updateCommodityStores();
     }
 
+    @ResponseBody
+    @RequestMapping("/itemsByitemTypeId")
+    public JSONObject idNameItems() {
+
+        long itemTypeId = getLongParameter("itemTypeId", 0);
+
+        if(itemTypeId == 0) {
+            return fail("该分类下没有商品");
+        }
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/getItemTemplateIdAndNames.do?itemTypeId=" + itemTypeId);
+        JSONObject response = parseObject(json);
+
+        if(response.getIntValue("code") == 0) {
+            return success(response);
+        } else {
+            return fail("该分类下没有商品");
+        }
+    }
 }
