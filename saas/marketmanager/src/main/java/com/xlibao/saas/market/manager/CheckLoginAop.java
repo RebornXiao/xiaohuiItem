@@ -9,7 +9,7 @@ import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.Cookie;
 
 /**
  * @author chinahuangxc on 2017/7/21.
@@ -20,12 +20,12 @@ public class CheckLoginAop extends BaseController {
 
     @Around(value = "execution(* com.xlibao.saas.market.manager.controller.*.*(..))")
     public Object around(ProceedingJoinPoint point) throws Throwable {
-        Object[] args = point.getArgs();
         getHttpServletResponse().setHeader("content-type", "text/html");
         try {
+            fillCookieAttributes();
             long pid = getLongParameter("passportId", 0);
 
-            Object passportId = getSessionAttribute("passportId");
+            Object passportId = getHttpServletRequest().getSession().getAttribute("passportId");
             if (passportId != null) {
                 pid = Long.parseLong((String) passportId);
             }
@@ -35,7 +35,7 @@ public class CheckLoginAop extends BaseController {
             }
 
             // 检测 accessToken 有效期
-            Object accessToken = getSessionAttribute("accessToken");
+            Object accessToken = getHttpServletRequest().getSession().getAttribute("accessToken");
             if (accessToken == null) {
                 // 需要登录
                 return LogicConfig.FTL_LOGIN;
@@ -44,28 +44,43 @@ public class CheckLoginAop extends BaseController {
             try {
                 token = PassportRemoteService.changeAccessToken(pid, token);
             } catch (Exception ex) {
-                faliError(ex.getMessage());
+                ex.printStackTrace();
+                failError(ex.getMessage());
                 return LogicConfig.FTL_LOGIN;
             }
             setAccessToken(token);
-            return point.proceed(args);
+            return point.proceed(point.getArgs());
         } catch (XlibaoIllegalArgumentException ex) {
             ex.printStackTrace();
-            faliError(ex.getMessage());
+            failError(ex.getMessage());
             return LogicConfig.FTL_ERROR;
         } catch (XlibaoRuntimeException ex) {
             ex.printStackTrace();
-            faliError(ex.getMessage());
+            failError(ex.getMessage());
             return LogicConfig.FTL_ERROR;
         } catch (Throwable cause) {
             cause.printStackTrace();
-            faliError("系统错误，请稍后重试！");
+            failError("系统错误，请稍后重试！");
             return LogicConfig.FTL_ERROR;
         }
     }
 
-    void faliError(String error) {
-        HttpServletRequest request = getHttpServletRequest();
-        request.setAttribute("error", error);
+    private void failError(String error) {
+        getHttpServletRequest().setAttribute("error", error);
+    }
+
+    private void fillCookieAttributes() {
+        // 获取浏览器访问访问服务器时传递过来的cookie数组
+        Cookie[] cookies = getHttpServletRequest().getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("accessToken".equals(cookie.getName())) {
+                    getHttpServletRequest().getSession().setAttribute("accessToken", cookie.getValue());
+                }
+                if ("passportId".equals(cookie.getName())) {
+                    getHttpServletRequest().getSession().setAttribute("passportId", cookie.getValue());
+                }
+            }
+        }
     }
 }

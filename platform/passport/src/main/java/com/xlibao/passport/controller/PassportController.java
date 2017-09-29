@@ -302,4 +302,10 @@ public class PassportController extends BasicWebService {
     public JSONObject changeAccessToken() {
         return passportService.changeAccessToken();
     }
+
+    @ResponseBody
+    @RequestMapping(value = "extendAccessToken")
+    public JSONObject extendAccessToken() {
+        return passportService.extendAccessToken();
+    }
 }

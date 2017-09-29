@@ -44,7 +44,7 @@ public class GlobalConstantConfig {
     public static final TimeUnit HEALTHY_MONITOR_TIME_UNIT = TimeUnit.MINUTES;
 
     /** 访问令牌有效时长(可续约)，单位：分钟 */
-    public static final long ACCESS_TOKEN_TIME_OUT = TimeUnit.MINUTES.toMillis(120);
+    public static final long ACCESS_TOKEN_TIME_OUT = TimeUnit.MINUTES.toMillis(60);
 
     /** 本地IP地址 */
     public static String LOCAL_IP_ADDRESS = "";

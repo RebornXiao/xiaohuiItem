@@ -140,6 +140,10 @@ public class CommonUtils {
         return calendar.getTimeInMillis();
     }
 
+    public static String dateFormat(Date date) {
+        return dateFormat(date.getTime());
+    }
+
     public static String dateFormat(long time) {
         return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(time));
     }

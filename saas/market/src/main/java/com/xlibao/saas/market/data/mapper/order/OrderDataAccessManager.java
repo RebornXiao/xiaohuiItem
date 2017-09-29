@@ -87,9 +87,10 @@ public class OrderDataAccessManager {
         return orderUnacceptLoggerMapper.removeUnAcceptLoggers(orderSequenceNumber);
     }
 
-    public int createUnAcceptLogger(String orderSequenceNumber, long passportId) {
+    public int createUnAcceptLogger(String orderSequenceNumber, long passportId, long marketId) {
         MarketOrderUnacceptLogger orderUnacceptLogger = new MarketOrderUnacceptLogger();
         orderUnacceptLogger.setTargetPassportId(passportId);
+        orderUnacceptLogger.setMarketId(marketId);
         orderUnacceptLogger.setOrderSequenceNumber(orderSequenceNumber);
 
         return orderUnacceptLoggerMapper.createUnAcceptLogger(orderUnacceptLogger);
@@ -97,6 +98,10 @@ public class OrderDataAccessManager {
 
     public MarketOrderUnacceptLogger getOrderUnacceptLogger(long passportId, String orderSequenceNumber) {
         return orderUnacceptLoggerMapper.getOrderUnacceptLogger(passportId, orderSequenceNumber);
+    }
+
+    public List<String> getAppointMarketOrderSequences(long passportId, long marketId, int pageStartIndex, int pageSize) {
+        return orderUnacceptLoggerMapper.getAppointMarketOrderSequences(passportId, marketId, pageStartIndex, pageSize);
     }
 
     public int createOrderPushedLogger(String orderSequenceNumber, long passportId, int type, String msgTitle, String msgContent, String pushResult, Date date, byte status) {

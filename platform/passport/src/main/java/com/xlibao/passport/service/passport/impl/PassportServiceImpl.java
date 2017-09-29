@@ -30,6 +30,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+
 /**
  * @author chinahuangxc on 2017/2/6.
  */
@@ -209,9 +211,10 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         if (!accessToken.equals(passport.getAccessToken())) {
             throw PlatformErrorCodeEnum.INVALID_ACCESS.throwException();
         }
-        int result = passportDataManager.modifyAccessToken(passport.getId(), "");
+        int result = passportDataManager.modifyAccessToken(passport.getId(), "", CommonUtils.nowFormat());
         if (result >= 1) {
             passport.setAccessToken(accessToken);
+            passport.setTokenInvalidTime(new Date());
         }
         setAccessToken(passport.getAccessToken());
         return null;
@@ -348,19 +351,43 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
 
     @Override
     public JSONObject changeAccessToken() {
+        // TODO 2017-09-28 23:43 修改accessToken的使用方式 将原来每次访问生成全新的token业务去除 修改延长当前token的有效期
+        // long passportId = getLongParameter("passportId");
+        // String accessToken = getUTF("accessToken");
+
+        // changeAccessToken(passportId, accessToken);
+        // return success();
+        return extendAccessToken();
+    }
+
+    @Override
+    public JSONObject extendAccessToken() {
         long passportId = getLongParameter("passportId");
         String accessToken = getUTF("accessToken");
 
-        changeAccessToken(passportId, accessToken);
+        Passport passport = getPassport(passportId);
+        if (!accessToken.equals(passport.getAccessToken())) {
+            throw PlatformErrorCodeEnum.INVALID_ACCESS.throwException();
+        }
+        if (passport.getTokenInvalidTime() == null || passport.getTokenInvalidTime().getTime() <= System.currentTimeMillis()) {
+            throw PlatformErrorCodeEnum.INVALID_ACCESS.throwException();
+        }
+        int result = passportDataManager.extendAccessToken(passportId, accessToken, CommonUtils.dateFormat(System.currentTimeMillis() + GlobalConstantConfig.ACCESS_TOKEN_TIME_OUT));
+        if (result <= 0) {
+            logger.error("其实此时的Token已经更新失败，但为了避免多线程时造成的误会，因为该请求依然放行；但如果并不是因为多线程造成的问题，那么可能在下次访问时进行拒绝；用户为："
+                    + passport.getShowName() + "(" + passportId + ")，本次的accessToken为：" + accessToken);
+        }
         return success();
     }
 
     @Override
     public void changeAccessToken(Passport passport) {
         String accessToken = CommonUtils.generateAccessToken(GlobalConstantConfig.PARTNER_ID_PREFIX + String.valueOf(passport.getId()));
-        int result = passportDataManager.modifyAccessToken(passport.getId(), accessToken);
+        long accessTokenTimeout = System.currentTimeMillis() + GlobalConstantConfig.ACCESS_TOKEN_TIME_OUT;
+        int result = passportDataManager.modifyAccessToken(passport.getId(), accessToken, CommonUtils.dateFormat(accessTokenTimeout));
         if (result >= 1) {
             passport.setAccessToken(accessToken);
+            passport.setTokenInvalidTime(new Date(accessTokenTimeout));
         }
         setAccessToken(passport.getAccessToken());
     }
@@ -434,6 +461,9 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         response.put("showPhoneNumber", CommonUtils.hideChar(passport.getPhoneNumber(), 3, 7));
         response.put("headImage", properties == null ? "" : CommonUtils.nullToEmpty(properties.getV()));
         response.put("roleValue", roleValue);
+        response.put("accessToken", passport.getAccessToken());
+        response.put("lastRefreshTime", CommonUtils.dateFormat(passport.getTokenInvalidTime()));
+
         return response;
     }
 
@@ -490,14 +520,5 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         response.put("showVersion", version.getShowVersion());
 
         return response;
-    }
-
-    private Passport changeAccessToken(long passportId, String accessToken) {
-        Passport passport = getPassport(passportId);
-        if (!accessToken.equals(passport.getAccessToken())) {
-            throw new XlibaoRuntimeException(PlatformErrorCodeEnum.INVALID_ACCESS.getKey(), PlatformErrorCodeEnum.INVALID_ACCESS.getValue());
-        }
-        changeAccessToken(passport);
-        return passport;
     }
 }

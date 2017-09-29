@@ -99,6 +99,10 @@ public class OrderDataAccessManager {
         return entryMapper.searchOrders(partnerId, passportId, searchKeyValue, type, roleType, pageStartIndex, pageSize);
     }
 
+    public List<OrderEntry> getOrderForSequenceSet(String orderSequenceSet) {
+        return entryMapper.getOrderForSequenceSet(orderSequenceSet);
+    }
+
     public int paymentOrder(long orderId, OrderStatusEnum orderStatusEnum, int matchBeforeStatus, String transType, int daySortNumber) {
         return entryMapper.paymentOrder(orderId, orderStatusEnum.getKey(), matchBeforeStatus, transType, daySortNumber);
     }

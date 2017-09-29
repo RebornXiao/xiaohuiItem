@@ -17,11 +17,21 @@ public class MessageEventFactory {
     @Autowired
     private HexMessageEventListenerImpl hexMessageEventListener;
 
+    private static volatile boolean hexOffline = true;
+
     public MessageEventListener getMarketMessageEventListener() {
         return marketMessageEventListener;
     }
 
     public MessageEventListener getHexMessageEventListener() {
         return hexMessageEventListener;
+    }
+
+    public static void setHexOffline(boolean hexOffline) {
+        MessageEventFactory.hexOffline = hexOffline;
+    }
+
+    public static boolean isHexOffline() {
+        return hexOffline;
     }
 }

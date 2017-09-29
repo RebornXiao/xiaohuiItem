@@ -2,10 +2,14 @@ package com.xlibao.saas.market.core.service.application.impl;
 
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.GlobalAppointmentOptEnum;
+import com.xlibao.common.thread.AsyncScheduledService;
+import com.xlibao.io.entry.MessageFactory;
 import com.xlibao.io.entry.MessageInputStream;
+import com.xlibao.io.entry.MessageOutputStream;
 import com.xlibao.io.service.netty.NettySession;
 import com.xlibao.market.protocol.HardwareMessageType;
 import com.xlibao.market.protocol.ShopProtocol;
+import com.xlibao.saas.market.core.config.ConfigFactory;
 import com.xlibao.saas.market.core.message.SessionManager;
 import com.xlibao.saas.market.core.message.client.HeartbeatCallable;
 import com.xlibao.saas.market.core.service.application.ApplicationService;
@@ -14,6 +18,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author chinahuangxc on 2017/8/13.
@@ -33,7 +40,7 @@ public class ApplicationServiceImpl implements ApplicationService {
         logger.debug("询问是否可进行取货操作，订单序号：" + orderSequenceNumber);
         boolean result = MarketApplicationRemoteService.askOrderPickUp((Long) sessionManager.getMarketSession().getAttribute("passportId"), orderSequenceNumber);
         if (!result) {
-            return ;
+            return;
         }
         String content = HardwareMessageType.HARDWARE_MSG_START + HardwareMessageType.PICK_UP + orderSequenceNumber + HardwareMessageType.HARDWARE_MSG_END;
         logger.info("【硬件消息】发送取货消息，消息内容：" + content);
@@ -53,7 +60,7 @@ public class ApplicationServiceImpl implements ApplicationService {
 
     @Override
     public void platformMessageExecute(NettySession session, MessageInputStream message) {
-        logger.info("【平台消息】" + session.getAttribute("passportId") + "，心跳结果：" + message.readUTF() + "；" + session.netTrack());
+        // logger.info("【平台消息】" + session.getAttribute("passportId") + "，心跳结果：" + message.readUTF() + "；" + session.netTrack());
     }
 
     @Override
@@ -79,6 +86,32 @@ public class ApplicationServiceImpl implements ApplicationService {
         session.setAttribute("passportId", parameters.getJSONObject("response").getLongValue("passportId"));
         sessionManager.setMarketSession(session);
         // 启动心跳线程
-        heartbeatCallable.start();
+        marketKeepAlive();
+    }
+
+    private AtomicBoolean connector = new AtomicBoolean(false);
+
+    private void marketKeepAlive() {
+        boolean result = connector.compareAndSet(false, true);
+        if (!result) {
+            logger.info("心跳任务已在执行中，无需再次发起......");
+            return;
+        }
+        logger.info("心跳任务启动成功");
+        Runnable runnable = new Runnable() {
+
+            @Override
+            public void run() {
+                MessageOutputStream message = MessageFactory.createPlatformMessage(MessageFactory.MSG_ID_HEARTBEAT);
+                message.writeUTF("商店心跳信息");
+
+                boolean result = sessionManager.sendMarketMessage(message);
+                if (!result) {
+                    logger.error("由于连接已断开，心跳消息发送失败......");
+                }
+                AsyncScheduledService.submitCommonTask(this, ConfigFactory.getServer().getBothTimeout(), TimeUnit.SECONDS);
+            }
+        };
+        AsyncScheduledService.submitCommonTask(runnable, ConfigFactory.getServer().getBothTimeout(), TimeUnit.SECONDS);
     }
 }

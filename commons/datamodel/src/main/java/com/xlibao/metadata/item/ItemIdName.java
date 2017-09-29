@@ -7,6 +7,7 @@ public class ItemIdName {
 
     private Long id;
     private String name;
+    private String barcode;
 
     public Long getId() {
         return id;
@@ -22,5 +23,13 @@ public class ItemIdName {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getBarcode() {
+        return barcode;
+    }
+
+    public void setBarcode(String barcode) {
+        this.barcode = barcode;
     }
 }

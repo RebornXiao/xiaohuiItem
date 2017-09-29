@@ -36,6 +36,8 @@ public class Passport {
     private String deviceName;
     /** 系统分配的令牌(登录后分配，120分钟(或其他配置的时长)有效期) */
     private String accessToken;
+    /** token的失效时间(非建立时间) */
+    private Date tokenInvalidTime;
     /** 最后登录使用的版本号 */
     private int versionIndex;
 
@@ -165,6 +167,14 @@ public class Passport {
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
+    }
+
+    public Date getTokenInvalidTime() {
+        return tokenInvalidTime;
+    }
+
+    public void setTokenInvalidTime(Date tokenInvalidTime) {
+        this.tokenInvalidTime = tokenInvalidTime;
     }
 
     public int getVersionIndex() {

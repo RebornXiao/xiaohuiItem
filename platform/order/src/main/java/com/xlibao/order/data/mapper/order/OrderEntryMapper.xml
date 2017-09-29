@@ -74,6 +74,10 @@
         select * from order_entry where sequence_number = #{sequenceNumber} order by payment_time desc, id desc
     </select>
 
+    <select id="getOrderForSequenceSet" resultMap="BaseResultMap">
+        select * from order_entry where order_sequence_number in(${orderSequenceSet})
+    </select>
+
     <select id="showConsumerOrders" resultMap="BaseResultMap">
         select * from order_entry where partner_id = #{partnerId}
         <if test="shippingPassportId != 0"> and shipping_passport_id = #{shippingPassportId} </if>

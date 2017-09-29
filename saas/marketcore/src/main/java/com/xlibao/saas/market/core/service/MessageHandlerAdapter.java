@@ -29,7 +29,7 @@ public class MessageHandlerAdapter {
     }
 
     public void marketMessageExecute(NettySession session, MessageInputStream message) {
-        logger.info("收到来自商店业务的消息，由应用程序的服务处理");
+        // logger.info("收到来自商店业务的消息，由应用程序的服务处理");
         byte messageType = message.getMsgType();
 
         switch (messageType) {
@@ -43,9 +43,5 @@ public class MessageHandlerAdapter {
                 applicationService.logicMessageExecute(session, message);
                 break;
         }
-    }
-
-    public void afterHardwareChannelActive(NettySession session) {
-        // TODO 检查是否存在未处理的消息；若存在，则发送至硬件进行处理
     }
 }

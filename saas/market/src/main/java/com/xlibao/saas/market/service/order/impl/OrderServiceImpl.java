@@ -39,10 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author chinahuangxc on 2017/7/10.
@@ -184,7 +181,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
         String statusSet = orderStatusSet(roleType, statusEnter);
         if (roleType == OrderRoleTypeEnum.COURIER.getKey() && statusEnter == StatusEnterEnum.COURIER_WAIT_ACCEPT.getKey()) {
-            // TODO 仅展示未接订单的记录
+            // 仅展示未接订单的记录
+            return showUnacceptOrders(passportId, roleType, marketId, pageSize);
         }
         List<OrderEntry> orders = OrderRemoteService.showOrders(passportId, marketId, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), roleType, statusSet, orderType, pageIndex, pageSize);
         JSONArray response = fillShowOrderMsg(roleType, orders);
@@ -222,7 +220,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         }
         // 移除所有未接记录
         dataAccessFactory.getOrderDataAccessManager().removeUnAcceptLoggers(orderEntry.getOrderSequenceNumber());
-        return OrderRemoteService.acceptOrder(passportId, orderId);
+        OrderRemoteService.acceptOrder(passportId, orderId, GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
+        return success("接单成功");
     }
 
     @Override
@@ -246,7 +245,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if (orderEntry.getCourierPassportId() != passportId) {
             return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
         }
-        return OrderRemoteService.distributionOrder(orderEntry.getId(), orderEntry.getCourierPassportId(), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), true);
+        OrderRemoteService.distributionOrder(orderEntry.getId(), orderEntry.getCourierPassportId(), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), true);
+        return success("配送成功");
     }
 
     @Override
@@ -261,7 +261,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if (orderEntry.getCourierPassportId() != passportId) {
             return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
         }
-        return OrderRemoteService.confirmOrder(orderEntry.getId(), Long.parseLong(orderEntry.getPartnerUserId()), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
+        OrderRemoteService.confirmOrder(orderEntry.getId(), Long.parseLong(orderEntry.getPartnerUserId()), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
+        return success("已确认订单");
     }
 
     @Override
@@ -295,7 +296,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if (orderEntry == null) {
             return OrderErrorCodeEnum.NOT_FOUND_ORDER.response();
         }
-        if (Long.parseLong(orderEntry.getPartnerUserId()) != passportId) {
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() && Long.parseLong(orderEntry.getPartnerUserId()) != passportId) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+        }
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.DISTRIBUTION.getKey() && orderEntry.getCourierPassportId() != passportId) {
             return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
         }
         MarketOrderProperties askProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.ASK_CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.ASK_CONTAINER_SET.getKey());
@@ -362,6 +366,30 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         return success(response);
     }
 
+    private JSONObject showUnacceptOrders(long passportId, int roleType, long marketId, int pageSize) {
+        int pageStartIndex = getPageStartIndex(pageSize);
+        List<String> orderSequences = dataAccessFactory.getOrderDataAccessManager().getAppointMarketOrderSequences(passportId, marketId, pageStartIndex, pageSize);
+        if (CommonUtils.isEmpty(orderSequences)) {
+            return PlatformErrorCodeEnum.NO_MORE_DATA.response();
+        }
+        List<OrderEntry> orderEntries = OrderRemoteService.getOrders(orderSequences);
+        if (CommonUtils.isEmpty(orderEntries)) {
+            return PlatformErrorCodeEnum.NO_MORE_DATA.response();
+        }
+        Iterator<OrderEntry> iterator = orderEntries.iterator();
+        while (iterator.hasNext()) {
+            OrderEntry orderEntry = iterator.next();
+            if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) {
+                iterator.remove();
+            }
+            if (orderEntry.getCourierPassportId() != null && orderEntry.getCourierPassportId() > 0) {
+                iterator.remove();
+            }
+        }
+        JSONArray response = fillShowOrderMsg(roleType, orderEntries);
+        return success(response);
+    }
+
     private String orderStatusSet(int roleType, int statusEnter) {
         if (roleType == OrderRoleTypeEnum.CONSUMER.getKey()) { // 消费者
             if (statusEnter == StatusEnterEnum.ALL.getKey()) { // 用户 全部
@@ -400,7 +428,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     }
 
     private JSONArray fillShowOrderMsg(int roleType, List<OrderEntry> orderEntries) {
-        if (roleType != OrderRoleTypeEnum.CONSUMER.getKey() && roleType != OrderRoleTypeEnum.COURIER.getKey()) {
+        if (roleType == OrderRoleTypeEnum.COURIER.getKey()) {
+            return fillCourierOrderMessage(orderEntries);
+        }
+        if (roleType != OrderRoleTypeEnum.CONSUMER.getKey()) {
             return new JSONArray();
         }
         JSONArray response = new JSONArray();
@@ -428,6 +459,32 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             data.put("paymentTime", orderEntry.getPaymentTime().getTime());
 
             fillItemSnapshotMsg(data, orderEntry);
+            response.add(data);
+        }
+        return response;
+    }
+
+    private JSONArray fillCourierOrderMessage(List<OrderEntry> orderEntries) {
+        JSONArray response = new JSONArray();
+
+        for (OrderEntry orderEntry : orderEntries) {
+            JSONObject data = new JSONObject();
+
+            data.put("sequenceNumber", orderEntry.getSequenceNumber());
+            data.put("orderId", orderEntry.getId());
+            data.put("orderSequenceNumber", orderEntry.getOrderSequenceNumber());
+
+            int deliverType = orderEntry.getDeliverType();
+
+            data.put("formatReceiptAddress", orderEntry.formatReceiptAddress());
+            data.put("receiptPhone", orderEntry.getReceiptPhone());
+            data.put("deliverDistance", CommonUtils.formatDistance(orderEntry.getTotalDistance()));
+
+            data.put("orderStatus", orderEntry.getStatus());
+            data.put("orderStatusTitle", orderStatusTitle(deliverType, orderEntry.getStatus()));
+
+            data.put("paymentTime", CommonUtils.dateFormat(orderEntry.getPaymentTime().getTime()));
+
             response.add(data);
         }
         return response;

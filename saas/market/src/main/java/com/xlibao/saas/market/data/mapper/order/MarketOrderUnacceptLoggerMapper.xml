@@ -5,15 +5,20 @@
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="order_sequence_number" property="orderSequenceNumber" jdbcType="VARCHAR"/>
         <result column="target_passport_id" property="targetPassportId" jdbcType="BIGINT"/>
+        <result column="market_id" property="marketId" jdbcType="BIGINT"/>
         <result column="pushed_time" property="pushedTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <insert id="createUnAcceptLogger">
-        insert into market_order_unaccept_logger(order_sequence_number, target_passport_id, pushed_time) values(#{orderSequenceNumber}, #{targetPassportId}, #{pushedTime})
+        insert into market_order_unaccept_logger(order_sequence_number, target_passport_id, market_id, pushed_time) values(#{orderSequenceNumber}, #{targetPassportId}, #{marketId}, #{pushedTime})
     </insert>
 
     <select id="getOrderUnacceptLogger" resultMap="BaseResultMap">
         select * from market_order_unaccept_logger where order_sequence_number = #{orderSequenceNumber} and target_passport_id = #{passportId}
+    </select>
+
+    <select id="getAppointMarketOrderSequences" resultType="String">
+        select distinct order_sequence_number from market_order_unaccept_logger where target_passport_id = #{passportId} and market_id = #{marketId} limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <update id="removeUnAcceptLoggers">

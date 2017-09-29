@@ -47,10 +47,20 @@ public class NettySession {
         return "会话ID：" + getId() + " 地址：" + getIP() + " 链接端口：" + getPort();
     }
 
-    public void send(MessageOutputStream message) {
-        if (message != null) {
-            channel.writeAndFlush(message);
+    public boolean send(MessageOutputStream message) {
+        if (message != null && isActive()) {
+            try {
+                channel.writeAndFlush(message).sync();
+                return true;
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
+        return false;
+    }
+
+    public boolean isActive() {
+        return channel != null && channel.isActive();
     }
 
     public void send(String message) {

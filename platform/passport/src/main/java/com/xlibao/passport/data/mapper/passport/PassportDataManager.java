@@ -56,8 +56,12 @@ public class PassportDataManager {
         return passportMapper.perfectPassportInformation(passportId, nickName, headImageUrl, sex, status);
     }
 
-    public int modifyAccessToken(long id, String accessToken) {
-        return passportMapper.modifyAccessToken(id, accessToken);
+    public int modifyAccessToken(long id, String accessToken, String appointTime) {
+        return passportMapper.modifyAccessToken(id, accessToken, appointTime);
+    }
+
+    public int extendAccessToken(long passportId, String accessToken, String appointTime) {
+        return passportMapper.extendAccessToken(passportId, accessToken, appointTime);
     }
 
     public int modifyPhoneNumber(long passportId, String mobileNumber) {

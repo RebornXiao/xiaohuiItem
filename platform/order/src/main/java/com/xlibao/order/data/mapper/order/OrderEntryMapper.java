@@ -24,6 +24,8 @@ public interface OrderEntryMapper {
     List<OrderEntry> searchOrders(@Param("partnerId") String partnerId, @Param("passportId") long passportId, @Param("searchKeyValue") String searchKeyValue, @Param("type") int type, @Param("roleType") int roleType,
                                   @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 
+    List<OrderEntry> getOrderForSequenceSet(@Param("orderSequenceSet") String orderSequenceSet);
+
     int findInvalidOrderSize(@Param("partnerId") String partnerId, @Param("orderType") int orderType, @Param("matchStatus") int matchStatus, @Param("timeout") String timeout);
 
     List<OrderEntry> findInvalidOrders(@Param("partnerId") String partnerId, @Param("orderType") int orderType, @Param("matchStatus") int matchStatus, @Param("timeout") String timeout);
