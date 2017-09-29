@@ -5,9 +5,9 @@ package com.xiaohui.replenishment.response;
  */
 public class Passport {
 
+    private String accessToken;//调整后,在登陆时返回
 
     private long passportId;
-    private String accessToken;
     private String showName;
     private String phoneNumber;//隐藏phone，明文，不用显示
     private String showPhoneNumber;//加密的phone，显示用

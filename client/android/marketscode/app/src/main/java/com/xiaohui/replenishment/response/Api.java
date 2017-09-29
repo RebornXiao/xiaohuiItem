@@ -24,8 +24,8 @@ public class Api {
 //    http://localhost:8080/market/market/openapi/myFocusMarkets.do?passportId=100001
 
 
-//    public static final String OPEN_API = "openapi/";
-    public static final String OPEN_API = "";
+    public static final String OPEN_API = "openapi/";
+//    public static final String OPEN_API = "";
 
     //登陆
     public static final String LOGIN = PASSPORT_URL + "passport/loginPassport";//登陆
@@ -55,6 +55,6 @@ public class Api {
     public static final String FINISH_DAY_TASK = MARKET_URL + "market/" + OPEN_API + "finishTodayPrepareActions.do";
 
     //修改店铺状态
-    public static final String UPDATE_MARKET_STATUS = MARKET_URL + "market/" + OPEN_API + "marketUpdateStatus.do";
+    public static final String UPDATE_MARKET_STATUS = MARKET_URL + "market/manager/marketUpdateStatus.do";
 
 }

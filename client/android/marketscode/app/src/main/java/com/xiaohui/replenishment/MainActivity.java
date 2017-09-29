@@ -125,6 +125,8 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
 
     Dialog updateStatusDialog;
 
+    RefreshAccessToken refreshAccessToken;
+
     //按日期区分的
     private Map<String, String> dataTitle = new HashMap<>();
 
@@ -260,6 +262,7 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
             refreshLoad.showLoading("登陆中");
         } else {
             startActivityForResult(new Intent(this, LoginActivity.class), 1);
+            return;
         }
 
         getPersimmions(this, CAMERA_PERMISSIONS, 1);
@@ -286,6 +289,7 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
         map.put("marketId", String.valueOf(selectMarket.getId()));
         map.put("beforeStatus", String.valueOf(selectMarket.getStatus()));
         map.put("status", String.valueOf(targetStatus));
+
         httpPost(map, Api.UPDATE_MARKET_STATUS, new HttpCallbackImpl<Integer>("status") {
             @Override
             public void onSuccess(Integer data) {
@@ -297,7 +301,7 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
 
             @Override
             public void onFailure() {
-                if(checkAccessToken()) {
+                if (checkAccessToken()) {
                     return;
                 }
                 super.onFailure();
@@ -338,7 +342,7 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
 
             @Override
             public void onFailure() {
-                if(checkAccessToken()) {
+                if (checkAccessToken()) {
                     return;
                 }
                 if (code == 2017) {//2017代表需要提交当日任务
@@ -371,7 +375,7 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
             @Override
             public void onFailure() {
                 closeLoadingDialog();
-                if(checkAccessToken()) {
+                if (checkAccessToken()) {
                     return;
                 }
             }
@@ -421,9 +425,20 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
 
                 SpUtils.saveValue("name", name);
                 SpUtils.saveValue("pass", password);
+
+
                 Api.passport = data;
                 Api.passport.setLoginName(name);
+
+                Callback.ACCESS_KEY = data.getAccessToken();
                 Callback.PASSPORT_ID = Api.passport.getPassportIdStr();
+
+                //检查版本
+                UpdateManager.checkUpdate(MainActivity.this, false, Api.passport.getVersionMessage(), null);
+
+                //刷新 token
+                refreshAccessToken = new RefreshAccessToken();
+                refreshAccessToken.start(MainActivity.this);
 
                 txt_username.setText(name);
 
@@ -473,8 +488,10 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
                 loadTaskBool = false;
 
                 //检测一次
-                if(nowIndex == 0) {
+                if (nowIndex == 0) {
                     checkAllTask();
+                } else {
+                    ttask_btn.setVisibility(View.GONE);
                 }
             }
 
@@ -486,7 +503,7 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
                 //检测一次
                 checkAllTask();
 
-                if(checkAccessToken()) {
+                if (checkAccessToken()) {
                     return;
                 }
             }
@@ -519,7 +536,7 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
             @Override
             public void onFailure() {
                 refreshLoad.showError(msg);
-                if(checkAccessToken()) {
+                if (checkAccessToken()) {
                     return;
                 }
             }
@@ -578,6 +595,14 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (refreshAccessToken != null) {
+            refreshAccessToken.close();
+        }
+    }
+
+    @Override
     public void onClick(View v) {
         int id = v.getId();
         if (id == R.id.title_left) {
@@ -619,25 +644,31 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
             Intent intent = new Intent(getApplication(), ScodeActivity.class);
             intent.putExtra("marketId", selectMarket.getId());
             startActivityForResult(intent, 100);
-        } else if(id == R.id.ttask_btn) {
+        } else if (id == R.id.ttask_btn) {
             submitDayAllTask();
         }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if(resultCode != RESULT_OK) {
+        if (resultCode != RESULT_OK) {
             return;
         }
         if (requestCode == 1) {
             //登陆成功标志
             login = true;
             refreshLoad.showLoading();
+            //检查版本
+            UpdateManager.checkUpdate(MainActivity.this, false, Api.passport.getVersionMessage(), null);
+            //刷新 token
+            refreshAccessToken = new RefreshAccessToken();
+            refreshAccessToken.start(MainActivity.this);
+
         } else if (requestCode == 100) {
             //需要刷新的标志,扫码,输入异常信息
             refreshLoad.showLoading();
-        } else if(requestCode == 200) {
-            //需要刷新的标志,扫码,输入异常信息
+        } else if (requestCode == 200) {
+            //提交所有任务,输入异常信息
             refreshLoad.showLoading();
         }
     }

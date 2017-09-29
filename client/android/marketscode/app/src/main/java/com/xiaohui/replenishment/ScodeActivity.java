@@ -3,10 +3,13 @@ package com.xiaohui.replenishment;
 import android.app.Dialog;
 import android.graphics.Bitmap;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -36,8 +39,8 @@ import butterknife.Bind;
  */
 public class ScodeActivity extends AfinalActivity implements View.OnClickListener {
 
-    private CaptureViewHandler captureViewHandler;
-    private BaseTitleBar titleBar;
+    CaptureViewHandler captureViewHandler;
+    BaseTitleBar titleBar;
 
     @Bind(R.id.info_view)
     View info_view;
@@ -75,6 +78,12 @@ public class ScodeActivity extends AfinalActivity implements View.OnClickListene
     @Bind(R.id.maxItemCount)
     TextView maxItemCount;
 
+    @Bind(R.id.red_line_ll)
+    View red_line_ll;
+
+    @Bind(R.id.red_line_input)
+    EditText red_line_input;
+
     Dialog taskListDailog;
 
     //是否已扫商品
@@ -105,6 +114,9 @@ public class ScodeActivity extends AfinalActivity implements View.OnClickListene
     //当前处理的任务
     Task nowTask = null;
 
+    //是否以红外线进行
+    boolean red_line_bool = false;
+
     @Override
     public int getContentViewId() {
         return R.layout.activity_scode;
@@ -122,20 +134,21 @@ public class ScodeActivity extends AfinalActivity implements View.OnClickListene
         titleBar.setLeftBack(this);
         titleBar.setCenterTxt("扫码补货");
 
-        titleBar.setCenterTxt("扫商品", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //扫商品
-                scode(scode_itemCode);
-            }
-        });
-        titleBar.setRightImg(R.drawable.ico_back, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //扫货架
-                scode(scode_clipCode);
-            }
-        });
+//          点击 测试
+//        titleBar.setCenterTxt("扫商品", new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //扫商品
+//                scode(scode_itemCode);
+//            }
+//        });
+//        titleBar.setRightImg(R.drawable.ico_back, new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                //扫货架
+//                scode(scode_clipCode);
+//            }
+//        });
 
         captureViewHandler = new CaptureViewHandler();
         captureViewHandler.create(this);
@@ -147,8 +160,7 @@ public class ScodeActivity extends AfinalActivity implements View.OnClickListene
                 if (e == null) {
 
                 } else {
-                    ToastUtil.showToast(ScodeActivity.this, "摄像头初始化失败！");
-                    finish();
+                    startRedLine();
                 }
             }
         });
@@ -231,6 +243,31 @@ public class ScodeActivity extends AfinalActivity implements View.OnClickListene
     protected void onDestroy() {
         super.onDestroy();
         captureViewHandler.onDestroy();
+    }
+
+    // 红外线扫描
+    void startRedLine() {
+        ToastUtil.showToast(ScodeActivity.this, "摄像头初始化失败，以红外线进行扫描");
+        red_line_bool = true;
+        red_line_ll.setVisibility(View.VISIBLE);
+        captureViewHandler.hideCapture();
+        red_line_input.requestFocus();
+        red_line_input.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                scode(s.toString().trim());
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
     }
 
     /**
@@ -335,7 +372,7 @@ public class ScodeActivity extends AfinalActivity implements View.OnClickListene
                 //super.onFailure();
                 scan_bool = false;
                 closeLoadingDialog();
-                if(checkAccessToken()) {
+                if (checkAccessToken()) {
                     return;
                 }
                 DialogUtils.createTipDialogOk(ScodeActivity.this, msg, null).show();
@@ -484,7 +521,7 @@ public class ScodeActivity extends AfinalActivity implements View.OnClickListene
         TipDialog tip = DialogUtils.createTipDialog(ScodeActivity.this, "温馨提示", "下架商品数量已" + ti + "任务货架商品数量\n\n是否添加下架数量?", "取消", "确定", new TipClickListener() {
             @Override
             public void onClick(boolean left) {
-                if(!left) {
+                if (!left) {
                     itemStock++;
                     //刷新界面
                     itemCount.setText(String.valueOf(itemStock));
@@ -562,7 +599,7 @@ public class ScodeActivity extends AfinalActivity implements View.OnClickListene
             @Override
             public void onFailure() {
                 closeLoadingDialog();
-                if(checkAccessToken()) {
+                if (checkAccessToken()) {
                     return;
                 }
                 DialogUtils.createTipDialogOk(ScodeActivity.this, msg, new TipClickListener() {
@@ -602,7 +639,7 @@ public class ScodeActivity extends AfinalActivity implements View.OnClickListene
             @Override
             public void onFailure() {
                 closeLoadingDialog();
-                if(checkAccessToken()) {
+                if (checkAccessToken()) {
                     return;
                 }
                 DialogUtils.createTipDialogOk(ScodeActivity.this, msg, new TipClickListener() {
@@ -641,6 +678,10 @@ public class ScodeActivity extends AfinalActivity implements View.OnClickListene
     Handler resetHandler = new Handler();
 
     void resetCapture() {
+        //如果是红外，不需要
+        if (red_line_bool) {
+            return;
+        }
         if (resetBool) {
             return;
         }
@@ -661,6 +702,10 @@ public class ScodeActivity extends AfinalActivity implements View.OnClickListene
     @Override
     public void finish() {
         super.finish();
+        //如果是红外，不需要
+        if (red_line_bool) {
+            return;
+        }
         if (resetHandler != null) {
             resetHandler.removeCallbacks(resetRunnable);
         }

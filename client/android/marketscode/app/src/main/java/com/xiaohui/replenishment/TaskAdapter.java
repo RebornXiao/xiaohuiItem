@@ -18,6 +18,7 @@ public class TaskAdapter extends AfinalAdapter<Task> {
     int w_color = 0;
     int g_color = 0;
     int r_color = 0;
+    int orange_color = 0;
     int taskType = 0;//0未完成，1完成
 
     public TaskAdapter(Context context, List<Task> tasks, int taskType) {
@@ -26,6 +27,7 @@ public class TaskAdapter extends AfinalAdapter<Task> {
         this.w_color = context.getResources().getColor(R.color.white);
         this.r_color = context.getResources().getColor(R.color.red);
         this.g_color = context.getResources().getColor(R.color.font_6);
+        this.orange_color = context.getResources().getColor(R.color.orange);
     }
 
     public void changeTaskType(int taskType) {
@@ -128,10 +130,10 @@ public class TaskAdapter extends AfinalAdapter<Task> {
 //                }
             } else {
                 task_status.setText("下架任务");
-                task_status.setBackgroundResource(R.drawable.btn_red);
+//                task_status.setBackgroundResource(R.drawable.btn_red);
 //                if(task.isError()) {
-                    task_status.setBackgroundResource(R.drawable.btn_border_blue);
-                    task_status.setTextColor(g_color);
+                    task_status.setBackgroundResource(R.drawable.btn_border_orange);
+                    task_status.setTextColor(orange_color);
 //                } else {
 //                    task_status.setBackgroundResource(R.drawable.btn_red);
 //                    task_status.setTextColor(w_color);

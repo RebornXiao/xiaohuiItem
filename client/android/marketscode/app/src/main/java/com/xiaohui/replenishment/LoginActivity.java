@@ -129,6 +129,7 @@ public class LoginActivity extends AfinalActivity implements View.OnClickListene
                 Api.passport = data;
 
                 Api.passport.setLoginName(uname);
+                Callback.ACCESS_KEY = data.getAccessToken();
                 Callback.PASSPORT_ID = Api.passport.getPassportIdStr();
 
 
