@@ -23,6 +23,7 @@
     <resultMap id="IdNameMap" type="com.xlibao.metadata.item.ItemIdName">
         <id column="id" property="id" jdbcType="BIGINT"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="barcode" property="barcode" jdbcType="VARCHAR"/>
     </resultMap>
 
     <sql id="Example_Entity_Where_Clause">
