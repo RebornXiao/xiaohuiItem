@@ -110,7 +110,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}"/>
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/purchase/purchasePage.do?supplierName=${supplierName}&warehouseCode=${warehouseCode}&status=${status}"/>
                 </div>
             </div>
             <!--/分页-->
