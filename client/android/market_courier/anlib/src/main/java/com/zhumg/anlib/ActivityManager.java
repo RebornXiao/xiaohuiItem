@@ -82,30 +82,28 @@ public class ActivityManager {
         }
     }
 
-//  /**
-//   * 关闭除了指定activity以外的全部activity 如果cls不存在于栈中，则栈全部清空
-//   *
-//   * @param cls
-//   */
-//  public static void finishOthersActivity(Class<?> cls) {
-//      try {
-//    	  List<Activity> activitys = new ArrayList<>();
-//          Iterator<Activity> it = activityStack.values().iterator();
-//          while(it.hasNext()) {
-//        	  Activity activity = it.next();
-//        	  if(activity.getClass().getName().equals(cls.getName())) {
-//        		  continue;
-//        	  }
-//        	  //删除
-//        	  activitys.add(activity);
-//          }
-//          for (int i = 0; i < activitys.size(); i++) {
-//        	  activitys.get(i).finish();
-//          }
-//      } catch (Exception ex) {
-//          ex.printStackTrace();
-//      }
-//  }
+  /**
+   * 关闭除了指定activity以外的全部activity 如果cls不存在于栈中，则栈全部清空
+   *
+   * @param cls
+   */
+  public static void finishOthersActivity(Class<?> cls) {
+      try {
+    	  List<Activity> activitys = new ArrayList<>();
+          for (int i = activitys.size()-1; i >= 0; i--) {
+              if(!activitys.get(i).getClass().getName().equals(cls.getName())) {
+                  Activity activity = activitys.remove(i);
+                  //删除
+                  activitys.add(activity);
+              }
+          }
+          for (int i = 0; i < activitys.size(); i++) {
+        	  activitys.get(i).finish();
+          }
+      } catch (Exception ex) {
+          ex.printStackTrace();
+      }
+  }
 
     /**
      * 结束所有Activity

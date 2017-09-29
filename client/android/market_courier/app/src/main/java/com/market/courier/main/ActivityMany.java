@@ -1,15 +1,21 @@
 package com.market.courier.main;
 
 import android.content.Context;
-import android.os.Handler;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import com.market.courier.R;
-import com.market.courier.response.ManyData;
+import com.market.courier.response.Api;
+import com.market.courier.response.Market;
+import com.market.courier.response.OrderData;
+import com.market.courier.response.enums.OrderRoleTypeEnum;
+import com.market.courier.response.enums.OrderTypeEnum;
+import com.market.courier.response.enums.StatusEnterEnum;
 import com.zhumg.anlib.AfinalActivity;
+import com.zhumg.anlib.http.Http;
+import com.zhumg.anlib.http.HttpCallback;
 import com.zhumg.anlib.utils.ViewUtils;
 import com.zhumg.anlib.widget.AfinalAdapter;
 import com.zhumg.anlib.widget.bar.BaseTitleBar;
@@ -17,7 +23,9 @@ import com.zhumg.anlib.widget.mvc.RefreshLoad;
 import com.zhumg.anlib.widget.mvc.RefreshLoadListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import in.srain.cube.views.ptr.PtrClassicFrameLayout;
@@ -43,8 +51,13 @@ public class ActivityMany extends AfinalActivity {
     ListView listView;
 
     RefreshLoad refreshLoad;
-    List<ManyData> manyDatas;
+    List<OrderData> manyDatas;
     ManyAdapter adapter;
+
+    int pageIndex = 1;
+    Market nowMarket;
+
+    StatusEnterEnum statusEnterEnum;
 
     @Override
     public int getContentViewId() {
@@ -59,6 +72,8 @@ public class ActivityMany extends AfinalActivity {
         g_color = getResources().getColor(R.color.font_9);
 
         type = getIntent().getIntExtra("type", 0);
+        statusEnterEnum = type == 0 ? StatusEnterEnum.COMPLETE : StatusEnterEnum.COURIER_CANCEL;
+        nowMarket = (Market) getIntent().getSerializableExtra("market");
 
         titleBar = new BaseTitleBar(view);
         titleBar.setLeftBack(this);
@@ -74,6 +89,8 @@ public class ActivityMany extends AfinalActivity {
             public void onLoading(boolean over) {
                 if (!over) {
                     ptr.setVisibility(View.GONE);
+                    pageIndex = 1;
+                    manyDatas.clear();
                     getDatas();
                 } else {
                     ptr.setVisibility(View.VISIBLE);
@@ -83,40 +100,67 @@ public class ActivityMany extends AfinalActivity {
             @Override
             public void onRefresh(boolean over) {
                 if (!over) {
+                    pageIndex = 1;
+                    manyDatas.clear();
+                    getDatas();
+                }
+            }
+
+            @Override
+            public void onLoadmore(boolean over) {
+                if (!over) {
+                    pageIndex++;
                     getDatas();
                 }
             }
         });
+
+        refreshLoad.showLoading();
     }
 
     void getDatas() {
-        new Handler().postDelayed(new Runnable() {
+
+        Map map = new HashMap<>();
+        map.put("passportId", Api.passport.getPassportIdStr());
+        map.put("marketId", String.valueOf(this.nowMarket.getId()));
+        map.put("roleType", String.valueOf(OrderRoleTypeEnum.COURIER.getKey()));
+        map.put("orderType", String.valueOf(OrderTypeEnum.SALE_ORDER_TYPE.getKey()));
+        map.put("statusEnter", String.valueOf(statusEnterEnum.getKey()));
+        map.put("pageIndex", String.valueOf(pageIndex));
+        map.put("pageSize", String.valueOf(Api.PAGE_SIZE));
+
+        Http.post(this, map, Api.SHOW_ORDERS, new HttpCallback<List<OrderData>>("datas") {
             @Override
-            public void run() {
-                for (int i = 0; i < 10; i++) {
-                    ManyData manyData = new ManyData();
-                    manyData.setAddress("天河广州");
-                    manyData.setError(type == 1 ? "取消原因：未知" : "");
-                    manyData.setTime("2017-10-10");
-                    manyData.setOrderId("56461321");
-                    manyDatas.add(manyData);
+            public void onSuccess(List<OrderData> data) {
+                if (data.size() == 0) {
+                    if (manyDatas.isEmpty()) {
+                        //没有了
+                        refreshLoad.showReset("当前没有数据");
+                        return;
+                    }
                 }
+                manyDatas.addAll(data);
                 adapter.notifyDataSetChanged();
-                refreshLoad.complete(false, false);
+                refreshLoad.complete(data.size() == 0, manyDatas.isEmpty());
             }
-        }, 1000);
+
+            @Override
+            public void onFailure() {
+                refreshLoad.showError(msg);
+            }
+        });
     }
 
-    class ManyAdapter extends AfinalAdapter<ManyData> {
+    class ManyAdapter extends AfinalAdapter<OrderData> {
 
-        public ManyAdapter(Context context, List<ManyData> manyDatas) {
+        public ManyAdapter(Context context, List<OrderData> manyDatas) {
             super(context, manyDatas);
         }
 
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            ManyData manyData = getItem(position);
+            OrderData manyData = getItem(position);
             Holder holder = null;
 
             if (convertView == null) {
@@ -149,10 +193,10 @@ public class ActivityMany extends AfinalActivity {
             tv_error = ViewUtils.find(view, R.id.tv_cal);
         }
 
-        public void refresh(ManyData manyData) {
-            tv_address.setText(manyData.getAddress());
-            tv_order.setText(manyData.getOrderId());
-            tv_time.setText(manyData.getTime());
+        public void refresh(OrderData manyData) {
+            tv_address.setText(manyData.getFormatReceiptAddress());
+            tv_order.setText(manyData.getOrderSequenceNumber());
+            tv_time.setText(manyData.getPaymentTime());
             if (type == 1) {
                 tv_status.setText("已取消");
                 tv_status.setTextColor(g_color);
@@ -162,13 +206,13 @@ public class ActivityMany extends AfinalActivity {
                 tv_status.setTextColor(b_color);
                 tv_status.setBackgroundResource(R.drawable.btn_border_blue);
             }
-            String error = manyData.getError();
-            if (error != null && error.length() > 0) {
-                tv_error.setText(error);
-                tv_error.setVisibility(View.VISIBLE);
-            } else {
+//            String error = manyData.getOrderStatusTitle();
+//            if (error != null && error.length() > 0) {
+//                tv_error.setText(error);
+//                tv_error.setVisibility(View.VISIBLE);
+//            } else {
                 tv_error.setVisibility(View.GONE);
-            }
+//            }
         }
     }
 }

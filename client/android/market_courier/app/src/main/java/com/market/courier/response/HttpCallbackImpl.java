@@ -3,7 +3,6 @@ package com.market.courier.response;
 import android.content.Intent;
 
 import com.market.courier.LoginActivity;
-import com.market.courier.main.MainActivity;
 import com.zhumg.anlib.ActivityManager;
 import com.zhumg.anlib.http.HttpCallback;
 import com.zhumg.anlib.utils.DialogUtils;
@@ -34,11 +33,7 @@ public abstract class HttpCallbackImpl<T> extends HttpCallback<T> {
                         //重新弹出登陆界面
                         context.startActivity(new Intent(context, LoginActivity.class).putExtra("jump", true));
                         //关闭主界面
-                        ActivityManager.finishActivity(MainActivity.class);
-                        //关闭所有其它界面
-                        //ActivityManager.finishActivity(ScodeActivity.class);
-                        //输入框关闭
-                        //ActivityManager.finishActivity(InputActivity.class);
+                        ActivityManager.finishOthersActivity(LoginActivity.class);
                     }
                 }
             });

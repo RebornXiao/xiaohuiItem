@@ -17,6 +17,7 @@ import com.market.courier.widget.JpushAliasUtil;
 import com.market.courier.widget.WebActivity;
 import com.zhumg.anlib.ActivityManager;
 import com.zhumg.anlib.AfinalActivity;
+import com.zhumg.anlib.http.Callback;
 import com.zhumg.anlib.http.Http;
 import com.zhumg.anlib.http.HttpCallback;
 import com.zhumg.anlib.utils.ApkUtils;
@@ -148,13 +149,17 @@ public class LoginActivity extends AfinalActivity implements View.OnClickListene
                 }
 
                 Api.passport = data;
+                Callback.PASSPORT_ID = data.getPassportIdStr();
+                Callback.ACCESS_KEY = data.getAccessToken();
+
                 //保存passport
                 SpUtils.saveJson("passport", JsonUtils.toJson(data));
+                SpUtils.saveJson("accessToken", data.getAccessToken());
 
                 JpushAliasUtil.setJpushAlias(LoginActivity.this, Api.passport.getPassportIdStr());
 
                 if(jump) {
-                    startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                    startActivity(new Intent(LoginActivity.this, MainActivity.class).putExtra("login", true));
                 }
 
                 setResult(RESULT_OK);

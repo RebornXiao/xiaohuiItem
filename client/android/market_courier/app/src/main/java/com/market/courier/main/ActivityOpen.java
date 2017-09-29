@@ -95,6 +95,7 @@ public class ActivityOpen extends AfinalActivity {
                         getCodeResult();
                     }
                     try {
+                        //2分钟搞一次
                         Thread.sleep(2000);
                     } catch (Exception ex) {
 
@@ -116,6 +117,11 @@ public class ActivityOpen extends AfinalActivity {
         });
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        runing = false;
+    }
 
     static Bitmap createQRImage(String qrcode, int widthPix, int heightPix) {
         try {

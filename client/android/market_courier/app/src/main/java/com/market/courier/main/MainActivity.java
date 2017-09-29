@@ -79,6 +79,9 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
 
     Market selectMarket;
 
+    RefreshAccessToken refreshAccessToken;
+    MonyFragment monyFragment;
+
     @Override
     public int getContentViewId() {
         return R.layout.activity_main;
@@ -103,37 +106,50 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
         fragments.add(OrderListFragment.createOrderListFragment(StatusEnterEnum.COURIER_WAIT_ACCEPT));
         fragments.add(OrderListFragment.createOrderListFragment(StatusEnterEnum.COURIER_WAIT_PICK_UP));
         fragments.add(OrderListFragment.createOrderListFragment(StatusEnterEnum.COURIER_DELIVER));
-        fragments.add(new MonyFragment());
+        monyFragment = new MonyFragment();
+        fragments.add(monyFragment);
 
         titleViewPager = new TitleViewPager(view, getSupportFragmentManager(), fragments, DeviceUtils.screenWidth(this));
 
-        //如果登录
-        String accessToken = SpUtils.loadValue("accessToken");
 
-        if (accessToken != null && accessToken.length() > 0) {
-            //取passport
-            Api.passport = SpUtils.loadJson("passport", Passport.class);
-            //无法改变，则重新登陆
-            if (Api.passport == null) {
+        boolean login = getIntent().getBooleanExtra("login", false);
+
+        //如果未登录
+        if(!login) {
+
+            String accessToken = SpUtils.loadValue("accessToken");
+
+            if (accessToken != null && accessToken.length() > 0) {
+                //取passport
+                Api.passport = SpUtils.loadJson("passport", Passport.class);
+                //无法改变，则重新登陆
+                if (Api.passport == null) {
+                    startActivityForResult(new Intent(this, LoginActivity.class), 1);
+                    return;
+                }
+                //赋值
+                Callback.ACCESS_KEY = accessToken;
+                Callback.PASSPORT_ID = Api.passport.getPassportIdStr();
+                //注册极光
+                JpushAliasUtil.setJpushAlias(this, Api.passport.getPassportIdStr());
+                //直接访问拿店铺数据
+                loadMarkets();
+
+            } else {
+                //TODO 暂时不显示登录
                 startActivityForResult(new Intent(this, LoginActivity.class), 1);
                 return;
             }
-            //赋值
-            Callback.ACCESS_KEY = accessToken;
-            //注册极光
-            JpushAliasUtil.setJpushAlias(this, Api.passport.getPassportIdStr());
-            //直接访问拿店铺数据
-            loadMarkets();
+
         } else {
-            //TODO 暂时不显示登录
-            startActivityForResult(new Intent(this, LoginActivity.class), 1);
-            return;
-//            loadingView.hibe();
-//            cpane.setVisibility(View.VISIBLE);
+            loadMarkets();
+            //登陆成功
+            refreshAccessToken = new RefreshAccessToken();
+            refreshAccessToken.start(this);
+            //检测版本
+            UpdateManager.checkUpdate(this, false, Api.passport.getVersionMessage(), null);
         }
 
-        //检测版本
-        UpdateManager.httpCheckUpdate(this, false);
     }
 
     int num = 0;
@@ -200,6 +216,16 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
         if (requestCode == 100) {
             //刷新 标题
             changeMarket((Market) data.getSerializableExtra("market"));
+        } else if(requestCode == 1) {
+            //登陆成功
+            refreshAccessToken = new RefreshAccessToken();
+            refreshAccessToken.start(this);
+
+            loadingView.showLoading();
+            loadMarkets();
+
+            //检测版本
+            UpdateManager.checkUpdate(this, false, Api.passport.getVersionMessage(), null);
         }
     }
 
@@ -225,6 +251,8 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
         if (fragment instanceof OrderListFragment) {
             ((OrderListFragment) fragment).refreshDatas();
         }
+
+        monyFragment.setMarket(market);
     }
 
     //加载所有商店
@@ -248,7 +276,20 @@ public class MainActivity extends AfinalActivity implements View.OnClickListener
                 if (checkAccessToken()) {
                     return;
                 }
+                final int cc = code;
                 loadingView.showReset(msg);
+                loadingView.setResetListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (cc == 100) {
+                            //需要重新登陆
+                            startActivityForResult(new Intent(MainActivity.this, LoginActivity.class), 1);
+                        } else {
+                            loadingView.showLoading();
+                            loadMarkets();
+                        }
+                    }
+                });
             }
         });
     }
