@@ -231,7 +231,7 @@
                 var sVal1 = $(this).children("td:eq(0)").find('select').val();
                 var sTxt2 = $(this).children("td:eq(1)").find('option:selected').text();
                 var sVal2 = $(this).children("td:eq(1)").find('select').val();
-                var code =  $(this).children("td:eq(2)").text();
+                var code =  $(this).children("td:eq(2)").find('input').val();
                 var inputTxt1 = $(this).children("td:eq(3)").find('input').val();
                 var inputTxt2 = $(this).children("td:eq(4)").find('input').val();
                 itemIDs += sVal1 + ",";
@@ -249,7 +249,7 @@
             barcodes = barcodes.length > 0 ? barcodes.substring(0, barcodes.length - 1) : "";
             purchaseDates = purchaseDates.length > 0 ? purchaseDates.substring(0, purchaseDates.length - 1) : "";
             purchaseNumbers = purchaseNumbers.length > 0 ? purchaseNumbers.substring(0, purchaseNumbers.length - 1) : "";
-            alert(barcodes);
+
             var para0 = "?warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs
                         +"&itemTypeTitles="+itemTypeTitles+"&purchaseTimes="+purchaseDates+"&purchaseNumbers="+purchaseNumbers+"&status=0&barcodes="+barcodes;
             var para1 = "?warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs

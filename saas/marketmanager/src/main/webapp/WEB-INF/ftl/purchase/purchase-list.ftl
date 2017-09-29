@@ -148,7 +148,7 @@
         $("#purchaseInfoTable").find('button[id=lookBtn]').each(function () {
             var that = this;
             $(this).on('click', function () {
-                location.href = "${base}/purchase/purchaseDetail.do?id="+$(that).attr("data_id");
+                location.href = "${base}/purchase/purchaseDetail.do?id="+$(that).attr("data_id")+"&purchaseID="+$(that).attr("data_id");
             });
         });
         $("#purchaseInfoTable").find('button[id=editBtn]').each(function () {
