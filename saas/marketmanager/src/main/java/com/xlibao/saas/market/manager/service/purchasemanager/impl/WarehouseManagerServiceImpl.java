@@ -26,13 +26,13 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
         String warehouseName = getUTF("warehouseName", "");
         int status = getIntParameter("status", -1);
         int pageSize = getPageSize();
-        int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
+        int pageIndex = getIntParameter("pageIndex", 1);
 
         Map<String, String> parameters = new HashMap<>();
         parameters.put("warehouseName", warehouseName);
         parameters.put("status", String.valueOf(status));
         parameters.put("pageSize", String.valueOf(pageSize));
-        parameters.put("pageStartIndex", String.valueOf(pageStartIndex));
+        parameters.put("pageIndex", String.valueOf(pageIndex));
 
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/searchWarehousePage.do";

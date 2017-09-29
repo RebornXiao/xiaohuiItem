@@ -30,7 +30,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
         String warehouseCode = getUTF("warehouseCode", "");
         int status = getIntParameter("status", -1);
         int pageSize = getPageSize();
-        int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
+        int pageIndex = getIntParameter("pageIndex", 1);
 
 
         Map<String, String> parameters = new HashMap<>();
@@ -38,7 +38,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
         parameters.put("warehouseCode", warehouseCode);
         parameters.put("status", String.valueOf(status));
         parameters.put("pageSize", String.valueOf(pageSize));
-        parameters.put("pageStartIndex", String.valueOf(pageStartIndex));
+        parameters.put("pageIndex", String.valueOf(pageIndex));
 
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/searchPurchasePage.do";
