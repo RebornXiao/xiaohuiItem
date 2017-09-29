@@ -3,16 +3,22 @@ package com.xlibao.saas.market.manager.service.purchasemanager.impl;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
+import com.xlibao.common.http.HttpRequest;
 import com.xlibao.common.support.BasicRemoteService;
+import com.xlibao.metadata.item.ItemIdName;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.service.purchasemanager.SupplierManagerService;
 import com.xlibao.saas.market.manager.service.purchasemanager.WarehouseManagerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.alibaba.fastjson.JSON.parseObject;
 
 /**
  * Created by user on 2017/9/20.
@@ -288,5 +294,7 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
             throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
+
+
 
 }

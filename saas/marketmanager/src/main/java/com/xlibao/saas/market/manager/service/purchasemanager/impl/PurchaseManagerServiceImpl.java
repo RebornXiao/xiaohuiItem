@@ -122,6 +122,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
         String  itemTypeIDs= getUTF("itemTypeIDs","");
         String  itemNames= getUTF("itemNames","");
         String  itemTypeTitles= getUTF("itemTypeTitles","");
+        String  barcodes= getUTF("barcodes","");
         String  purchaseTimes= getUTF("purchaseTimes","");
         String  purchaseNumbers= getUTF("purchaseNumbers","");
 
@@ -149,6 +150,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
                 String [] itemTypeIDList= itemTypeIDs.split(CommonUtils.SPLIT_COMMA);
                 String [] itemNameList= itemNames.split(CommonUtils.SPLIT_COMMA);
                 String [] itemTypeTitleList= itemTypeTitles.split(CommonUtils.SPLIT_COMMA);
+                String [] barcodeList= barcodes.split(CommonUtils.SPLIT_COMMA);
                 String [] purchaseTimeList= purchaseTimes.split(CommonUtils.SPLIT_COMMA);
                 String [] purchaseNumberList=purchaseNumbers.split(CommonUtils.SPLIT_COMMA);
                 for (int i = 0; i < itemIDList.length; i++) {
@@ -158,6 +160,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
                     parameters2.put("itemTypeID", itemTypeIDList[i]);
                     parameters2.put("itemName", itemNameList[i]);
                     parameters2.put("itemTypeTitle", itemTypeTitleList[i]);
+                    parameters2.put("barcode", barcodeList[i]);
                     parameters2.put("purchaseTime", purchaseTimeList[i]);
                     parameters2.put("purchaseNumber", purchaseNumberList[i]);
                     //调用添加接口
@@ -224,6 +227,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
         String  itemTypeIDs= getUTF("itemTypeIDs","");
         String  itemNames= getUTF("itemNames","");
         String  itemTypeTitles= getUTF("itemTypeTitles","");
+        String  barcodes= getUTF("barcodes","");
         String  purchaseTimes= getUTF("purchaseTimes","");
         String  purchaseNumbers= getUTF("purchaseNumbers","");
 
@@ -255,6 +259,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
                 String [] itemTypeIDList= itemTypeIDs.split(CommonUtils.SPLIT_COMMA);
                 String [] itemNameList= itemNames.split(CommonUtils.SPLIT_COMMA);
                 String [] itemTypeTitleList= itemTypeTitles.split(CommonUtils.SPLIT_COMMA);
+                String [] barcodeList= barcodes.split(CommonUtils.SPLIT_COMMA);
                 String [] purchaseTimeList= purchaseTimes.split(CommonUtils.SPLIT_COMMA);
                 String [] purchaseNumberList=purchaseNumbers.split(CommonUtils.SPLIT_COMMA);
                 for (int i = 0; i < itemIDList.length; i++) {
@@ -264,6 +269,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
                     parameters2.put("itemTypeID", itemTypeIDList[i]);
                     parameters2.put("itemName", itemNameList[i]);
                     parameters2.put("itemTypeTitle", itemTypeTitleList[i]);
+                    parameters2.put("barcode", barcodeList[i]);
                     parameters2.put("purchaseTime", purchaseTimeList[i]);
                     parameters2.put("purchaseNumber", purchaseNumberList[i]);
                     //调用添加接口
