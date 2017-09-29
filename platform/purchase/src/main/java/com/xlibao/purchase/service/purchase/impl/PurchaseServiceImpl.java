@@ -55,7 +55,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         JSONObject response = new JSONObject();
         response.put("data", purchaseSuppliers);
         response.put("count", count);
-        response.put("pageIndex", getIntParameter("pageIndex", 1) - 1);
+        response.put("pageIndex", getIntParameter("pageIndex", 1));
         return success(response);
 
     }
@@ -187,7 +187,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         JSONObject response = new JSONObject();
         response.put("data", purchaseWarehouses);
         response.put("count", count);
-        response.put("pageIndex", getIntParameter("pageIndex", 1) - 1);
+        response.put("pageIndex", getIntParameter("pageIndex", 1));
         return success(response);
     }
 
@@ -371,13 +371,14 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
 
+
         List<ResultMap> purchaseWarehouses = purchaseDataAccessManager.searchPurchasePage(supplierName,warehouseCode,status,pageSize,pageStartIndex);
         int count = purchaseDataAccessManager.searchPurchasePageCount(supplierName,warehouseCode,status);
 
         JSONObject response = new JSONObject();
         response.put("data", purchaseWarehouses);
         response.put("count", count);
-        response.put("pageIndex", getIntParameter("pageIndex", 1) - 1);
+        response.put("pageIndex", getIntParameter("pageIndex", 1));
         return success(response);
     }
 
