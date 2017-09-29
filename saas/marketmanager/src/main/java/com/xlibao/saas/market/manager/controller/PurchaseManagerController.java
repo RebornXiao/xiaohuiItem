@@ -468,7 +468,7 @@ public class PurchaseManagerController extends BaseController {
         JSONObject response = parseObject(json);
 
         if(response.getIntValue("code") == 0) {
-            return success(response);
+            return response;
         } else {
             return fail("该分类下没有商品");
         }
