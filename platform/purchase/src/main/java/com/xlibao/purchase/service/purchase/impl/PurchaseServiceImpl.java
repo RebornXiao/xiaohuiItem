@@ -464,6 +464,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         long itemTypeID = getLongParameter("itemTypeID",-1);
         String itemName = getUTF("itemName",null);
         String itemTypeTitle = getUTF("itemTypeTitle",null);
+        String barcode = getUTF("barcode",null);
         String purchaseTime = getUTF("purchaseTime",null);
         int purchaseNumber = getIntParameter("purchaseNumber",-1);
 
@@ -481,6 +482,8 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
             return fail("缺少商品类型");
         }else if(purchaseTime == null || purchaseTime.isEmpty()){
             return fail("缺少采购日期");
+        }else if(barcode == null || barcode.isEmpty()){
+            return fail("缺少商品条形码");
         }
         PurchaseCommodity purchaseCommodity = new PurchaseCommodity();
         purchaseCommodity.setPurchaseId(purchaseID);
@@ -488,6 +491,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         purchaseCommodity.setItemName(itemName);
         purchaseCommodity.setItemTypeId(itemTypeID);
         purchaseCommodity.setItemTypeTitle(itemTypeTitle);
+        purchaseCommodity.setBarcode(barcode);
         purchaseCommodity.setPurchaseNumber(purchaseNumber);
         purchaseCommodity.setPurchaseTime(purchaseTime);
 
