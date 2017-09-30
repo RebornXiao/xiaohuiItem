@@ -73,17 +73,17 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String salesmanName = getUTF("salesmanName",null);
         String phone = getUTF("phone",null);
         if(supplierName == null || supplierName.isEmpty()){
-            return fail("缺少供应商名称");
+            return fail("缺少供应商名称supplierName");
         }else if(address == null || address.isEmpty()){
-            return fail("缺少供应商地址");
+            return fail("缺少供应商地址address");
         }else if(deliverPeriod == null || deliverPeriod.isEmpty()){
-            return fail("缺少供货周期");
+            return fail("缺少供货周期deliverPeriod");
         }else if(salesmanName == null || salesmanName.isEmpty()){
-            return fail("缺少供业务员");
+            return fail("缺少供业务员salesmanName");
         }else if(phone == null || phone.isEmpty()){
-            return fail("缺少业务员联系电话");
+            return fail("缺少业务员联系电话phone");
         }else if(supplierType==-1){
-            return fail("缺少供应商级别");
+            return fail("缺少供应商级别supplierType");
         }
         PurchaseSupplier supplier = new PurchaseSupplier();
         supplier.setSupplierName(supplierName);
@@ -107,19 +107,19 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String salesmanName = getUTF("salesmanName",null);
         String phone = getUTF("phone",null);
         if(id==-1){
-            return fail("缺少供应商ID");
+            return fail("缺少供应商id");
         }else if(supplierName == null || supplierName.isEmpty()){
-            return fail("缺少供应商名称");
+            return fail("缺少供应商名称supplierName");
         }else if(address == null || address.isEmpty()){
-            return fail("缺少供应商地址");
+            return fail("缺少供应商地址address");
         }else if(deliverPeriod == null || deliverPeriod.isEmpty()){
-            return fail("缺少供货周期");
+            return fail("缺少供货周期deliverPeriod");
         }else if(salesmanName == null || salesmanName.isEmpty()){
-            return fail("缺少供业务员");
+            return fail("缺少供业务员salesmanName");
         }else if(phone == null || phone.isEmpty()){
-            return fail("缺少业务员联系电话");
+            return fail("缺少业务员联系电话phone");
         }else if(supplierType==-1){
-            return fail("缺少供应商级别");
+            return fail("缺少供应商级别supplierType");
         }
         PurchaseSupplier supplier = new PurchaseSupplier();
         supplier.setId(id);
@@ -143,9 +143,9 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String  stopRemark = getUTF("stopRemark",null);
 
         if(id==-1){
-            return fail("缺少供应商ID");
+            return fail("缺少供应商id");
         }else if(status==-1){
-            return fail("缺少状态参数");
+            return fail("缺少状态参数status");
         }
 
         PurchaseSupplier supplier = new PurchaseSupplier();
@@ -164,7 +164,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
     public JSONObject getSupplier(){
         long id = getLongParameter("id",-1);
         if(id==-1){
-            return fail("缺少供应商ID");
+            return fail("缺少供应商id");
         }
         PurchaseSupplier supplier =purchaseDataAccessManager.getSupplier(id);
         if (supplier == null) {
@@ -199,11 +199,11 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String remark = getUTF("remark",null);
 
         if(warehouseCode == null || warehouseCode.isEmpty()){
-            return fail("缺少仓库编码");
+            return fail("缺少仓库编码warehouseCode");
         }else if(warehouseName == null || warehouseName.isEmpty()){
-            return fail("缺少仓库名称");
+            return fail("缺少仓库名称warehouseName");
         }else if(address == null || address.isEmpty()){
-            return fail("缺少仓库地址");
+            return fail("缺少仓库地址address");
         }
         PurchaseWarehouse warehouse = new PurchaseWarehouse();
         warehouse.setWarehouseCode(warehouseCode);
@@ -230,7 +230,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String address = getUTF("address",null);
         String remark = getUTF("remark",null);
         if(id==-1){
-            return fail("缺少仓库ID");
+            return fail("缺少仓库id");
         }else if(warehouseCode == null || warehouseCode.isEmpty()){
             return fail("缺少仓库编码");
         }else if(warehouseName == null || warehouseName.isEmpty()){
@@ -259,7 +259,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String  stopRemark = getUTF("stopRemark",null);
 
         if(id==-1){
-            return fail("缺少仓库ID");
+            return fail("缺少仓库id");
         }else if(status==-1){
             return fail("缺少状态参数");
         }
@@ -281,7 +281,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
     public JSONObject getWarehouse() {
         long id = getLongParameter("id",-1);
         if(id==-1){
-            return fail("缺少仓库ID");
+            return fail("缺少仓库id");
         }
         PurchaseWarehouse warehouse =purchaseDataAccessManager.getWarehouse(id);
         if (warehouse == null) {
@@ -298,7 +298,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String password = getUTF("password",null);
         String remark = getUTF("remark",null);
         if(warehouseID==-1){
-            return fail("缺少仓库ID");
+            return fail("缺少仓库warehouseID");
         }else if(username == null || username.isEmpty()){
             return fail("缺少仓库管理员用户名");
         }else if(password == null || password.isEmpty()){
@@ -329,7 +329,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String password = getUTF("password",null);
 
         if(id==-1){
-            return fail("缺少仓库管理员ID");
+            return fail("缺少仓库管理员id");
         }if(password == null || password.isEmpty()){
             return fail("缺少管理员密码");
         }
@@ -349,7 +349,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         long id = getLongParameter("id",-1);
 
         if(id==-1){
-            return fail("缺少仓库管理员ID");
+            return fail("缺少仓库管理员id");
         }
 
         PurchaseWarehouseUser warehouseUser = new PurchaseWarehouseUser();
@@ -386,7 +386,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
     public JSONObject getPurchase() {
         long id = getLongParameter("id",-1);
         if(id==-1){
-            return fail("缺少采购单ID");
+            return fail("缺少采购单id");
         }
         HashMap purchase =purchaseDataAccessManager.getPurchase(id);
         if (purchase == null) {
@@ -412,7 +412,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         long id = getLongParameter("id",-1);
 
         if(id==-1){
-            return fail("缺少采购单ID");
+            return fail("缺少采购单id");
         }
 
         PurchaseEntry purchaseEntry = new PurchaseEntry();
@@ -438,11 +438,11 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         int status = getIntParameter("status", -1);
 
         if(warehouseCode == null){
-            return fail("缺少仓库编码");
+            return fail("缺少仓库编码warehouseCode");
         }else if(supplierID == -1){
-            return fail("缺少供应商ID");
+            return fail("缺少供应商supplierID");
         }else if(status==-1){
-            return fail("缺少状态");
+            return fail("缺少状态status");
         }
         PurchaseEntry purchaseEntry = new PurchaseEntry();
         purchaseEntry.setWarehouseCode(warehouseCode);
@@ -469,21 +469,21 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         int purchaseNumber = getIntParameter("purchaseNumber",-1);
 
         if(purchaseID == -1){
-            return fail("缺少采购单ID");
+            return fail("缺少采购单purchaseID");
         }else if(itemID == -1){
-            return fail("缺少商品ID");
+            return fail("缺少商品itemID");
         }else if(itemTypeID==-1){
-            return fail("缺少商品类型ID");
+            return fail("缺少商品类型itemTypeID");
         }else if(purchaseNumber==-1){
-            return fail("缺少采购数量");
+            return fail("缺少采购数量purchaseNumber");
         }else if(itemName == null || itemName.isEmpty()){
-            return fail("缺少商品名称");
+            return fail("缺少商品名称itemName");
         }else if(itemTypeTitle == null || itemTypeTitle.isEmpty()){
-            return fail("缺少商品类型");
+            return fail("缺少商品类型itemTypeTitle");
         }else if(purchaseTime == null || purchaseTime.isEmpty()){
-            return fail("缺少采购日期");
+            return fail("缺少采购日期purchaseTime");
         }else if(barcode == null || barcode.isEmpty()){
-            return fail("缺少商品条形码");
+            return fail("缺少商品条形码barcode");
         }
         PurchaseCommodity purchaseCommodity = new PurchaseCommodity();
         purchaseCommodity.setPurchaseId(purchaseID);
@@ -509,13 +509,13 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         int status = getIntParameter("status", -1);
 
         if(id == -1){
-            return fail("缺少采购单ID");
+            return fail("缺少采购单id");
         }else if(warehouseCode == null){
-            return fail("缺少仓库编码");
+            return fail("缺少仓库编码warehouseCode");
         }else if(supplierID == -1){
-            return fail("缺少供应商ID");
+            return fail("缺少供应商supplierID");
         }else if(status==-1){
-            return fail("缺少状态");
+            return fail("缺少状态status");
         }
         PurchaseEntry purchaseEntry = new PurchaseEntry();
         purchaseEntry.setId(id);
@@ -555,13 +555,13 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String  depositNumbers= getUTF("depositNumbers",null);*/
 
         if(id == -1){
-            return fail("缺少采购单ID");
+            return fail("缺少采购单id");
         }else if(status==-1){
-            return fail("缺少状态");
+            return fail("缺少状态status");
         }else if(warehouseCode == null){
-            return fail("缺少仓库编码");
+            return fail("缺少仓库编码warehouseCode");
         }else if(warehouseName == null){
-            return fail("缺少仓库名称");
+            return fail("缺少仓库名称warehouseName");
         }else if(datas== null){
             return fail("缺少入库产品明细信息");
         }
@@ -636,13 +636,13 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String sessionkey = "222222";
         String version = "1.0";
         String param = "";
-        String ownercode ="beibei";
+        String ownercode =ConfigFactory.getXMarketConfig().getWhcode();
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("sourceno","11");
         jsonObject.put("planno","22");
         jsonObject.put("title","测试");
-        jsonObject.put("ownercode","beibei");
-        jsonObject.put("whcode","beibei");
+        jsonObject.put("ownercode",ConfigFactory.getXMarketConfig().getOwnercode());
+        jsonObject.put("whcode",ConfigFactory.getXMarketConfig().getWhcode());
         jsonObject.put("type","21");
 
         JSONArray array = new JSONArray();
@@ -692,13 +692,13 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         int number = getIntParameter("number",-1);
 
         if(warehouseCode == null){
-            return fail("缺少仓库编码");
+            return fail("缺少仓库编码warehouseCode");
         }else if(itemId == -1){
-            return fail("缺少商品ID");
+            return fail("缺少商品itemId");
         }else if(stockType==-1){
-            return fail("缺少操作类型");
+            return fail("缺少操作类型stockType");
         }else if(number==-1){
-            return fail("缺少商品数量");
+            return fail("缺少商品数量number");
         }
        JSONObject response = updateStockNumber(warehouseCode,null,-1,null,itemId,null,null,stockType,number);
         return success("商品库存更新",response);
@@ -810,9 +810,9 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         int warnNumber = getIntParameter("warnNumber", -1);
 
         if(id == -1){
-            return fail("缺少商品库存ID");
+            return fail("缺少商品库存id");
         }else if(warnNumber==-1){
-            return fail("缺少预警数量");
+            return fail("缺少预警数量warnNumber");
         }
         PurchaseCommodityStores purchaseCommodityStores = new PurchaseCommodityStores();
         purchaseCommodityStores.setId(id);

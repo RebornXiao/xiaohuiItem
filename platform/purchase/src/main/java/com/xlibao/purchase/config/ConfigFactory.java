@@ -15,8 +15,11 @@ public class ConfigFactory {
 
     @Autowired
     private DomainNameConfig domainNameConfig;
+    @Autowired
+    private XMarketConfig xmarketConfig;
 
     private static DomainNameConfig domainName;
+    private static XMarketConfig xmarket;
 
     @PostConstruct
     public void initialization() {
@@ -27,10 +30,16 @@ public class ConfigFactory {
 
         //DataCacheApplicationContextLoaderNotify.setItemRemoteServiceURL(domainName.itemRemoteURL);
         //ItemDataCacheService.initItemCache();
+
+        xmarket = xmarketConfig;
     }
 
     public static DomainNameConfig getDomainNameConfig() {
         return domainName;
+    }
+
+    public static XMarketConfig getXMarketConfig() {
+        return xmarket;
     }
 
 }
