@@ -110,7 +110,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}"/>
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/purchase/purchasePage.do?supplierName=${supplierName}&warehouseCode=${warehouseCode}&status=${status}"/>
                 </div>
             </div>
             <!--/分页-->
@@ -148,7 +148,7 @@
         $("#purchaseInfoTable").find('button[id=lookBtn]').each(function () {
             var that = this;
             $(this).on('click', function () {
-                location.href = "${base}/purchase/purchaseDetail.do?id="+$(that).attr("data_id");
+                location.href = "${base}/purchase/purchaseDetail.do?id="+$(that).attr("data_id")+"&purchaseID="+$(that).attr("data_id");
             });
         });
         $("#purchaseInfoTable").find('button[id=editBtn]').each(function () {

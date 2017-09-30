@@ -94,7 +94,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}"/>
+                    <@paginate nowPage=pageIndex itemCount=count action="${base}/purchase/commodityStoresPage.do?warehouseCode=${warehouseCode}&itemName=${itemName}&barcode=${barcode}"/>
                 </div>
             </div>
             <!--/分页-->
@@ -109,8 +109,10 @@
         if(r!=null)return  unescape(r[2]); return null;
     }
     function update(obj){
+        console.log(obj);
         var xg=$(obj).html();
         var $tr = $(obj).parent().parent();
+        console.log($tr);
         var $td = $tr.find("td:eq(5)");
         var tdTxt = $td.text();
         if(xg=='编辑'){
