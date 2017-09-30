@@ -1,6 +1,7 @@
 package com.xlibao.saas.market.manager.service.itemmanager;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
 
@@ -40,7 +41,9 @@ public interface ItemManagerService {
 
     public JSONObject searchItemTemplatesPage(String searchType, String searchKey, int pageSize, int pageIndex);
 
-    public JSONObject getItemTemplate(long itemTemplateId);
+    public JSONObject getItemTemplateJson(long itemTemplateId);
+
+    public ItemTemplate getItemTemplate(long itemTemplateId);
 
     public JSONObject removeItemTemplates(String[] ids);
 

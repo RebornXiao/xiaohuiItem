@@ -33,6 +33,10 @@
         select * from market_item_location where item_id = #{itemId} and stock > 0
     </select>
 
+    <select id="getItemLocationsForMarket" resultMap="BaseResultMap">
+        select * from market_item_location where market_id = #{marketId} and location_code in(${itemLocationSet}) and stock > 0
+    </select>
+
     <update id="offsetItemLocationStock">
         update market_item_location set stock = stock - #{decrementStock}, last_modify_time = now() where id = #{locationId}
     </update>

@@ -5,7 +5,7 @@ package com.xlibao.saas.market.core.message;
  */
 public interface MessageService {
 
-    boolean connectorMarketServer();
+    void reconnector(MarketConnectorListener connectorListener);
 
     void startListener();
 }

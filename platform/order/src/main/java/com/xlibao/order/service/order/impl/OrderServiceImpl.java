@@ -203,6 +203,21 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     }
 
     @Override
+    public JSONObject getOrderForSequenceSet() {
+        String orderSequenceSet = getUTF("orderSequenceSet");
+
+        List<OrderEntry> orderEntries = getOrderForSequenceSet(orderSequenceSet);
+
+        fillOrdersItemSnapshots(orderEntries);
+
+        JSONArray orderArray = orderEntries.stream().map(orderEntry -> JSONObject.parseObject(JSONObject.toJSONString(orderEntry))).collect(Collectors.toCollection(JSONArray::new));
+
+        JSONObject response = new JSONObject();
+        response.put("orderArray", orderArray);
+        return success(response);
+    }
+
+    @Override
     public JSONObject cancelOrder() {
         long orderId = getLongParameter("orderId");
         String partnerId = getUTF("partnerId");
@@ -320,13 +335,17 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     public JSONObject acceptOrder() {
         long courierPassportId = getLongParameter("courierPassportId");
         long orderId = getLongParameter("orderId", 0);
+        int forceAppoint = getIntParameter("forceAppoint", GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
 
-        OrderUnacceptLogger unacceptLogger = (orderId == 0) ? orderDataAccessManager.getNewestUnacceptLogger(courierPassportId) : orderDataAccessManager.getUnacceptLogger(orderId, courierPassportId);
-        if (unacceptLogger == null) {
-            return fail("没有可接取的订单记录");
+        if (forceAppoint == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()) {
+            OrderUnacceptLogger unacceptLogger = (orderId == 0) ? orderDataAccessManager.getNewestUnacceptLogger(courierPassportId) : orderDataAccessManager.getUnacceptLogger(orderId, courierPassportId);
+            if (unacceptLogger == null) {
+                return fail("没有可接取的订单记录");
+            }
+            orderId = unacceptLogger.getOrderId();
         }
         // 获取订单记录
-        OrderEntry orderEntry = getOrder(unacceptLogger.getOrderId());
+        OrderEntry orderEntry = getOrder(orderId);
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CANCEL.getKey()) {
             return fail("订单已被取消");
         }
@@ -422,6 +441,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         long courierPassportId = getLongParameter("courierPassportId");
         // 是否自营订单
         byte self = getByteParameter("self", GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
+        byte refreshOrderStatus = getByteParameter("refreshOrderStatus", GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
 
         OrderEntry orderEntry = getOrder(orderId);
 
@@ -475,7 +495,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             }
         }
         // 设置订单状态
-        orderEntry.setStatus(isBatch ? OrderStatusEnum.ORDER_STATUS_BATCH.getKey() : OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey());
+        orderEntry.setStatus(isBatch ? OrderStatusEnum.ORDER_STATUS_BATCH.getKey() :
+                (refreshOrderStatus == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey() ? OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey() : orderEntry.getStatus()));
         int deliverStatus = OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey();
         // 更新订单状态和配送状态
         int result = orderDataAccessManager.updateOrderStatus(orderEntry.getId(), orderEntry.getStatus(), beforeStatus, deliverStatus, orderEntry.getDeliverStatus());
@@ -506,9 +527,6 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         }
         if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey()) {
             return fail("订单已完成，无需再次配送");
-        }
-        if (orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_BATCH.getKey() && orderEntry.getStatus() != OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
-            return fail("订单状态有误，不能执行送达操作；当天状态：" + OrderStatusEnum.getOrderStatusEnum(orderEntry.getStatus()).getValue());
         }
         if ((orderEntry.getDeliverStatus() & OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) != OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
             return fail("不为配送状态，暂时不能执行送达操作");
@@ -686,12 +704,13 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         return result > 0 ? success("收货成功") : fail("收货失败");
     }
 
+    @Override
     public JSONObject refreshOrderStatus() {
         String orderSequenceNumber = getUTF("orderSequenceNumber"); // 订单序列号
         String operationPassportId = getUTF("operationPassportId"); // 操作者通行证ID
         int permissionType = getIntParameter("permissionType", 1);  // 等于或包含以下值时：1、下单方 2、销售方 4、收货方 8、发货方 16、配送方
         String validStatusSet = getUTF("validStatusSet");           // 有效的状态集合，即处于指定状态下才可执行该请求的意思
-        int targetStatus = getIntParameter("targetStatus");         // 状态的目标值
+        int targetStatus = getIntParameter("targetStatus");         // 目标状态值
 
         OrderEntry orderEntry = getOrder(orderSequenceNumber);
         if (!validStatusSet.contains(String.valueOf(orderEntry.getStatus()))) {
@@ -728,6 +747,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     public JSONObject showOrders() {
         String partnerId = getUTF("partnerId");
         String targetUserId = getUTF("targetUserId");
+        long appointFriendPassportId = getLongParameter("appointFriendPassportId", 0);
         byte target = getByteParameter("target");
         int roleType = getIntParameter("roleType");
         int type = getIntParameter("type", -1);
@@ -742,7 +762,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         List<OrderEntry> orders;
         switch (roleTypeEnum) {
             case CONSUMER: // 消费者
-                orders = orderDataAccessManager.showConsumerOrders(partnerId, targetUserId, target, orderStatusSet, type, pageStartIndex, pageSize);
+                orders = orderDataAccessManager.showConsumerOrders(partnerId, targetUserId, appointFriendPassportId, target, orderStatusSet, type, pageStartIndex, pageSize);
                 break;
             case MERCHANT: // 商家
                 orders = orderDataAccessManager.showMerchantOrders(partnerId, Long.parseLong(targetUserId), orderStatusSet, type, pageStartIndex, pageSize);
@@ -915,16 +935,17 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         long passportId = getLongParameter("passportId");
         String orderSequenceNumber = getUTF("orderSequenceNumber");
         String matchStatusSet = getUTF("matchStatusSet", String.valueOf(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()));
+        String refundReason = getUTF("refundReason", "");
 
         OrderEntry orderEntry = getOrder(orderSequenceNumber);
-        if (matchStatusSet.contains(String.valueOf(orderEntry.getStatus()))) {
+        if (!matchStatusSet.contains(String.valueOf(orderEntry.getStatus()))) {
             // 必须处于支付状态才能进行退款
             return OrderErrorCodeEnum.CANNOT_REFUND.response("当前状态不能执行退款操作，状态值：" + orderEntry.getStatus());
         }
         if (passportId != Long.parseLong(orderEntry.getPartnerUserId())) {
             return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
         }
-        int result = orderDataAccessManager.updateOrderStatus(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey(), orderEntry.getStatus(), orderEntry.getDeliverStatus(), orderEntry.getDeliverStatus());
+        int result = orderDataAccessManager.applyRefund(orderEntry.getId(), OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey(), matchStatusSet, refundReason);
         if (result <= 0) { // 预操作，当执行失败时，回滚该操作；否则提交
             return OrderErrorCodeEnum.REFUND_FAIL.response("申请退款失败，请稍后重试！");
         }
@@ -999,6 +1020,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             throw new XlibaoRuntimeException("订单不存在或已被删除，订单序列号：" + sequenceNumber);
         }
         return orders;
+    }
+
+    private List<OrderEntry> getOrderForSequenceSet(String orderSequenceSet) {
+        return orderDataAccessManager.getOrderForSequenceSet(orderSequenceSet);
     }
 
     private OrderSequence usePreparedOrder(String partnerId, String partnerUserId, String sequenceNumber) {

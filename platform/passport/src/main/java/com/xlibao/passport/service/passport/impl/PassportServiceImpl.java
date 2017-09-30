@@ -19,6 +19,7 @@ import com.xlibao.metadata.passport.PassportProperties;
 import com.xlibao.passport.data.mapper.channel.ChannelDataManager;
 import com.xlibao.passport.data.mapper.passport.PassportDataManager;
 import com.xlibao.passport.data.mapper.version.VersionDataManager;
+import com.xlibao.passport.data.model.PassportAlias;
 import com.xlibao.passport.data.model.PassportVersion;
 import com.xlibao.passport.service.passport.PassportEventListenerManager;
 import com.xlibao.passport.service.passport.PassportService;
@@ -28,6 +29,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 /**
  * @author chinahuangxc on 2017/2/6.
@@ -157,7 +160,7 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
     public JSONObject loginPassport() {
         String username = getUTF("username");
         String password = getUTF("password");
-        int deviceType = getIntParameter("versionType", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey());
+        int deviceType = getIntParameter("deviceType", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey());
         int clientType = getIntParameter("clientType", ClientTypeEnum.CONSUMER.getKey());
         // 当前版本号
         int versionIndex = getIntParameter("versionIndex");
@@ -173,28 +176,48 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
             logger.error("登录失败，登录帐号(" + username + ")、登录密码(" + password + ")错误，用户 -- " + passport);
             throw new XlibaoIllegalArgumentException("帐号或密码错误");
         }
-        if (passport.getStatus() == PassportStatusEnum.FORBID_LOGIN.getKey()) {
-            logger.error("登录失败，账户(" + passport + ")的状态类型不正常，目前状态：" + passport.getStatus());
-            throw new XlibaoRuntimeException("您的帐号已被禁止登录系统，如有疑问，请联系我司客服");
-        }
-        if (passport.getStatus() == PassportStatusEnum.BACK_LIST.getKey()) {
-            logger.error("登录失败，账户(" + passport + ")的状态类型不正常，目前状态：" + passport.getStatus());
-            throw new XlibaoRuntimeException("您的帐号目前处于黑名单状态，暂时不能登录");
-        }
-        // 客户端的权限控制
-        String roleValue = clientPowerControl(passport, clientType);
-        // 设置新的访问密令
-        changeAccessToken(passport);
+        return afterLogin(passport, deviceType, clientType, versionIndex);
+    }
 
-        passport.setVersionIndex(versionIndex);
-        // 版本检测
-        JSONObject versionMessage = versionControl(deviceType, clientType, versionIndex);
-        JSONObject response = fillLoginMessage(passport, roleValue);
-        response.put("versionMessage", versionMessage);
+    @Override
+    public JSONObject loginForVerificationCode() {
+        String phone = getUTF("phone");
+        String smsCode = getUTF("smsCode");
 
-        // 通知监听系统登录成功
-        passportEventListenerManager.notifyLoginPassport(passport);
-        return success(response);
+        int deviceType = getIntParameter("deviceType", DeviceTypeEnum.DEVICE_TYPE_ANDROID.getKey());
+        int clientType = getIntParameter("clientType", ClientTypeEnum.CONSUMER.getKey());
+        // 当前版本号
+        int versionIndex = getIntParameter("versionIndex");
+
+        if (!CommonUtils.isMobileNum(phone)) {
+            return PlatformErrorCodeEnum.PHONE_NUMBER_ERROR.response("手机号[" + phone + "]无效");
+        }
+        // 短信验证码验证 错误时抛 XlibaoIllegalArgumentException异常
+        smsService.verifySmsCode(phone, smsCode, SmsCodeTypeEnum.LOGIN.getKey());
+
+        Passport passport = passportDataManager.getPassport(phone);
+        if (passport == null) {
+            logger.error("登录失败，手机号不存在 -- " + phone);
+            throw new XlibaoIllegalArgumentException("手机号：" + phone + "未注册！");
+        }
+        return afterLogin(passport, deviceType, clientType, versionIndex);
+    }
+
+    @Override
+    public JSONObject logoutPassport() {
+        long passportId = getLongParameter("passportId");
+        String accessToken = getUTF("accessToken");
+        Passport passport = getPassport(passportId);
+        if (!accessToken.equals(passport.getAccessToken())) {
+            throw PlatformErrorCodeEnum.INVALID_ACCESS.throwException();
+        }
+        int result = passportDataManager.modifyAccessToken(passport.getId(), "", CommonUtils.nowFormat());
+        if (result >= 1) {
+            passport.setAccessToken(accessToken);
+            passport.setTokenInvalidTime(new Date());
+        }
+        setAccessToken(passport.getAccessToken());
+        return null;
     }
 
     @Override
@@ -277,6 +300,29 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
     }
 
     @Override
+    public int bindingMobileNumber(long passportId, String mobileNumber) {
+        Passport passport = passportDataManager.getPassport(mobileNumber);
+        if (passport != null) {
+            throw new XlibaoRuntimeException("手机号：" + mobileNumber + "已被使用，请重新设置！");
+        }
+        int result = passportDataManager.modifyPhoneNumber(passportId, mobileNumber);
+        if (result <= 0) {
+            throw new XlibaoRuntimeException("绑定手机号出错，请稍后重试");
+        }
+        PassportAlias passportAlias = new PassportAlias();
+        passportAlias.setPassportId(passportId);
+        passportAlias.setType(PassportAliasTypeEnum.PHONE.getKey());
+        passportAlias.setAliasName(mobileNumber);
+        passportAlias.setStatus((byte) PassportStatusEnum.NORMAL.getKey());
+
+        result = passportDataManager.createPassportAlias(passportAlias);
+        if (result <= 0) {
+            throw new XlibaoRuntimeException("绑定手机号出错，请稍后重试");
+        }
+        return result;
+    }
+
+    @Override
     public JSONObject authentication() {
         long passportId = getLongParameter("passportId");
         String fullName = getUTF("fullName");
@@ -305,19 +351,43 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
 
     @Override
     public JSONObject changeAccessToken() {
+        // TODO 2017-09-28 23:43 修改accessToken的使用方式 将原来每次访问生成全新的token业务去除 修改延长当前token的有效期
+        // long passportId = getLongParameter("passportId");
+        // String accessToken = getUTF("accessToken");
+
+        // changeAccessToken(passportId, accessToken);
+        // return success();
+        return extendAccessToken();
+    }
+
+    @Override
+    public JSONObject extendAccessToken() {
         long passportId = getLongParameter("passportId");
         String accessToken = getUTF("accessToken");
 
-        changeAccessToken(passportId, accessToken);
+        Passport passport = getPassport(passportId);
+        if (!accessToken.equals(passport.getAccessToken())) {
+            throw PlatformErrorCodeEnum.INVALID_ACCESS.throwException();
+        }
+        if (passport.getTokenInvalidTime() == null || passport.getTokenInvalidTime().getTime() <= System.currentTimeMillis()) {
+            throw PlatformErrorCodeEnum.INVALID_ACCESS.throwException();
+        }
+        int result = passportDataManager.extendAccessToken(passportId, accessToken, CommonUtils.dateFormat(System.currentTimeMillis() + GlobalConstantConfig.ACCESS_TOKEN_TIME_OUT));
+        if (result <= 0) {
+            logger.error("其实此时的Token已经更新失败，但为了避免多线程时造成的误会，因为该请求依然放行；但如果并不是因为多线程造成的问题，那么可能在下次访问时进行拒绝；用户为："
+                    + passport.getShowName() + "(" + passportId + ")，本次的accessToken为：" + accessToken);
+        }
         return success();
     }
 
     @Override
     public void changeAccessToken(Passport passport) {
         String accessToken = CommonUtils.generateAccessToken(GlobalConstantConfig.PARTNER_ID_PREFIX + String.valueOf(passport.getId()));
-        int result = passportDataManager.modifyAccessToken(passport.getId(), accessToken);
+        long accessTokenTimeout = System.currentTimeMillis() + GlobalConstantConfig.ACCESS_TOKEN_TIME_OUT;
+        int result = passportDataManager.modifyAccessToken(passport.getId(), accessToken, CommonUtils.dateFormat(accessTokenTimeout));
         if (result >= 1) {
             passport.setAccessToken(accessToken);
+            passport.setTokenInvalidTime(new Date(accessTokenTimeout));
         }
         setAccessToken(passport.getAccessToken());
     }
@@ -337,6 +407,16 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
     }
 
     @Override
+    public JSONObject phoneBeUsed() {
+        String phoneNumber = getUTF("phoneNumber");
+        if (!CommonUtils.isMobileNum(phoneNumber)) {
+            return PlatformErrorCodeEnum.PHONE_NUMBER_ERROR.response("手机号格式错误，号码：" + phoneNumber);
+        }
+        Passport passport = getPassport(phoneNumber);
+        return passport == null ? success() : fail("手机号[" + phoneNumber + "]已被使用");
+    }
+
+    @Override
     public JSONObject modifyNickname() {
         changeAccessToken();
         long passportId = getLongParameter("passportId");
@@ -346,9 +426,33 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         return result <= 0 ? fail() : success();
     }
 
+    private JSONObject afterLogin(Passport passport, int deviceType, int clientType, int versionIndex) {
+        if (passport.getStatus() == PassportStatusEnum.FORBID_LOGIN.getKey()) {
+            logger.error("登录失败，账户(" + passport + ")的状态类型不正常，目前状态：" + passport.getStatus());
+            throw new XlibaoRuntimeException("您的帐号已被禁止登录系统，如有疑问，请联系我司客服");
+        }
+        if (passport.getStatus() == PassportStatusEnum.BACK_LIST.getKey()) {
+            logger.error("登录失败，账户(" + passport + ")的状态类型不正常，目前状态：" + passport.getStatus());
+            throw new XlibaoRuntimeException("您的帐号目前处于黑名单状态，暂时不能登录");
+        }
+        // 客户端的权限控制
+        String roleValue = clientPowerControl(passport, clientType);
+        // 设置新的访问密令
+        changeAccessToken(passport);
+
+        passport.setVersionIndex(versionIndex);
+        // 版本检测
+        JSONObject versionMessage = versionControl(deviceType, clientType, versionIndex);
+        JSONObject response = fillLoginMessage(passport, roleValue);
+        response.put("versionMessage", versionMessage);
+
+        // 通知监听系统登录成功
+        passportEventListenerManager.notifyLoginPassport(passport);
+        return success(response);
+    }
+
     private JSONObject fillLoginMessage(Passport passport, String roleValue) {
         PassportProperties properties = passportDataManager.getPassportProperties(passport.getId(), PropertiesTypeEnum.PERSONAL.getKey(), PersonalKeyEnum.HEAD_IMAGE.getKey());
-
         // 填充登录消息
         JSONObject response = new JSONObject();
         response.put("passportId", passport.getId());
@@ -358,6 +462,8 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
         response.put("headImage", properties == null ? "" : CommonUtils.nullToEmpty(properties.getV()));
         response.put("roleValue", roleValue);
         response.put("accessToken", passport.getAccessToken());
+        response.put("lastRefreshTime", CommonUtils.dateFormat(passport.getTokenInvalidTime()));
+
         return response;
     }
 
@@ -415,15 +521,4 @@ public class PassportServiceImpl extends BasicWebService implements PassportServ
 
         return response;
     }
-
-    private Passport changeAccessToken(long passportId, String accessToken) {
-        Passport passport = getPassport(passportId);
-        if (!accessToken.equals(passport.getAccessToken())) {
-            throw new XlibaoRuntimeException(PlatformErrorCodeEnum.INVALID_ACCESS.getKey(), PlatformErrorCodeEnum.INVALID_ACCESS.getValue());
-        }
-        changeAccessToken(passport);
-        return passport;
-    }
-
-
 }

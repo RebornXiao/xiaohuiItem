@@ -52,20 +52,20 @@
                                             class="fa fa-search"></i></button>
                                 </span>
                             </div>
-                            <div class="form-group pull-right">
-                                <div class="btn-group">
-                                    <button type="button"
-                                            class="btn btn-default waves-effect waves-light dropdown-toggle"
-                                            data-toggle="dropdown" aria-expanded="false">导出 商品模板库 <span
-                                            class="caret"></span></button>
-                                    <ul class="dropdown-menu">
-                                        <li><a href="#" id="outExcelBtn">To Excel</a></li>
-                                        <li><a href="#" id="outPdfBtn">To PDF</a></li>
-                                        <li class="divider"></li>
-                                        <li><a href="#" id="outCopyBtn">To 剪贴板</a></li>
-                                    </ul>
-                                </div>
-                            </div>
+                            <#--<div class="form-group pull-right">-->
+                                <#--<div class="btn-group">-->
+                                    <#--<button type="button"-->
+                                            <#--class="btn btn-default waves-effect waves-light dropdown-toggle"-->
+                                            <#--data-toggle="dropdown" aria-expanded="false">导出 商品模板库 <span-->
+                                            <#--class="caret"></span></button>-->
+                                    <#--<ul class="dropdown-menu">-->
+                                        <#--<li><a href="#" id="outExcelBtn">To Excel</a></li>-->
+                                        <#--<li><a href="#" id="outPdfBtn">To PDF</a></li>-->
+                                        <#--<li class="divider"></li>-->
+                                        <#--<li><a href="#" id="outCopyBtn">To 剪贴板</a></li>-->
+                                    <#--</ul>-->
+                                <#--</div>-->
+                            <#--</div>-->
                         </form>
                     </div>
             </div>
@@ -94,7 +94,7 @@
                             <tr>
                                 <td>${item.id?c}</td>
                                 <td>${item.name}</td>
-                                <td>${item.defineCode}</td>
+                                <td>${(item.defineCode)!}</td>
                                 <td>${item.barcode}</td>
                                 <td>${item.typeName}</td>
                                 <td>${item.unitName}</td>
@@ -105,6 +105,10 @@
                                     <button id="editBtn" type="button"
                                             class="btn waves-effect waves-light btn-warning btn-sm"
                                             data_id="${item.id?c}">编辑
+                                    </button>
+                                    <button id="seeBtn" type="button"
+                                            class="btn waves-effect waves-light btn-info btn-sm"
+                                            data_id="${item.id?c}">商品是否在店铺上架
                                     </button>
                                 </td>
                             </tr>
@@ -126,7 +130,7 @@
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
-                    <@paginate nowPage=pageIndex itemCount=count action="${base}/item/itemList.do?searchType=${searchType}&searchKey=${searchKey}" />
+                    <@paginate pageItemCount=pageSize nowPage=pageIndex itemCount=count action="${base}/item/itemList.do?searchType=${searchType}&searchKey=${searchKey}" />
                 </div>
             </div>
 
@@ -151,11 +155,14 @@
 
                 if (searchTypeValue == "define_code") {
                     _searchMenu.html("按自定义编码搜索<span class=\"caret\"></span>");
+                    _searchKeyTxt.attr("placeholder", "按自定义编码搜索");
                 } else if (searchTypeValue == "barcode") {
                     _searchMenu.html("按条形码搜索<span class=\"caret\"></span>");
+                    _searchKeyTxt.attr("placeholder", "按条形码搜索");
                 } else {
                     searchTypeValue = "name";
                     _searchMenu.html("按名称搜索<span class=\"caret\"></span>");
+                    _searchKeyTxt.attr("placeholder", "按名称搜索");
                 }
 
                 //设置搜索框内容
@@ -182,7 +189,8 @@
                         swal("包括了特殊符号，无法搜索!");
                         return;
                     }
-                    location.href = "${base}/item/itemList.do?searchType=" + searchTypeValue + "&searchKey=" + sValue;
+                    open({url:"${base}/item/itemList.do?searchType=" + searchTypeValue + "&searchKey=" + sValue});
+                    //location.href = "${base}/item/itemList.do?searchType=" + searchTypeValue + "&searchKey=" + sValue;
                 });
 
                 //添加新品
@@ -195,7 +203,16 @@
                 //单项编辑
                 _itemListTable.find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/item/itemEdit.do?id=" + $(this).attr("data_id");
+                        open({url:"${base}/item/itemEdit.do?id=" + $(this).attr("data_id")});
+                        //location.href = "${base}/item/itemEdit.do?id=" + $(this).attr("data_id");
+                    });
+                });
+
+                //单项查看店铺分布
+                _itemListTable.find('button[id=seeBtn]').each(function () {
+                    $(this).on('click', function () {
+                        open({url:"${base}/market/marketItems.do?searchType=itemTemplateId&searchKey=" + $(this).attr("data_id")});
+                        //location.href = "${base}/market/marketItems.do?searchType=itemTemplateId&searchKey=" + $(this).attr("data_id");
                     });
                 });
 

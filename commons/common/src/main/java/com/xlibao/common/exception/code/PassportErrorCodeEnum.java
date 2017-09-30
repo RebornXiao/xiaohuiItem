@@ -1,5 +1,7 @@
 package com.xlibao.common.exception.code;
 
+import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.BasicWebService;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 
 /**
@@ -30,6 +32,14 @@ public enum PassportErrorCodeEnum {
 
     public String getValue() {
         return value;
+    }
+
+    public JSONObject response() {
+        return response(getValue());
+    }
+
+    public JSONObject response(String errorMsg) {
+        return BasicWebService.fail(getKey(), errorMsg);
     }
 
     public XlibaoRuntimeException throwException() {

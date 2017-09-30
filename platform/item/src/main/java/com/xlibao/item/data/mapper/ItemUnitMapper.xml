@@ -8,7 +8,7 @@
     </resultMap>
 
     <select id="loaderItemUnits" resultMap="BaseResultMap">
-        select * from item_unit where status = #{status}
+        select * from item_unit
     </select>
 
     <select id="getItemUnit" resultMap="BaseResultMap">
@@ -43,6 +43,10 @@
         <if test="searchKey != null" > where title like "%"#{searchKey}"%" </if>
     </select>
 
+    <insert id="createItemUnit" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.metadata.item.ItemUnit">
+        insert into item_unit(title, status) values(#{title}, #{status})
+    </insert>
+
     <update id="updateItemUnit">
         update item_unit set title = #{title}, status = #{status}
         where id = #{itemUnitId}
@@ -51,9 +55,5 @@
     <select id="getItemUnitByTitle" resultMap="BaseResultMap">
         select * from item_unit where title = #{title}
     </select>
-
-    <insert id="createItemUnit" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.metadata.item.ItemUnit">
-        insert into item_unit(title, status) values(#{title}, #{status})
-    </insert>
 
 </mapper>

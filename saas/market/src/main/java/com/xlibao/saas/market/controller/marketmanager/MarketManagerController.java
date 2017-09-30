@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * Created by zhumg on 8/15.
+ * @author zhumg on 8/15.
  */
 @Controller
 @RequestMapping(value = "/market/manager")
@@ -34,6 +34,18 @@ public class MarketManagerController {
     }
 
     @ResponseBody
+    @RequestMapping(value = "marketEditSave", method = RequestMethod.POST)
+    public JSONObject marketEditSave() {
+        return marketService.marketEditSave();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "marketUpdateStatus", method = RequestMethod.POST)
+    public JSONObject marketUpdateStatus() {
+        return marketService.marketUpdateStatus();
+    }
+
+    @ResponseBody
     @RequestMapping(value = "getAllMarkets")
     public JSONObject getAllMarkets() {
         return marketService.getAllMarkets();
@@ -46,13 +58,38 @@ public class MarketManagerController {
         return shelvesService.getShelvesMarks();
     }
 
-    //获取弹夹的值
     @ResponseBody
     @RequestMapping(value = "loaderClipDatas")
     public JSONObject loaderClipDatas() {
         return shelvesService.loaderClipDatas();
     }
 
+    /**
+     * <pre>
+     *     <b>获取原来存在的任务数据</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/manager/checkPrepareActionTask.do
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>taskId</b> - long 任务ID，必填参数；该参数必定大于0
+     *
+     *     <b>返回：</b>
+     *          <b>taskId</b> - long 任务ID
+     *          <b>locationCode</b> - String 弹夹的完整编码，如：01010101
+     *          <b>itemTemplateId</b> - long 商品模版ID
+     *          <b>itemName</b> - String 商品名
+     *          <b>unitName</b> - String 当前存放的商品单位
+     *          <b>hasCompleteQuantity</b> - int 执行完成的商品数量
+     *          <b>itemQuantity</b> - int 商品数量
+     *          <b>barcode</b> - String 商品的条码
+     *          <b>type</b> - int 任务类型，参考：{@link com.xlibao.saas.market.service.market.ShelvesTaskTypeEnum}
+     *          <b>status</b> - int 任务状态，参考：{@link com.xlibao.saas.market.service.item.PrepareActionStatusEnum}
+     *          <b>hopeExecutorDate</b> - String 期望执行的日期
+     *          <b>completeTime</b> - String 实际完成的时间点
+     *          <b>dateTitle</b> - String 用于展示的执行日期格式标题，如：今天、昨天、2017-09-18 周一
+     * </pre>
+     */
     @ResponseBody
     @RequestMapping(value = "checkPrepareActionTask")
     public JSONObject checkPrepareActionTask() {

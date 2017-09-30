@@ -10,10 +10,11 @@
         <result column="top" property="top" jdbcType="TINYINT"/>
         <result column="icon" property="icon" jdbcType="VARCHAR"/>
         <result column="image" property="image" jdbcType="VARCHAR"/>
+        <result column="request_source" property="requestSource" jdbcType="INTEGER"/>
     </resultMap>
 
     <select id="loaderItemTypes" resultMap="BaseResultMap">
-        select * from item_type where status = #{status}
+        select * from item_type
     </select>
 
     <select id="relationItemTypes" resultMap="BaseResultMap">
@@ -31,20 +32,20 @@
 
     <select id="pageItemType" resultMap="BaseResultMap">
         select * from item_type
-        <if test="parentItemTypeId != -1" > where parent_id = #{parentItemTypeId} </if>
-        <if test="pageSize != 0">order by sort asc limit #{pageStartIndex}, #{pageSize}</if>
-        <if test="pageSize == 0">order by sort asc</if>
+          <if test="parentItemTypeId != -1" > where parent_id = #{parentItemTypeId} </if>
+        order by sort asc
+          <if test="pageSize != 0">limit #{pageStartIndex}, #{pageSize}</if>
     </select>
 
     <select id="searchItemTypePageByName" resultMap="BaseResultMap">
         select * from item_type
-        <if test="searchKey != null" > where title like "%"#{searchKey}"%" </if>
+          <if test="searchKey != null" > where title like "%"#{searchKey}"%" </if>
         order by id desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="searchItemTypeCountByName" resultType="Integer">
-        select COUNT(id) from item_type
-        <if test="searchKey != null" > where title like "%"#{searchKey}"%" </if>
+        select count(id) from item_type
+        <if test="searchKey != null"> where title like "%"#{searchKey}"%"</if>
     </select>
 
     <select id="getItemTypeSortMaxId" resultMap="BaseResultMap">
@@ -53,5 +54,13 @@
 
     <update id="updateItemTypeSort">
         update item_type set sort = #{sort} where id = #{id}
+    </update>
+
+    <update id="updateItemTypeIconUrl">
+        update item_type set icon = #{icon}  where id = #{id}
+    </update>
+
+    <update id="updateItemType">
+        update item_type set icon = #{type.icon} , parent_id = #{type.parentId} , title = #{type.title} where id = #{type.id}
     </update>
 </mapper>

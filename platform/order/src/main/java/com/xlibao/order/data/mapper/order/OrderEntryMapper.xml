@@ -74,8 +74,13 @@
         select * from order_entry where sequence_number = #{sequenceNumber} order by payment_time desc, id desc
     </select>
 
+    <select id="getOrderForSequenceSet" resultMap="BaseResultMap">
+        select * from order_entry where order_sequence_number in(${orderSequenceSet})
+    </select>
+
     <select id="showConsumerOrders" resultMap="BaseResultMap">
         select * from order_entry where partner_id = #{partnerId}
+        <if test="shippingPassportId != 0"> and shipping_passport_id = #{shippingPassportId} </if>
         <if test='orderStatusSet != null and orderStatusSet != "0"'> and status in (${orderStatusSet}) </if>
         <if test="target == 0"> and partner_user_id = #{partnerUserId} </if>
         <if test="target == 1"> and receipt_user_id = #{partnerUserId} </if>
@@ -124,7 +129,7 @@
     </update>
 
     <update id="correctOrderPrice">
-        update order_entry set actual_price = #{actualPrice}, total_price = #{totalPrice}, discount_price = #{discountPrice}, distribution_fee = #{distributionFee}, deliver_type = #{deliveyType} where id = #{orderId}
+        update order_entry set actual_price = #{actualPrice}, total_price = #{totalPrice}, discount_price = #{discountPrice}, distribution_fee = #{distributionFee}, deliver_type = #{deliverType} where id = #{orderId}
     </update>
 
     <update id="fillDailyRowSort">
@@ -169,5 +174,9 @@
 
     <update id="refreshOrderStatus">
         update order_entry set status = #{targetStatus} where order_sequence_number = #{orderSequenceNumber} and status in (${validStatusSet})
+    </update>
+
+    <update id="applyRefund">
+        update order_entry set status = #{refundStatus}, detail = #{refundReason} where id = #{orderId} and status in (${matchStatusSet})
     </update>
 </mapper>

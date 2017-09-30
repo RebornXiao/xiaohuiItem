@@ -18,6 +18,7 @@
         <result column="device_type" property="deviceType" jdbcType="INTEGER"/>
         <result column="device_name" property="deviceName" jdbcType="VARCHAR"/>
         <result column="access_token" property="accessToken" jdbcType="VARCHAR"/>
+        <result column="token_invalid_time" property="tokenInvalidTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <insert id="createPassport" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.metadata.passport.Passport">
@@ -38,10 +39,18 @@
     </update>
 
     <update id="modifyAccessToken">
-        update passport set access_token = #{accessToken} where id = #{id}
+        update passport set access_token = #{accessToken}, token_invalid_time = #{appointTime} where id = #{id}
+    </update>
+
+    <update id="modifyPhoneNumber">
+        update passport set phone_number = #{mobileNumber} where id = #{passportId}
     </update>
 
     <update id="modifyNickname">
         update passport set show_name = #{nickname} where id = #{id}
+    </update>
+
+    <update id="extendAccessToken">
+        update passport set token_invalid_time = #{appointTime} where passport_id = #{passportId} and access_toke = #{accessToken} and token_invalid_time > now()
     </update>
 </mapper>

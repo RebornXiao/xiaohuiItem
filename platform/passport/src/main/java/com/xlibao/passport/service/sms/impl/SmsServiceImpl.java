@@ -5,12 +5,11 @@ import com.xlibao.common.*;
 import com.xlibao.common.constant.sms.SmsCodeTypeEnum;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
-import com.xlibao.common.service.sms.partner.AliyunMessageService;
-import com.xlibao.common.thread.AsyncScheduledService;
 import com.xlibao.passport.config.ConfigFactory;
 import com.xlibao.passport.data.mapper.sms.SmsDataManager;
 import com.xlibao.passport.data.model.PassportSmsLogger;
 import com.xlibao.passport.service.sms.SmsService;
+import com.xlibao.passport.service.sms.channel.RBPSMSMessageService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,9 +86,14 @@ public class SmsServiceImpl extends BasicWebService implements SmsService {
             logger.info("没有开启短信验证码功能，不执行发送流程");
             return;
         }
-        SmsCodeTypeEnum typeEnum = SmsCodeTypeEnum.getSmsCodeTypeEnum(type);
+        // 拼接短信内容
+        smsContent = smsCode + smsContent;
         // 接入短信渠道
-        Runnable runnable = () -> AliyunMessageService.sendSmsVerifyCode(phone, typeEnum.getTemplateCode(), smsCode);
-        AsyncScheduledService.submitImmediateRemoteNotifyTask(runnable);
+        try {
+            RBPSMSMessageService.sendMessage(phone, smsContent);
+        } catch (Exception ex) {
+            logger.error("发送短信验证码失败发生异常", ex);
+            throw new XlibaoRuntimeException("获取验证码失败，请稍后重试！");
+        }
     }
 }

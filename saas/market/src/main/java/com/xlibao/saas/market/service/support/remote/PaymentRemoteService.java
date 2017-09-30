@@ -1,6 +1,7 @@
 package com.xlibao.saas.market.service.support.remote;
 
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.CommonUtils;
 import com.xlibao.common.DefineRandom;
 import com.xlibao.saas.market.service.support.BasicRemoteService;
 import org.apache.log4j.Logger;
@@ -40,11 +41,17 @@ public class PaymentRemoteService extends BasicRemoteService {
         return response;
     }
 
-    public static JSONObject applyRefund(long passportId, String orderSequenceNumber, String matchStatusSet) {
+    public static JSONObject applyRefund(long passportId, String orderSequenceNumber, String matchStatusSet, String title, String content) {
+        JSONObject refundReason = new JSONObject();
+        refundReason.put("refundType", "用户退款");
+        refundReason.put("title", title);
+        refundReason.put("content", CommonUtils.isNullString(content) ? "未填写退款说明" : CommonUtils.nullToEmpty(content));
+
         Map<String, String> parameters = initialParameter();
         parameters.put("passportId", String.valueOf(passportId));
         parameters.put("orderSequenceNumber", orderSequenceNumber);
         parameters.put("matchStatusSet", matchStatusSet);
+        parameters.put("refundReason", refundReason.toJSONString());
 
         return postOrderMsg("order/payment/applyRefund", parameters);
     }

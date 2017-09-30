@@ -37,9 +37,9 @@ public class VGFrame extends javax.swing.JFrame {
     public VGFrame() {
         initComponents();
 
-        // setExtendedState(JFrame.MAXIMIZED_BOTH);
-        // setAlwaysOnTop(true);
-        // setUndecorated(true);
+//        setExtendedState(JFrame.MAXIMIZED_BOTH);
+//        setAlwaysOnTop(true);
+//        setUndecorated(true);
 
         Image img = Toolkit.getDefaultToolkit().getImage(getClass().getResource("").getPath() + "/logo64.png");
         setIconImage(img);
@@ -263,6 +263,7 @@ public class VGFrame extends javax.swing.JFrame {
 
     private void btnClearHistoryActionPerformed(java.awt.event.ActionEvent evt) {
         txtHistory.setText("");
+        lineIndex = 0;
         appendHistory("清空了操作历史记录");
     }
 

@@ -46,6 +46,16 @@ public class OrderEventListenerManager {
         }
     }
 
+    public void notifyAcceptedOrder(OrderEntry orderEntry) {
+        for (Map.Entry<String, OrderEventListener> entrys : ORDER_EVENT_LISTENER_MAP.entrySet()) {
+            try {
+                entrys.getValue().notifyAcceptedOrder(orderEntry);
+            } catch (Exception ex) {
+                logger.error("【" + orderEntry.getOrderSequenceNumber() + "】通知订单接单完成的后续操作发生了异常，正在执行的系统：" + entrys.getKey(), ex);
+            }
+        }
+    }
+
     public void notifyDeliveredOrderEntry(OrderEntry orderEntry) {
         for (Map.Entry<String, OrderEventListener> entrys : ORDER_EVENT_LISTENER_MAP.entrySet()) {
             try {

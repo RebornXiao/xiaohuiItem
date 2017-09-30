@@ -85,7 +85,8 @@
 
                 $("#sortlist").on("change", function () {
                     var obj = $(this).children('option:selected');
-                    location.href = "${base}/item/itemTypeSort.do?id=" + obj.attr("data_id");
+                    open({url:"${base}/item/itemTypeSort.do?id=" + obj.attr("data_id")});
+                    //location.href = "${base}/item/itemTypeSort.do?id=" + obj.attr("data_id");
                 });
 
                 $("#saveBtn").on("click", function () {
@@ -107,7 +108,7 @@
                     }
 
                     //保存
-                    $.post("${base}/item/itemTypeSortEditSave.do", {ids:ids}, function(data) {
+                    tokenPresPost("${base}/item/itemTypeSortEditSave.do", {ids:ids}, function(data) {
 
                         if(data.code == 0) {
                             //成功

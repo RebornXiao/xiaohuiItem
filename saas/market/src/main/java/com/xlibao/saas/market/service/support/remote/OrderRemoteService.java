@@ -2,6 +2,8 @@ package com.xlibao.saas.market.service.support.remote;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.CommonUtils;
+import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.support.ShareOrderRemoteService;
 import com.xlibao.metadata.order.OrderEntry;
@@ -88,12 +90,13 @@ public class OrderRemoteService extends BasicRemoteService {
         return response;
     }
 
-    public static JSONObject distributionOrder(long orderId, long courierPassportId, byte self) {
+    public static JSONObject distributionOrder(long orderId, long courierPassportId, byte self, boolean refreshOrderStatus) {
         Map<String, String> parameters = initialParameter();
 
         parameters.put("orderId", String.valueOf(orderId));
         parameters.put("courierPassportId", String.valueOf(courierPassportId));
         parameters.put("self", String.valueOf(self));
+        parameters.put("refreshOrderStatus", String.valueOf(refreshOrderStatus ? GlobalAppointmentOptEnum.LOGIC_TRUE.getKey() : GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()));
 
         JSONObject response = postOrderMsg("order/distributionOrder", parameters);
         logger.info("配送结果：" + response);
@@ -124,29 +127,24 @@ public class OrderRemoteService extends BasicRemoteService {
                 ConfigFactory.getDomainNameConfig().orderRemoteURL, orderSequenceNumber);
     }
 
-    public static List<OrderEntry> getOrders(String sequenceNumber) {
-        Map<String, String> parameters = initialParameter();
-
-        parameters.put("sequenceNumber", sequenceNumber);
-
-        JSONObject response = postOrderMsg("order/getOrders", parameters);
-
-        logger.info("批量获取订单数据：" + response);
-
-        response = response.getJSONObject("response");
-        JSONArray orderArray = response.getJSONArray("orderArray");
-        List<OrderEntry> orders = new ArrayList<>();
-        for (int i = 0; i < orderArray.size(); i++) {
-            orders.add(JSONObject.parseObject(orderArray.getString(i), OrderEntry.class));
+    public static List<OrderEntry> getOrders(List<String> orderSequences) {
+        StringBuilder orderSequenceSet = new StringBuilder();
+        for (String sequenceNumber : orderSequences) {
+            orderSequenceSet.append("'").append(sequenceNumber).append("'").append(CommonUtils.SPLIT_COMMA);
         }
-        return orders;
+        if (orderSequenceSet.toString().endsWith(CommonUtils.SPLIT_COMMA)) {
+            orderSequenceSet.deleteCharAt(orderSequenceSet.length() - 1);
+        }
+        return ShareOrderRemoteService.getOrderForSequenceSet(ConfigFactory.getXMarketConfig().getPartnerId(), ConfigFactory.getXMarketConfig().getOrderAppId(), ConfigFactory.getXMarketConfig().getOrderAppkey(),
+                ConfigFactory.getDomainNameConfig().orderRemoteURL, orderSequenceSet.toString());
     }
 
-    public static List<OrderEntry> showOrders(long passportId, byte target, int roleType, String orderStatusSet, int type, int pageIndex, int pageSize) {
+    public static List<OrderEntry> showOrders(long passportId, long appointFriendPassportId, byte target, int roleType, String orderStatusSet, int type, int pageIndex, int pageSize) {
         Map<String, String> parameters = initialParameter();
 
         parameters.put("targetUserId", String.valueOf(passportId));
         parameters.put("target", String.valueOf(target));
+        parameters.put("appointFriendPassportId", String.valueOf(appointFriendPassportId));
         parameters.put("roleType", String.valueOf(roleType));
         parameters.put("orderStatusSet", orderStatusSet);
         parameters.put("type", String.valueOf(type));
@@ -157,28 +155,6 @@ public class OrderRemoteService extends BasicRemoteService {
 
         response = response.getJSONObject("response");
         JSONArray orderArray = response.getJSONArray("orderArray");
-        List<OrderEntry> orders = new ArrayList<>();
-        for (int i = 0; i < orderArray.size(); i++) {
-            orders.add(JSONObject.parseObject(orderArray.getString(i), OrderEntry.class));
-        }
-        return orders;
-    }
-
-    public static List<OrderEntry> searchOrders(long passportId, int roleType, String searchKeyValue, int orderType, int pageIndex, int pageSize) {
-        Map<String, String> parameters = initialParameter();
-        parameters.put("passportId", String.valueOf(passportId));
-        parameters.put("roleType", String.valueOf(roleType));
-        parameters.put("searchKeyValue", searchKeyValue);
-        parameters.put("orderType", String.valueOf(orderType));
-        parameters.put("pageIndex", String.valueOf(pageIndex));
-        parameters.put("pageSize", String.valueOf(pageSize));
-
-        JSONObject response = postOrderMsg("order/searchOrders", parameters);
-
-        logger.info("搜索订单结果：" + response);
-
-        response = response.getJSONObject("response");
-        JSONArray orderArray = response.getJSONArray("datas");
         List<OrderEntry> orders = new ArrayList<>();
         for (int i = 0; i < orderArray.size(); i++) {
             orders.add(JSONObject.parseObject(orderArray.getString(i), OrderEntry.class));
@@ -217,15 +193,6 @@ public class OrderRemoteService extends BasicRemoteService {
         logger.info("修正订单价格结果：" + response);
     }
 
-    public static void paymentOrder(long orderId, String paymentType) {
-        Map<String, String> parameters = initialParameter();
-
-        parameters.put("orderId", String.valueOf(orderId));
-        parameters.put("transType", paymentType);
-
-        postOrderMsg("order/paymentOrder", parameters);
-    }
-
     public static JSONObject cancelOrder(long orderId, String partnerUserId, int beforeStatus, String reason) {
         Map<String, String> parameters = initialParameter();
 
@@ -246,11 +213,23 @@ public class OrderRemoteService extends BasicRemoteService {
         return postOrderMsg("order/findInvalidOrderSize", parameters);
     }
 
-    public static JSONObject acceptOrder(long passportId, long orderId) {
+    public static JSONObject batchResetOverdueOrderStatus(int orderType, int matchStatus, int expectStatus, long timeout) {
+        Map<String, String> parameters = initialParameter();
+
+        parameters.put("orderType", String.valueOf(orderType));
+        parameters.put("matchStatus", String.valueOf(matchStatus));
+        parameters.put("expectStatus", String.valueOf(expectStatus));
+        parameters.put("timeout", String.valueOf(timeout));
+
+        return postOrderMsg("order/batchResetOverdueOrderStatus", parameters);
+    }
+
+    public static JSONObject acceptOrder(long passportId, long orderId, int forceAppoint) {
         Map<String, String> parameters = initialParameter();
 
         parameters.put("courierPassportId", String.valueOf(passportId));
         parameters.put("orderId", String.valueOf(orderId));
+        parameters.put("forceAppoint", String.valueOf(forceAppoint));
 
         return postOrderMsg("order/acceptOrder", parameters);
     }

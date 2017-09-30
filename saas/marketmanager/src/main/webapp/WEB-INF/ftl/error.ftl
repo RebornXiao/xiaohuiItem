@@ -48,6 +48,11 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
+
+    <#--<#if accessToken?? >-->
+        <#--$.cookie("accessToken", ${accessToken}, {expires: 365});-->
+    <#--</#if>-->
+
         $("#backBtn").on('click', function () {
             history.back(-1);
         });

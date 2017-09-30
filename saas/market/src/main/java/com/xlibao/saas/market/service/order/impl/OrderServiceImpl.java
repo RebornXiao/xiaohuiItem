@@ -14,19 +14,21 @@ import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.exception.code.OrderErrorCodeEnum;
 import com.xlibao.datacache.item.ItemDataCacheService;
-import com.xlibao.market.data.model.MarketEntry;
-import com.xlibao.market.data.model.MarketItem;
-import com.xlibao.market.data.model.MarketItemDailyPurchaseLogger;
+import com.xlibao.market.data.model.*;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import com.xlibao.saas.market.data.DataAccessFactory;
+import com.xlibao.saas.market.data.model.MarketOrderProperties;
 import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.item.MarketItemErrorCodeEnum;
+import com.xlibao.saas.market.service.market.MarketErrorCodeEnum;
+import com.xlibao.saas.market.service.market.MarketStatusEnum;
 import com.xlibao.saas.market.service.order.MarketOrderErrorCodeEnum;
 import com.xlibao.saas.market.service.order.OrderEventListenerManager;
 import com.xlibao.saas.market.service.order.OrderService;
 import com.xlibao.saas.market.service.order.StatusEnterEnum;
+import com.xlibao.saas.market.service.order.properties.PropertiesKeyEnum;
 import com.xlibao.saas.market.service.support.ItemSupport;
 import com.xlibao.saas.market.service.support.remote.MarketShopRemoteService;
 import com.xlibao.saas.market.service.support.remote.OrderRemoteService;
@@ -56,7 +58,6 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     private ItemSupport itemSupport;
     @Autowired
     private MarketShopRemoteService marketShopRemoteService;
-
 
     @Override
     public JSONObject prepareCreateOrder() {
@@ -155,6 +156,10 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if ((order.getStatus() & OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) == OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) {
             throw new XlibaoRuntimeException("订单已支付！");
         }
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(order.getShippingPassportId());
+        if (marketEntry.getStatus() != MarketStatusEnum.NORMAL.getKey()) {
+            throw MarketErrorCodeEnum.MARKET_STATUS_ERROR.throwException("商店正在升级维护中，请稍后再来！");
+        }
         // 重新计价
         correctingOrderCost(passportId, deliverType, order);
         // 总共需要支付的费用
@@ -167,13 +172,19 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     @Override
     public JSONObject showOrders() {
         long passportId = getPassportId();
+        long marketId = getLongParameter("marketId", 0);
         int roleType = getIntParameter("roleType");
         int orderType = getIntParameter("orderType");
         int statusEnter = getIntParameter("statusEnter");
         int pageIndex = getIntParameter("pageIndex", GlobalConstantConfig.DEFAULT_PAGE_INDEX);
         int pageSize = getPageSize();
 
-        List<OrderEntry> orders = OrderRemoteService.showOrders(passportId, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), roleType, orderStatusSet(roleType, statusEnter), orderType, pageIndex, pageSize);
+        String statusSet = orderStatusSet(roleType, statusEnter);
+        if (roleType == OrderRoleTypeEnum.COURIER.getKey() && statusEnter == StatusEnterEnum.COURIER_WAIT_ACCEPT.getKey()) {
+            // 仅展示未接订单的记录
+            return showUnacceptOrders(passportId, roleType, marketId, pageSize);
+        }
+        List<OrderEntry> orders = OrderRemoteService.showOrders(passportId, marketId, GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), roleType, statusSet, orderType, pageIndex, pageSize);
         JSONArray response = fillShowOrderMsg(roleType, orders);
         return success(response);
     }
@@ -203,11 +214,81 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if (orderEntry.getCourierPassportId() != null && orderEntry.getCourierPassportId() > 0) {
             return MarketOrderErrorCodeEnum.ORDER_HAS_ACCEPT.response();
         }
-        return OrderRemoteService.acceptOrder(passportId, orderId);
+        MarketOrderUnacceptLogger orderUnacceptLogger = dataAccessFactory.getOrderDataAccessManager().getOrderUnacceptLogger(passportId, orderEntry.getOrderSequenceNumber());
+        if (orderUnacceptLogger == null) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response("订单已被接取");
+        }
+        // 移除所有未接记录
+        dataAccessFactory.getOrderDataAccessManager().removeUnAcceptLoggers(orderEntry.getOrderSequenceNumber());
+        OrderRemoteService.acceptOrder(passportId, orderId, GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
+        return success("接单成功");
+    }
+
+    @Override
+    public JSONObject notifyAcceptedOrder() {
+        String data = getUTF("data");
+        OrderEntry orderEntry = JSONObject.toJavaObject(JSONObject.parseObject(data), OrderEntry.class);
+
+        orderEventListenerManager.notifyAcceptedOrder(orderEntry);
+        return success();
+    }
+
+    @Override
+    public JSONObject deliverOrder() {
+        long passportId = getLongParameter("passportId");
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) {
+            return OrderErrorCodeEnum.ORDER_STATUS_ERROR.response("自提订单无需进行配送");
+        }
+        if (orderEntry.getCourierPassportId() != passportId) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+        }
+        OrderRemoteService.distributionOrder(orderEntry.getId(), orderEntry.getCourierPassportId(), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey(), true);
+        return success("配送成功");
+    }
+
+    @Override
+    public JSONObject arriveOrder() {
+        long passportId = getLongParameter("passportId");
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) {
+            return OrderErrorCodeEnum.ORDER_STATUS_ERROR.response("自提订单不能执行送达操作");
+        }
+        if (orderEntry.getCourierPassportId() != passportId) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+        }
+        OrderRemoteService.confirmOrder(orderEntry.getId(), Long.parseLong(orderEntry.getPartnerUserId()), GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
+        return success("已确认订单");
     }
 
     @Override
     public JSONObject refundOrder() {
+        long passportId = getPassportId();
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+        String title = getUTF("title"); // 退款原因标题，必填参数。
+        String content = getUTF("content", "");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+        if (orderEntry == null) {
+            return OrderErrorCodeEnum.NOT_FOUND_ORDER.response();
+        }
+        String matchStatusSet = OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey();
+        // 申请退款
+        PaymentRemoteService.applyRefund(passportId, orderSequenceNumber, matchStatusSet, title, content);
+
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
+        // 请求商店进行退货
+        marketShopRemoteService.refundMessage(marketEntry.getPassportId(), orderSequenceNumber);
+        // 执行退款业务
+        return success("已发起退货申请，请稍后刷新订单状态");
+    }
+
+    @Override
+    public JSONObject findContainerData() {
         long passportId = getPassportId();
         String orderSequenceNumber = getUTF("orderSequenceNumber");
 
@@ -215,13 +296,98 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         if (orderEntry == null) {
             return OrderErrorCodeEnum.NOT_FOUND_ORDER.response();
         }
-        // 申请退款
-        PaymentRemoteService.applyRefund(passportId, orderSequenceNumber, (orderEntry.getDeliverType() != DeliverTypeEnum.PICKED_UP.getKey()) ? String.valueOf(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey()) :
-                (OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DELIVER + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()));
-        // 请求商店进行退货
-        marketShopRemoteService.refundMessage(passportId, orderSequenceNumber);
-        // 执行退款业务
-        return success("已发起退货申请，请稍后刷新订单状态");
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() && Long.parseLong(orderEntry.getPartnerUserId()) != passportId) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+        }
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.DISTRIBUTION.getKey() && orderEntry.getCourierPassportId() != passportId) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+        }
+        MarketOrderProperties askProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.ASK_CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.ASK_CONTAINER_SET.getKey());
+        if (askProperties != null) {
+            return MarketOrderErrorCodeEnum.PICK_UP_DATA_ERROR.response("您已取货完成，请不要重复执行询问请求！");
+        }
+        MarketOrderProperties orderContainerSetProperties = dataAccessFactory.getOrderDataAccessManager().getOrderProperties(orderEntry.getId(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.PICK_UP_CONTAINER_SET.getKey());
+        if (orderContainerSetProperties == null) {
+            return MarketOrderErrorCodeEnum.UN_SUCCESS_PICK_UP.response("商品未完成拣货，请稍候......");
+        }
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
+
+        String statusCode = orderContainerSetProperties.getV().split(CommonUtils.SPLIT_UNDER_LINE)[0];
+        String value = orderContainerSetProperties.getV().split(CommonUtils.SPLIT_UNDER_LINE)[1];
+
+        JSONObject response = new JSONObject();
+        response.put("mark", "请从" + marketEntry.getName() + "以下出货口取走商品");
+        response.put("statusCode", statusCode);
+
+        JSONArray containerData = new JSONArray();
+        if ("00".equals(statusCode)) {
+            for (int i = 0; i < value.length() / 2; i++) {
+                containerData.add(value.substring(i * 2, (i + 1) * 2));
+            }
+            dataAccessFactory.getOrderDataAccessManager().createOrderProperties(orderEntry.getId(), orderEntry.getOrderSequenceNumber(), PropertiesKeyEnum.ASK_CONTAINER_SET.getTypeEnum().getKey(), PropertiesKeyEnum.ASK_CONTAINER_SET.getKey(), value);
+        } else {
+            containerData.add(value);
+        }
+        response.put("containerData", containerData);
+        return success(response);
+    }
+
+    @Override
+    public JSONObject askOrderStatus() {
+        long passportId = getLongParameter("passportId");
+        String orderSequenceNumber = getUTF("orderSequenceNumber");
+        int askType = getIntParameter("askType");
+
+        OrderEntry orderEntry = OrderRemoteService.getOrder(orderSequenceNumber);
+        if (orderEntry == null) {
+            return OrderErrorCodeEnum.NOT_FOUND_ORDER.response("订单不存在，序列号：" + orderSequenceNumber);
+        }
+        if (Long.parseLong(orderEntry.getPartnerUserId()) != passportId) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response();
+        }
+        if (orderEntry.getUserSource() != DeviceTypeEnum.DEVICE_TYPE_AUTO.getKey()) {
+            return PlatformErrorCodeEnum.NOT_HAVE_PERMISSION.response("现场订单才能执行此功能");
+        }
+        JSONObject response = new JSONObject();
+        response.put("statusTitle", orderStatusTitle(DeliverTypeEnum.PICKED_UP.getKey(), orderEntry.getStatus()));
+
+        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey()) {
+            response.put("afterAskStatus", OrderStatusEnum.ORDER_STATUS_DELIVER.getKey());
+            response.put("msg", askType == 1 ? "订单已支付成功" : "正在出货，请稍候......");
+        }
+        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey()) {
+            response.put("afterAskStatus", OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey());
+            response.put("msg", "订单已完成");
+        }
+        if (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_REFUND.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM_REFUND.getKey()) {
+            response.put("afterAskStatus", OrderStatusEnum.ORDER_STATUS_REFUND.getKey());
+            response.put("msg", "订单已申请退款");
+        }
+        return success(response);
+    }
+
+    private JSONObject showUnacceptOrders(long passportId, int roleType, long marketId, int pageSize) {
+        int pageStartIndex = getPageStartIndex(pageSize);
+        List<String> orderSequences = dataAccessFactory.getOrderDataAccessManager().getAppointMarketOrderSequences(passportId, marketId, pageStartIndex, pageSize);
+        if (CommonUtils.isEmpty(orderSequences)) {
+            return PlatformErrorCodeEnum.NO_MORE_DATA.response();
+        }
+        List<OrderEntry> orderEntries = OrderRemoteService.getOrders(orderSequences);
+        if (CommonUtils.isEmpty(orderEntries)) {
+            return PlatformErrorCodeEnum.NO_MORE_DATA.response();
+        }
+        Iterator<OrderEntry> iterator = orderEntries.iterator();
+        while (iterator.hasNext()) {
+            OrderEntry orderEntry = iterator.next();
+            if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) {
+                iterator.remove();
+            }
+            if (orderEntry.getCourierPassportId() != null && orderEntry.getCourierPassportId() > 0) {
+                iterator.remove();
+            }
+        }
+        JSONArray response = fillShowOrderMsg(roleType, orderEntries);
+        return success(response);
     }
 
     private String orderStatusSet(int roleType, int statusEnter) {
@@ -242,12 +408,30 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             if (statusEnter == StatusEnterEnum.RECOMMEND.getKey()) { // 首页推荐
                 return OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey();
             }
+            return OrderStatusEnum.ORDER_STATUS_CANCEL.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey();
         }
-        return OrderStatusEnum.ORDER_STATUS_CANCEL.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey();
+        if (roleType == OrderRoleTypeEnum.COURIER.getKey()) {
+            if (statusEnter == StatusEnterEnum.COURIER_WAIT_ACCEPT.getKey()) {
+                return String.valueOf(OrderStatusEnum.ORDER_STATUS_PAYMENT.getKey());
+            }
+            if (statusEnter == StatusEnterEnum.COURIER_WAIT_PICK_UP.getKey()) {
+                return OrderStatusEnum.ORDER_STATUS_DELIVER.getKey() + CommonUtils.SPLIT_COMMA + OrderStatusEnum.ORDER_STATUS_ACCEPT.getKey();
+            }
+            if (statusEnter == StatusEnterEnum.COURIER_DELIVER.getKey()) {
+                return String.valueOf(OrderStatusEnum.ORDER_STATUS_DISTRIBUTION.getKey());
+            }
+            if (statusEnter == StatusEnterEnum.COURIER_CANCEL.getKey()) {
+                return String.valueOf(OrderStatusEnum.ORDER_STATUS_CANCEL.getKey());
+            }
+        }
+        return String.valueOf(OrderStatusEnum.ORDER_STATUS_CONFIRM.getKey());
     }
 
     private JSONArray fillShowOrderMsg(int roleType, List<OrderEntry> orderEntries) {
-        if (roleType != OrderRoleTypeEnum.CONSUMER.getKey() && roleType != OrderRoleTypeEnum.COURIER.getKey()) {
+        if (roleType == OrderRoleTypeEnum.COURIER.getKey()) {
+            return fillCourierOrderMessage(orderEntries);
+        }
+        if (roleType != OrderRoleTypeEnum.CONSUMER.getKey()) {
             return new JSONArray();
         }
         JSONArray response = new JSONArray();
@@ -272,8 +456,35 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
 
             data.put("deliverType", deliverType);
             data.put("deliverTitle", deliverType == DeliverTypeEnum.PICKED_UP.getKey() ? "到店自提" : "小惠配送");
+            data.put("paymentTime", orderEntry.getPaymentTime().getTime());
 
             fillItemSnapshotMsg(data, orderEntry);
+            response.add(data);
+        }
+        return response;
+    }
+
+    private JSONArray fillCourierOrderMessage(List<OrderEntry> orderEntries) {
+        JSONArray response = new JSONArray();
+
+        for (OrderEntry orderEntry : orderEntries) {
+            JSONObject data = new JSONObject();
+
+            data.put("sequenceNumber", orderEntry.getSequenceNumber());
+            data.put("orderId", orderEntry.getId());
+            data.put("orderSequenceNumber", orderEntry.getOrderSequenceNumber());
+
+            int deliverType = orderEntry.getDeliverType();
+
+            data.put("formatReceiptAddress", orderEntry.formatReceiptAddress());
+            data.put("receiptPhone", orderEntry.getReceiptPhone());
+            data.put("deliverDistance", CommonUtils.formatDistance(orderEntry.getTotalDistance()));
+
+            data.put("orderStatus", orderEntry.getStatus());
+            data.put("orderStatusTitle", orderStatusTitle(deliverType, orderEntry.getStatus()));
+
+            data.put("paymentTime", CommonUtils.dateFormat(orderEntry.getPaymentTime().getTime()));
+
             response.add(data);
         }
         return response;
@@ -286,7 +497,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                 case ORDER_STATUS_PAYMENT:
                     return "待出货";
                 case ORDER_STATUS_DELIVER:
-                    return "出货中";
+                    // return "出货中";
                 case ORDER_STATUS_DISTRIBUTION:
                     return "待取货";
                 case ORDER_STATUS_ARRIVE:
@@ -305,6 +516,9 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                     return "已签收";
             }
         }
+        if (orderStatusEnum == OrderStatusEnum.ORDER_STATUS_APPLY_REFUND || orderStatusEnum == OrderStatusEnum.ORDER_STATUS_REFUND) {
+            return "退款中";
+        }
         return orderStatusEnum.getValue();
     }
 
@@ -318,7 +532,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         JSONObject orderMsg = new JSONObject();
 
         int orderStatus = orderEntry.getStatus();
-        String statusValue = OrderStatusEnum.getOrderStatusEnum(orderStatus).getValue();
+        String statusValue = orderStatus == OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey() ? "用户退款" : OrderStatusEnum.getOrderStatusEnum(orderStatus).getValue();
 
         MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
         orderMsg.put("marketId", marketEntry.getId());
@@ -334,7 +548,11 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         orderMsg.put("orderStatus", orderStatus);
         orderMsg.put("statusValue", statusValue);
 
-        orderMsg.put("deliverTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "配送进度" : "自提进度");
+        String deliverTitle = (orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_APPLY_REFUND.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_REFUND.getKey() || orderEntry.getStatus() == OrderStatusEnum.ORDER_STATUS_CONFIRM_REFUND.getKey())
+                ? "退款进度" : (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "自提进度" : "配送进度");
+        orderMsg.put("refundReason", CommonUtils.nullToEmpty(orderEntry.getDetail()));
+
+        orderMsg.put("deliverTitle", deliverTitle);
         orderMsg.put("deliverResult", orderStatusTitle(orderEntry.getDeliverType(), orderEntry.getStatus()));
 
         // 实收费用
@@ -347,7 +565,8 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         orderMsg.put("addressTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货地址：" : "收货地址：");
         orderMsg.put("address", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? orderEntry.formatShippingAddress() : orderEntry.formatReceiptAddress());
         orderMsg.put("targetTitle", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "取货点：" : "收货人：");
-        orderMsg.put("targetName", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "小惠便利店" + orderEntry.getShippingNickName() : orderEntry.getReceiptNickName());
+        orderMsg.put("targetName", orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey() ? "小惠便利店" + CommonUtils.nullToEmpty(orderEntry.getShippingNickName()) : CommonUtils.nullToEmpty(orderEntry.getReceiptNickName()));
+        orderMsg.put("receiptPhone", CommonUtils.hideChar(orderEntry.getReceiptPhone(), 3, 7));
 
         fillItemSnapshotMsg(orderMsg, orderEntry);
 
@@ -385,13 +604,18 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
     }
 
     private List<OrderItemSnapshot> generateItemSnapshots(long passportId, long marketId, JSONObject buyItemTemplates) {
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
+        if (marketEntry.getStatus() != MarketStatusEnum.NORMAL.getKey()) {
+            throw MarketErrorCodeEnum.MARKET_STATUS_ERROR.throwException("商店正在升级维护中，请稍后再来！");
+        }
         String itemTemplateSet = processItemTemplateSet(buyItemTemplates);
 
         List<MarketItem> items = dataAccessFactory.getItemDataAccessManager().getItemForItemTemplates(marketId, itemTemplateSet);
 
+        Map<Long, List<MarketItemLadderPrice>> itemLadderPriceMap = itemSupport.loadItemLadderPrices(items);
 
         String itemSet = processItemSet(items);
-        List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers = dataAccessFactory.getItemDataAccessManager().passportDailyBuyLoggers(passportId, itemSet);
+        List<MarketItemDailyPurchaseLogger> itemDailyPurchaseLoggers = (passportId <= 0 ? null : dataAccessFactory.getItemDataAccessManager().passportDailyBuyLoggers(passportId, itemSet));
         // 购买资格检查
         itemSupport.buyQualifications(items, itemDailyPurchaseLoggers, buyItemTemplates);
 
@@ -404,7 +628,7 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
                 throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.BUY_QUANTITY_ERROR.getKey(), "商品" + (itemTemplate == null ? "" : "[" + itemTemplate.getName() + "]") + "的购买数量必须大于0");
             }
             MarketItemDailyPurchaseLogger itemDailyPurchaseLogger = itemDailyPurchaseLoggerMap.get(item.getItemTemplateId());
-            itemSnapshots.add(fillOrderItemSnapshot(passportId, item, itemDailyPurchaseLogger, buyCount));
+            itemSnapshots.add(fillOrderItemSnapshot(passportId, item, itemDailyPurchaseLogger, buyCount, itemLadderPriceMap.get(item.getId())));
         }
         return itemSnapshots;
     }
@@ -446,13 +670,17 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
         order.setCurrentLocation(currentLocation);
         order.setCollectingFees(collectingFees);
 
-        long deliverPrice = deliverType == DeliverTypeEnum.PICKED_UP.getKey() ? 0 : marketEntry.getDeliveryCost();
-        long actualPrice = deliverPrice;
-        long totalPrice = deliverPrice;
+        long actualPrice = 0;
+        long totalPrice = 0;
         for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
             actualPrice += itemSnapshot.getTotalPrice();
             totalPrice += (itemSnapshot.getNormalPrice() * itemSnapshot.totalQuantity());
         }
+        // 自提或达到免配送费额度时，配送费为0
+        long deliverPrice = (deliverType == DeliverTypeEnum.PICKED_UP.getKey() || actualPrice >= marketEntry.getFreeDeliveryFee()) ? 0 : marketEntry.getDeliveryCost();
+        actualPrice += deliverPrice;
+        totalPrice += deliverPrice;
+
         long discountPrice = totalPrice - actualPrice;
         order.setActualPrice(actualPrice);
         order.setTotalPrice(totalPrice);
@@ -495,28 +723,25 @@ public class OrderServiceImpl extends BasicWebService implements OrderService {
             actualPrice += itemSnapshot.getTotalPrice();
             totalPrice += (itemSnapshot.getNormalPrice() * (itemSnapshot.totalQuantity()));
         }
-        long deliverCost = 0;
-        if (deliverType == DeliverTypeEnum.DISTRIBUTION.getKey()) {
-            deliverCost = marketEntry.getDeliveryCost();
-        }
-        // 仓库的配送费
-        actualPrice += deliverCost;
-        totalPrice += deliverCost;
+        // 自提或达到免配送费额度时，配送费为0
+        long deliverPrice = (deliverType == DeliverTypeEnum.PICKED_UP.getKey() || actualPrice >= marketEntry.getFreeDeliveryFee()) ? 0 : marketEntry.getDeliveryCost();
+        actualPrice += deliverPrice;
+        totalPrice += deliverPrice;
 
         long discountPrice = totalPrice - actualPrice;
-        if (!order.isPriceMatch(actualPrice, totalPrice, discountPrice, deliverCost, deliverType)) {
-            OrderRemoteService.correctOrderPrice(order.getId(), actualPrice, totalPrice, discountPrice, deliverCost, deliverType);
+        if (!order.isPriceMatch(actualPrice, totalPrice, discountPrice, deliverPrice, deliverType)) {
+            OrderRemoteService.correctOrderPrice(order.getId(), actualPrice, totalPrice, discountPrice, deliverPrice, deliverType);
 
             order.setActualPrice(actualPrice);
             order.setTotalPrice(totalPrice);
             order.setDiscountPrice(discountPrice);
-            order.setDistributionFee(deliverCost);
+            order.setDistributionFee(deliverPrice);
             order.setDeliverType(deliverType);
         }
     }
 
-    private OrderItemSnapshot fillOrderItemSnapshot(long passportId, MarketItem item, MarketItemDailyPurchaseLogger roleDailyBuyLogger, int thisBuyCount) {
-        OrderItemSnapshot orderItemSnapshot = itemSupport.fillOrderItemSnapshot(item, roleDailyBuyLogger, thisBuyCount);
+    private OrderItemSnapshot fillOrderItemSnapshot(long passportId, MarketItem item, MarketItemDailyPurchaseLogger roleDailyBuyLogger, int thisBuyCount, List<MarketItemLadderPrice> itemLadderPrices) {
+        OrderItemSnapshot orderItemSnapshot = itemSupport.fillOrderItemSnapshot(item, roleDailyBuyLogger, thisBuyCount, itemLadderPrices);
 
         orderItemSnapshot.setUserMark(String.valueOf(passportId));
         return orderItemSnapshot;

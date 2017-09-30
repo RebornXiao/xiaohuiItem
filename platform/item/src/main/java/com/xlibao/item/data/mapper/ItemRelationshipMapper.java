@@ -9,12 +9,6 @@ public interface ItemRelationshipMapper {
     @Select("select * from item_relationship where id = #{id}")
     ItemRelationship getItemRelationship(@Param("id") long id);
 
-    @Select("select * from item_relationship where source_barcode = #{sourceBarcode}")
-    ItemRelationship getItemRelationshipBySourceItemTemplateId(@Param("sourceBarcode") String sourceBarcode);
-
-    @Select("select * from item_relationship where target_barcode = #{targetBarcode}")
-    ItemRelationship getItemRelationshipByTargetItemTemplateId(@Param("targetBarcode") String targetBarcode);
-
     @Insert("insert into item_relationship (title, source_barcode, target_barcode, relation_coefficient, create_time) value (#{rship.title}, #{rship.sourceBarcode}, #{rship.targetBarcode}, #{rship.relationCoefficient}, #{rship.createTime})")
     @SelectKey(before=false,keyProperty="brand.id",resultType=Long.class,statementType= StatementType.STATEMENT,statement="SELECT LAST_INSERT_ID() AS id")
     Long add(@Param("rship") ItemRelationship rship);

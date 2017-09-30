@@ -10,4 +10,6 @@ public interface TencentService {
     JSONObject weixinAuthorization();
 
     JSONObject perfectWeixinInformation();
+
+    JSONObject weixinBindingCellNumber();
 }

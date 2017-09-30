@@ -5,13 +5,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
+import com.xlibao.common.constant.passport.ClientTypeEnum;
+import com.xlibao.common.support.PassportRemoteService;
 import com.xlibao.datacache.location.LocationDataCacheService;
 import com.xlibao.market.data.model.MarketEntry;
 import com.xlibao.market.data.model.MarketRelationship;
-import com.xlibao.metadata.passport.PassportArea;
-import com.xlibao.metadata.passport.PassportCity;
-import com.xlibao.metadata.passport.PassportProvince;
-import com.xlibao.metadata.passport.PassportStreet;
+import com.xlibao.metadata.passport.*;
 import com.xlibao.saas.market.data.DataAccessFactory;
 import com.xlibao.saas.market.data.model.MarketAccessLogger;
 import com.xlibao.saas.market.service.market.*;
@@ -110,18 +109,8 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         if (CommonUtils.isEmpty(marketEntries)) {
             return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response();
         }
-        JSONArray response = marketEntries.stream().map(marketEntry -> marketEntry.message(0, 0)).collect(Collectors.toCollection(JSONArray::new));
+        JSONArray response = marketEntries.stream().map(marketEntry -> marketEntry.message(latitude, longitude)).collect(Collectors.toCollection(JSONArray::new));
         return success(response);
-    }
-
-    @Override
-    public JSONObject initShelvesDatas() {
-        long marketId = getLongParameter("marketId");
-
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
-
-        marketShopRemoteService.shelvesMessage(marketEntry.getPassportId(), "CC");
-        return success();
     }
 
     @Override
@@ -130,7 +119,7 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         String city = getUTF("city", null);
         String district = getUTF("district", null);
         String street = getUTF("street", null);
-        long streetId = getIntParameter("streetId", -1);
+        long streetId = getIntParameter("streetId", 0);
 
         int type = getIntParameter("type", -1);
         int status = getIntParameter("status", -1);
@@ -178,9 +167,16 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         if (marketEntry == null) {
             return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response("找不到商店，通行证ID：" + passportId);
         }
-        int status = (responseStatus == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) ? (marketEntry.getStatus() | MarketStatusEnum.NO_RESPONSE.getKey()) : (marketEntry.getStatus() ^ MarketStatusEnum.NO_RESPONSE.getKey());
-        marketEntry.setStatus((responseStatus == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey()) ? (marketEntry.getStatus() | MarketStatusEnum.NO_RESPONSE.getKey()) : (marketEntry.getStatus() ^ MarketStatusEnum.NO_RESPONSE.getKey()));
-        dataAccessFactory.getMarketDataAccessManager().marketResponse(marketEntry.getId(), status);
+        if (responseStatus == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey() && marketEntry.getOnlineStatus() == MarketOnlineStatusEnum.OFFLINE.getKey()) {
+            return success();
+        }
+        if (responseStatus == GlobalAppointmentOptEnum.LOGIC_TRUE.getKey() && marketEntry.getOnlineStatus() == MarketOnlineStatusEnum.ONLINE.getKey()) {
+            return success();
+        }
+        int targetStatus = (responseStatus == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()) ? MarketOnlineStatusEnum.OFFLINE.getKey() : MarketOnlineStatusEnum.ONLINE.getKey();
+        int matchStatus = (responseStatus == GlobalAppointmentOptEnum.LOGIC_FALSE.getKey()) ? MarketOnlineStatusEnum.ONLINE.getKey() : MarketOnlineStatusEnum.OFFLINE.getKey();
+
+        dataAccessFactory.getMarketDataAccessManager().changeOnlineStatus(marketEntry.getId(), targetStatus, matchStatus);
         return success();
     }
 
@@ -195,7 +191,9 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
     @Override
     public JSONObject myFocusMarkets() {
         long passportId = getLongParameter("passportId");
-        List<MarketRelationship> marketRelationships = dataAccessFactory.getMarketDataAccessManager().myFocusMarkets(passportId, MarketRelationshipTypeEnum.FOCUS.getKey());
+        int roleType = getIntParameter("roleType", ClientTypeEnum.WAREHOUSE.getKey());
+        List<MarketRelationship> marketRelationships = dataAccessFactory.getMarketDataAccessManager().myFocusMarkets(String.valueOf(passportId),
+                roleType == ClientTypeEnum.WAREHOUSE.getKey() ? MarketRelationshipTypeEnum.FOCUS.getKey() : MarketRelationshipTypeEnum.COURIER.getKey());
         if (CommonUtils.isEmpty(marketRelationships)) {
             return MarketErrorCodeEnum.CAN_NOT_FOUND_FOCUS_RELATIONSHIP.response("您的帐号未绑定任何商店，请联系管理员！");
         }
@@ -209,6 +207,105 @@ public class MarketServiceImpl extends BasicWebService implements MarketService 
         }
         return success(response);
     }
+
+    @Override
+    public JSONObject macRelationMarket() {
+        String mac = getUTF("macAddress");
+
+        List<MarketRelationship> marketRelationships = dataAccessFactory.getMarketDataAccessManager().myFocusMarkets(mac, MarketRelationshipTypeEnum.MAC.getKey());
+        if (CommonUtils.isEmpty(marketRelationships)) {
+            return MarketErrorCodeEnum.CAN_NOT_FOUND_FOCUS_RELATIONSHIP.response("该Mac地址未绑定任何商店，请联系管理员！");
+        }
+        MarketRelationship marketRelationship = marketRelationships.get(0);
+
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketRelationship.getMarketId());
+        if (marketEntry == null) {
+            return MarketErrorCodeEnum.CAN_NOT_FOUND_FOCUS_RELATIONSHIP.response("该Mac地址关联的商店不存在，错误码：" + marketRelationship.getMarketId() + "；请联系管理员！");
+        }
+        Passport passport = PassportRemoteService.getPassport(marketEntry.getPassportId());
+        setAccessToken(passport.getAccessToken());
+
+        JSONObject response = new JSONObject();
+        response.put("marketId", marketEntry.getId());
+        response.put("marketName", marketEntry.getName());
+        response.put("marketPassportId", marketEntry.getPassportId());
+
+        return success(response);
+    }
+
+    @Override
+    public JSONObject marketEditSave() {
+        long marketId = getLongParameter("marketId", 0);
+        String marketName = getUTF("name");
+        String provinceName = getUTF("province");
+        String cityName = getUTF("city");
+        String district = getUTF("district");
+        long streetId = getLongParameter("streetId");
+        String streetName = getUTF("streetName");
+        String streetNumber = getUTF("streetNumber", "");
+        String address = getUTF("address", "");
+        String location = getUTF("location", "0");
+        int deliveryMode = getIntParameter("deliveryMode", 0);
+        int distance = getIntParameter("distance", 0);
+        long deliveryCost = CommonUtils.changeMoney(getUTF("deliveryCost", "0"));
+        long freeDeliveryCost = CommonUtils.changeMoney(getUTF("freeDeliveryCost", "0"));
+
+        MarketEntry entry = new MarketEntry();
+        entry.setId(marketId);
+        entry.setName(marketName);
+        entry.setProvince(provinceName);
+        entry.setCity(cityName);
+        entry.setDistrict(district);
+        entry.setStreetId(streetId);
+        entry.setStreet(streetName);
+        entry.setStreetNumber(streetNumber);
+        entry.setAddress(address);
+        entry.setLocation(location);
+        entry.setDeliveryMode(deliveryMode);
+        entry.setDistance(distance);
+        entry.setDeliveryCost(deliveryCost);
+        entry.setFreeDeliveryFee(freeDeliveryCost);
+
+        if (marketId == 0) {
+
+            //如果是新增
+            entry.setType(0);//默认是自动化的类型店铺
+            entry.setStatus(2);//默认是关店状态
+
+            if (dataAccessFactory.getMarketDataAccessManager().createMarket(entry) > 0) {
+                return success("添加成功");
+            } else {
+                return fail("添加失败");
+            }
+        } else {
+            // 修改
+            if (dataAccessFactory.getMarketDataAccessManager().updateMarket(entry) > 0) {
+                return success("修改成功");
+            } else {
+                return fail("修改失败");
+            }
+        }
+    }
+
+    @Override
+    public JSONObject marketUpdateStatus() {
+        long marketId = getLongParameter("marketId");
+        int status = getIntParameter("status");
+        int beforeStatus = getIntParameter("beforeStatus");
+
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
+        if (marketEntry == null) {
+            return MarketErrorCodeEnum.CAN_NOT_FIND_MARKET.response();
+        }
+        int result = dataAccessFactory.getMarketDataAccessManager().marketResponse(marketId, status, beforeStatus);
+        if (result > 0) {
+            JSONObject response = new JSONObject();
+            response.put("status", status);
+            return success(response);
+        }
+        return fail("修改商店状态失败");
+    }
+
 
     private JSONArray provinceMessage(List<PassportProvince> provinces) {
         JSONArray response = new JSONArray();

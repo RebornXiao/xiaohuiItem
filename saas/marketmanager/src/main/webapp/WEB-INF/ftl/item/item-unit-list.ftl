@@ -128,12 +128,14 @@
                         swal("包括了特殊符号，无法搜索!");
                         return;
                     }
-                    location.href = "${base}/item/itemUnits.do?searchKey=" + sValue;
+                    open({url:"${base}/item/itemUnits.do?searchKey=" + sValue});
+                    //location.href = "${base}/item/itemUnits.do?searchKey=" + sValue;
                 });
 
                 //添加新品
                 $("#addBtn").on('click', function () {
-                    location.href = "${base}/item/itemUnitEdit.do";
+                    open({url:"${base}/item/itemUnitEdit.do"});
+                    //location.href = "${base}/item/itemUnitEdit.do";
                 });
 
             <#if (itemUnits?size > 0)>
@@ -141,7 +143,8 @@
                 //单项编辑
                 $("#itemUnitTable").find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/item/itemUnitEdit.do?id=" + $(this).attr("data_id");
+                        open({url:"${base}/item/itemUnitEdit.do?id=" + $(this).attr("data_id")});
+                        //location.href = "${base}/item/itemUnitEdit.do?id=" + $(this).attr("data_id");
                     });
                 });
 

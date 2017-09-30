@@ -1,7 +1,6 @@
 package com.xlibao.saas.market.core.message.client;
 
 import com.xlibao.common.constant.device.DeviceTypeEnum;
-import com.xlibao.common.thread.AsyncScheduledService;
 import com.xlibao.io.entry.MessageFactory;
 import com.xlibao.io.entry.MessageInputStream;
 import com.xlibao.io.entry.MessageOutputStream;
@@ -13,6 +12,7 @@ import com.xlibao.io.service.netty.filter.DefaultMessageEncoder;
 import com.xlibao.market.protocol.ShopProtocol;
 import com.xlibao.saas.market.core.config.ConfigFactory;
 import com.xlibao.saas.market.core.message.MessageService;
+import com.xlibao.saas.market.core.message.SessionManager;
 import com.xlibao.saas.market.core.service.MessageHandlerAdapter;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToMessageEncoder;
@@ -20,8 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * @author chinahuangxc on 2017/8/12.
@@ -35,6 +33,8 @@ public class MarketMessageEventListenerImpl implements MessageEventListener {
     private MessageHandlerAdapter messageHandlerAdapter;
     @Autowired
     private MessageService messageService;
+    @Autowired
+    private SessionManager sessionManager;
 
     @Override
     public ByteToMessageDecoder newDecoder() {
@@ -61,8 +61,9 @@ public class MarketMessageEventListenerImpl implements MessageEventListener {
 
     @Override
     public void notifySessionClosed(NettySession session) {
+        sessionManager.setMarketSession(null);
         // 执行重连功能
-        reconnector();
+        messageService.reconnector(null);
     }
 
     @Override
@@ -79,19 +80,6 @@ public class MarketMessageEventListenerImpl implements MessageEventListener {
                 e.printStackTrace();
             }
         }
-    }
-
-    private void reconnector() {
-        Runnable runnable = new Runnable() {
-
-            @Override
-            public void run() {
-                if (!messageService.connectorMarketServer()) {
-                    AsyncScheduledService.submitCommonTask(this, ConfigFactory.getServer().getReconnectorPeriod(), TimeUnit.MINUTES);
-                }
-            }
-        };
-        AsyncScheduledService.submitImmediateCommonTask(runnable);
     }
 
     private void login(NettySession session) {

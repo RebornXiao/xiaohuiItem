@@ -42,7 +42,7 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="col-md-4 control-label">商品单位名称：</label>
+                            <label class="col-md-4 control-label">商品分类名称：</label>
                             <div class="col-md-8">
                                 <input id="itName" type="text" class="form-control" <#if itemType?exists>value="${itemType.title}"</#if>>
                             </div>
@@ -54,7 +54,7 @@
                                 <select class="form-control" id="itSelect">
                                 <#if itemTypes?exists && (itemTypes?size > 0)>
                                     <#list itemTypes as type>
-                                        <option data_id="${type.id}"
+                                        <option data_id="${type.id?c}"
                                                 <#if pItemType?exists && pItemType.id == type.id>
                                                 selected
                                                 <#else>
@@ -74,9 +74,20 @@
                         <div class="form-group">
                             <label class="col-md-4 control-label">分类图标：</label>
                             <div class="col-md-4">
-                                <img id="itImg" <#if itemType?exists && itemType.icon??> src="${itemType.icon}" </#if> width="150px" height="150px" />
+                                <div id="itemMainImgDiv" style="background: white; width:150px; height:150px;">
+                                    <img id="upImg" <#if itemType?exists && itemType.icon??>
+                                         src="${itemType.icon}" </#if>/>
+                                </div>
                                 <p class="m-t-10">
-                                    <button id="upBtn" type="button" class="btn waves-effect waves-light btn-default">上传图标</button></p>
+                                    <button id="selectFileBtn" type="button"
+                                            class="btn waves-effect waves-light btn-default">
+                                        选择图标
+                                    </button>
+                                    <button id="removeFileBtn" type="button"
+                                            class="btn waves-effect waves-light btn-default">
+                                        删除图标
+                                    </button>
+                                </p>
                             </div>
                         </div>
 
@@ -96,6 +107,8 @@
             <!-- end container -->
         </div>
 
+        <script src="${res}/assets/plugins/alioss/plupload-2.1.2/js/plupload.full.min.js"></script>
+        <script src="${res}/assets/plugins/alioss/plupload-2.1.2/my_upload.js"></script>
 
         <script type="text/javascript">
 
@@ -103,9 +116,58 @@
 
                 var itemTypeId = 0;
                 var _typesAlist = $("#typesAlist");
+                var addType = 1;//添加类型，1=一级，2=二级
+                var _imgUrl = <#if itemType?exists >"${itemType.icon}";<#else>"";</#if>
+                //如果原来有图片
+                if(_imgUrl != "") {
+                    srcImgBool = true;
+                }
+                function postSuccess() {
+                    var msg = "添加成功";
+                    if(itemTypeId != 0) {
+                        msg = "修改成功";
+                    }
+                    showSuccess(msg, function () {
+                        open({url:"${base}/item/itemTypes.do"});
+                    });
+                }
+                //上传图片
+                function updateImgUrl(itemTypeId, itemImgUrl) {
+                    tokenPost("${base}/item/itemTypeUpdateIconUrl.do?itemTypeId="+itemTypeId+"&itemTypeIconUrl="+itemImgUrl, function(data) {
+                        //重新刷新
+                        postSuccess();
+                    }, "json");
+                }
 
-                <#if itemType?exists>
-                    itemTypeId = "${itemType.id?c}"
+                $("#removeFileBtn").on('click', function () {
+                    _imgUrl = "";
+                    clear_img();
+                });
+
+                upImgName = "upImg";
+                serverUrl = "${base}/oss/uploadImg.do?targetDir=itemtype";
+
+                function upImgFunc(itemTypeId, itemImgKey) {
+                    upCallback = function (hType, obj) {
+                        if(hType == 0) {
+                            //没有图片提交
+                            alert("没有图片需要提交");
+                        } else if(hType == 1) {
+                            //开始提交
+                        } else if(hType == 2) {
+                            //进度监听
+                        } else if(hType == 100) {
+                            //完成，更新回对应的图片
+                            updateImgUrl(itemTypeId, obj);
+                        } else {
+                            //有错误
+                        }
+                    };
+                    set_upload_param(uploader, itemImgKey);
+                }
+
+            <#if itemType?exists>
+                    itemTypeId = ${itemType.id?c};
                     //隐藏
                     $("#sBtn").hide();
 
@@ -125,13 +187,15 @@
                     $("#addBtnA").on('click', function () {
                         if($(this).is(':checked')) {
                             //隐藏二级
+                            addType = 1;
                             _typesAlist.hide();
                         }
                     });
                     //添加点击切换
                     $("#addBtnB").on('click', function () {
                         if($(this).is(':checked')) {
-                            //隐藏二级
+                            //显示二级
+                            addType = 2;
                             _typesAlist.show();
                         }
                     });
@@ -147,9 +211,6 @@
                     history.back(-1);
                 });
 
-                $("#upBtn").on('click', function () {
-                });
-
                 //保存商品单位
                 $("#saveBtn").on('click', function () {
 
@@ -160,17 +221,42 @@
                         return;
                     }
 
-                    //保存
-                    $.post("${base}/item/itemTypeEditSave.do", function(data) {
+                    //检测长度
+                    if(strlen(title) > 8) {
+                        swal("分类名称不能超过4个中文或者8个字符!");
+                        return;
+                    }
 
-                        <#if !(itemType?exists) >
-                        $("#itName").val("");
-                        </#if>
+                    var _typeId = 0;
+                    if(addType == 2) {
+                        _typeId = $("#itSelect").find("option:selected").attr("data_id");
+                    }
+
+                    var post_data = {
+                        itemTypeId: itemTypeId,
+                        parentId: _typeId,
+                        title: title,
+                        icon: _imgUrl,
+                    }
+
+                    var btn_ = $(this);
+                    btn_.attr("disabled", true);
+
+                    //保存
+                    tokenPresPost("${base}/item/itemTypeEditSave.do", post_data, function(data) {
 
                         //重新刷新
                         if(data.code == "0") {
-                            swal("提示", data.msg, "success");
+                            var itemType = data.response.datas;
+                            //如果需要更新图片路径
+                            if(upImgBool) {
+                                upImgFunc(itemType.id, itemType.id);
+                            } else {
+                                postSuccess();
+                            }
                         } else {
+                            //$(this).button("reset");
+                            btn_.removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

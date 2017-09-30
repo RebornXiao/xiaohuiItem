@@ -1,10 +1,14 @@
 package com.xlibao.saas.market.manager;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.GlobalConstantConfig;
 import com.xlibao.saas.market.manager.config.LogicConfig;
 import org.springframework.ui.ModelMap;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by zhumg on 8/10.
@@ -38,5 +42,23 @@ public class BaseController extends BasicWebService {
 
     protected int getPageSize() {
         return getIntParameter("pageSize", 12);
+    }
+
+
+    protected Map<String, String> getMapParameter() {
+        Map<String, String[]> requestParams = getHttpServletRequest().getParameterMap();
+        Map<String, String> parame = new HashMap<>();
+        for (Map.Entry<String, String[]> entry : requestParams.entrySet()) {
+            String name = entry.getKey();
+            String[] values = entry.getValue();
+
+
+            if (values.length == 1) {
+                parame.put(name, values[0]);
+            } else {
+                parame.put(name, String.valueOf(values));
+            }
+        }
+        return parame;
     }
 }

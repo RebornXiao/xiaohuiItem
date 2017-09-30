@@ -75,12 +75,13 @@
                             <tr>
                                 <td>${task.taskId?c}</td>
                                 <td>${task.locationCode}</td>
-                                <td>${task.itemTemplateId}</td>
+                                <td>${task.itemTemplateId?c}</td>
                                 <td>${task.itemName}</td>
                                 <td>${task.itemQuantity}</td>
                                 <td>${task.barcode}</td>
                                 <td>${task.unitName}</td>
-                                <td>${task.status}</td>
+                                <td><#if task.status == 1><span class="label label-primary">有效(未完成)</span></#if>
+                                    <#if task.status == 2><span class="label label-success">已执行</span></#if></td>
                                 <td>${task.hopeExecutorDate}</td>
                                 <td>
                                     <button id="editBtn" type="button"
@@ -92,7 +93,7 @@
                             </#list>
                         <#else>
                         <tr>
-                            <td colSpan="11" height="200px">
+                            <td colSpan="10" height="200px">
                                 <p class="text-center">暂无任何数据</p>
                             </td>
                         </tr>
@@ -126,28 +127,26 @@
                     var select_obj = _sMarket.find("option:selected");
                     var data_id = select_obj.attr("data_id");
 
-                    location.href = "${base}/market/marketTasks.do?marketId=" + data_id;
+                    open({url:"${base}/market/marketTasks.do?marketId=" + data_id});
+                    //location.href = "${base}/market/marketTasks.do?marketId=" + data_id;
                 });
 
                 //删除任务列表里的某项
                 $("#taskListTable").on("click", "button[id=editBtn]", function () {
                     var task_id = $(this).attr("data_id");
                     //2次确定
-                    showTi("确定要取消这个任务吗？", function (isConfirm) {
+                    showWarning("确定要取消这个任务吗？", function (isConfirm) {
                         if (!isConfirm) {
                             return;
                         }
                         //去取消
-                        $.get("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
+                        tokenPost("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
                             if (json.code != 0) {
                                 swal(json.msg);
                             } else {
-                                showMsg("操作成功", function () {
-                                    //直接刷新界面
-                                    var select_obj = _sMarket.find("option:selected");
-                                    var data_id = select_obj.attr("data_id");
-                                    location.href = "${base}/market/marketTasks.do?marketId=" + data_id;
-                                });
+                                var select_obj = _sMarket.find("option:selected");
+                                var data_id = select_obj.attr("data_id");
+                                open({url:"${base}/market/marketTasks.do?marketId=" + data_id});
                             }
                         }, "json");
                     });

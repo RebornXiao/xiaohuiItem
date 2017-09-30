@@ -15,6 +15,8 @@ public enum MarketErrorCodeEnum {
     ERROR_MARKET_INFORMATION(1001, "错误的商店信息"),
     /** 1002 -- 不处于维护中 */
     DON_NOT_MAINTAIN(1002, "不处于维护中"),
+    /** 1003 -- 商店状态错误 */
+    MARKET_STATUS_ERROR(1003, "商店状态错误"),
     /** 1100 -- 货架信息有误 */
     SHELVES_LOCATION_ERROR(1100, "货架信息有误"),
     /** 1101 -- 货架位置上的任务有误 */

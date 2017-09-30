@@ -13,6 +13,12 @@ import java.util.List;
  */
 public interface PassportManagerService {
 
+    public PassportProvince getProvinceById(long provinceId);
+
+    public PassportCity getCityById(long cityId);
+
+    public PassportArea getAreaById(long areaId);
+
     public PassportProvince searchProvinceByName(String name);
 
     public PassportCity searchCityByName(String name);

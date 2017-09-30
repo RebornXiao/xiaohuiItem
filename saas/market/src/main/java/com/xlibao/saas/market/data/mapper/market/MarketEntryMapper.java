@@ -19,7 +19,11 @@ public interface MarketEntryMapper {
 
     int searchMarketsCount(@Param("searchModel")MarketEntry searchModel);
 
-    List<MarketEntry> getAllMarkets();
+    int marketResponse(@Param("marketId") long marketId, @Param("status") int status, @Param("matchStatus") int matchStatus);
 
-    int marketResponse(@Param("marketId") long marketId, @Param("status") int status);
+    int changeOnlineStatus(@Param("marketId") long marketId, @Param("targetStatus") int targetStatus, @Param("matchStatus") int matchStatus);
+
+    int createMarket(MarketEntry entry);
+
+    int updateMarket(MarketEntry entry);
 }

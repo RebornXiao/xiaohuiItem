@@ -17,23 +17,20 @@ public class BaseFreeMarkerView extends FreeMarkerView {
     protected void exposeHelpers(Map<String, Object> model,
                                  HttpServletRequest request) throws Exception
     {
-        //如果有登录过，则设置用户名，用户ID
-        Object obj = request.getSession().getAttribute("loginUserName");
+        //如果有登录过，则设置accessToken
+
+        Object obj = request.getSession().getAttribute("accessToken");
         if(obj != null) {
-            model.put("userName", (String)obj);
+            model.put("accessToken", (String)obj);
         } else {
-            model.put("userName", "未登录");
-        }
-        obj = request.getSession().getAttribute("loginUserId");
-        if(obj != null) {
-            model.put("userId", (String)obj);
-        } else {
-            model.put("userId", "0");
+            model.put("accessToken", "");
         }
 
+        //设置res地址
         model.put(RES_PATH, request.getContextPath());
-        //设置base
+        //设置base地址
         model.put(REQUEST_PATH, request.getContextPath() + "/marketmanager");
+
         super.exposeHelpers(model, request);
     }
 }

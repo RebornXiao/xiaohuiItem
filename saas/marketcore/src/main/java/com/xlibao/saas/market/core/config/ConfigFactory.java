@@ -31,7 +31,6 @@ public class ConfigFactory {
         server = serverConfig;
         domainName = domainNameConfig;
 
-        messageService.connectorMarketServer();
         messageService.startListener();
     }
 

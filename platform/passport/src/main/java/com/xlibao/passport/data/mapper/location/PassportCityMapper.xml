@@ -18,4 +18,7 @@
         select * from passport_city where name = #{name}
     </select>
 
+    <select id="getCityById" resultMap="BaseResultMap">
+        select * from passport_city where id = #{id}
+    </select>
 </mapper>

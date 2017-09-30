@@ -25,9 +25,8 @@ public class PassportControllerAop extends BasicWebService {
 
     @Around(value = "execution(* com.xlibao.passport.controller.*.*(..))")
     public Object around(ProceedingJoinPoint point) throws Throwable {
-        Object[] args = point.getArgs();
         try {
-            return point.proceed(args);
+            return point.proceed(point.getArgs());
         } catch (XlibaoIllegalArgumentException ex) {
             logger.error("通行证切面拦截异常(非法参数)，错误信息：" + ex.getMessage());
             return fail(ex.getMessage());

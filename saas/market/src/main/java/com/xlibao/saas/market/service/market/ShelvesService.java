@@ -29,4 +29,10 @@ public interface ShelvesService {
     JSONObject offShelves();
 
     JSONObject onShelves();
+
+    JSONObject finishTodayPrepareActions();
+
+    JSONObject findValidTasks();
+
+    JSONObject showExceptionTask();
 }

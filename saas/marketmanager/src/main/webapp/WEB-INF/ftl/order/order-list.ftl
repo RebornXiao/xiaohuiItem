@@ -259,12 +259,14 @@
                     var sTime = _startTime.val();
                     var eTime = _endTime.val();
 
-                    location.href = "${base}/order/orders.do?searchType="
+                    var url = "${base}/order/orders.do?searchType="
                             +sType+"&searchKey="
                             +sValue+"&marketId="
                             +marketId+"&orderState="
                             +orderState+"&sTime="
                             +sTime+"&eTime="+eTime;
+
+                    open({url:url});
                 });
 
             });

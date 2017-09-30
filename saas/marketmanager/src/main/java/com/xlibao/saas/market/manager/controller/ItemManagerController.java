@@ -5,7 +5,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.http.HttpRequest;
 import com.xlibao.metadata.item.ItemIdName;
-import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
 import com.xlibao.saas.market.manager.BaseController;
@@ -90,6 +89,8 @@ public class ItemManagerController extends BaseController {
         map.put("searchType", searchType);
         map.put("searchKey", searchKey);
         map.put("pageIndex", pageIndex);
+        map.put("pageSize", pageSize);
+
         map.put("count", response.getIntValue("count"));
 
         return jumpPage(map, LogicConfig.FTL_ITEM_LIST, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
@@ -101,7 +102,7 @@ public class ItemManagerController extends BaseController {
         long itemTemplaterId = getLongParameter("id", 0);
 
         if (itemTemplaterId != 0) {
-            JSONObject itemJson = itemManagerService.getItemTemplate(itemTemplaterId);
+            JSONObject itemJson = itemManagerService.getItemTemplateJson(itemTemplaterId);
 
             if (itemJson.getIntValue("code") != 0) {
                 return remoteFail(map, itemJson, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
@@ -124,9 +125,23 @@ public class ItemManagerController extends BaseController {
         return jumpPage(map, LogicConfig.FTL_ITEM_EDIT, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
     }
 
+    //商店 编辑 保存
+    @ResponseBody
     @RequestMapping("/itemEditSave")
-    public String itemEditSave(ModelMap map) {
-        return jumpPage(map, LogicConfig.FTL_ITEM_EDIT, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TEMPLATE);
+    public JSONObject itemEditSave() {
+        Map map = getMapParameter();
+        String url = ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/itemEditSave.do";
+        String json = HttpRequest.post(url, map);
+        return JSONObject.parseObject(json);
+    }
+
+    @ResponseBody
+    @RequestMapping("/itemUpdateImgUrl")
+    public JSONObject itemUpdateImgUrl() {
+        Map map = getMapParameter();
+        String url = ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/itemUpdateImgUrl.do";
+        String json = HttpRequest.post(url, map);
+        return JSONObject.parseObject(json);
     }
 
     @RequestMapping("/itemTypes")
@@ -161,6 +176,7 @@ public class ItemManagerController extends BaseController {
 
         map.put("searchKey", searchKey);
         map.put("itemTypes", response.getJSONArray("data"));
+        map.put("pageSize", pageSize);
         map.put("pageIndex", pageIndex);
         map.put("count", response.getIntValue("count"));
 
@@ -195,6 +211,25 @@ public class ItemManagerController extends BaseController {
         }
 
         return jumpPage(map, LogicConfig.FTL_ITEM_TYPE_EDIT, LogicConfig.TAB_ITEM, LogicConfig.TAB_ITEM_TYPE);
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/itemTypeEditSave")
+    public JSONObject itemTypeEditSave() {
+        Map map = getMapParameter();
+        String url = ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/itemTypeEditSave.do";
+        String json = HttpRequest.post(url, map);
+        return JSONObject.parseObject(json);
+    }
+
+    @ResponseBody
+    @RequestMapping("/itemTypeUpdateIconUrl")
+    public JSONObject itemTypeUpdateIconUrl() {
+        Map map = getMapParameter();
+        String url = ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/itemTypeUpdateIconUrl.do";
+        String json = HttpRequest.post(url, map);
+        return JSONObject.parseObject(json);
     }
 
     @RequestMapping("/itemTypeSort")
@@ -240,6 +275,7 @@ public class ItemManagerController extends BaseController {
 
         map.put("itemUnits", units);
         map.put("searchKey", searchKey);
+        map.put("pageSize", pageSize);
         map.put("pageIndex", pageIndex);
         map.put("count", unitJson.getJSONObject("response").getIntValue("count"));
 
@@ -278,7 +314,7 @@ public class ItemManagerController extends BaseController {
         if(itemTypeId == 0) {
             return fail("该分类下没有商品");
         }
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/getItemTemplateIdAndNames.do?itemTypeId=" + itemTypeId);
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/getItemTemplateIdAndNames.do?itemTypeId=" + itemTypeId);
         JSONObject response = parseObject(json);
 
         if(response.getIntValue("code") == 0) {

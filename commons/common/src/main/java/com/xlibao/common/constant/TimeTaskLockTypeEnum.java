@@ -5,7 +5,7 @@ package com.xlibao.common.constant;
  */
 public enum TimeTaskLockTypeEnum {
 
-    SUPPLYCHAIN_ORDER_STATUS(11, "供应链订单状态修正"),
+    MARKET_ORDER_STATUS(11, "商店订单状态修正"),
     ;
 
     private int key;

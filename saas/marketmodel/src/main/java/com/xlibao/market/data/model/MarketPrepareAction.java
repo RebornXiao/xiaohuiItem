@@ -7,11 +7,14 @@ public class MarketPrepareAction {
     private Long id;
     private Long marketId;
     private Long actionPassportId;
+    private Long executorPassportId;
     private String itemLocation;
     private Long hopeItemTemplateId;
     private String hopeItemBarcode;
+    private Integer hasCompleteQuantity;
     private Integer hopeItemQuantity;
     private Date hopeExecutorDate;
+    private Integer type;
     private Integer status;
     private Date createTime;
     private Date completeTime;
@@ -40,6 +43,14 @@ public class MarketPrepareAction {
         this.actionPassportId = actionPassportId;
     }
 
+    public Long getExecutorPassportId() {
+        return executorPassportId;
+    }
+
+    public void setExecutorPassportId(Long executorPassportId) {
+        this.executorPassportId = executorPassportId;
+    }
+
     public String getItemLocation() {
         return itemLocation;
     }
@@ -64,6 +75,14 @@ public class MarketPrepareAction {
         this.hopeItemBarcode = hopeItemBarcode == null ? null : hopeItemBarcode.trim();
     }
 
+    public Integer getHasCompleteQuantity() {
+        return hasCompleteQuantity;
+    }
+
+    public void setHasCompleteQuantity(Integer hasCompleteQuantity) {
+        this.hasCompleteQuantity = hasCompleteQuantity;
+    }
+
     public Integer getHopeItemQuantity() {
         return hopeItemQuantity;
     }
@@ -78,6 +97,14 @@ public class MarketPrepareAction {
 
     public void setHopeExecutorDate(Date hopeExecutorDate) {
         this.hopeExecutorDate = hopeExecutorDate;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public Integer getStatus() {
