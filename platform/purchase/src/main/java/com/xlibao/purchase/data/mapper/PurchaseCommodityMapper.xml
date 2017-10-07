@@ -16,7 +16,7 @@
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
-    <result column="warehouse_name" jdbcType="VARCHAR" property="itemName" />
+    <result column="warehouse_name" jdbcType="VARCHAR" property="warehouseName" />
 
   </resultMap>
   <sql id="Base_Column_List">
