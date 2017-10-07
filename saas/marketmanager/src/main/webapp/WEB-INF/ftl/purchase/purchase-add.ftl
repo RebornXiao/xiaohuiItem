@@ -86,12 +86,12 @@
                                                         <option value=${iType.id?c} <#if item?exists && iType.id == item.typeId>selected </#if>><#if iType.parentId == 0>${iType.title}
                                                         <#else>&nbsp;&nbsp;&nbsp;&nbsp;${iType.title}</#if></option>
                                                     </#list>
-                                                <#else><option value='0'>无</option>
+                                                <#else><option value='0'>找不到商品</option>
                                                 </#if>
                                             </select>
                                         </td>
                                         <td>
-                                            <select class="form-control" onchange="addCode(this)">
+                                            <select class="form-control" onchange="changeCode(this)">
                                                 <option value="">请选择商品名称</option>
                                             </select>
                                         </td>
@@ -101,7 +101,12 @@
                                             </fieldset>
                                         </td>
                                         <td>
-                                            <input id="endTime" type="text" class="form-control"  placeholder="如：2017-10-10">
+                                            <div class="input-group">
+                                                <input id="endTime" type="text" class="form-control">
+                                                <span class="input-group-addon bg-default" onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD'})">
+                                                    <i class="fa fa-calendar"></i>
+                                                </span>
+                                            </div>
                                         </td>
                                         <td>
                                             <input type="text" class="form-control" placeholder="输入采购数量">
@@ -127,15 +132,21 @@
 <script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
 <script type="text/javascript">
     function addTr2(tab, row){
+
         var trHtml="<tr><td>" +
                 "<select class='form-control' onchange='changeSelect(this)'>" +
                 "<option value=''>请选择商品分类</option>" +
                 "<#if (itemTypes?size > 0)><#list itemTypes as iType> <option value='${iType.id?c}' <#if item?exists && iType.id == item.typeId>selected </#if>>" +
                 "<#if iType.parentId == 0>${iType.title}<#else>&nbsp;&nbsp;&nbsp;&nbsp;${iType.title}</#if></option></#list><#else><option value='0'>无</option></#if>" +
-                "</select></td>" +
-                "<td><select class='form-control' onchange='addCode(this)'><option value=''>请选择商品名称</option></select></td>" +
+                "</select>" +
+                "</td>" +
+                "<td><select class='form-control' onchange='changeCode(this)'><option value=''>请选择商品名称</option></select></td>" +
                 "<td><fieldset disabled><input type='text' class='form-control'></fieldset></td>" +
-                "<td><input id='endTime' type='text' class='form-control' placeholder='如：2017-10-10'></td>" +
+                "<td>" +
+                "<div class='input-group'><input id='endTime' type='text' class='form-control'>" +
+//                "<span class='input-group-addon bg-default' onClick='jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD'})'><i class='fa fa-calendar'></i></span>" +
+                "</div>" +
+                "</td>" +
                 "<td><input type='text' class='form-control' placeholder='输入采购数量'></td>" +
                 "<td><button class='btn-danger' onclick='deleTr(this);'>删除</button></td>" +
                 "</tr>";
@@ -175,8 +186,9 @@
                 console.log(data);
                 var _obj = data.response.datas;
                 if(data.code==0) {//返回的数据不为空
-                    $s2.empty();
+                    $s2.empty();//清空第二个下拉列表
                     $s2.html("");
+                    $in.val("");//清空条形码输入框
                     $("<option value=''>请选择商品名称</option>").appendTo($s2);
                     for(var i = 0; i < _obj.length; i++) {
                         $("<option value ='" + _obj[i].id + "' data-id ='" + _obj[i].barcode + "'> " + _obj[i].name + "</option>").appendTo($s2);
@@ -209,7 +221,7 @@
             $in.val("");
         }
     }
-    function addCode($se) {
+    function changeCode($se) {
        var _code = $($se).find('option:selected').attr('data-id');
        $($se).parent().parent().find("td:eq(2)").find('input').val(_code);
     }
@@ -249,7 +261,6 @@
             barcodes = barcodes.length > 0 ? barcodes.substring(0, barcodes.length - 1) : "";
             purchaseDates = purchaseDates.length > 0 ? purchaseDates.substring(0, purchaseDates.length - 1) : "";
             purchaseNumbers = purchaseNumbers.length > 0 ? purchaseNumbers.substring(0, purchaseNumbers.length - 1) : "";
-
             var para0 = "?warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs
                         +"&itemTypeTitles="+itemTypeTitles+"&purchaseTimes="+purchaseDates+"&purchaseNumbers="+purchaseNumbers+"&status=0&barcodes="+barcodes;
             var para1 = "?warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs

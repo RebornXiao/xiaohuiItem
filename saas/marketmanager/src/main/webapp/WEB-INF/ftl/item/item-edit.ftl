@@ -59,8 +59,7 @@
                                         <select class="form-control" id="typeSelect">
                                         <#if (itemTypes?size > 0)>
                                             <#list itemTypes as iType>
-                                                <option data_id="${iType.id}" <#if item?exists && iType.id == item.typeId>
-                                                        selected </#if>>
+                                                <option data_id="${iType.id}" <#if item?exists && iType.id == item.typeId> selected </#if>>
 
                                                 <#if iType.parentId == 0>
                                                     ${iType.title}

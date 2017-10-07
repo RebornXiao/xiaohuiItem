@@ -70,13 +70,13 @@
                                 <td>${purchase.supplier_name}</td>
                                 <td>${purchase.create_time}</td>
                                 <#if purchase.status=0>
-                                    <td><b>未提交</b></td>
+                                    <td class="text-info"><b>未提交</b></td>
                                     <td>
                                         <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">编辑</button>
                                         <button id="deleBtn" type="button" class="btn btn-danger btn-sm" data_id="${purchase.id}">删除</button>
                                     </td>
                                 <#elseif purchase.status=1>
-                                    <td class="text-danger"><b>未入库</b></td>
+                                    <td class="text-warning"><b>未入库</b></td>
                                     <td>
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">查看</button>
                                         <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">编辑</button>
@@ -87,7 +87,7 @@
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">查看</button>
                                     </td>
                                 <#elseif purchase.status=3>
-                                    <td class="text-danger"><b>完成入库</b></td>
+                                    <td class="text-success"><b>完成入库</b></td>
                                     <td>
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">查看</button>
                                     </td>
@@ -154,7 +154,7 @@
         $("#purchaseInfoTable").find('button[id=editBtn]').each(function () {
             var that = this;
             $(this).on('click', function () {
-                location.href = "${base}/purchase/purchaseEdit.do?id="+$(that).attr("data_id");
+                location.href = "${base}/purchase/purchaseEdit.do?id="+$(that).attr("data_id")+"&purchaseID="+$(that).attr("data_id");
             });
         });
         $("#purchaseInfoTable").find('button[id=deleBtn]').each(function () {

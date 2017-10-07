@@ -26,25 +26,47 @@
                                     <tr>
                                         <td style="background-color: #f9f9f9">仓库名称</td>
                                         <td>
-                                            <select class="form-control" id="houseSelect">
-                                                <option value="-1">请选择仓库</option>
-                                                <#if warehouseItem?exists >
-                                                    <#list warehouseItem as warehouse>
-                                                        <option value="${warehouse.id?c}">${warehouse.warehouseName}</option>
-                                                    </#list>
-                                                </#if>
-                                            </select>
+                                            <#if purchase.status=1>
+                                                <fieldset disabled>
+                                                <select class="form-control" id="houseSelect">
+                                                    <#if warehouseItem?exists >
+                                                        <#list warehouseItem as warehouse>
+                                                            <option value="${warehouse.id?c}" <#if warehouseItem?exists && purchase?exists && warehouse.warehouseName == purchase.warehouse_name>selected</#if>>${warehouse.warehouseName}</option>
+                                                        </#list>
+                                                    </#if>
+                                                </select>
+                                                </fieldset>
+                                            <#else>
+                                                <select class="form-control" id="houseSelect">
+                                                    <#if warehouseItem?exists >
+                                                        <#list warehouseItem as warehouse>
+                                                            <option value="${warehouse.id?c}" <#if warehouseItem?exists && purchase?exists && warehouse.warehouseName == purchase.warehouse_name>selected</#if>>${warehouse.warehouseName}</option>
+                                                        </#list>
+                                                    </#if>
+                                                </select>
+                                            </#if>
                                         </td>
                                         <td style="background-color: #f9f9f9">供应商名称</td>
                                         <td>
-                                            <select class="form-control" id="supplierSelect">
-                                                <option value="-1">请选择供应商</option>
-                                                <#if supperlierItem?exists >
-                                                    <#list supperlierItem as supplier>
-                                                        <option value="${supplier.id?c}">${supplier.supplierName}</option>
-                                                    </#list>
-                                                </#if>
-                                            </select>
+                                            <#if purchase.status=1>
+                                                <fieldset disabled>
+                                                <select class="form-control" id="supplierSelect">
+                                                    <#if supperlierItem?exists >
+                                                        <#list supperlierItem as supplier>
+                                                            <option value="${supplier.id?c}" <#if supperlierItem?exists && purchase?exists && supplier.supplierName == purchase.supplier_name>selected</#if>>${supplier.supplierName}</option>
+                                                        </#list>
+                                                    </#if>
+                                                </select>
+                                                </fieldset>
+                                            <#else>
+                                                 <select class="form-control" id="supplierSelect">
+                                                     <#if supperlierItem?exists >
+                                                         <#list supperlierItem as supplier>
+                                                             <option value="${supplier.id?c}" <#if supperlierItem?exists && purchase?exists && supplier.supplierName == purchase.supplier_name>selected</#if>>${supplier.supplierName}</option>
+                                                         </#list>
+                                                     </#if>
+                                                 </select>
+                                            </#if>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -62,40 +84,55 @@
                             <h5 class="page-title" style="padding-top: 20px"><b>采购信息</b></h5>
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
                             <div class="table-responsive advert_detail_table">
-                                <table class="table table-bordered" id="tab">
+                                <table class="table table-bordered">
                                     <thead>
                                         <th style="background-color: #f9f9f9">商品分类</th>
                                         <th style="background-color: #f9f9f9">商品名称</th>
+                                        <th style="background-color: #f9f9f9">条形码</th>
                                         <th style="background-color: #f9f9f9">采购日期</th>
                                         <th style="background-color: #f9f9f9">采购数量</th>
                                         <th style="background-color: #f9f9f9">操作</th>
                                     </thead>
-                                    <tbody>
-                                        <#--<#if (itemTypes?size > 0)>-->
-                                            <#--<#list itemTypes as itemType>-->
-                                            <#--<tr>-->
-                                                <#--<td>-->
-                                                    <#--<select class="form-control">-->
-                                                        <#--<option value="-1">饮料</option>-->
-                                                        <#--<option value="0">零食</option>-->
-                                                    <#--</select>-->
-                                                <#--</td>-->
-                                                <#--<td>-->
-                                                    <#--<select class="form-control">-->
-                                                        <#--<option value="-1">哇哈哈</option>-->
-                                                        <#--<option value="0">营养快线</option>-->
-                                                    <#--</select>-->
-                                                <#--</td>-->
-                                                <#--<td>-->
-                                                    <#--<input id="endTime" type="text" class="form-control"  placeholder="如：2017-10-10">-->
-                                                <#--</td>-->
-                                                <#--<td>-->
-                                                    <#--<input type="text" class="form-control" placeholder="输入采购数量">-->
-                                                <#--</td>-->
-                                                <#--<td><button onclick="deleTr(this);">删除</button></td>-->
-                                            <#--</tr>-->
-                                            <#--</#list>-->
-                                        <#--</#if>-->
+                                    <tbody id="tab">
+                                        <#if (commoditys?size > 0)>
+                                            <#list commoditys as commodity>
+                                            <tr>
+                                                <td>
+                                                    <select class="form-control" onchange="changeSelect(this)">
+                                                        <#--<option value="${commodity.purchaseId}">${commodity.itemTypeTitle}</option>-->
+                                                        <#if (itemTypes?size > 0)>
+                                                            <#list itemTypes as itemType>
+                                                                <option value=${itemType.id?c} <#if commodity?exists && itemType.id == commodity.itemId>selected </#if>><#if itemType.parentId == 0>${itemType.title}
+                                                                <#else>&nbsp;&nbsp;&nbsp;&nbsp;${itemType.title}</#if></option>
+                                                            </#list>
+                                                        <#else><option value='0'>找不到商品</option>
+                                                        </#if>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <select class="form-control" onchange="changeCode(this)">
+                                                        <option value="${commodity.itemTypeId?c}">${commodity.itemTypeTitle}</option>
+                                                    </select>
+                                                </td>
+                                                <td>
+                                                    <fieldset disabled>
+                                                        <input type="text" class="form-control" value="${commodity.barcode}">
+                                                    </fieldset>
+                                                </td>
+                                                <td>
+                                                    <div class="input-group">
+                                                        <input id="endTime" type="text" class="form-control" value="${commodity.purchaseTime}">
+                                                        <span class="input-group-addon bg-default" onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD'})">
+                                                             <i class="fa fa-calendar"></i></span>
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    <input type="text" class="form-control" value="${commodity.purchaseNumber?c}" ">
+                                                </td>
+                                                <td><button class="btn-danger" onclick="deleTr(this);">删除</button></td>
+                                            </tr>
+                                            </#list>
+                                        </#if>
                                     </tbody>
                                 </table>
                             </div>
@@ -110,16 +147,24 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
 <script type="text/javascript">
     function addTr2(tab, row){
+
         var trHtml="<tr><td>" +
                 "<select class='form-control' onchange='changeSelect(this)'>" +
-                "<option value='-1'>请选择商品分类</option>" +
-                "<#if (itemTypes?size > 0)><#list itemTypes as iType> <option value='${iType.id?c}'><#if iType.parentId == 0>${iType.title}<#else>&nbsp;&nbsp;&nbsp;&nbsp;${iType.title}</#if></option></#list><#else><option value='0'>无</option></#if>" +
+                "<option value=''>请选择商品分类</option>" +
+                        "<#if (itemTypes?size > 0)><#list itemTypes as iType> <option value='${iType.id?c}' <#if item?exists && iType.id == item.typeId>selected </#if>>" +
+                        "<#if iType.parentId == 0>${iType.title}<#else>&nbsp;&nbsp;&nbsp;&nbsp;${iType.title}</#if></option></#list><#else><option value='0'>无</option></#if>" +
                 "</select>" +
                 "</td>" +
-                "<td><select class='form-control'><option value='-1'>请选择商品名称</option></select></td>" +
-                "<td><input id='endTime' type='text' class='form-control'  placeholder='如：2017-10-10'></td>" +
+                "<td><select class='form-control' onchange='changeCode(this)'><option value=''>请选择商品名称</option></select></td>" +
+                "<td><fieldset disabled><input type='text' class='form-control'></fieldset></td>" +
+                "<td>" +
+                "<div class='input-group'><input id='endTime' type='text' class='form-control' placeholder='2017-10-10'>" +
+//                "<span class='input-group-addon bg-default' onClick='jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD'})'><i class='fa fa-calendar'></i></span>" +
+                "</div>" +
+                "</td>" +
                 "<td><input type='text' class='form-control' placeholder='输入采购数量'></td>" +
                 "<td><button class='btn-danger' onclick='deleTr(this);'>删除</button></td>" +
                 "</tr>";
@@ -129,12 +174,14 @@
         //获取table最后一行 $("#tab tr:last")
         //获取table第一行 $("#tab tr").eq(0)
         //获取table倒数第二行 $("#tab tr").eq(-2)
-        var $tr=$("#"+tab+" tr").eq(row);
+//        var $tr=$("#"+tab+" tr").eq(row);
+        var $tr=$("#tab");
         if($tr.size()==0){
             alert("指定的table id或行数不存在！");
             return;
         }
-        $tr.after(trHtml);
+//        $tr.after(trHtml);
+        $tr.append(trHtml);
     }
     function deleTr(nowTr) {
         $(nowTr).parent().parent().remove();
@@ -144,27 +191,28 @@
         var $tr = $($s1).parent().parent();
         var $td = $tr.find("td:eq(1)");
         var $s2 = $td.find('select');
+        var $in = $tr.find("td:eq(2)").find('input');
         if(_id !=""){//当商品分类不为空时
             console.log($s1);
 //            if(!$s1.data(_id)){//不在缓冲区中,需要向服务器请求
-            var _url = "http://192.168.1.166:17777/item/item/getItemTemplateIdAndNames.do?itemTypeId=";
-                var url = "${base}/item/idNameItems.do?itemTypeId=";
-                $.get(_url+_id,function(data) {
+//            var _url = "http://192.168.1.166:17777/item/item/getItemTemplateIdAndNames.do?itemTypeId=";
+                var url = "${base}/purchase/itemsByitemTypeId.do?itemTypeId=";
+                $.get(url+_id,function(data) {
                     console.log(data);
                     var _obj = data.response.datas;
-
-                    if((_obj.length != 0)&& data) {//返回的数据不为空
-                        $s2.empty();
+                    if(data.code==0) {//返回的数据不为空
+                        $s2.empty();//清空第二个下拉列表
                         $s2.html("");
+                        $in.val("");//清空条形码输入框
+                        $("<option value=''>请选择商品名称</option>").appendTo($s2);
                         for(var i = 0; i < _obj.length; i++) {
-                            $("<option value ='" + _obj[i].id + "'> " + _obj[i].name + "</option>").appendTo($s2);
+                            $("<option value ='" + _obj[i].id + "' data-id ='" + _obj[i].barcode + "'> " + _obj[i].name + "</option>").appendTo($s2);
                         }
-                        $s2.parent().show();
-                        $s2.next().show();
                     } else {//返回的数据为空
                         $s2.empty();
                         $s2.html("");
                         $("<option value=''>该分类下没有商品</option>").appendTo($s2);
+                        $in.val("");
                     }
 //                    $s2.data(_id, data);
                 }, "json");
@@ -184,9 +232,13 @@
 //                }
 //            }
         }else{//商品分类为空的情况，隐藏第二个下拉框
-            $s2.parent().hide();
-            $s1.next().hide();
+            $s2.empty();
+            $in.val("");
         }
+    }
+    function changeCode($se) {
+        var _code = $($se).find('option:selected').attr('data-id');
+        $($se).parent().parent().find("td:eq(2)").find('input').val(_code);
     }
     $(document).ready(function () {
         $(".statusBtn").click(function () {
@@ -196,19 +248,22 @@
             var itemNames = "";//商品名称
             var itemTypeIDs = "";//商品类型id
             var itemTypeTitles = "";//商品类型名称
+            var barcodes = "";//条形码
             var purchaseDates = "";//商品采购时间
             var purchaseNumbers = "";//商品采购数量
-            $("#tab tbody tr").each(function() {
+            $("#tab tr").each(function() {
                 var sTxt1 = $(this).children("td:eq(0)").find('option:selected').text();
                 var sVal1 = $(this).children("td:eq(0)").find('select').val();
                 var sTxt2 = $(this).children("td:eq(1)").find('option:selected').text();
                 var sVal2 = $(this).children("td:eq(1)").find('select').val();
+                var code =  $(this).children("td:eq(2)").find('input').val();
                 var inputTxt1 = $(this).children("td:eq(2)").find('input').val();
                 var inputTxt2 = $(this).children("td:eq(3)").find('input').val();
                 itemIDs += sVal1 + ",";
                 itemNames += sTxt1 + ",";
                 itemTypeIDs += sVal2 + ",";
                 itemTypeTitles += sTxt2 + ",";
+                barcodes += code + ",";
                 purchaseDates += inputTxt1 + ",";
                 purchaseNumbers += inputTxt2 + ",";
             })
@@ -216,16 +271,16 @@
             itemNames = itemNames.length > 0 ? itemNames.substring(0, itemNames.length - 1) : "";
             itemTypeIDs = itemTypeIDs.length > 0 ? itemTypeIDs.substring(0, itemTypeIDs.length - 1) : "";
             itemTypeTitles = itemTypeTitles.length > 0 ? itemTypeTitles.substring(0, itemTypeTitles.length - 1) : "";
+            barcodes = barcodes.length > 0 ? barcodes.substring(0, barcodes.length - 1) : "";
             purchaseDates = purchaseDates.length > 0 ? purchaseDates.substring(0, purchaseDates.length - 1) : "";
             purchaseNumbers = purchaseNumbers.length > 0 ? purchaseNumbers.substring(0, purchaseNumbers.length - 1) : "";
-            alert(purchaseDates);
-            var para0 = "?warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs
-                        +"&itemTypeTitles="+itemTypeTitles+"&purchaseTimes="+purchaseDates+"&purchaseNumbers="+purchaseNumbers+"&status=0";
-            var para1 = "?warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs
-                        +"&itemTypeTitles="+itemTypeTitles+"&purchaseTimes="+purchaseDates+"&purchaseNumbers="+purchaseNumbers+"&status=1";
+            var para0 = "&warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs
+                        +"&itemTypeTitles="+itemTypeTitles+"&purchaseTimes="+purchaseDates+"&purchaseNumbers="+purchaseNumbers+"&status=0&barcodes="+barcodes;
+            var para1 = "&warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs
+                        +"&itemTypeTitles="+itemTypeTitles+"&purchaseTimes="+purchaseDates+"&purchaseNumbers="+purchaseNumbers+"&status=1&barcodes="+barcodes;
             var eleId = $(this).attr('id');
             if(eleId=='saveBtn'){
-                $.post("${base}/purchase/updatePurchase.do?id=1"+para1, function (data) {//提交
+                $.post("${base}/purchase/updatePurchase.do?id=${purchase.id}"+para1, function (data) {//提交
                     //重新刷新
                     console.log(data);
                     if (data.code == "0") {

@@ -449,24 +449,24 @@
                             <div class="col-md-5">
                                 <input type="text" class="form-control" id="editStartTime">
                             </div>
-                            <div class="col-md-1">
-                                <span class="input-group-addon bg-default"
-                                      onClick="jeDate({dateCell:'#editStartTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})">
-                                    <i class="fa fa-calendar"></i>
-                                </span>
-                            </div>
+                            <#--<div class="col-md-1">-->
+                                <#--<span class="input-group-addon bg-default"-->
+                                      <#--onClick="jeDate({dateCell:'#editStartTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})">-->
+                                    <#--<i class="fa fa-calendar"></i>-->
+                                <#--</span>-->
+                            <#--</div>-->
                         </div>
                         <div class="form-group">
                             <label class="col-md-4 control-label">结束时间：</label>
                             <div class="col-md-5">
                                 <input type="text" class="form-control" id="editEndTime">
                             </div>
-                            <div class="col-md-1">
-                                <span class="input-group-addon bg-default"
-                                      onClick="jeDate({dateCell:'#editEndTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})">
-                                    <i class="fa fa-calendar"></i>
-                                </span>
-                            </div>
+                            <#--<div class="col-md-1">-->
+                                <#--<span class="input-group-addon bg-default"-->
+                                      <#--onClick="jeDate({dateCell:'#editEndTime',isTime:true,format:'YYYY-MM-DD 00:00:00'})">-->
+                                    <#--<i class="fa fa-calendar"></i>-->
+                                <#--</span>-->
+                            <#--</div>-->
                         </div>
                         <div class="form-group">
                             <label class="col-md-4 control-label">播放排序：</label>

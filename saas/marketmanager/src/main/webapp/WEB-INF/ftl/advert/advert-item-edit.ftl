@@ -131,7 +131,7 @@
         //搜索
         //上传广告
         $("#uploadAdvertButton").on('click', function () {
-            $(this).button('loading').delay(500).queue(function() {
+            $(this).button('loading').delay(500).queue(function() {//阻止二次提交
                 $(this).button('reset'); //重置按钮
                 $(this).dequeue();
                 var form = new FormData($('#uploadForm')[0]);//表单数据，序列化

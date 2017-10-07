@@ -112,14 +112,14 @@
 </div>
 <script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        function checkInput(obj) {
-            if (obj == "") {
-                return false;
-            } else {
-                return true;
-            }
+    function checkInput(obj) {
+        if (obj == "") {
+            return false;
+        } else {
+            return true;
         }
+    }
+    $(document).ready(function () {
         $("#saveBtn").on('click', function () {//确定
             $(this).button('loading').delay(500).queue(function() {
                 $(this).button('reset'); //重置按钮
