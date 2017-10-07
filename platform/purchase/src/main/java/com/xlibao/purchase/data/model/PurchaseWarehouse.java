@@ -17,6 +17,8 @@ public class PurchaseWarehouse {
 
     private String remark="";
 
+    private  String wmsKEY="";
+
     private String updateTime;
 
     private String createTime;
@@ -111,5 +113,13 @@ public class PurchaseWarehouse {
 
     public void setUserCount(Integer userCount) {
         this.userCount = userCount;
+    }
+
+    public String getWmsKEY() {
+        return wmsKEY;
+    }
+
+    public void setWmsKEY(String wmsKEY) {
+        this.wmsKEY = wmsKEY;
     }
 }

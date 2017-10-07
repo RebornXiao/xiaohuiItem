@@ -9,13 +9,14 @@
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="stop_remark" jdbcType="VARCHAR" property="stopRemark" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
+    <result column="wms_key" jdbcType="VARCHAR" property="wmsKEY" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
     <result column="userCount" jdbcType="INTEGER" property="userCount" />
   </resultMap>
   <sql id="Base_Column_List">
-    id, warehouse_code, warehouse_name, address, status, stop_remark, remark, update_time,
+    id, warehouse_code, warehouse_name, address, status, stop_remark, remark, wms_key, update_time,
     create_time, is_delete
   </sql>
 
@@ -88,6 +89,9 @@
       <if test="remark != null">
         remark,
       </if>
+      <if test="wmsKEY != null">
+        wms_key,
+      </if>
       <if test="updateTime != null">
         update_time,
       </if>
@@ -120,6 +124,9 @@
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
       </if>
+      <if test="wmsKEY != null">
+        #{wmsKEY,jdbcType=VARCHAR},
+      </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
       </if>
@@ -151,6 +158,9 @@
       </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="wmsKEY != null">
+        wms_key = #{wmsKEY,jdbcType=VARCHAR},
       </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
