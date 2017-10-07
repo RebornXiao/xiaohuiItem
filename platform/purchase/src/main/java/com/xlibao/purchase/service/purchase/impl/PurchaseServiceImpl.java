@@ -424,9 +424,8 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
             purchaseCommodity.setPurchaseId(id);
             purchaseCommodity.setIsDelete(1);
             purchaseCommodity.setUpdateTime(DateUtil.getNowDate());
-            if (purchaseDataAccessManager.delPurchaseCommodity(purchaseCommodity) > 0) {
-                 return success("删除成功");
-             }
+            purchaseDataAccessManager.delPurchaseCommodity(purchaseCommodity);
+            return success("删除成功");
         }
         return fail("删除失败");
     }
@@ -622,7 +621,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
                 }
             }*/
             /****/
-            putInWMS(datas);
+            putInWMS(id,datas);
             //将入库信息推送至WMS系统
         }else {
             throw new XlibaoIllegalArgumentException("入库失败");
@@ -630,7 +629,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         return success("入库成功");
     }
 
-    public void putInWMS(String datas){
+    public void putInWMS(long id,String datas){
         String url = ConfigFactory.getDomainNameConfig().wmsRemoteURL+"/sycnInputPlan.do";
         String appkey = "111111";
         String sessionkey = "222222";
@@ -638,9 +637,9 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String param = "";
         String ownercode =ConfigFactory.getXMarketConfig().getWhcode();
         JSONObject jsonObject = new JSONObject();
-        jsonObject.put("sourceno","11");
-        jsonObject.put("planno","22");
-        jsonObject.put("title","测试");
+        jsonObject.put("sourceno",id);
+        jsonObject.put("planno","00");
+        jsonObject.put("title","小惠科技入库单");
         jsonObject.put("ownercode",ConfigFactory.getXMarketConfig().getOwnercode());
         jsonObject.put("whcode",ConfigFactory.getXMarketConfig().getWhcode());
         jsonObject.put("type","21");
@@ -737,6 +736,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
                 purchaseCommodityStoresa.setItemName(itemName);
                 purchaseCommodityStoresa.setBarcode(barcode);
                 purchaseCommodityStoresa.setStoresNumber(number);
+                purchaseCommodityStoresa.setWarnNumber(number);
                 //添加库存信息
                 if(purchaseDataAccessManager.savePurchaseCommodityStores(purchaseCommodityStoresa)>0){
                     JSONObject response = new JSONObject();
@@ -824,6 +824,4 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         }
         return fail("修改失败");
     }
-
-
 }
