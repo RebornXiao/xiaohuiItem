@@ -21,9 +21,9 @@ public class PurchaseCommodity {
 
     private Integer purchaseNumber;
 
-    private String depositTime;
+    private String depositTime="";
 
-    private Integer depositNumber;
+    private Integer depositNumber=0;
 
     private String updateTime;
 
