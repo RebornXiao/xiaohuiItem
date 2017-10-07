@@ -158,8 +158,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
                     parameters2.put("purchaseID", String.valueOf(purchaseID));
                     parameters2.put("itemID", itemIDList[i]);
                     parameters2.put("itemTypeID", itemTypeIDList[i]);
-                    parameters2.put("itemName", itemNameList[i]);
-                    parameters2.put("itemTypeTitle", itemTypeTitleList[i]);
+                    parameters2.put("itemName", itemNameList[i].trim());
+                    parameters2.put("itemTypeTitle", itemTypeTitleList[i].trim());
                     parameters2.put("barcode", barcodeList[i]);
                     parameters2.put("purchaseTime", purchaseTimeList[i]);
                     parameters2.put("purchaseNumber", purchaseNumberList[i]);
