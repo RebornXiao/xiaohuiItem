@@ -197,6 +197,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String warehouseName = getUTF("warehouseName",null);
         String address = getUTF("address",null);
         String remark = getUTF("remark",null);
+        String wmsKEY = getUTF("wmsKEY",null);
 
         if(warehouseCode == null || warehouseCode.isEmpty()){
             return fail("缺少仓库编码warehouseCode");
@@ -210,6 +211,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         warehouse.setWarehouseName(warehouseName);
         warehouse.setAddress(address);
         warehouse.setRemark(remark);
+        warehouse.setWmsKEY(wmsKEY);
         if (purchaseDataAccessManager.saveWarehouse(warehouse) > 0) {
             return success("添加成功");
         }
@@ -229,6 +231,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String warehouseName = getUTF("warehouseName",null);
         String address = getUTF("address",null);
         String remark = getUTF("remark",null);
+        String wmsKEY = getUTF("wmsKEY",null);
         if(id==-1){
             return fail("缺少仓库id");
         }else if(warehouseCode == null || warehouseCode.isEmpty()){
@@ -244,6 +247,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         warehouse.setWarehouseName(warehouseName);
         warehouse.setAddress(address);
         warehouse.setRemark(remark);
+        warehouse.setWmsKEY(wmsKEY);
         warehouse.setUpdateTime(DateUtil.getNowDate());
         if (purchaseDataAccessManager.updateWarehouse(warehouse) > 0) {
             return success("修改成功");
