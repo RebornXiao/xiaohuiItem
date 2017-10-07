@@ -55,6 +55,7 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
         String warehouseName = getUTF("warehouseName","");
         String address = getUTF("address","");
         String remark = getUTF("remark","");
+        String wmsKEY = getUTF("wmsKEY","");
 
         if(warehouseCode == "" || warehouseCode.isEmpty()){
             return fail("缺少仓库编码");
@@ -68,6 +69,7 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
         parameters.put("warehouseName", warehouseName);
         parameters.put("address", address);
         parameters.put("remark", remark);
+        parameters.put("wmsKEY", wmsKEY);
 
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/saveWarehouse.do";
@@ -97,6 +99,7 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
         String warehouseName = getUTF("warehouseName","");
         String address = getUTF("address","");
         String remark = getUTF("remark","");
+        String wmsKEY = getUTF("wmsKEY","");
         if(id==-1){
             return fail("缺少仓库ID");
         }else if(warehouseCode == "" || warehouseCode.isEmpty()){
@@ -112,6 +115,7 @@ public class WarehouseManagerServiceImpl extends BasicRemoteService implements W
         parameters.put("warehouseName", warehouseName);
         parameters.put("address", address);
         parameters.put("remark", remark);
+        parameters.put("wmsKEY", wmsKEY);
 
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updateWarehouse.do";
