@@ -37,7 +37,7 @@
                                 </tr>
                                 <tr>
                                     <td style="background-color: #f9f9f9">备注</td>
-                                    <#--<td><input type="text" class="form-control" id="remark" placeholder="请输入相关说明" value="${warehouse.address}"/></td>-->
+                                    <td><input type="text" class="form-control" id="remark" <#if warehouse.remark!=''>value="${warehouse.remark}"<#else>value="无"</#if>/></td>
                                 </tr>
                                 </tbody>
                             </#if>
@@ -58,7 +58,7 @@
                                 <tbody>
                                 <tr>
                                     <td style="background-color: #f9f9f9">Key:</td>
-                                    <td><input type="text" class="form-control" id="keyInput" placeholder="请输入与WMS对接Key，没有暂时不写" value=""/></td>
+                                    <td><input type="text" class="form-control" id="keyInput" placeholder="请输入与WMS对接Key" value=""/></td>
                                 </tr>
                                 </tbody>
                             <#--</#if>-->
@@ -93,10 +93,11 @@
                 var input1 = checkInput(arr.code);
                 var input2 = checkInput(arr.name);
                 var input3 = checkInput(arr.address);
-                if (input1 && input2 && input3) {
+                var input4 = checkInput(arr.key);
+                if (input1 && input2 && input3 && input4) {
                     var url = "${base}/purchase/updateWarehouse.do?id=${warehouse.id}&warehouseCode="
                             + arr.code + "&warehouseName=" + arr.name + "&address=" + arr.address + "&remark="
-                            + arr.remark;
+                            + arr.remark + "&wmsKEY" + arr.key;
                     $.post(url, function (data) {
                         //重新刷新
                         console.log(data);

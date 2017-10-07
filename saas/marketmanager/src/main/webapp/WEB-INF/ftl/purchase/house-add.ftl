@@ -91,10 +91,11 @@
                 var input1 = checkInput(arr.code);
                 var input2 = checkInput(arr.name);
                 var input3 = checkInput(arr.address);
-                if (input1 && input2 && input3) {
+                var input4 = checkInput(arr.key);
+                if (input1 && input2 && input3 && input4) {
                     var url = "${base}/purchase/saveWarehouse.do?warehouseCode="
                             + arr.code + "&warehouseName=" + arr.name + "&address=" + arr.address + "&remark="
-                            + arr.remark;
+                            + arr.remark + "&wmsKEY" + arr.key;
                     $.post(url, function (data) {
                         //重新刷新
                         console.log(data);

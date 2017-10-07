@@ -19,7 +19,7 @@
                     <div class="form-group m-l-15">
                         <label>仓库名称：</label>
                         <select id="houseSelect" class="form-control" name="warehouseCode">
-                            <option value="">全部仓库</option>
+                            <option value="">所有仓库</option>
                             <#if warehouseItem?exists >
                                 <#list warehouseItem as warehouse>
                                     <option value="${warehouse.warehouseCode}">${warehouse.warehouseName}</option>
@@ -37,8 +37,8 @@
                             <option value="-1">全部</option>
                             <option value="0">未提交</option>
                             <option value="1">未入库</option>
-                            <option value="0">入库异常</option>
-                            <option value="1">完成入库</option>
+                            <option value="2">入库异常</option>
+                            <option value="3">完成入库</option>
                         </select>
                     </div>
                     <div class="form-group m-l-15">

@@ -112,9 +112,9 @@
                                     <#if (commoditys?size > 0)>
                                         <#list commoditys as commodity>
                                         <tr>
-                                            <td>${commodity.itemName}</td>
+                                            <td>${commodity.warehouseName}</td>
                                             <td>${commodity.purchaseTime}</td>
-                                            <td>${commodity.itemName}</td>
+                                            <td>${commodity.itemTypeTitle}</td>
                                             <td>${commodity.purchaseNumber}</td>
                                         </tr>
                                         </#list>

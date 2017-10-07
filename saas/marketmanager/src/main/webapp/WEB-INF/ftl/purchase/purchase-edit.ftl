@@ -129,7 +129,9 @@
                                                 <td>
                                                     <input type="text" class="form-control" value="${commodity.purchaseNumber?c}" ">
                                                 </td>
-                                                <td><button class="btn-danger" onclick="deleTr(this);">删除</button></td>
+                                                <td>
+                                                    <button type="button" class="btn btn-default" disabled="disabled">不可删</button>
+                                                </td>
                                             </tr>
                                             </#list>
                                         </#if>
@@ -162,7 +164,7 @@
                 "<td><fieldset disabled><input type='text' class='form-control'></fieldset></td>" +
                 "<td>" +
                 "<div class='input-group'><input id='endTime' type='text' class='form-control' placeholder='2017-10-10'>" +
-//                "<span class='input-group-addon bg-default' onClick='jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD'})'><i class='fa fa-calendar'></i></span>" +
+                "<span class='input-group-addon bg-default' onClick=\"jeDate({dateCell:\'#endTime\',isTime:true,format:\'YYYY-MM-DD\'})\"><i class='fa fa-calendar'></i></span>" +
                 "</div>" +
                 "</td>" +
                 "<td><input type='text' class='form-control' placeholder='输入采购数量'></td>" +
@@ -259,10 +261,10 @@
                 var code =  $(this).children("td:eq(2)").find('input').val();
                 var inputTxt1 = $(this).children("td:eq(2)").find('input').val();
                 var inputTxt2 = $(this).children("td:eq(3)").find('input').val();
-                itemIDs += sVal1 + ",";
-                itemNames += sTxt1 + ",";
-                itemTypeIDs += sVal2 + ",";
-                itemTypeTitles += sTxt2 + ",";
+                itemIDs += sVal2 + ",";
+                itemNames += sTxt2 + ",";
+                itemTypeIDs += sVal1 + ",";
+                itemTypeTitles += sTxt1 + ",";
                 barcodes += code + ",";
                 purchaseDates += inputTxt1 + ",";
                 purchaseNumbers += inputTxt2 + ",";

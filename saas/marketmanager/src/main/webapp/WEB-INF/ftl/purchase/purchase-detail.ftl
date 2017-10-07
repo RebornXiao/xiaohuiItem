@@ -48,7 +48,7 @@
                                             </tr>
                                             <tr>
                                                 <td style="background-color: #f9f9f9">异常说明</td>
-                                                <td colspan="3">没有返回stopRemark</td>
+                                                <td colspan="3"><#if purchase.exception_remark!=''>${purchase.exception_remark}<#else>无</#if></td>
                                             </tr>
                                             </tbody>
                                         </#if>
@@ -108,11 +108,11 @@
                                         <tr>
                                             <td>${commodity.itemTypeTitle}</td>
                                             <td>${commodity.itemName}</td>
-                                            <td>没有返回条形码</td>
+                                            <td>${commodity.barcode}</td>
                                             <td>${commodity.purchaseTime}</td>
                                             <td>${commodity.purchaseNumber}</td>
-                                            <td>入库日期为空</td>
-                                            <td>入库数量为空</td>
+                                            <td>${commodity.depositTime}</td>
+                                            <td>${commodity.depositNumber}</td>
                                         </tr>
                                         </#list>
                                     <#else>
