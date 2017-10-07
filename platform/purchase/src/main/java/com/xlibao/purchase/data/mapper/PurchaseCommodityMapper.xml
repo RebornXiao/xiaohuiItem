@@ -30,7 +30,7 @@
     </if>
   </select>
   <select id="getSupplierCommodityS" resultMap="BaseResultMap">
-    SELECT w.warehouse_name, c.* from purchase_entry e join purchase_commodity c on e.id = c.purchase_id  join purchase_warehouse w on w.id  = e.warehouse_id where e.is_delete !=1 and c.is_delete!=1 and w.is_delete!=1
+    SELECT w.warehouse_name, c.* from purchase_entry e join purchase_commodity c on e.id = c.purchase_id  join purchase_warehouse w on w.warehouse_code  = e.warehouse_code where e.is_delete !=1 and c.is_delete!=1 and w.is_delete!=1
     <if test="supplierId != -1">
       AND e.supplier_id = #{supplierId}
     </if>
