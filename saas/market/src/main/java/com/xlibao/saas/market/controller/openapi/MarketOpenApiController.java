@@ -110,7 +110,11 @@ public class MarketOpenApiController {
      *              <b>itemQuantity</b> - int 当前的商品库存
      *              <b>barcode</b> - String 当前存放的商品条码
      *              <b>unitName</b> - String 当前存放的商品单位
+     *
      *              <b>taskId</b> - long 任务ID；当没有存在预操作任务时为0，否则为对应的任务ID
+     *              <b>taskStatus</b> - int 任务状态，当<b>taskId</b>为0时无效；具体参考：{@link com.xlibao.saas.market.service.item.PrepareActionStatusEnum}
+     *              <b>hasCompleteQuantity</b> - int 已完成的数量，当<b>taskId</b>为0时无效
+     *              <b>hopeItemQuantity</b> - int 期望执行的数量，当<b>taskId</b>为0时无效
      * </pre>
      */
     @ResponseBody
@@ -134,11 +138,15 @@ public class MarketOpenApiController {
      *          <b>locationCode</b> - String 弹夹的完整编码，如：01010101
      *          <b>itemTemplateId</b> - long 商品模版ID
      *          <b>itemName</b> - String 商品名
+     *          <b>unitName</b> - String 当前存放的商品单位
+     *          <b>hasCompleteQuantity</b> - int 执行完成的商品数量
      *          <b>itemQuantity</b> - int 商品数量
      *          <b>barcode</b> - String 商品的条码
-     *          <b>unitName</b> - String 当前存放的商品单位
+     *          <b>type</b> - int 任务类型，参考：{@link com.xlibao.saas.market.service.market.ShelvesTaskTypeEnum}
      *          <b>status</b> - int 任务状态，参考：{@link com.xlibao.saas.market.service.item.PrepareActionStatusEnum}
      *          <b>hopeExecutorDate</b> - String 期望执行的日期
+     *          <b>completeTime</b> - String 实际完成的时间点
+     *          <b>dateTitle</b> - String 用于展示的执行日期格式标题，如：今天、昨天、2017-09-18 周一
      * </pre>
      */
     @ResponseBody
@@ -201,15 +209,23 @@ public class MarketOpenApiController {
      *
      *     <b>参数：</b>
      *          <b>marketId</b> - long 商店ID，必填参数。
-     *          <b>barcode</b> - String 商品条码，必填参数；一般为扫码获取。
+     *          <b>barcode</b> - String 商品或货架编码，必填参数；一般为扫码获取。
      *
      *     <b>返回：</b>
-     *          <b>datas</b> - JSONArray 任务集合，每个元素为JSONObject，结构如：
+     *          <b>datas</b> - JSONArray 当前的任务列表，每个元素为JSONObject，结构为：
      *              <b>taskId</b> - long 任务ID
+     *              <b>locationCode</b> - String 弹夹的完整编码，如：01010101
+     *              <b>itemTemplateId</b> - long 商品模版ID
      *              <b>itemName</b> - String 商品名
-     *              <b>locationCode</b> - String 位置信息
-     *              <b>itemQuantity</b> - int 需补货数量
-     *              <b>unitName</b> - 单位名称
+     *              <b>unitName</b> - String 当前存放的商品单位
+     *              <b>hasCompleteQuantity</b> - int 执行完成的商品数量
+     *              <b>itemQuantity</b> - int 商品数量
+     *              <b>barcode</b> - String 商品的条码
+     *              <b>type</b> - int 任务类型，参考：{@link com.xlibao.saas.market.service.market.ShelvesTaskTypeEnum}
+     *              <b>status</b> - int 任务状态，参考：{@link com.xlibao.saas.market.service.item.PrepareActionStatusEnum}
+     *              <b>hopeExecutorDate</b> - String 期望执行的日期
+     *              <b>completeTime</b> - String 实际完成的时间点
+     *              <b>dateTitle</b> - String 用于展示的执行日期格式标题，如：今天、昨天、2017-09-18 周一
      * </pre>
      */
     @ResponseBody
@@ -236,11 +252,15 @@ public class MarketOpenApiController {
      *              <b>locationCode</b> - String 弹夹的完整编码，如：01010101
      *              <b>itemTemplateId</b> - long 商品模版ID
      *              <b>itemName</b> - String 商品名
+     *              <b>unitName</b> - String 当前存放的商品单位
+     *              <b>hasCompleteQuantity</b> - int 执行完成的商品数量
      *              <b>itemQuantity</b> - int 商品数量
      *              <b>barcode</b> - String 商品的条码
-     *              <b>unitName</b> - String 当前存放的商品单位
+     *              <b>type</b> - int 任务类型，参考：{@link com.xlibao.saas.market.service.market.ShelvesTaskTypeEnum}
      *              <b>status</b> - int 任务状态，参考：{@link com.xlibao.saas.market.service.item.PrepareActionStatusEnum}
      *              <b>hopeExecutorDate</b> - String 期望执行的日期
+     *              <b>completeTime</b> - String 实际完成的时间点
+     *              <b>dateTitle</b> - String 用于展示的执行日期格式标题，如：今天、昨天、2017-09-18 周一
      * </pre>
      */
     @ResponseBody
@@ -267,6 +287,28 @@ public class MarketOpenApiController {
 
     /**
      * <pre>
+     *     <b>Mac地址关联的商店</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/open/macRelationMarket.do
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>macAddress</b> - String mac地址，必填参数。
+     *
+     *     <b>返回：</b>
+     *          <b>marketId</b> - long 商店ID
+     *          <b>marketName</b> - String 商店名
+     *          <b>marketPassportId</b> - long 商店对应的通行证ID
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "macRelationMarket")
+    public JSONObject macRelationMarket() {
+        return marketService.macRelationMarket();
+    }
+
+    /**
+     * <pre>
      *     <b>展示货架任务</b>
      *
      *     <b>访问地址：</b>http://domainName/market/open/showShelvesTask.do
@@ -279,5 +321,82 @@ public class MarketOpenApiController {
     @RequestMapping(value = "showShelvesTask")
     public JSONObject showShelvesTask() {
         return shelvesService.showShelvesTask();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "findValidTasks")
+    public JSONObject findValidTasks() {
+        return shelvesService.findValidTasks();
+    }
+
+    /**
+     * <pre>
+     *     <b>完成今天的所有预操作任务</b>
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "finishTodayPrepareActions")
+    public JSONObject finishTodayPrepareActions() {
+        return shelvesService.finishTodayPrepareActions();
+    }
+
+    /**
+     * <pre>
+     *     <b>展示异常任务记录</b>
+     *
+     *     <b>访问地址：</b>http://domainName/market/open/showExceptionTask.do
+     *     <b>访问方式：</b>GET/POST 推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>marketId</b> - long 商店ID，必填参数。
+     *          <b>happenDate</b> - String 发生日期，非必填参数；指定时表示查看某天的任务详情列表，<b>注意：</b>格式为yyyy-MM-dd 00:00:00；如：2017-09-24 00:00:00
+     *          <b>pageIndex</b> - int 页码，非必填参数；默认值为：{@link com.xlibao.common.GlobalConstantConfig#DEFAULT_PAGE_INDEX}
+     *          <b>pageSize</b> - int 单页数量，非必填参数；默认值为：{@link com.xlibao.common.GlobalConstantConfig#DEFAULT_PAGE_SIZE}
+     *
+     *     <b>返回：</b>
+     *          <b>isLastPage</b> - 是否最后一页
+     *          <b>nextPage</b> - 下一页页码
+     *          <b>prePage</b> - 上一页页码
+     *          <b>totalPage</b> - 总页数
+     *          <b>currentPage</b> - 当前页码
+     *          <b>pageSize</b> - 单页记录数量
+     *          <b>maxSize</b> - 总数量
+     *
+     *          当<b>happenDate</b>为空时：
+     *              <b>data</b> - JSONArray 按天汇总的记录，每个元素为JSONObject，结构为：
+     *                  <b>id</b> - long 异常记录ID，没有太大的作用
+     *                  <b>executorPassportId</b> - long 执行者通行证ID
+     *                  <b>executorPassportName</b> - long 执行者姓名
+     *
+     *                  <b>hopeTotalItemQuantity</b> - int 任务期望上架的商品总数量
+     *                  <b>actualItemQuantity</b> - int 实际执行上架的商品数量
+     *
+     *                  <b>hopeTotalBarcodeQuantity</b> - int 任务期望上架的商品品种数(SKU数)
+     *                  <b>actualBarcodeQuantity</b> - int 实际执行上架的商品品种数(SKU数)
+     *
+     *                  <b>happenDate</b> - String 期望执行的日期，格式为：yyyy-MM-dd 如：2017-09-24
+     *                  <b>submitTime</b> - String 提交的时间，格式为：yyyy-MM-dd hh:mm:ss 如：2017-09-24 15:38:17
+     *
+     *          当<b>happenDate</b>不为空时：
+     *              <b>data</b> - JSONArray 指定日期下的执行记录，每个元素为JSONObject，结构为：
+     *                  <b>taskId</b> - long 任务ID
+     *                  <b>locationCode</b> - String 弹夹的完整编码，如：01010101
+     *                  <b>itemTemplateId</b> - long 商品模版ID
+     *                  <b>itemName</b> - String 商品名
+     *                  <b>unitName</b> - String 当前存放的商品单位
+     *                  <b>hasCompleteQuantity</b> - int 执行完成的商品数量
+     *                  <b>itemQuantity</b> - int 商品数量
+     *                  <b>barcode</b> - String 商品的条码
+     *                  <b>type</b> - int 任务类型，参考：{@link com.xlibao.saas.market.service.market.ShelvesTaskTypeEnum}
+     *                  <b>status</b> - int 任务状态，参考：{@link com.xlibao.saas.market.service.item.PrepareActionStatusEnum}
+     *                  <b>hopeExecutorDate</b> - String 期望执行的日期
+     *                  <b>completeTime</b> - String 实际完成的时间点
+     *                  <b>dateTitle</b> - String 用于展示的执行日期格式标题，如：今天、昨天、2017-09-18 周一
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "showExceptionTask")
+    public JSONObject showExceptionTask() {
+        return shelvesService.showExceptionTask();
     }
 }

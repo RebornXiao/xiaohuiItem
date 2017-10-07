@@ -83,8 +83,8 @@ public class OrderDataAccessManager {
         return entryMapper.getOrderEntrys(sequenceNumber);
     }
 
-    public List<OrderEntry> showConsumerOrders(String partnerId, String partnerUserId, byte target, String orderStatusSet, int type, int pageStartIndex, int pageSize) {
-        return entryMapper.showConsumerOrders(partnerId, partnerUserId, target, orderStatusSet, type, pageStartIndex, pageSize);
+    public List<OrderEntry> showConsumerOrders(String partnerId, String partnerUserId, long shippingPassportId, byte target, String orderStatusSet, int type, int pageStartIndex, int pageSize) {
+        return entryMapper.showConsumerOrders(partnerId, partnerUserId, shippingPassportId, target, orderStatusSet, type, pageStartIndex, pageSize);
     }
 
     public List<OrderEntry> showMerchantOrders(String partnerId, long shippingPassportId, String orderStatusSet, int type, int pageStartIndex, int pageSize) {
@@ -97,6 +97,10 @@ public class OrderDataAccessManager {
 
     public List<OrderEntry> searchOrders(String partnerId, long passportId, String searchKeyValue, int type, int roleType, int pageStartIndex, int pageSize) {
         return entryMapper.searchOrders(partnerId, passportId, searchKeyValue, type, roleType, pageStartIndex, pageSize);
+    }
+
+    public List<OrderEntry> getOrderForSequenceSet(String orderSequenceSet) {
+        return entryMapper.getOrderForSequenceSet(orderSequenceSet);
     }
 
     public int paymentOrder(long orderId, OrderStatusEnum orderStatusEnum, int matchBeforeStatus, String transType, int daySortNumber) {
@@ -133,6 +137,10 @@ public class OrderDataAccessManager {
 
     public int refreshOrderStatus(String orderSequenceNumber, int targetStatus, String validStatusSet) {
         return entryMapper.refreshOrderStatus(orderSequenceNumber, targetStatus, validStatusSet);
+    }
+
+    public int applyRefund(long orderId, int refundStatus, String matchStatusSet, String refundReason) {
+        return entryMapper.applyRefund(orderId, refundStatus, matchStatusSet, refundReason);
     }
     // ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑ 订单访问接口(orderEntryMapper) ↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑
 
@@ -251,6 +259,7 @@ public class OrderDataAccessManager {
     public List<OrderEntry> searchPageOrders(long marketId, int orderState, String startTime, String endTime, String searchType, String searchKey, int pageSize, int pageStartIndex) {
         return entryMapper.searchPageOrders(marketId, orderState, startTime, endTime, searchType, searchKey, pageSize, pageStartIndex);
     }
+
     public int searchPageOrderCount(long marketId, int orderState, String startTime, String endTime, String searchType, String searchKey, int pageSize, int pageStartIndex) {
         return entryMapper.searchPageOrderCount(marketId, orderState, startTime, endTime, searchType, searchKey, pageSize, pageStartIndex);
     }

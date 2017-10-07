@@ -8,26 +8,25 @@
 // Roar////////......callback
 
 
-
-!function($) {
+!function ($) {
     "use strict";
 
-    var Sidemenu = function() {
+    var Sidemenu = function () {
         this.$body = $("body"),
             this.$openLeftBtn = $(".open-left"),
             this.$menuItem = $("#sidebar-menu a")
     };
-    Sidemenu.prototype.openLeftBar = function() {
+    Sidemenu.prototype.openLeftBar = function () {
         $("#wrapper").toggleClass("enlarged");
         $("#wrapper").addClass("forced");
 
-        if($("#wrapper").hasClass("enlarged") && $("body").hasClass("fixed-left")) {
+        if ($("#wrapper").hasClass("enlarged") && $("body").hasClass("fixed-left")) {
             $("body").removeClass("fixed-left").addClass("fixed-left-void");
-        } else if(!$("#wrapper").hasClass("enlarged") && $("body").hasClass("fixed-left-void")) {
+        } else if (!$("#wrapper").hasClass("enlarged") && $("body").hasClass("fixed-left-void")) {
             $("body").removeClass("fixed-left-void").addClass("fixed-left");
         }
 
-        if($("#wrapper").hasClass("enlarged")) {
+        if ($("#wrapper").hasClass("enlarged")) {
             $(".left ul").removeAttr("style");
         } else {
             $(".subdrop").siblings("ul:first").show();
@@ -37,39 +36,39 @@
         $("body").trigger("resize");
     },
         //menu item click
-        Sidemenu.prototype.menuItemClick = function(e) {
-            if(!$("#wrapper").hasClass("enlarged")){
-                if($(this).parent().hasClass("has_sub")) {
+        Sidemenu.prototype.menuItemClick = function (e) {
+            if (!$("#wrapper").hasClass("enlarged")) {
+                if ($(this).parent().hasClass("has_sub")) {
 
                 }
-                if(!$(this).hasClass("subdrop")) {
+                if (!$(this).hasClass("subdrop")) {
                     // hide any open menus and remove all other classes
-                    $("ul",$(this).parents("ul:first")).slideUp(350);
-                    $("a",$(this).parents("ul:first")).removeClass("subdrop");
+                    $("ul", $(this).parents("ul:first")).slideUp(350);
+                    $("a", $(this).parents("ul:first")).removeClass("subdrop");
                     $("#sidebar-menu .pull-right i").removeClass("md-remove").addClass("md-add");
 
                     // open our new menu and add the open class
                     $(this).next("ul").slideDown(350);
                     $(this).addClass("subdrop");
-                    $(".pull-right i",$(this).parents(".has_sub:last")).removeClass("md-add").addClass("md-remove");
-                    $(".pull-right i",$(this).siblings("ul")).removeClass("md-remove").addClass("md-add");
-                }else if($(this).hasClass("subdrop")) {
+                    $(".pull-right i", $(this).parents(".has_sub:last")).removeClass("md-add").addClass("md-remove");
+                    $(".pull-right i", $(this).siblings("ul")).removeClass("md-remove").addClass("md-add");
+                } else if ($(this).hasClass("subdrop")) {
                     $(this).removeClass("subdrop");
                     $(this).next("ul").slideUp(350);
-                    $(".pull-right i",$(this).parent()).removeClass("md-remove").addClass("md-add");
+                    $(".pull-right i", $(this).parent()).removeClass("md-remove").addClass("md-add");
                 }
             }
         },
 
         //init sidemenu
-        Sidemenu.prototype.init = function() {
-            var $this  = this;
+        Sidemenu.prototype.init = function () {
+            var $this = this;
 
             var ua = navigator.userAgent,
                 event = (ua.match(/iP/i)) ? "touchstart" : "click";
 
             //bind on click
-            this.$openLeftBtn.on(event, function(e) {
+            this.$openLeftBtn.on(event, function (e) {
                 e.stopPropagation();
                 $this.openLeftBar();
             });
@@ -87,53 +86,53 @@
 }(window.jQuery),
 
 
-    function($) {
+    function ($) {
         "use strict";
 
-        var FullScreen = function() {
+        var FullScreen = function () {
             this.$body = $("body"),
                 this.$fullscreenBtn = $("#btn-fullscreen")
         };
 
         //turn on full screen
         // Thanks to http://davidwalsh.name/fullscreen
-        FullScreen.prototype.launchFullscreen  = function(element) {
-            if(element.requestFullscreen) {
+        FullScreen.prototype.launchFullscreen = function (element) {
+            if (element.requestFullscreen) {
                 element.requestFullscreen();
-            } else if(element.mozRequestFullScreen) {
+            } else if (element.mozRequestFullScreen) {
                 element.mozRequestFullScreen();
-            } else if(element.webkitRequestFullscreen) {
+            } else if (element.webkitRequestFullscreen) {
                 element.webkitRequestFullscreen();
-            } else if(element.msRequestFullscreen) {
+            } else if (element.msRequestFullscreen) {
                 element.msRequestFullscreen();
             }
         },
-            FullScreen.prototype.exitFullscreen = function() {
-                if(document.exitFullscreen) {
+            FullScreen.prototype.exitFullscreen = function () {
+                if (document.exitFullscreen) {
                     document.exitFullscreen();
-                } else if(document.mozCancelFullScreen) {
+                } else if (document.mozCancelFullScreen) {
                     document.mozCancelFullScreen();
-                } else if(document.webkitExitFullscreen) {
+                } else if (document.webkitExitFullscreen) {
                     document.webkitExitFullscreen();
                 }
             },
             //toggle screen
-            FullScreen.prototype.toggle_fullscreen  = function() {
+            FullScreen.prototype.toggle_fullscreen = function () {
                 var $this = this;
                 var fullscreenEnabled = document.fullscreenEnabled || document.mozFullScreenEnabled || document.webkitFullscreenEnabled;
-                if(fullscreenEnabled) {
-                    if(!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
+                if (fullscreenEnabled) {
+                    if (!document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement) {
                         $this.launchFullscreen(document.documentElement);
-                    } else{
+                    } else {
                         $this.exitFullscreen();
                     }
                 }
             },
             //init sidemenu
-            FullScreen.prototype.init = function() {
-                var $this  = this;
+            FullScreen.prototype.init = function () {
+                var $this = this;
                 //bind
-                $this.$fullscreenBtn.on('click', function() {
+                $this.$fullscreenBtn.on('click', function () {
                     $this.toggle_fullscreen();
                 });
             },
@@ -143,12 +142,11 @@
     }(window.jQuery),
 
 
-
 //main app module
-    function($) {
+    function ($) {
         "use strict";
 
-        var App = function() {
+        var App = function () {
             this.VERSION = "1.0.0",
                 this.AUTHOR = "Coderthemes",
                 this.SUPPORT = "coderthemes@gmail.com",
@@ -157,21 +155,21 @@
         };
 
         //on doc load
-        App.prototype.onDocReady = function(e) {
+        App.prototype.onDocReady = function (e) {
             FastClick.attach(document.body);
             resizefunc.push("initscrolls");
             resizefunc.push("changeptype");
 
-            $('.animate-number').each(function(){
+            $('.animate-number').each(function () {
                 $(this).animateNumbers($(this).attr("data-value"), true, parseInt($(this).attr("data-duration")));
             });
 
             //RUN RESIZE ITEMS
-            $(window).resize(debounce(resizeitems,100));
+            $(window).resize(debounce(resizeitems, 100));
             $("body").trigger("resize");
 
             // right side-bar toggle
-            $('.right-bar-toggle').on('click', function(e){
+            $('.right-bar-toggle').on('click', function (e) {
 
                 $('#wrapper').toggleClass('right-bar-enabled');
             });
@@ -179,7 +177,7 @@
 
         },
             //initilizing
-            App.prototype.init = function() {
+            App.prototype.init = function () {
                 var $this = this;
                 //document load initialization
                 $(document).ready($this.onDocReady);
@@ -194,11 +192,10 @@
     }(window.jQuery),
 
 //initializing main application module
-    function($) {
+    function ($) {
         "use strict";
         $.App.init();
     }(window.jQuery);
-
 
 
 /* ------------ some utility functions ----------------------- */
@@ -216,29 +213,29 @@
 //     }
 //     return context[func].apply(this, args);
 // }
-var w,h,dw,dh;
-var changeptype = function(){
+var w, h, dw, dh;
+var changeptype = function () {
     w = $(window).width();
     h = $(window).height();
     dw = $(document).width();
     dh = $(document).height();
 
-    if(jQuery.browser.mobile === true){
+    if (jQuery.browser.mobile === true) {
         $("body").addClass("mobile").removeClass("fixed-left");
     }
 
-    if(!$("#wrapper").hasClass("forced")){
-        if(w > 990){
+    if (!$("#wrapper").hasClass("forced")) {
+        if (w > 990) {
             $("body").removeClass("smallscreen").addClass("widescreen");
             $("#wrapper").removeClass("enlarged");
-        }else{
+        } else {
             $("body").removeClass("widescreen").addClass("smallscreen");
             $("#wrapper").addClass("enlarged");
             $(".left ul").removeAttr("style");
         }
-        if($("#wrapper").hasClass("enlarged") && $("body").hasClass("fixed-left")){
+        if ($("#wrapper").hasClass("enlarged") && $("body").hasClass("fixed-left")) {
             $("body").removeClass("fixed-left").addClass("fixed-left-void");
-        }else if(!$("#wrapper").hasClass("enlarged") && $("body").hasClass("fixed-left-void")){
+        } else if (!$("#wrapper").hasClass("enlarged") && $("body").hasClass("fixed-left-void")) {
             $("body").removeClass("fixed-left-void").addClass("fixed-left");
         }
 
@@ -247,11 +244,11 @@ var changeptype = function(){
 }
 
 
-var debounce = function(func, wait, immediate) {
+var debounce = function (func, wait, immediate) {
     var timeout, result;
-    return function() {
+    return function () {
         var context = this, args = arguments;
-        var later = function() {
+        var later = function () {
             timeout = null;
             if (!immediate) result = func.apply(context, args);
         };
@@ -263,16 +260,16 @@ var debounce = function(func, wait, immediate) {
     };
 }
 
-function resizeitems(){
-    if($.isArray(resizefunc)){
+function resizeitems() {
+    if ($.isArray(resizefunc)) {
         for (i = 0; i < resizefunc.length; i++) {
             window[resizefunc[i]]();
         }
     }
 }
 
-function initscrolls(){
-    if(jQuery.browser.mobile !== true){
+function initscrolls() {
+    if (jQuery.browser.mobile !== true) {
         //SLIM SCROLL
         $('.slimscroller').slimscroll({
             height: 'auto',
@@ -288,13 +285,13 @@ function initscrolls(){
         });
     }
 }
-function toggle_slimscroll(item){
-    if($("#wrapper").hasClass("enlarged")){
-        $(item).css("overflow","inherit").parent().css("overflow","inherit");
-        $(item). siblings(".slimScrollBar").css("visibility","hidden");
-    }else{
-        $(item).css("overflow","hidden").parent().css("overflow","hidden");
-        $(item). siblings(".slimScrollBar").css("visibility","visible");
+function toggle_slimscroll(item) {
+    if ($("#wrapper").hasClass("enlarged")) {
+        $(item).css("overflow", "inherit").parent().css("overflow", "inherit");
+        $(item).siblings(".slimScrollBar").css("visibility", "hidden");
+    } else {
+        $(item).css("overflow", "hidden").parent().css("overflow", "hidden");
+        $(item).siblings(".slimScrollBar").css("visibility", "visible");
     }
 }
 
@@ -308,10 +305,11 @@ function toggle_slimscroll(item){
 // );
 // wow.init();
 
-!function($) {
+!function ($) {
     "use strict";
 
-    var SweetAlert = function() {};
+    var SweetAlert = function () {
+    };
 
     //init
     $.SweetAlert = new SweetAlert, $.SweetAlert.Constructor = SweetAlert
@@ -332,8 +330,7 @@ var containSpecial = RegExp(/[(\ )(\~)(\!)(\@)(\#)(\$)(\%)(\^)(\&)(\*)(\()(\))(\
 //     }(window.jQuery);
 
 
-
-function showTi(msg, callback) {
+function showWarning(msg, callback) {
     swal({
         title: "系统提示?",
         text: msg,
@@ -342,11 +339,11 @@ function showTi(msg, callback) {
         confirmButtonColor: "#DD6B55",
         confirmButtonText: "确定!",
         cancelButtonText: "取消",
-        closeOnConfirm: false
+        closeOnConfirm: true
     }, callback);
 }
 
-function showMsg(msg, callback) {
+function showSuccess(msg, callback) {
     swal({
         title: "系统提示",
         text: msg,
@@ -354,19 +351,198 @@ function showMsg(msg, callback) {
         showCancelButton: false,
         confirmButtonColor: "#DD6B55",
         confirmButtonText: "确定",
-        closeOnConfirm: false,
+        closeOnConfirm: true,
     }, callback);
 }
 
-function moveEnd(obj){
+function moveEnd(obj) {
     obj.focus();
     var len = obj.value.length;
     if (document.selection) {
         var sel = obj.createTextRange();
-        sel.moveStart('character',len); //设置开头的位置
+        sel.moveStart('character', len); //设置开头的位置
         sel.collapse();
         sel.select();
     } else if (typeof obj.selectionStart == 'number' && typeof obj.selectionEnd == 'number') {
         obj.selectionStart = obj.selectionEnd = len;
     }
 }
+
+function getUrl(href) {
+    if (href == null || href == '') return {url: '', data: {}}
+    var url = {}
+    url.href = href.split("?")[0];
+    url.data = {};
+    if (href.split("?")[1]) {
+        url.d = href.split("?")[1].split("&"); // asd=sdasd&asd=asd
+
+        for (var key in url.d) {
+            var item = url.d[key].split("=");
+            url.data[item[0]] = item[1] || "";
+        }
+    }
+    return url;
+}
+
+function checkVal(ui_name, info) {
+    var v = $("#" + ui_name).val();
+    if (v == null || v == "") {
+        swal(info);
+        return null;
+    }
+    //去掉左右空格
+    v = v.replace(/(^\s*)|(\s*$)/g, "");
+    if (v == "") {
+        swal(info);
+        return null;
+    }
+    return v;
+}
+
+function tokenPost(url, callback) {
+    // var accessToken = $.cookie("accessToken") || "";
+    var passportId = $.cookie("passportId") || "";
+    $.post(url + "&passportId=" + passportId, function (data) {
+        $.cookie("accessToken", data.accessToken, { path: "/", expires: 365 });
+        callback(data);
+    }, "json");
+    // $.post(url, callback, "json");
+}
+
+function tokenPresPost(url, pres, callback) {
+    // var accessToken = $.cookie("accessToken") || "";
+    var passportId = $.cookie("passportId") || "";
+    $.post(url + "?passportId=" + passportId, pres, function (data) {
+        $.cookie("accessToken", data.accessToken, { path: "/", expires: 365 });
+        callback(data);
+    }, "json");
+    // $.post(url, pres, callback, "json");
+}
+
+function open(option) {
+    option = $.extend({
+        url: '',
+        method: 'post',
+        target: '_self' //_blank ,_self
+    }, option);
+
+    var u = getUrl(option.url);
+
+    var form = $('<form style="display: none"></form>');   // 创建Form
+    // 设置属性
+    form.attr('action', u.href);
+    form.attr('method', option.method);
+    form.attr('target', option.target);
+
+    for (var Key in u.data) {
+        form.append($('<input type="text" name="' + Key + '" value="' + u.data[Key] + '" />'));
+    }
+
+    // var accessToken = $.cookie("accessToken") || "";
+    // var passportId = $.cookie("passportId") || "";
+    //
+    // form.append($('<input type="text" name="accessToken" value="' + accessToken + '" />'));
+    // form.append($('<input type="text" name="passportId" value="' + passportId + '" />'));
+
+    // 提交表单
+    form.appendTo("body");
+    form.submit();
+
+    // 注意return false取消链接的默认动作
+    return false;
+}
+
+//字符长度，区别中英文
+function strlen(str) {
+    var len = 0;
+    for (var i = 0; i < str.length; i++) {
+        var c = str.charCodeAt(i);
+        //单字节加1
+        if ((c >= 0x0001 && c <= 0x007e) || (0xff60 <= c && c <= 0xff9f)) {
+            len++;
+        }
+        else {
+            len += 2;
+        }
+    }
+    return len;
+}
+
+//policy 要经过base64编码， signature 还要进一步处理，可以查阅官方文档
+// function OssUpload(param, file, fileName, callBack) {
+//     var policyBase64 = Base64.encode(param.policy);
+//     var signature = param.signature.split(':')[1];
+//     var filePathName = param.filePath + "/" + param.fileName;
+//     var fileFullName = param.contentHostName + "/" + filePathName;
+//     var request = new FormData();
+//     request.append('OSSAccessKeyId', param.accessKeyId);
+//     request.append('policy', policyBase64);
+//     request.append('Signature', signature);
+//     request.append('key', filePathName);
+//     for (var i in param.metaDatas) {
+//         request.append(i, param.metaDatas[i]);
+//     }
+//     request.append('file', file);
+//     request.append('submit', "Upload to OSS");
+//     $.ajax({
+//         url: param.contentHostName,
+//         data: request,
+//         processData: false,
+//         cache: false,
+//         async: false,
+//         contentType: false,
+//         //关键是要设置contentType 为false，不然发出的请求头 没有boundary
+//         //该参数是让jQuery去判断contentType
+//         type: "POST",
+//         success: function (data, textStatus, request) {
+//             if (textStatus === "nocontent") {
+//                 callBack(fileFullName);
+//                 alert("success!");
+//             } else {
+//                 alert(textStatus);
+//             }
+//         }
+//     });
+// }
+
+//
+// var glo_image_data = {
+//         OSSAccessKeyId:'',//需要根据自己的bucket填写 详情请见oss api
+//         policy:'',
+//         signature:'',
+//         success_action_status:'201',
+//         key:'img/111/${filename}'
+//     },
+//     glo_image_upload_url = 'http://xxx.oss-cn-beijing.aliyuncs.com';
+//
+// function doUploadImage(url, data){
+//     var oMyForm = new FormData();
+//
+//     for(var field_name in data){
+//         oMyForm.append(field_name, data[field_name]);
+//     }
+//
+//     oMyForm.append("file", document.getElementByIdx_x('file').files[0]);
+//
+//     var oReq = new XMLHttpRequest();
+//     //上传进度监听
+//     oReq.upload.onprogress = function (e) {
+//         if(e.type=='progress'){
+//             var percent = Math.round(e.loaded/e.total*100,2)+'%';
+//             $('#progress').html(percent);//显示进度的容器 自行修改
+//         }
+//     };
+//     //上传结果
+//     oReq.onreadystatechange = function(e){
+//         if(oReq.readyState == 4){
+//             if(oReq.status==201)//这里如果成功返回的是 success_action_status设置的值
+//                 alert('成功');
+//             else
+//                 alert('失败');
+//         }
+//     };
+//     oReq.open("POST", url);
+//     oReq.send(oMyForm);
+// }
+//
+// doUploadImage(glo_image_upload_url, glo_image_data);

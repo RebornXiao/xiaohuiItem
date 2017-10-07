@@ -1,12 +1,13 @@
 package com.xlibao.saas.market.core.service.hardware.impl;
 
-import com.xlibao.common.CommonUtils;
 import com.xlibao.io.service.netty.NettySession;
 import com.xlibao.market.protocol.HardwareMessageType;
+import com.xlibao.saas.market.core.message.SessionManager;
 import com.xlibao.saas.market.core.service.hardware.HardwareService;
 import com.xlibao.saas.market.core.service.support.MarketApplicationRemoteService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -17,9 +18,12 @@ public class HardwareServiceImpl implements HardwareService {
 
     private static final Logger logger = LoggerFactory.getLogger(HardwareServiceImpl.class);
 
+    @Autowired
+    private SessionManager sessionManager;
+
     @Override
     public void fromHardwareMessageExecute(NettySession session, String content) {
-        content = content.replaceAll(CommonUtils.SPACE, "");
+        content = content.trim();
         // 消息类型
         String messageType = content.substring(4, 8);
 
@@ -29,21 +33,24 @@ public class HardwareServiceImpl implements HardwareService {
             return;
         }
         content = content.substring(8);
+        NettySession marketSession = sessionManager.getMarketSession();
         switch (messageType) {
-            case HardwareMessageType.SHIPMENT:
-                MarketApplicationRemoteService.notifyShipment((Long) session.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 20));
+            case HardwareMessageType.SHIPMENT: // 配货
+                MarketApplicationRemoteService.notifyShipment((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 20));
                 break;
-            case HardwareMessageType.SHELVES:
-                MarketApplicationRemoteService.notifyShelvesData((Long) session.getAttribute("passportId"), content);
+            case HardwareMessageType.SHELVES: // 货架信息
+                MarketApplicationRemoteService.notifyShelvesData((Long) marketSession.getAttribute("passportId"), content);
                 break;
-            case HardwareMessageType.ORDER:
-                MarketApplicationRemoteService.notifyOrderData((Long) session.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18), content.substring(18));
+            case HardwareMessageType.ORDER: // 订单信息 16--17位如果是EE时 表示订单不存在
+                MarketApplicationRemoteService.notifyOrderData((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16));
                 break;
-            case HardwareMessageType.REFUND:
-                MarketApplicationRemoteService.notifyRefund((Long) session.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18));
+            case HardwareMessageType.REFUND: // 16--17位如果是EE时 表示订单不存在
+                MarketApplicationRemoteService.notifyRefund((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16));
                 break;
-            case HardwareMessageType.PICK_UP:
-                MarketApplicationRemoteService.notifyPickUp((Long) session.getAttribute("passportId"), content.substring(0, 16), content.substring(16, 18), content.substring(18));
+            case HardwareMessageType.PICK_UP: // 16--17位如果是EE时 表示订单不存在
+                MarketApplicationRemoteService.notifyPickUp((Long) marketSession.getAttribute("passportId"), content.substring(0, 16), content.substring(16));
+                break;
+            case HardwareMessageType.WARN:
                 break;
         }
     }

@@ -8,9 +8,8 @@
 <script src="${res}/assets/plugins/bootstrap-select2/zh-CN.js"></script>
 
 <!-- 商品更改库存界面 -->
-<div class="modal fade" id="upItemDialog" tabindex="-1"
-     role="dialog" aria-labelledby="myModalLabel">
-    <div class="modal-dialog" role="document">
+<div class="modal fade" id="upItemDialog" tabindex="-1" role="dialog" >
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal"
@@ -24,26 +23,26 @@
                         <form class="form-horizontal" role="form">
                             <div class="form-group">
                                 <label class="col-md-4 control-label">弹夹编码：</label>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <input type="text" id="ipItemCode" class="form-control" disabled>
                                 </div>
                             </div>
                             <div class="form-group" id="dItemName">
                                 <label class="col-md-4 control-label" id="lItemName">商品名称：</label>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <input type="text" id="ipItemName" class="form-control" disabled>
                                 </div>
                             </div>
                             <div class="form-group" id="dItemStock">
                                 <label class="col-md-4 control-label" id="lItemStock">库存：</label>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <input type="text" id="ipItemStock" class="form-control" disabled>
                                 </div>
                             </div>
                             <div class="form-group" id="dItemTypes">
                                 <label class="col-md-4 control-label" id="lItemTypes">选择替换的商品：</label>
-                                <div class="col-md-8">
-                                    <select id="sItemTypes" style="width:120px;">
+                                <div class="col-md-4">
+                                    <select id="sItemTypes" style="width:200px">
                                     <#if itemTypes?exists && (itemTypes?size > 0)>
                                         <option data_id="0">选择分类</option>
                                         <#list itemTypes as iType>
@@ -59,12 +58,12 @@
                                         <option data_id="0">选择分类</option>
                                     </#if>
                                     </select>
-                                    <select id="sItem" style="width:120px;"></select>
+                                    <select id="sItem" style="width:200px"></select>
                                 </div>
                             </div>
                             <div class="form-group" id="dNewItemStock">
                                 <label class="col-md-4 control-label" id="lNewItemStock">新增库存：</label>
-                                <div class="col-md-6">
+                                <div class="col-md-4">
                                     <input type="number" id="ipNewItemStock" class="form-control">
                                 </div>
                             </div>
@@ -92,8 +91,7 @@
 
 
 <!-- 任务详情 -->
-<div class="modal fade" id="taskDialog" tabindex="-1"
-     role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="taskDialog" tabindex="-1" role="dialog" >
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -160,8 +158,7 @@
 
 
 <!-- 任务列表 -->
-<div class="modal fade" id="taskListDialog" tabindex="-1"
-     role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="taskListDialog" tabindex="-1" role="dialog" >
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -400,7 +397,7 @@
                         });
                     } else {
                         //从网络获取
-                        $.get("${base}/item/idNameItems.do?itemTypeId=" + data_id, function (json) {
+                        tokenPost("${base}/item/idNameItems.do?itemTypeId=" + data_id, function (json) {
                             if (json.code != 0) {
                                 swal(json.msg);
                             } else {
@@ -437,7 +434,7 @@
                     } else {
                         var select_obj = _sItem.find("option:selected");
                         var data_id = select_obj.attr("data_id");
-                        if (data_id == 0) {
+                        if (data_id == "0") {
                             swal("你还没有选择商品");
                             return;
                         }
@@ -508,7 +505,7 @@
                 _taskListTable.on("click", "button[id=delTaskBtn]", function () {
                     var obj = $(this);
                     var code = obj.attr("data_code");
-                    showTi("确定要删除该任务吗?", function (isConfirm) {
+                    showWarning("确定要删除该任务吗?", function (isConfirm) {
                         if (!isConfirm) {
                             return;
                         }
@@ -518,7 +515,7 @@
                         var td = $("#h" + code);
                         if (td != null) {
                             td.empty();
-                            td.append(addBtns(td.attr("data_t"), td.attr("data_id"), td.attr("data_code")));
+                            td.append(addBtns(td.attr("task_id"), td.attr("data_id"), td.attr("data_code")));
                         }
                         //删除一项任务
                         task_count = task_count - 1;
@@ -536,11 +533,11 @@
                 //查看 任务详情
                 _clipListTable.on("click", "button[id=seeTaskBtn]", function () {
                     var td = $(this).parent();//找到父 td
-                    var data_t = td.attr("data_t");
+                    var task_id = td.attr("task_id");
                     var data_id = td.attr("data_id");
                     var data_code = td.attr("data_code");
                     //取得任务数据
-                    $.get("${base}/market/checkPrepareActionTask.do?taskId=" + data_id, function (json) {
+                    tokenPost("${base}/market/checkPrepareActionTask.do?taskId=" + task_id, function (json) {
                         if (json.code != 0) {
                             swal(json.msg);
                         } else {
@@ -551,7 +548,7 @@
                             _ipTaskDate.val(data.hopeExecutorDate);
 
                             //将当前数据注入按钮
-                            _cancelTaskBtn.attr("data_t", data_t);
+                            _cancelTaskBtn.attr("task_id", task_id);
                             _cancelTaskBtn.attr("data_id", data_id);
                             _cancelTaskBtn.attr("data_code", data_code);
 
@@ -565,7 +562,7 @@
 
                     //如果原来有商品
                     var td = $(this).parent();//找到父 td
-                    var data_t = td.attr("data_t");
+                    var task_id = td.attr("task_id");
                     var data_id = td.attr("data_id");
                     var data_code = td.attr("data_code");
 
@@ -604,7 +601,7 @@
                 _clipListTable.on("click", "button[id=changeItemBtn]", function () {
 
                     var td = $(this).parent();//找到父 td
-                    var data_t = td.attr("data_t");
+                    var task_id = td.attr("task_id");
                     var data_id = td.attr("data_id");
                     var data_code = td.attr("data_code");
 
@@ -633,16 +630,16 @@
 
                 //取消某个任务
                 _cancelTaskBtn.on("click", function () {
-                    var task_id = $(this).attr("data_t");
+                    var task_id = $(this).attr("task_id");
                     var data_id = $(this).attr("data_id");
                     var data_code = $(this).attr("data_code");
                     //2次确定
-                    showTi("确定要取消这个任务吗？", function (isConfirm) {
+                    showWarning("确定要取消这个任务吗？", function (isConfirm) {
                         if(!isConfirm) {
                             return;
                         }
                         //去取消
-                        $.get("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
+                        tokenPost("${base}/market/cancelPrepareActionTask.do?taskId=" + task_id, function (json) {
                             if (json.code != 0) {
                                 swal(json.msg);
                             } else {
@@ -652,7 +649,7 @@
                                 var td = $("#h" + data_code);
                                 if(td != null) {
                                     td.empty();
-                                    td.attr("data_t", task_id);
+                                    td.attr("task_id", task_id);
                                     td.attr("data_id", data_id);
                                     td.attr("data_code", data_code);
                                     if (data_id == 0) {
@@ -672,19 +669,27 @@
                         swal("当前没有任务可提交");
                         return;
                     }
+                    //$(this).button("loading");
                     //将 task 拼成 map;
                     var txt = "";
                     var hDate = "";
                     $.each(task_list, function (k, value) {
-                        txt = k + "-" + value.itemId + "-" + value.itemStock + ",";
+                        txt = txt + k + "-" + value.itemId + "-" + value.itemStock + ",";
                     });
-                    $.post("${base}/market/prepareAction.do?marketId=" + s_MarketId + "&actionDatas=" + txt + "&hopeExecutorDate=" + hDate, function (data) {
+
+                    var btn_ = $(this);
+                    btn_.attr("disabled", true);
+
+                    tokenPost("${base}/market/prepareAction.do?marketId=" + s_MarketId + "&actionDatas=" + txt + "&hopeExecutorDate=" + hDate, function (data) {
                         //重新刷新
                         if (data.code == 0) {
-                            showMsg("操作成功", function () {
-                                location.href = "${base}/market/marketItems.do?id=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer;
+                            showSuccess(data.msg, function () {
+                                open({url:"${base}/market/marketTasks.do?marketId=" + s_MarketId});
+                                //location.href = "${base}/market/marketItems.do?id=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer;
                             })
                         } else {
+                            //$(this).button("reset");
+                            btn_.removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");
@@ -751,19 +756,19 @@
                         //如果没有任务，则什么也不做
                         if (!task_list[value.locationCode]) {
                             if (value.taskId > 0) {
-                                txt = txt + "<td id=\"h" + value.locationCode + "\" data_t=\"" + value.taskId + "\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\">" + addBtns(0, value.taskId, value.locationCode) + "</td>";
+                                txt = txt + "<td id=\"h" + value.locationCode + "\" task_id=\"" + value.taskId + "\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\">" + addBtns(0, value.taskId, value.locationCode) + "</td>";
                             } else if (value.itemTemplateId != 0) {
-                                txt = txt + "<td id=\"h" + value.locationCode + "\" data_t=\"1\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\">" + addBtns(1, value.itemTemplateId, value.locationCode) + "</td>";
+                                txt = txt + "<td id=\"h" + value.locationCode + "\" task_id=\"1\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\">" + addBtns(1, value.itemTemplateId, value.locationCode) + "</td>";
                             } else {
-                                txt = txt + "<td id=\"h" + value.locationCode + "\" data_t=\"2\" data_id=\"0\" data_code=\"" + value.locationCode + "\">" + addBtns(2, 0, value.locationCode) + "</td>";
+                                txt = txt + "<td id=\"h" + value.locationCode + "\" task_id=\"2\" data_id=\"0\" data_code=\"" + value.locationCode + "\">" + addBtns(2, 0, value.locationCode) + "</td>";
                             }
                         } else {
                             if (value.taskId > 0) {
-                                txt = txt + "<td id=\"h" + value.locationCode + "\" data_t=\"0\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\"><span class=\"label label-warning\">任务待提交</span></td>";
+                                txt = txt + "<td id=\"h" + value.locationCode + "\" task_id=\"0\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\"><span class=\"label label-warning\">任务待提交</span></td>";
                             } else if (value.itemTemplateId != 0) {
-                                txt = txt + "<td id=\"h" + value.locationCode + "\" data_t=\"1\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\"><span class=\"label label-warning\">任务待提交</span></td>";
+                                txt = txt + "<td id=\"h" + value.locationCode + "\" task_id=\"1\" data_id=\"" + value.itemTemplateId + "\" data_code=\"" + value.locationCode + "\"><span class=\"label label-warning\">任务待提交</span></td>";
                             } else {
-                                txt = txt + "<td id=\"h" + value.locationCode + "\" data_t=\"2\" data_id=\"0\" data_code=\"" + value.locationCode + "\"><span class=\"label label-warning\">任务待提交</span></td>";
+                                txt = txt + "<td id=\"h" + value.locationCode + "\" task_id=\"2\" data_id=\"0\" data_code=\"" + value.locationCode + "\"><span class=\"label label-warning\">任务待提交</span></td>";
                             }
                         }
                         _clipListTable.append(txt);
@@ -783,7 +788,7 @@
 
                     var select_obj = _sMarket.find("option:selected");
                     s_MarketId = select_obj.attr("data_id");
-                    if (s_MarketId == 0) {
+                    if (s_MarketId == "0") {
                         return;
                     }
 
@@ -802,7 +807,8 @@
                         }, function (isConfirm) {
                             if (isConfirm) {
                                 //直接切换
-                                location.href = "${base}/market/marketShelves.do?id=" + s_MarketId;
+                                open({url:"${base}/market/marketShelves.do?marketId=" + s_MarketId});
+                                //location.href = "${base}/market/marketShelves.do?id=" + s_MarketId;
                             } else {
                                 //弹出任务列表
                                 showTaskDailog();
@@ -810,7 +816,8 @@
                         });
                     } else {
                         //直接切换
-                        location.href = "${base}/market/marketShelves.do?id=" + s_MarketId;
+                        open({url:"${base}/market/marketShelves.do?marketId=" + s_MarketId});
+                        //location.href = "${base}/market/marketShelves.do?id=" + s_MarketId;
                     }
                 });
 
@@ -821,14 +828,14 @@
                     var select_obj = _m_group_ui.find("option:selected");
                     var data_id = select_obj.attr("data_id");
 
-                    if (data_id == 0) {
+                    if (data_id == "0") {
                         return;
                     }
 
                     s_Group = select_obj.val();
 
                     if (unit_list[s_Group] == null) {
-                        $.get("${base}/market/getShelvesMarks.do?marketId=" + s_MarketId + "&shelvesType=2&groupCode=" + s_Group, function (json) {
+                        tokenPost("${base}/market/getShelvesMarks.do?marketId=" + s_MarketId + "&shelvesType=2&groupCode=" + s_Group, function (json) {
                             if (json.code != 0) {
                                 swal("无法找到该店铺的 单元 信息");
                             } else {
@@ -858,7 +865,7 @@
                     s_Unit = select_obj.val();
 
                     if (level_list[s_Unit] == null) {
-                        $.get("${base}/market/getShelvesMarks.do?marketId=" + s_MarketId + "&shelvesType=3&groupCode=" + s_Group + "&unitCode=" + s_Unit, function (json) {
+                        tokenPost("${base}/market/getShelvesMarks.do?marketId=" + s_MarketId + "&shelvesType=3&groupCode=" + s_Group + "&unitCode=" + s_Unit, function (json) {
                             if (json.code != 0) {
                                 swal("无法找到该店铺的 层 信息");
                             } else {
@@ -880,12 +887,12 @@
                     var data_id = select_obj.attr("data_id");
 
                     if (data_id == "0") {
-                        hibeDatas("暂无数据");
+                        hibeDatas("暂无任何数据");
                         return;
                     }
                     s_Layer = select_obj.val();
 
-                    $.get("${base}/market/loaderClipDatas.do?marketId=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer, function (json) {
+                    tokenPost("${base}/market/loaderClipDatas.do?marketId=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer, function (json) {
 
                         if (json.code != 0) {
                             hibeDatas(json.msg);

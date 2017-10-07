@@ -26,7 +26,7 @@
     </select>
 
     <insert id="createStreet" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.metadata.passport.PassportStreet">
-        insert into passport_street(area_id, name) values(#{street.areaId}, #{street.name})
+        insert into passport_street(area_id, name) values(#{areaId}, #{name})
     </insert>
 
     <update id="updateStreet">

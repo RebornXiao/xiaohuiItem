@@ -99,11 +99,27 @@
                         return;
                     }
 
-                    $.post("${base}/market/streetEditSave.do?id=" + _streetId + "&title=" + title + "&areaId=" + _now_areaId, function (data) {
+                    //$(this).button("loading");
+
+                    //直接跳转
+                    var provinceId = $('#loc_province').val();
+                    var cityId = $('#loc_city').val();
+                    var areaId = $('#loc_district').val();
+
+
+                    var btn_ = $(this);
+                    btn_.attr("disabled", true);
+
+                    tokenPost("${base}/market/streetEditSave.do?id=" + _streetId + "&title=" + title + "&areaId=" + areaId, function (data) {
                         //重新刷新
                         if (data.code == "0") {
-                            swal("提示", "操作成功", "success");
+                            showSuccess(data.msg, function () {
+                                open({url:"${base}/market/streets.do?provinceId=" + provinceId + "&cityId=" + cityId + "&areaId=" + areaId });
+                                //location.href = "${base}/market/marketItems.do?id=" + s_MarketId + "&groupCode=" + s_Group + "&unitCode=" + s_Unit + "&floorCode=" + s_Layer;
+                            })
                         } else {
+                            //$(this).button("reset");
+                            btn_.removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

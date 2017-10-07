@@ -74,7 +74,7 @@
                             </#list>
                         <#else>
                         <tr>
-                            <td colSpan="11" height="200px">
+                            <td colSpan="3" height="200px">
                                 <p class="text-center">暂无任何数据</p>
                             </td>
                         </tr>
@@ -104,12 +104,20 @@
                         var cityId = $('#loc_city').val();
                         var areaId = $('#loc_district').val();
 
-                        location.href = "${base}/market/streets.do?provinceId=" + provinceId + "&cityId=" + cityId + "&areaId=" + areaId;
+                        open({url:"${base}/market/streets.do?provinceId=" + provinceId + "&cityId=" + cityId + "&areaId=" + areaId});
+                        //location.href = "${base}/market/streets.do?provinceId=" + provinceId + "&cityId=" + cityId + "&areaId=" + areaId;
                     }
                 });
 
                 $("#addBtn").on('click', function () {
-                    location.href = "${base}/market/streetEdit.do";
+
+                    //直接跳转
+                    var provinceId = $('#loc_province').val();
+                    var cityId = $('#loc_city').val();
+                    var areaId = $('#loc_district').val();
+
+                    open({url:"${base}/market/streetEdit.do?provinceId=" + provinceId + "&cityId=" + cityId + "&areaId=" + areaId});
+                    //location.href = "${base}/market/streetEdit.do";
                 });
 
             <#if (streets?size > 0)>
@@ -117,7 +125,14 @@
                 //单项编辑
                 $("#streetListTable").find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/market/streetEdit.do?id=" + $(this).attr("data_id");
+
+                        //直接跳转
+                        var provinceId = $('#loc_province').val();
+                        var cityId = $('#loc_city').val();
+                        var areaId = $('#loc_district').val();
+
+                        open({url:"${base}/market/streetEdit.do?id=" + $(this).attr("data_id") +"&provinceId=" + provinceId + "&cityId=" + cityId + "&areaId=" + areaId});
+                        //location.href = "${base}/market/streetEdit.do?id=" + $(this).attr("data_id");
                     });
                 });
 

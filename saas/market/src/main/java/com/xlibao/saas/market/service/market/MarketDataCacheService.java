@@ -35,8 +35,8 @@ public class MarketDataCacheService {
     private static final ReentrantReadWriteLock.WriteLock MARKET_WRITE_LOCK = MARKET_READ_WRITE_LOCK.writeLock();
 
     private static final Map<Long, MarketEntry> markets = new ConcurrentHashMap<>();
-    private static final Map<Long, List<Long>> streetMarketCache = new ConcurrentHashMap<>();
-    private static final Map<Long, Long> passportCache = new ConcurrentHashMap<>();
+    // private static final Map<Long, List<Long>> streetMarketCache = new ConcurrentHashMap<>();
+    // private static final Map<Long, Long> passportCache = new ConcurrentHashMap<>();
 
     private final MarketDistanceComparator marketDistanceComparator = new MarketDistanceComparator();
 
@@ -69,20 +69,20 @@ public class MarketDataCacheService {
             logger.info("当前系统商店数量：" + (marketEntries == null ? 0 : marketEntries.size()));
 
             Map<Long, MarketEntry> marketEntryMap = new ConcurrentHashMap<>();
-            Map<Long, List<Long>> streetMarketMap = new ConcurrentHashMap<>();
-            Map<Long, Long> passportCacheMap = new ConcurrentHashMap<>();
+            // Map<Long, List<Long>> streetMarketMap = new ConcurrentHashMap<>();
+            // Map<Long, Long> passportCacheMap = new ConcurrentHashMap<>();
             if (!CommonUtils.isEmpty(marketEntries)) {
                 for (MarketEntry marketEntry : marketEntries) {
                     marketEntryMap.put(marketEntry.getId(), marketEntry);
 
-                    List<Long> markets = streetMarketMap.get(marketEntry.getStreetId());
-                    if (markets == null) {
-                        markets = new ArrayList<>();
-                        streetMarketMap.put(marketEntry.getStreetId(), markets);
-                    }
-                    markets.add(marketEntry.getId());
+                    // List<Long> markets = streetMarketMap.get(marketEntry.getStreetId());
+                    // if (markets == null) {
+                        // markets = new ArrayList<>();
+                        // streetMarketMap.put(marketEntry.getStreetId(), markets);
+                    // }
+                    // markets.add(marketEntry.getId());
 
-                    passportCacheMap.put(marketEntry.getPassportId(), marketEntry.getId());
+                    // passportCacheMap.put(marketEntry.getPassportId(), marketEntry.getId());
                 }
             }
             if (!MARKET_WRITE_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
@@ -90,12 +90,12 @@ public class MarketDataCacheService {
             }
             try {
                 markets.clear();
-                streetMarketCache.clear();
-                passportCache.clear();
+                // streetMarketCache.clear();
+                // passportCache.clear();
 
                 markets.putAll(marketEntryMap);
-                streetMarketCache.putAll(streetMarketMap);
-                passportCache.putAll(passportCacheMap);
+                // streetMarketCache.putAll(streetMarketMap);
+                // passportCache.putAll(passportCacheMap);
             } catch (Exception ex) {
                 ex.printStackTrace();
             } finally {
@@ -108,70 +108,70 @@ public class MarketDataCacheService {
     }
 
     public MarketEntry getMarket(long marketId) {
-        try {
-            if (!MARKET_READ_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
-                return dataAccessFactory.getMarketDataAccessManager().getMarket(marketId);
-            }
-            try {
-                return markets.get(marketId);
-            } finally {
-                MARKET_READ_LOCK.unlock();
-            }
-        } catch (Throwable cause) {
-            cause.printStackTrace();
-        }
+//        try {
+//            if (!MARKET_READ_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
+//                return dataAccessFactory.getMarketDataAccessManager().getMarket(marketId);
+//            }
+//            try {
+//                return markets.get(marketId);
+//            } finally {
+//                MARKET_READ_LOCK.unlock();
+//            }
+//        } catch (Throwable cause) {
+//            cause.printStackTrace();
+//        }
         return dataAccessFactory.getMarketDataAccessManager().getMarket(marketId);
     }
 
     public List<MarketEntry> getMarkets(long streetId) {
-        try {
-            if (!MARKET_READ_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
-                return dataAccessFactory.getMarketDataAccessManager().getMarkets(streetId);
-            }
-            try {
-                List<Long> marketIds = streetMarketCache.get(streetId);
-                if (CommonUtils.isEmpty(marketIds)) {
-                    return dataAccessFactory.getMarketDataAccessManager().getMarkets(streetId);
-                }
-                List<MarketEntry> marketEntries = new ArrayList<>();
-                for (Long L : marketIds) {
-                    MarketEntry marketEntry = markets.get(L);
-                    if (marketEntry == null) {
-                        continue;
-                    }
-                    marketEntries.add(marketEntry);
-                }
-                return marketEntries;
-            } finally {
-                MARKET_READ_LOCK.unlock();
-            }
-        } catch (Throwable cause) {
-            cause.printStackTrace();
-        }
+//        try {
+//            if (!MARKET_READ_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
+//                return dataAccessFactory.getMarketDataAccessManager().getMarkets(streetId);
+//            }
+//            try {
+//                List<Long> marketIds = streetMarketCache.get(streetId);
+//                if (CommonUtils.isEmpty(marketIds)) {
+//                    return dataAccessFactory.getMarketDataAccessManager().getMarkets(streetId);
+//                }
+//                List<MarketEntry> marketEntries = new ArrayList<>();
+//                for (Long L : marketIds) {
+//                    MarketEntry marketEntry = markets.get(L);
+//                    if (marketEntry == null) {
+//                        continue;
+//                    }
+//                    marketEntries.add(marketEntry);
+//                }
+//                return marketEntries;
+//            } finally {
+//                MARKET_READ_LOCK.unlock();
+//            }
+//        } catch (Throwable cause) {
+//            cause.printStackTrace();
+//        }
         return dataAccessFactory.getMarketDataAccessManager().getMarkets(streetId);
     }
 
     public MarketEntry getMarketForPassport(long passportId) {
-        try {
-            if (!MARKET_READ_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
-                return dataAccessFactory.getMarketDataAccessManager().getMarketForPassport(passportId);
-            }
-            try {
-                Long marketId = passportCache.get(passportId);
-                if (marketId == null) {
-                    return dataAccessFactory.getMarketDataAccessManager().getMarketForPassport(passportId);
-                }
-                MarketEntry marketEntry = markets.get(marketId);
-                if (marketEntry == null) {
-                    return dataAccessFactory.getMarketDataAccessManager().getMarketForPassport(passportId);
-                }
-                return marketEntry;
-            } finally {
-                MARKET_READ_LOCK.unlock();
-            }
-        } catch (Throwable cause) {
-            cause.printStackTrace();
-        }
+//        try {
+//            if (!MARKET_READ_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
+//                return dataAccessFactory.getMarketDataAccessManager().getMarketForPassport(passportId);
+//            }
+//            try {
+//                Long marketId = passportCache.get(passportId);
+//                if (marketId == null) {
+//                    return dataAccessFactory.getMarketDataAccessManager().getMarketForPassport(passportId);
+//                }
+//                MarketEntry marketEntry = markets.get(marketId);
+//                if (marketEntry == null) {
+//                    return dataAccessFactory.getMarketDataAccessManager().getMarketForPassport(passportId);
+//                }
+//                return marketEntry;
+//            } finally {
+//                MARKET_READ_LOCK.unlock();
+//            }
+//        } catch (Throwable cause) {
+//            cause.printStackTrace();
+//        }
         return dataAccessFactory.getMarketDataAccessManager().getMarketForPassport(passportId);
     }
 
@@ -213,19 +213,19 @@ public class MarketDataCacheService {
     }
 
     public List<MarketEntry> getMarketEntries() {
-        try {
-            if (!MARKET_READ_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
-                return dataAccessFactory.getMarketDataAccessManager().getAllMarkets();
-            }
-            try {
-                return new ArrayList<>(markets.values());
-            } finally {
-                MARKET_READ_LOCK.unlock();
-            }
-        } catch (Throwable cause) {
-            cause.printStackTrace();
-        }
-        return dataAccessFactory.getMarketDataAccessManager().getAllMarkets();
+//        try {
+//            if (!MARKET_READ_LOCK.tryLock(XMarketTimeConfig.WAIT_LOCK_TIME_OUT, XMarketTimeConfig.WAIT_LOCK_TIME_UNIT)) {
+//                return dataAccessFactory.getMarketDataAccessManager().getAllMarkets();
+//            }
+//            try {
+//                return new ArrayList<>(markets.values());
+//            } finally {
+//                MARKET_READ_LOCK.unlock();
+//            }
+//        } catch (Throwable cause) {
+//            cause.printStackTrace();
+//        }
+        return dataAccessFactory.getMarketDataAccessManager().loaderMarkets();
     }
 
     /**

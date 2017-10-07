@@ -102,6 +102,67 @@ public class PassportController extends BasicWebService {
 
     /**
      * <pre>
+     *     <b>通过验证码登录</b>
+     *
+     *     <b>访问地址：</b>http://domainName/passport/loginForVerificationCode
+     *     <b>访问方式：</b>GET/POST，推荐使用POST
+     *
+     *     <b>访问参数：</b>
+     *
+     *     <b>phone</b> - String 登录手机号，必填参数。
+     *     <b>smsCode</b> - String 登录验证码，必填参数；验证码通过 {@link SmsController#requestVerificationCode()}进行获取
+     *     <b>deviceType</b> - int 设备类型，必填参数；参考：{@linkplain com.xlibao.common.constant.device.DeviceTypeEnum}。
+     *     <b>clientType</b> - int 客户端类型，必填参数；具体参考：{@linkplain com.xlibao.common.constant.passport.ClientTypeEnum}，
+     *                      默认值：{@link com.xlibao.common.constant.passport.ClientTypeEnum#CONSUMER}。
+     *     <b>versionIndex</b> - int 当前的版本标志，必填参数；(内部版本号，一般递增，初始为1，此部分的信息主要由前端决定)。
+     *
+     *     <b>返回结果：</b>
+     *          <b>passportId</b> - long 通行证ID
+     *          <b>showName</b> - String 可用于展示的名字
+     *          <b>phoneNumber</b> - String 手机号（已隐藏部分字符，前端直接展示即可）
+     *          <b>headImage</b> - String 头像地址
+     *          <b>roleValue</b> - int 角色类型值，参考：{@link com.xlibao.common.constant.passport.PassportRoleTypeEnum}
+     *          <b>accessToken</b> - String 访问令牌(暂时未使用)
+     *
+     *          <b>versionMessage</b> - JSONObject 版本信息
+     *              <b>upgradeType</b> - int 更新的类型，参考：{@linkplain com.xlibao.common.constant.version.VersionTypeEnum}
+     *              <b>title</b> - String 更新标题
+     *              <b>showVersion</b> - String 用于展示前端的版本号，如：V1.0
+     *
+     *              当upgradeType为<b>{@linkplain com.xlibao.common.constant.version.VersionTypeEnum#UN_FORCE_UPGRADE}</b>或<b>{@linkplain com.xlibao.common.constant.version.VersionTypeEnum#FORCE_UPGRADE}</b>
+     *                  <b>versionIndex</b> - int 最新内部版本号
+     *                  <b>introduce</b> - String 版本更新提示内容
+     *                  <b>versionUrl</b> - String 新版本的下载地址
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "loginForVerificationCode")
+    public JSONObject loginForVerificationCode() {
+        return passportService.loginForVerificationCode();
+    }
+
+    /**
+     * <pre>
+     *     <b>退出登录</b>
+     *
+     *     <b>访问地址：</b>http://domainName/passport/logoutPassport
+     *     <b>访问方式：</b>GET/POST，推荐使用POST
+     *
+     *     <b>访问参数：</b>
+     *          <b>passportId</b> - long 用户通行证ID，必填参数。
+     *          <b>accessToken</b> - String 访问令牌，必填参数。
+     *
+     *     <b>返回：</b>仅返回退出成功或失败
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "logoutPassport")
+    public JSONObject logoutPassport() {
+        return passportService.logoutPassport();
+    }
+
+    /**
+     * <pre>
      *     <b>修改密码</b>
      *
      *     <b>访问地址：</b>http://domainName/passport/modifyPassword
@@ -217,9 +278,34 @@ public class PassportController extends BasicWebService {
         return passportService.versionUpgrade();
     }
 
+    /**
+     * <pre>
+     *     <b>确认手机号是否已被使用</b>
+     *
+     *     <b>访问地址：</b>http://domainName/passport/phoneBeUsed
+     *     <b>访问方式：</b>GET/POST，推荐使用POST
+     *
+     *     <b>参数：</b>
+     *          <b>phoneNumber</b> - String 需要验证的手机号
+     *
+     *     <b>返回：</b>仅返回是否被使用的描述
+     * </pre>
+     */
+    @ResponseBody
+    @RequestMapping(value = "phoneBeUsed")
+    public JSONObject phoneBeUsed() {
+        return passportService.phoneBeUsed();
+    }
+
     @ResponseBody
     @RequestMapping(value = "changeAccessToken")
     public JSONObject changeAccessToken() {
         return passportService.changeAccessToken();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "extendAccessToken")
+    public JSONObject extendAccessToken() {
+        return passportService.extendAccessToken();
     }
 }

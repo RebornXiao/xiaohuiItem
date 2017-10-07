@@ -1,5 +1,6 @@
 package com.xlibao.market.data.model;
 
+import com.xlibao.common.constant.item.ItemRequestSourceEnum;
 import com.xlibao.metadata.item.ItemTemplate;
 
 import java.util.Date;
@@ -25,6 +26,7 @@ public class MarketItem {
     private Integer allocationQuantity = 0;
     private Integer purchaseQuantity = 0;
     private Byte status = 1;
+    private Integer requestSource = ItemRequestSourceEnum.OFF_LINE.getKey() | ItemRequestSourceEnum.ON_LINE.getKey();
     private Long costPrice;
     private Long sellPrice;
     private Long marketPrice;
@@ -46,6 +48,8 @@ public class MarketItem {
 
     public static MarketItem newInstance(long ownerId, ItemTemplate itemTemplate, long costPrice, long sellPrice, long marketPrice, long discountPrice, String description, byte status) {
         MarketItem item = new MarketItem();
+        item.setDefineName(itemTemplate.getName());
+        item.setDefineImage(itemTemplate.getImageUrl());
         item.setOwnerId(ownerId);
         item.setItemTemplateId(itemTemplate.getId());
         item.setCostPrice(costPrice);
@@ -207,6 +211,14 @@ public class MarketItem {
 
     public void setStatus(Byte status) {
         this.status = status;
+    }
+
+    public Integer getRequestSource() {
+        return requestSource;
+    }
+
+    public void setRequestSource(Integer requestSource) {
+        this.requestSource = requestSource;
     }
 
     public Long getCostPrice() {

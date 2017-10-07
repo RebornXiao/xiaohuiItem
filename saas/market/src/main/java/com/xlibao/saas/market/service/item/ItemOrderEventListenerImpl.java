@@ -1,13 +1,9 @@
 package com.xlibao.saas.market.service.item;
 
-import com.xlibao.common.CommonUtils;
+import com.xlibao.common.constant.order.DeliverTypeEnum;
 import com.xlibao.common.constant.order.OrderTypeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
-import com.xlibao.datacache.item.ItemDataCacheService;
-import com.xlibao.market.data.model.MarketEntry;
-import com.xlibao.market.data.model.MarketItemLocation;
 import com.xlibao.market.data.model.MarketItemStockLockLogger;
-import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.order.OrderEntry;
 import com.xlibao.metadata.order.OrderItemSnapshot;
 import com.xlibao.saas.market.data.DataAccessFactory;
@@ -72,75 +68,16 @@ public class ItemOrderEventListenerImpl implements OrderEventListener {
 
     @Override
     public void notifyOrderPayment(OrderEntry orderEntry) {
-        List<MarketItemStockLockLogger> itemStockLockLoggers = dataAccessFactory.getItemDataAccessManager().getItemStockLockLoggers(orderEntry.getOrderSequenceNumber(), ItemLockTypeEnum.CREATE_ORDER, ItemStockLockStatusEnum.LOCK.getKey());
-        // 推送给硬件进行拣货操作(缓存)
-        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(orderEntry.getShippingPassportId());
-
-        // TODO 需要考虑分包
-        StringBuilder message = new StringBuilder().append(orderEntry.getOrderSequenceNumber()).append(CommonUtils.toHexString(1, 4, "0"));
-        int locationCount = 0;
-        if (!CommonUtils.isEmpty(itemStockLockLoggers)) { // 原来存在锁定的记录 进行解锁同时新增挂起数量
-            for (MarketItemStockLockLogger itemStockLockLogger : itemStockLockLoggers) {
-                // 对商品进行库存挂起操作
-                // dataAccessFactory.getItemDataAccessManager().itemPending(itemStockLockLogger.getItemId(), itemStockLockLogger.getLockQuantity());
-                // 这里已修改为不减少挂起数量
-                dataAccessFactory.getItemDataAccessManager().decrementItemStock(itemStockLockLogger.getItemId(), itemStockLockLogger.getLockQuantity());
-                // 设定锁定记录为：出货状态
-                dataAccessFactory.getItemDataAccessManager().modifyStockLockStatus(itemStockLockLogger.getId(), ItemStockLockStatusEnum.SHIPMENT.getKey());
-                String[] msg = decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemStockLockLogger.getItemId(), itemStockLockLogger.getItemTemplateId(), itemStockLockLogger.getLockQuantity());
-                message.append(msg[0]);
-
-                locationCount += Integer.parseInt(msg[1]);
-            }
-            message.append(CommonUtils.toHexString(locationCount, 4, "0"));
-            // 发送消息给硬件做出货操作
-            marketShopRemoteService.shipmentMessage(marketEntry.getPassportId(), orderEntry.getOrderSequenceNumber() + CommonUtils.SPLIT_UNDER_LINE + CommonUtils.toHexString(1, 4, "0"), message.toString());
-            return;
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.PICKED_UP.getKey()) {
+            marketShopRemoteService.sendShipmentMessage(orderEntry);
         }
-        // 如果本来没有锁定的记录 那么则只需要进行挂起
-        List<OrderItemSnapshot> itemSnapshots = orderEntry.getItemSnapshots();
-        for (OrderItemSnapshot itemSnapshot : itemSnapshots) {
-            // dataAccessFactory.getItemDataAccessManager().incrementPending(itemSnapshot.getItemId(), itemSnapshot.totalQuantity());
-            // 这里已修改为不减少挂起数量
-            dataAccessFactory.getItemDataAccessManager().decrementItemStock(itemSnapshot.getItemId(), itemSnapshot.totalQuantity());
-            String[] msg = decrementItemLocationStock(orderEntry.getOrderSequenceNumber(), itemSnapshot.getItemId(), itemSnapshot.getItemTemplateId(), itemSnapshot.totalQuantity());
-            message.append(msg[0]);
-
-            locationCount += Integer.parseInt(msg[1]);
-        }
-        message.append(CommonUtils.toHexString(locationCount, 4, "0"));
-        // 发送消息给硬件做出货操作
-        marketShopRemoteService.shipmentMessage(marketEntry.getPassportId(), orderEntry.getOrderSequenceNumber() + CommonUtils.SPLIT_UNDER_LINE + CommonUtils.toHexString(1, 4, "0"), message.toString());
     }
 
-    private String[] decrementItemLocationStock(String orderSequenceNumber, long itemId, long itemTemplateId, int quantity) {
-        List<MarketItemLocation> itemLocations = dataAccessFactory.getItemDataAccessManager().getItemLocations(itemId);
-
-        ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(itemTemplateId);
-        // 组合硬件消息
-        StringBuilder msgBuilder = new StringBuilder();
-        int locationCount = 0;
-        for (MarketItemLocation itemLocation : itemLocations) {
-            locationCount++;
-            int decrementStock = quantity;
-            if (itemLocation.getStock() < quantity) { // 库存不足时 将库存清空
-                decrementStock = itemLocation.getStock();
-            }
-            int result = dataAccessFactory.getItemDataAccessManager().offsetItemLocationStock(itemLocation.getId(), decrementStock);
-            if (result > 0) { // 数据库执行成功后减少未出货数量
-                quantity -= decrementStock;
-            }
-            // 商品位置 数量(16进制，4位 不足时前面补0)
-            msgBuilder.append(itemLocation.getLocationCode()).append(CommonUtils.toHexString(decrementStock, 4, "0"));
-            if (quantity <= 0) {
-                break;
-            }
+    @Override
+    public void notifyAcceptedOrder(OrderEntry orderEntry) {
+        if (orderEntry.getDeliverType() == DeliverTypeEnum.DISTRIBUTION.getKey()) {
+            marketShopRemoteService.sendShipmentMessage(orderEntry);
         }
-        if (quantity > 0) {
-            logger.error("【" + orderSequenceNumber + "】严重问题，商品库存不足，商品ID：" + itemId + "(" + itemTemplate.getName() + ")，需要扣除数量：" + quantity);
-            throw MarketItemErrorCodeEnum.ITEM_STOCK_NOT_ENOUGH.throwException();
-        }
-        return new String[]{msgBuilder.toString(), String.valueOf(locationCount)};
     }
 
     @Override

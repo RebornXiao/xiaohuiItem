@@ -7,7 +7,10 @@ import com.xlibao.common.GlobalAppointmentOptEnum;
 import com.xlibao.common.constant.device.DeviceTypeEnum;
 import com.xlibao.common.constant.passport.ChannelTypeEnum;
 import com.xlibao.common.constant.passport.PassportStatusEnum;
+import com.xlibao.common.constant.sms.SmsCodeTypeEnum;
+import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
+import com.xlibao.common.exception.code.PassportErrorCodeEnum;
 import com.xlibao.common.http.HttpUtils;
 import com.xlibao.metadata.passport.Passport;
 import com.xlibao.passport.config.ConfigFactory;
@@ -15,6 +18,7 @@ import com.xlibao.passport.data.mapper.passport.PassportDataManager;
 import com.xlibao.passport.service.partner.TencentService;
 import com.xlibao.passport.service.partner.WeixinAuthorTypeEnum;
 import com.xlibao.passport.service.passport.PassportService;
+import com.xlibao.passport.service.sms.SmsService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +38,8 @@ public class TencentServiceImpl extends BasicWebService implements TencentServic
     private PassportService passportService;
     @Autowired
     private PassportDataManager passportDataManager;
+    @Autowired
+    private SmsService smsService;
 
     @Override
     public JSONObject weixinAuthorization() {
@@ -71,6 +77,26 @@ public class TencentServiceImpl extends BasicWebService implements TencentServic
 
         int result = passportDataManager.perfectPassportInformation(passportId, nickName, headImageUrl, sex, PassportStatusEnum.NORMAL.getKey());
         return result <= 0 ? fail() : success();
+    }
+
+    @Override
+    public JSONObject weixinBindingCellNumber() {
+        String openId = getUTF("openId");
+        String phoneNumber = getUTF("phoneNumber");
+        String smsCode = getUTF("smsCode");
+
+        if (!CommonUtils.isMobileNum(phoneNumber)) {
+            return PlatformErrorCodeEnum.PHONE_NUMBER_ERROR.response("手机号格式错误，请检查！");
+        }
+        // 短信验证码验证 错误时抛 XlibaoIllegalArgumentException异常
+        smsService.verifySmsCode(phoneNumber, smsCode, SmsCodeTypeEnum.BINDING_MOBILE_NUMBER.getKey());
+
+        Passport passport = passportService.getPassport(openId);
+        if (passport == null) {
+            throw PassportErrorCodeEnum.NOT_FOUND_PASSPORT.throwException("绑定手机号前请先授权获取您的微信基本数据(仅昵称与头像)");
+        }
+        int result = passportService.bindingMobileNumber(passport.getId(), phoneNumber);
+        return result >= 1 ? success("绑定手机号成功") : fail("绑定手机号失败");
     }
 
     private JSONObject weixinJSAuth() {
@@ -133,6 +159,10 @@ public class TencentServiceImpl extends BasicWebService implements TencentServic
         response.put("headImageUrl", CommonUtils.nullToEmpty(passport.getHeadImage()));
         response.put("sex", passport.getSex() == null ? GlobalAppointmentOptEnum.FEMALE.getKey() : passport.getSex());
         response.put("status", passport.getStatus());
+        response.put("hasBinding", CommonUtils.isNotNullString(passport.getPhoneNumber()) ? GlobalAppointmentOptEnum.LOGIC_TRUE.getKey() : GlobalAppointmentOptEnum.LOGIC_FALSE.getKey());
+        response.put("bindingPhoneNumber", CommonUtils.hideChar(passport.getPhoneNumber(), 3, 8));
+        response.put("accessToken", passport.getAccessToken());
+        response.put("lastRefreshTime", CommonUtils.dateFormat(passport.getTokenInvalidTime()));
 
         return response;
     }

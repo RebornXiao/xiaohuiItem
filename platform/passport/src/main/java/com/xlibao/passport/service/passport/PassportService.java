@@ -14,11 +14,17 @@ public interface PassportService {
 
     JSONObject loginPassport();
 
+    JSONObject loginForVerificationCode();
+
+    JSONObject logoutPassport();
+
     JSONObject modifyPassword();
 
     JSONObject forgetPassword();
 
     JSONObject resetMobileNumber();
+
+    int bindingMobileNumber(long passportId, String mobileNumber);
 
     JSONObject authentication();
 
@@ -26,11 +32,15 @@ public interface PassportService {
 
     JSONObject changeAccessToken();
 
+    JSONObject extendAccessToken();
+
     void changeAccessToken(Passport passport);
 
     Passport getPassport(long passportId);
 
     Passport getPassport(String loginName);
+
+    JSONObject phoneBeUsed();
 
     JSONObject modifyNickname();
 }

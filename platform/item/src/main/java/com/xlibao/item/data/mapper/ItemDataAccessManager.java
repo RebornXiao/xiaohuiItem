@@ -101,8 +101,8 @@ public class ItemDataAccessManager {
         return typeMapper.add(type);
     }
 
-    public void updateItemType(ItemType type) {
-        typeMapper.update(type);
+    public int updateItemType(ItemType type) {
+        return typeMapper.updateItemType(type);
     }
 
     public List<ItemUnit> loaderItemUnits(ItemStatusEnum statusEnum) {
@@ -184,5 +184,21 @@ public class ItemDataAccessManager {
     //更新某个itemType的sort值
     public void updateItemTypeSort(long id, int sort) {
         typeMapper.updateItemTypeSort(id, sort);
+    }
+
+    public int createTemplate(ItemTemplate itemTemplate) {
+        return templateMapper.createTemplate(itemTemplate);
+    }
+
+    public int updateTemplate(ItemTemplate itemTemplate) {
+        return templateMapper.updateTemplate(itemTemplate);
+    }
+
+    public int updateTemplateImgUrl(long itemId, String itemImgUrl) {
+        return templateMapper.updateTemplateImgUrl(itemId, itemImgUrl);
+    }
+
+    public int updateItemTypeIconUrl(long itemTypeId, String itemTypeIconUrl) {
+        return typeMapper.updateItemTypeIconUrl(itemTypeId, itemTypeIconUrl);
     }
 }

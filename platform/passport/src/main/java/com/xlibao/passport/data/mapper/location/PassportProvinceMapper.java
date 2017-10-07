@@ -10,4 +10,6 @@ public interface PassportProvinceMapper {
     List<PassportProvince> loaderProvinces();
 
     PassportProvince searchProvinceByName(@Param("name") String name);
+
+    PassportProvince getProvinceById(@Param("id") long id);
 }

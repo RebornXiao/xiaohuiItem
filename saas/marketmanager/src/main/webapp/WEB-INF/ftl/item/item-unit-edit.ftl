@@ -85,6 +85,8 @@
                 //保存商品单位
                 $("#saveBtn").on('click', function () {
 
+                    //$(this).button("loading");
+
                     //检测
                     var title = _itemUnitTitle.val();
                     var status = 0;
@@ -97,7 +99,10 @@
                         status = 1;
                     }
 
-                    $.post("${base}/item/itemUnitEditSave.do?id=" + itemUnitId + "&title=" + title + "&status=" + status, function (data) {
+                    var btn_ = $(this);
+                    btn_.attr("disabled", true);
+
+                    tokenPost("${base}/item/itemUnitEditSave.do?id=" + itemUnitId + "&title=" + title + "&status=" + status, function (data) {
 
                         //添加完成，清空，允许重新再添加
                     <#if !(itemUnit?exists) >
@@ -107,8 +112,11 @@
 
                         //重新刷新
                         if (data.code == "0") {
-                            swal("提示", "操作成功", "success");
+                            showSuccess(data.msg, function () {
+                                open({url:"${base}/item/itemUnits.do"});
+                            });
                         } else {
+                            btn_.removeAttr("disabled");
                             swal(data.msg);
                         }
                     }, "json");

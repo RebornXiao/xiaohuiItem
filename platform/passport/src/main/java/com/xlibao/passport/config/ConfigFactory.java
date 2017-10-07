@@ -22,8 +22,8 @@ public class ConfigFactory {
     @PostConstruct
     public void initialization() {
         partner = partnerParameters;
-        AliyunMessageService.setAliyunAccessParameters(partnerParameters.getAliyunAccessKeyId(), partnerParameters.getAliyunAccessKeySecret(), partnerParameters.getAliyunAccountEndpoint(),
-                partnerParameters.getAliyunSmsSignName(), partnerParameters.getAliyunSmsTopic());
+        //AliyunMessageService.setAliyunAccessParameters(partnerParameters.getAliyunAccessKeyId(), partnerParameters.getAliyunAccessKeySecret(), partnerParameters.getAliyunAccountEndpoint(),
+        //        partnerParameters.getAliyunSmsSignName(), partnerParameters.getAliyunSmsTopic());
     }
 
     public static PartnerParameters getPartner() {

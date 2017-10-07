@@ -7,9 +7,11 @@ import com.xlibao.metadata.order.OrderEntry;
  */
 public interface OrderEventListener {
 
-    void notifyCreatedOrder(OrderEntry entry);
+    void notifyCreatedOrder(OrderEntry orderEntry);
 
-    void notifyOrderPayment(OrderEntry order);
+    void notifyOrderPayment(OrderEntry orderEntry);
+
+    void notifyAcceptedOrder(OrderEntry orderEntry);
 
     void notifyDeliveredOrderEntry(OrderEntry orderEntry);
 

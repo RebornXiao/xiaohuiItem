@@ -19,10 +19,6 @@ public class MarketDataAccessManager {
     @Autowired
     private MarketEntryMapper entryMapper;
     @Autowired
-    private MarketCabinetLoggerMapper cabinetLoggerMapper;
-    @Autowired
-    private MarketCabinetMapper cabinetMapper;
-    @Autowired
     private MarketRelationshipMapper relationshipMapper;
     @Autowired
     private MarketAccessLoggerMapper accessLoggerMapper;
@@ -47,8 +43,12 @@ public class MarketDataAccessManager {
         return entryMapper.getMarketForPassport(passportId);
     }
 
-    public int marketResponse(long marketId, int status) {
-        return entryMapper.marketResponse(marketId, status);
+    public int marketResponse(long marketId, int status, int matchStatus) {
+        return entryMapper.marketResponse(marketId, status, matchStatus);
+    }
+
+    public int changeOnlineStatus(long marketId, int targetStatus, int matchStatus) {
+        return entryMapper.changeOnlineStatus(marketId, targetStatus, matchStatus);
     }
 
     public List<MarketEntry> searchMarkets(MarketEntry searchModel, int pageSize, int pageStartIndex) {
@@ -59,8 +59,12 @@ public class MarketDataAccessManager {
         return entryMapper.searchMarketsCount(searchModel);
     }
 
-    public List<MarketEntry> getAllMarkets() {
-        return entryMapper.getAllMarkets();
+    public int createMarket(MarketEntry entry) {
+        return entryMapper.createMarket(entry);
+    }
+
+    public int updateMarket(MarketEntry entry) {
+        return entryMapper.updateMarket(entry);
     }
 
     public MarketAccessLogger getLastAccessLogger(long passportId) {
@@ -83,12 +87,16 @@ public class MarketDataAccessManager {
         return shelvesManagerMapper.getClipDatas(marketId, groupCode, unitCode, floorCode, pageStartIndex, pageSize);
     }
 
-    public List<MarketRelationship> myFocusMarkets(long passportId, int type) {
-        return relationshipMapper.myFocusMarkets(passportId, type);
+    public List<MarketRelationship> myFocusMarkets(String k, int type) {
+        return relationshipMapper.myFocusMarkets(k, type);
     }
 
-    public MarketRelationship getRelationship(long passportId, long marketId, int type) {
-        return relationshipMapper.getRelationship(passportId, marketId, type);
+    public List<MarketRelationship> getRelationships(long marketId, int type) {
+        return relationshipMapper.getRelationships(marketId, type);
+    }
+
+    public MarketRelationship getRelationship(String k, long marketId, int type) {
+        return relationshipMapper.getRelationship(k, marketId, type);
     }
 
     public List<MarketTaskLogger> getTaskLoggers(long passportId, long marketId, int pageStartIndex, int pageSize) {
@@ -102,4 +110,5 @@ public class MarketDataAccessManager {
     public int clearShelves(long marketId) {
         return shelvesManagerMapper.clearShelves(marketId);
     }
+
 }

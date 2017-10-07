@@ -12,6 +12,7 @@ public class ItemType {
     private Byte top;
     private String icon;
     private String image;
+    private Integer requestSource;
 
     private List<ItemType> subTypes;
 
@@ -77,6 +78,14 @@ public class ItemType {
 
     public void setImage(String image) {
         this.image = image == null ? null : image.trim();
+    }
+
+    public Integer getRequestSource() {
+        return requestSource;
+    }
+
+    public void setRequestSource(Integer requestSource) {
+        this.requestSource = requestSource;
     }
 
     public void putSubType(ItemType itemType) {

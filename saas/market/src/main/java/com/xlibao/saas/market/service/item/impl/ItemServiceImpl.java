@@ -5,11 +5,14 @@ import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.BasicWebService;
 import com.xlibao.common.CommonUtils;
 import com.xlibao.common.GlobalAppointmentOptEnum;
+import com.xlibao.common.constant.item.ItemRequestSourceEnum;
+import com.xlibao.common.constant.item.ItemStatusEnum;
 import com.xlibao.common.exception.PlatformErrorCodeEnum;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.exception.code.ItemErrorCodeEnum;
 import com.xlibao.common.lbs.baidu.AddressComponent;
 import com.xlibao.common.lbs.baidu.BaiduWebAPI;
+import com.xlibao.common.thread.AsyncScheduledService;
 import com.xlibao.datacache.item.ItemDataCacheService;
 import com.xlibao.market.data.model.*;
 import com.xlibao.metadata.item.ItemTemplate;
@@ -22,15 +25,15 @@ import com.xlibao.saas.market.service.XMarketTimeConfig;
 import com.xlibao.saas.market.service.activity.RecommendItemTypeEnum;
 import com.xlibao.saas.market.service.item.*;
 import com.xlibao.saas.market.service.market.MarketErrorCodeEnum;
+import com.xlibao.saas.market.service.market.MarketStatusEnum;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.URLEncoder;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -71,9 +74,9 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
 
     @Override
     public JSONObject itemTypes() {
-        List<ItemType> itemTypes = ItemDataCacheService.getItemTypes();
+        int requestSource = getIntParameter("requestSource", ItemRequestSourceEnum.ON_LINE.getKey());
 
-        JSONArray response = fillItemTypeMsg(itemTypes, false);
+        JSONArray response = fillItemTypeMsg(ItemDataCacheService.getItemTypes(), requestSource, false);
 
         return success(response);
     }
@@ -81,12 +84,14 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     @Override
     public JSONObject findSubItemTypes() {
         long itemTypeId = getLongParameter("itemTypeId");
+        int requestSource = getIntParameter("requestSource", ItemRequestSourceEnum.ON_LINE.getKey());
+
         ItemType itemType = ItemDataCacheService.getItemType(itemTypeId);
         if (itemType == null) {
             return MarketItemErrorCodeEnum.ITEM_TYPE_ERROR.response();
         }
         List<ItemType> itemTypes = ItemDataCacheService.relationItemTypes(itemTypeId);
-        JSONArray response = fillItemTypeMsg(itemTypes, true);
+        JSONArray response = fillItemTypeMsg(itemTypes, requestSource, true);
         return success(response);
     }
 
@@ -119,28 +124,40 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         int sortValue = getIntParameter("sortValue", 0);
         String searchKeyValue = getUTF("searchKeyValue", null);
 
+        int requestSource = getIntParameter("requestSource", ItemRequestSourceEnum.ON_LINE.getKey());
+
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex(pageSize);
 
+        MarketEntry marketEntry = dataAccessFactory.getMarketDataCacheService().getMarket(marketId);
+        if (marketEntry.getStatus() != MarketStatusEnum.NORMAL.getKey()) {
+            return MarketErrorCodeEnum.MARKET_STATUS_ERROR.response("商店正在升级维护中，请稍后再来！");
+        }
         List<MarketItem> items;
         if (CommonUtils.isNotNullString(searchKeyValue)) {
-            items = conditionPageItems(marketId, ItemDataCacheService.fuzzyQueryItemTemplates(searchKeyValue), sortType, sortValue, pageStartIndex, pageSize);
+            items = conditionPageItems(marketId, ItemDataCacheService.fuzzyQueryItemTemplates(searchKeyValue), sortType, sortValue, requestSource, pageStartIndex, pageSize);
+            if (!CommonUtils.isEmpty(items)) {
+                // 记录搜索次数
+                incrementSearchTimes(marketId, searchKeyValue);
+            }
         } else {
             ItemSpecialTypeEnum itemSpecialTypeEnum = ItemSpecialTypeEnum.getItemSpecialTypeEnum(itemTypeId);
             if (itemSpecialTypeEnum != null) {
-                items = specialPageItems(itemSpecialTypeEnum, marketId, sortType, sortValue, pageStartIndex, pageSize);
+                items = specialPageItems(itemSpecialTypeEnum, marketId, sortType, sortValue, requestSource, pageStartIndex, pageSize);
             } else {
-                items = conditionPageItems(marketId, ItemDataCacheService.appointItemType(itemTypeId), sortType, sortValue, pageStartIndex, pageSize);
+                items = conditionPageItems(marketId, ItemDataCacheService.appointItemType(itemTypeId), sortType, sortValue, requestSource, pageStartIndex, pageSize);
             }
         }
         if (CommonUtils.isEmpty(items)) {
             // 没有更多数据
             return PlatformErrorCodeEnum.NO_MORE_DATA.response();
         }
+        Map<Long, List<MarketItemLadderPrice>> itemLadderPriceMap = loadItemLadderPrices(items);
+
         JSONObject response = new JSONObject();
 
         response.put("buyMessage", fillBuyMessage(passportId, items));
-        response.put("pageItemMsg", fillPageItemMessage(items));
+        response.put("pageItemMsg", fillPageItemMessage(items, itemLadderPriceMap));
         return success(response);
     }
 
@@ -175,13 +192,21 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     }
 
     @Override
-    public OrderItemSnapshot fillOrderItemSnapshot(MarketItem item, MarketItemDailyPurchaseLogger itemDailyPurchaseLogger, int buyCount) {
+    public OrderItemSnapshot fillOrderItemSnapshot(MarketItem item, MarketItemDailyPurchaseLogger itemDailyPurchaseLogger, int buyCount, List<MarketItemLadderPrice> itemLadderPrices) {
         OrderItemSnapshot orderItemSnapshot = fillBaseOrderItemSnapshot(item);
+
+        MarketItemLadderPrice optimalItemLadderPrice = findOptimalItemLadderPrice(itemLadderPrices, buyCount);
 
         int normalQuantity = buyCount;
         int discountQuantity = 0;
         long normalPrice = item.getSellPrice();
         long discountPrice = normalPrice;
+
+        if (optimalItemLadderPrice != null) { // 存在阶梯价时
+            normalQuantity = 0;
+            discountQuantity = buyCount;
+            discountPrice = optimalItemLadderPrice.getExpectPrice();
+        }
         if (item.getDiscountType() != DiscountTypeEnum.NORMAL.getKey()) {
             normalPrice = item.maxPrice(); // 以高价出售
             if (item.getRestrictionQuantity() == RestrictionQuantityEnum.UN_LIMIT.getKey()) {
@@ -202,7 +227,8 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
                     discountQuantity = 0;
                 }
             }
-            discountPrice = item.getDiscountPrice();
+            // 优惠价始终已最低价存在
+            discountPrice = discountPrice > item.getDiscountPrice() ? item.getDiscountPrice() : discountPrice;
         }
         long totalPrice = normalQuantity * normalPrice + discountQuantity * discountPrice;
 
@@ -231,7 +257,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         for (MarketItem item : items) {
             ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(item.getItemTemplateId());
             ItemUnit itemUnit = ItemDataCacheService.getItemUnit(itemTemplate.getUnitId());
-            if (item.getStatus() != ItemStatusEnum.NORMAL.getKey()) {
+            if (item.getStatus() != MarketItemStatusEnum.NORMAL.getKey()) {
                 logger.error("用户购买【" + itemTemplate.getName() + "】，目前处于下架状态(状态值：" + item.getStatus() + ")，暂不通过！");
                 throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.ITEM_STATUS_ERROR_OFF_LINE.getKey(), "抱歉，您购买的【" + itemTemplate.getName() + "】已下架！");
             }
@@ -240,7 +266,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
                 throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.ITEM_UN_SELL.getKey(), "抱歉，您购买的【" + itemTemplate.getName() + "】已下架！");
             }
             // 本次购买的数量
-            int buyCount = buyItems.getIntValue(String.valueOf(item.getId()));
+            int buyCount = buyItems.getIntValue(String.valueOf(item.getItemTemplateId()));
             if (buyCount < item.getMinimumSellCount()) {
                 throw new XlibaoRuntimeException(MarketItemErrorCodeEnum.LESS_THAN_MINIMUM_SELL.getKey(), itemTemplate.getName() + "最低购买数量：" + item.getMinimumSellCount() + itemUnit.getTitle());
             }
@@ -284,7 +310,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         long sellPrice = getLongParameter("sellPrice");
         long marketPrice = getLongParameter("marketPrice", sellPrice);
         String description = getUTF("description", "");
-        int status = getIntParameter("status", ItemStatusEnum.OFF_SALE.getKey());
+        int status = getIntParameter("status", MarketItemStatusEnum.OFF_SALE.getKey());
 
         if (costPrice < 0) {
             return fail(3, "成本价不能小于0分");
@@ -306,10 +332,10 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             return ItemErrorCodeEnum.NOT_FOUND_ITEM_TEMPLATE.response("商品模版不存在，错误码：" + itemTemplateId);
         }
         MarketItem item = dataAccessFactory.getItemDataAccessManager().getItem(marketId, itemTemplateId);
-        if (status == ItemStatusEnum.HIDE.getKey()) {
-            status = ItemStatusEnum.OFF_SALE.getKey();
+        if (status == MarketItemStatusEnum.HIDE.getKey()) {
+            status = MarketItemStatusEnum.OFF_SALE.getKey();
         }
-        int result = 0;
+        int result;
         if (item == null) {
             // 未有商品存在
             item = MarketItem.newInstance(marketId, itemTemplate, costPrice, sellPrice, marketPrice, sellPrice, description, (byte) status);
@@ -352,14 +378,138 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
     }
 
     @Override
+    public JSONObject loaderHotSearch() {
+        long marketId = getLongParameter("marketId");
+        int pageSize = getPageSize();
+        int pageStartIndex = getPageStartIndex(pageSize);
+
+        List<String> searchHistories = dataAccessFactory.getItemDataAccessManager().loaderHotSearch(marketId, pageStartIndex, pageSize);
+        if (CommonUtils.isEmpty(searchHistories)) {
+            return PlatformErrorCodeEnum.NO_MORE_DATA.response();
+        }
+        return success(searchHistories);
+    }
+
+    @Override
     public JSONObject fuzzyMatchItemName() {
+        long marketId = getLongParameter("marketId");
         String itemName = getUTF("fuzzyItemName");
+        int requestSource = getIntParameter("requestSource", ItemRequestSourceEnum.ON_LINE.getKey());
+
         List<ItemTemplate> itemTemplates = ItemDataCacheService.fuzzyQueryItemTemplates(itemName);
         if (CommonUtils.isEmpty(itemTemplates)) {
             return PlatformErrorCodeEnum.NO_MORE_DATA.response();
         }
-        JSONArray itemNameSet = itemTemplates.stream().map(ItemTemplate::getName).collect(Collectors.toCollection(JSONArray::new));
+        String itemTemplateSet = ItemDataCacheService.assembleItemTemplateSet(itemTemplates);
+
+        List<Long> itemTemplateIdSet = dataAccessFactory.getItemDataAccessManager().existItemTemplates(marketId, itemTemplateSet, requestSource);
+
+        JSONArray itemNameSet = new JSONArray();
+        for (ItemTemplate itemTemplate : itemTemplates) {
+            if (!itemTemplateIdSet.contains(itemTemplate.getId())) {
+                continue;
+            }
+            itemNameSet.add(itemTemplate.getName());
+        }
+        if (itemNameSet.size() <= 0) {
+            return PlatformErrorCodeEnum.NO_MORE_DATA.response();
+        }
         return success(itemNameSet);
+    }
+
+    @Override
+    public JSONObject itemLadderPrices() {
+        long itemId = getLongParameter("itemId");
+
+        List<MarketItemLadderPrice> itemLadderPrices = dataAccessFactory.getItemDataAccessManager().loadItemLadderPrices(String.valueOf(itemId));
+
+        MarketItem item = dataAccessFactory.getItemDataAccessManager().getMarketItem(itemId);
+        if (item == null) {
+            return MarketItemErrorCodeEnum.NOT_FOUND_ITEM.response();
+        }
+
+        JSONArray response = new JSONArray();
+        for (MarketItemLadderPrice itemLadderPrice : itemLadderPrices) {
+            JSONObject data = new JSONObject();
+            data.put("id", itemLadderPrice.getId());
+            data.put("minQuantity", itemLadderPrice.getMinQuantity());
+            data.put("maxQuantity", itemLadderPrice.getMaxQuantity());
+            data.put("expectPrice", itemLadderPrice.getExpectPrice());
+            data.put("status", itemLadderPrice.getStatus());
+            data.put("mark", itemLadderPrice.getMark());
+
+            response.add(data);
+        }
+        return success(response);
+    }
+
+    @Override
+    public JSONObject createItemLadderPrice() {
+        long itemId = getLongParameter("itemId");
+        int minQuantity = getIntParameter("minQuantity");
+        int maxQuantity = getIntParameter("maxQuantity");
+        long expectPrice = getLongParameter("expectPrice", 1);
+        String mark = getUTF("mark");
+
+        MarketItem item = dataAccessFactory.getItemDataAccessManager().getMarketItem(itemId);
+        if (item == null) {
+            return MarketItemErrorCodeEnum.NOT_FOUND_ITEM.response();
+        }
+        List<MarketItemLadderPrice> itemLadderPrices = dataAccessFactory.getItemDataAccessManager().loadItemLadderPrices(String.valueOf(itemId));
+        if (!CommonUtils.isEmpty(itemLadderPrices)) {
+            return MarketItemErrorCodeEnum.EXIST_ITEM_LADDER_PRICE.response();
+        }
+        MarketItemLadderPrice itemLadderPrice = new MarketItemLadderPrice();
+        itemLadderPrice.setItemId(itemId);
+        itemLadderPrice.setMinQuantity(minQuantity);
+        itemLadderPrice.setMaxQuantity(maxQuantity);
+        itemLadderPrice.setExpectPrice(expectPrice);
+        itemLadderPrice.setStatus((int) GlobalAppointmentOptEnum.LOGIC_TRUE.getKey());
+        itemLadderPrice.setMark(mark);
+
+        int result = dataAccessFactory.getItemDataAccessManager().createItemLadderPrice(itemLadderPrice);
+        return result <= 0 ? PlatformErrorCodeEnum.DB_ERROR.response() : success();
+    }
+
+    @Override
+    public JSONObject removeItemLadderPrice() {
+        long itemId = getLongParameter("itemId");
+        long itemLadderId = getLongParameter("itemLadderId");
+
+        int result = dataAccessFactory.getItemDataAccessManager().removeItemLadderPrice(itemId, itemLadderId);
+        return result <= 0 ? PlatformErrorCodeEnum.DB_ERROR.response() : success();
+    }
+
+    @Override
+    public Map<Long, List<MarketItemLadderPrice>> loadItemLadderPrices(List<MarketItem> items) {
+        String itemSet = processItem(items);
+        if (CommonUtils.isNullString(itemSet)) {
+            return Collections.emptyMap();
+        }
+        List<MarketItemLadderPrice> itemLadderPrices = dataAccessFactory.getItemDataAccessManager().loadItemLadderPrices(itemSet);
+
+        Map<Long, List<MarketItemLadderPrice>> itemLadderPriceMap = new HashMap<>();
+        for (MarketItemLadderPrice itemLadderPrice : itemLadderPrices) {
+            List<MarketItemLadderPrice> ladderPrices = itemLadderPriceMap.get(itemLadderPrice.getItemId());
+            if (ladderPrices == null) {
+                ladderPrices = new ArrayList<>();
+                itemLadderPriceMap.put(itemLadderPrice.getItemId(), ladderPrices);
+            }
+            ladderPrices.add(itemLadderPrice);
+        }
+        return itemLadderPriceMap;
+    }
+
+    private MarketItemLadderPrice findOptimalItemLadderPrice(List<MarketItemLadderPrice> itemLadderPrices, int quantity) {
+        if (CommonUtils.isEmpty(itemLadderPrices)) {
+            return null;
+        }
+        for (MarketItemLadderPrice itemLadderPrice : itemLadderPrices) {
+            if (quantity >= itemLadderPrice.getMinQuantity()) {
+                return itemLadderPrice;
+            }
+        }
+        return null;
     }
 
     private long matchMarketId(long passportId, long marketId) {
@@ -462,8 +612,10 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         }
         List<MarketItem> items = dataAccessFactory.getItemDataAccessManager().getItemsForItemTemplateSet(marketId, itemTemplates, pageStartIndex, pageSize);
 
+        Map<Long, List<MarketItemLadderPrice>> itemLadderPriceMap = loadItemLadderPrices(items);
+
         response.put("buyMessage", fillBuyMessage(passportId, items));
-        response.put("pageItemMsg", fillPageItemMessage(items));
+        response.put("pageItemMsg", fillPageItemMessage(items, itemLadderPriceMap));
         return response;
     }
 
@@ -491,19 +643,25 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return recommendItems;
     }
 
-    private JSONArray fillItemTypeMsg(List<ItemType> itemTypes, boolean fillImage) {
+    private JSONArray fillItemTypeMsg(List<ItemType> itemTypes, int requestSource, boolean fillImage) {
         if (CommonUtils.isEmpty(itemTypes)) {
             return new JSONArray();
         }
         JSONArray response = new JSONArray();
         for (ItemType itemType : itemTypes) {
+            if (itemType.getStatus() != ItemStatusEnum.NORMAL.getKey()) {
+                continue;
+            }
+            if ((itemType.getRequestSource() & requestSource) != requestSource) {
+                continue;
+            }
             List<ItemType> subItemTypes = ItemDataCacheService.relationItemTypes(itemType.getId());
             if (CommonUtils.isEmpty(subItemTypes)) {
                 continue;
             }
             JSONObject data = fillItemTypeMsg(itemType, fillImage);
 
-            JSONArray subItemTypeMsg = subItemTypes.stream().map(it -> fillItemTypeMsg(it, true)).collect(Collectors.toCollection(JSONArray::new));
+            JSONArray subItemTypeMsg = subItemTypes.stream().map(it -> fillItemTypeMsg(it, fillImage)).collect(Collectors.toCollection(JSONArray::new));
             data.put("subItemTypes", subItemTypeMsg);
             response.add(data);
         }
@@ -522,18 +680,18 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return response;
     }
 
-    private List<MarketItem> conditionPageItems(long marketId, List<ItemTemplate> itemTemplates, int sortType, int sortValue, int pageStartIndex, int pageSize) {
+    private List<MarketItem> conditionPageItems(long marketId, List<ItemTemplate> itemTemplates, int sortType, int sortValue, int requestSource, int pageStartIndex, int pageSize) {
         if (CommonUtils.isEmpty(itemTemplates)) {
             return null;
         }
         // 拼装商品集合
         String itemTemplateSet = ItemDataCacheService.assembleItemTemplateSet(itemTemplates);
         // 按前端指定的排序条件查找对应的商品列表
-        return dataAccessFactory.getItemDataAccessManager().conditionOrdering(marketId, itemTemplateSet, sortType, sortValue, pageStartIndex, pageSize);
+        return dataAccessFactory.getItemDataAccessManager().conditionOrdering(marketId, itemTemplateSet, sortType, sortValue, requestSource, pageStartIndex, pageSize);
     }
 
-    private List<MarketItem> specialPageItems(ItemSpecialTypeEnum itemSpecialTypeEnum, long marketId, int sortType, int sortValue, int pageStartIndex, int pageSize) {
-        return dataAccessFactory.getItemDataAccessManager().specialProducts(marketId, itemSpecialTypeEnum.getKey(), XMarketTimeConfig.ITEM_NEW_TIME, sortType, sortValue, pageStartIndex, pageSize);
+    private List<MarketItem> specialPageItems(ItemSpecialTypeEnum itemSpecialTypeEnum, long marketId, int sortType, int sortValue, int requestSource, int pageStartIndex, int pageSize) {
+        return dataAccessFactory.getItemDataAccessManager().specialProducts(marketId, itemSpecialTypeEnum.getKey(), XMarketTimeConfig.ITEM_NEW_TIME, sortType, sortValue, requestSource, pageStartIndex, pageSize);
     }
 
     private OrderItemSnapshot fillBaseOrderItemSnapshot(MarketItem item) {
@@ -586,7 +744,7 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         return response;
     }
 
-    private JSONArray fillPageItemMessage(List<MarketItem> items) {
+    private JSONArray fillPageItemMessage(List<MarketItem> items, Map<Long, List<MarketItemLadderPrice>> itemLadderPriceMap) {
         JSONArray itemArray = new JSONArray();
         for (MarketItem item : items) {
             ItemTemplate itemTemplate = ItemDataCacheService.getItemTemplate(item.getItemTemplateId());
@@ -616,9 +774,29 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
             itemMsg.put("deliveryDelay", item.getDeliveryDelay());
             itemMsg.put("status", item.getStatus());
 
+            itemMsg.put("itemLadderPrices", fillItemLadderPriceMsg(itemLadderPriceMap.get(item.getId()), itemUnit));
+
             itemArray.add(itemMsg);
         }
         return itemArray;
+    }
+
+    private JSONArray fillItemLadderPriceMsg(List<MarketItemLadderPrice> itemLadderPrices, ItemUnit itemUnit) {
+        if (CommonUtils.isEmpty(itemLadderPrices)) {
+            return new JSONArray();
+        }
+        JSONArray response = new JSONArray();
+
+        for (MarketItemLadderPrice itemLadderPrice : itemLadderPrices) {
+            JSONObject data = new JSONObject();
+            data.put("minQuantity", itemLadderPrice.getMinQuantity());
+            data.put("maxQuantity", itemLadderPrice.getMaxQuantity());
+            data.put("expectPrice", itemLadderPrice.getExpectPrice());
+            data.put("mark", itemLadderPrice.getMark());
+            data.put("showMsg", "满" + itemLadderPrice.getMinQuantity() + itemUnit.getTitle() + "，￥" + CommonUtils.formatAmount(itemLadderPrice.getExpectPrice()) + "/" + itemUnit.getTitle());
+            response.add(data);
+        }
+        return response;
     }
 
     private String itemTemplateSet(List<MarketItem> items) {
@@ -643,5 +821,36 @@ public class ItemServiceImpl extends BasicWebService implements ItemService {
         DiscountTypeEnum discountTypeEnum = DiscountTypeEnum.getDiscountTypeEnum(item.getDiscountType());
         String limit = (item.getRestrictionQuantity() == -1 ? "无限购" : "每天限购" + item.getRestrictionQuantity() + itemUnit.getTitle());
         return (discountTypeEnum == null ? "" : discountTypeEnum.getValue()) + CommonUtils.formatNumber(discount * 10, "0.00") + "折" + "(" + limit + ")";
+    }
+
+    private String processItem(List<MarketItem> items) {
+        if (CommonUtils.isEmpty(items)) {
+            return "";
+        }
+        StringBuilder itemSet = new StringBuilder();
+        for (MarketItem item : items) {
+            itemSet.append(item.getId()).append(CommonUtils.SPLIT_COMMA);
+        }
+        itemSet.deleteCharAt(itemSet.length() - 1);
+        return itemSet.toString();
+    }
+
+    private void incrementSearchTimes(long marketId, String searchKey) {
+        Runnable runnable = () -> {
+            try {
+                int result = dataAccessFactory.getItemDataAccessManager().incrementSearchTimes(marketId, searchKey);
+                if (result <= 0) {
+                    dataAccessFactory.getItemDataAccessManager().createHistorySearch(marketId, searchKey);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                dataAccessFactory.getItemDataAccessManager().incrementSearchTimes(marketId, searchKey);
+            }
+        };
+        AsyncScheduledService.submitImmediateSaveTask(runnable);
+    }
+
+    public static void main(String[] args) throws Exception {
+        System.out.println(URLEncoder.encode("{\"101027\":3}", "UTF-8"));
     }
 }

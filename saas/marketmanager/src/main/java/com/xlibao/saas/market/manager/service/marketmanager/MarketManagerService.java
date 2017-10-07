@@ -13,6 +13,10 @@ public interface MarketManagerService {
 
     public JSONObject searchMarkets(MarketEntry entry, int pageSize, int pageIndex);
 
-    public JSONObject getMarket(long id);
+    public MarketEntry getMarket(long id);
 
+    public JSONObject getMarketItem(long id);
+
+    //搜索店铺商品
+    public JSONObject searchMarketItems(long marketId, String searchType, String searchKey, int pageSize, int pageIndex);
 }

@@ -41,6 +41,12 @@ public enum MarketItemErrorCodeEnum {
     NOT_FOUND_PREPARE_ACTION(2014, "没有存在预操作的行为"),
     /** 2015 -- 与预操作行为不一致 */
     ERROR_PREPARE_ACTION(2015, "与预操作行为不一致"),
+    /** 2016 -- 已存在有效的阶梯价配置 */
+    EXIST_ITEM_LADDER_PRICE(2016, "已存在有效的阶梯价配置"),
+    /** 2017 -- 存在预操作任务 */
+    EXIST_PREPARE_ACTION_ERROR(2017, "存在预操作任务"),
+    /** 2018 -- 预操作任务状态错误 */
+    PREPARE_ACTION_STATUS_ERROR(2018, "预操作任务状态错误"),
     ;
 
     private int key;

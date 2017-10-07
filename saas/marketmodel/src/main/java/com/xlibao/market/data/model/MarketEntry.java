@@ -14,6 +14,7 @@ public class MarketEntry {
     private String image;
     private Integer type;
     private Integer status;
+    private Integer onlineStatus;
     private String adminName;
     private String phoneNumber;
     private Long streetId;
@@ -27,6 +28,7 @@ public class MarketEntry {
     private Long coveringDistance;
     private Integer deliveryMode;
     private Long deliveryCost;
+    private Long freeDeliveryFee;
     private Date createTime;
 
     private int distance = 0;
@@ -77,6 +79,14 @@ public class MarketEntry {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public Integer getOnlineStatus() {
+        return onlineStatus;
+    }
+
+    public void setOnlineStatus(Integer onlineStatus) {
+        this.onlineStatus = onlineStatus;
     }
 
     public String getAdminName() {
@@ -175,6 +185,14 @@ public class MarketEntry {
         this.deliveryMode = deliveryMode;
     }
 
+    public Long getFreeDeliveryFee() {
+        return freeDeliveryFee;
+    }
+
+    public void setFreeDeliveryFee(Long freeDeliveryFee) {
+        this.freeDeliveryFee = freeDeliveryFee;
+    }
+
     public Long getDeliveryCost() {
         return deliveryCost == null ? 0 : deliveryCost;
     }
@@ -220,6 +238,7 @@ public class MarketEntry {
         marketEntry.setCoveringDistance(getCoveringDistance());
         marketEntry.setDeliveryMode(getDeliveryMode());
         marketEntry.setDeliveryCost(getDeliveryCost());
+        marketEntry.setFreeDeliveryFee(getFreeDeliveryFee());
         marketEntry.setCreateTime(getCreateTime());
 
         return marketEntry;
@@ -231,6 +250,8 @@ public class MarketEntry {
         response.put("id", getId());
         response.put("name", getName());
         response.put("type", getType());
+        response.put("status", getStatus());
+        response.put("onlineStatus", getOnlineStatus());
         response.put("adminName", CommonUtils.nullToEmpty(getAdminName()));
         response.put("showPhoneNumber", CommonUtils.hideChar(getPhoneNumber(), 4, 7));
         response.put("hidePhoneNumber", getPhoneNumber());
@@ -239,6 +260,7 @@ public class MarketEntry {
         response.put("coveringDistance", CommonUtils.formatDistance(getCoveringDistance()));
         response.put("deliveryMode", getDeliveryMode());
         response.put("deliveryCost", getDeliveryCost());
+        response.put("freeDeliveryFee", getFreeDeliveryFee());
         response.put("formatDistance", CommonUtils.formatDistance(SimpleLocationUtils.simpleDistance(latitude, longitude, Double.parseDouble(getLocation().split(CommonUtils.SPLIT_COMMA)[1]), Double.parseDouble(getLocation().split(CommonUtils.SPLIT_COMMA)[0]))));
 
         return response;

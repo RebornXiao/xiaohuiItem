@@ -11,5 +11,9 @@ public interface MarketItemStockLockLoggerMapper {
 
     List<MarketItemStockLockLogger> getItemStockLockLoggers(@Param("orderSequenceNumber") String orderSequenceNumber, @Param("key") int key, @Param("status") int status);
 
+    List<MarketItemStockLockLogger> findInvalidItemStockLockLoggers(@Param("status") int status, @Param("timeout") String timeout);
+
     int modifyStockLockStatus(@Param("id") long id, @Param("status") int status);
+
+    int releaseTimeoutItemLockStock(@Param("status") int status, @Param("timeout") String timeout, @Param("matchStatus") int matchStatus);
 }

@@ -5,7 +5,12 @@ package com.xlibao.saas.market.service.market;
  */
 public enum MarketRelationshipTypeEnum {
 
+    /** 1 -- 关注 */
     FOCUS(1, "关注"),
+    /** 2 -- 配送 */
+    COURIER(2, "配送"),
+    /** 3 -- mac地址绑定 */
+    MAC(3, "mac地址绑定"),
     ;
 
     private int key;

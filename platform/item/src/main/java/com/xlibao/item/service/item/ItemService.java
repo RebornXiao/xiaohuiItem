@@ -58,4 +58,12 @@ public interface ItemService {
     JSONObject searchItemTemplatesPage();
 
     JSONObject updateItemTypesSort();
+
+    JSONObject itemEditSave();
+
+    JSONObject itemUpdateImgUrl();
+
+    JSONObject itemTypeEditSave();
+
+    JSONObject itemTypeUpdateIconUrl();
 }

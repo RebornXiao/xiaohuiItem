@@ -6,7 +6,7 @@ package com.xlibao.saas.market.service.order.properties;
 public enum PropertiesTypeEnum {
 
     CONTAINER(1, "货柜"),
-
+    ASK(2, "询问"),
     ;
 
     private int key;

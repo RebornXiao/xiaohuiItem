@@ -15,7 +15,7 @@ public interface OrderEntryMapper {
 
     List<OrderEntry> getOrderEntrys(@Param("sequenceNumber") String sequenceNumber);
 
-    List<OrderEntry> showConsumerOrders(@Param("partnerId") String partnerId, @Param("partnerUserId") String partnerUserId, @Param("target") byte target, @Param("orderStatusSet") String orderStatusSet, @Param("type") int type, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
+    List<OrderEntry> showConsumerOrders(@Param("partnerId") String partnerId, @Param("partnerUserId") String partnerUserId, @Param("shippingPassportId") long shippingPassportId, @Param("target") byte target, @Param("orderStatusSet") String orderStatusSet, @Param("type") int type, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 
     List<OrderEntry> showMerchantOrders(@Param("partnerId") String partnerId, @Param("shippingPassportId") long shippingPassportId, @Param("orderStatusSet") String orderStatusSet, @Param("type") int type, @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
 
@@ -23,6 +23,8 @@ public interface OrderEntryMapper {
 
     List<OrderEntry> searchOrders(@Param("partnerId") String partnerId, @Param("passportId") long passportId, @Param("searchKeyValue") String searchKeyValue, @Param("type") int type, @Param("roleType") int roleType,
                                   @Param("pageStartIndex") int pageStartIndex, @Param("pageSize") int pageSize);
+
+    List<OrderEntry> getOrderForSequenceSet(@Param("orderSequenceSet") String orderSequenceSet);
 
     int findInvalidOrderSize(@Param("partnerId") String partnerId, @Param("orderType") int orderType, @Param("matchStatus") int matchStatus, @Param("timeout") String timeout);
 
@@ -50,4 +52,6 @@ public interface OrderEntryMapper {
                             @Param("receiptPhone") String receiptPhone, @Param("receiptLocation") String receiptLocation, @Param("remark") String remark);
 
     int refreshOrderStatus(@Param("orderSequenceNumber") String orderSequenceNumber, @Param("targetStatus") int targetStatus, @Param("validStatusSet") String validStatusSet);
+
+    int applyRefund(@Param("orderId") long orderId, @Param("refundStatus") int refundStatus, @Param("matchStatusSet") String matchStatusSet, @Param("refundReason") String refundReason);
 }

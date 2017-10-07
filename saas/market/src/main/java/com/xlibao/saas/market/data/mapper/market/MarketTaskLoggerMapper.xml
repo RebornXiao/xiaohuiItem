@@ -8,11 +8,15 @@
         <result column="executor_passport_id" property="executorPassportId" jdbcType="BIGINT"/>
         <result column="item_template_id" property="itemTemplateId" jdbcType="BIGINT"/>
         <result column="item_quantity" property="itemQuantity" jdbcType="INTEGER"/>
+        <result column="hope_item_quantity" property="hopeItemQuantity" jdbcType="INTEGER"/>
+        <result column="type" property="type" jdbcType="INTEGER"/>
+        <result column="mark" property="mark" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <insert id="createTaskLogger">
-        insert into market_task_logger(market_id, item_location, executor_passport_id, item_template_id, item_quantity, create_time) values(#{marketId}, #{itemLocation}, #{executorPassportId}, #{itemTemplateId}, #{itemQuantity}, #{createTime})
+        insert into market_task_logger(market_id, item_location, executor_passport_id, item_template_id, item_quantity, hope_item_quantity, type, mark, create_time)
+        values(#{marketId}, #{itemLocation}, #{executorPassportId}, #{itemTemplateId}, #{itemQuantity}, #{hopeItemQuantity}, #{type}, #{mark}, #{createTime})
     </insert>
 
     <select id="getTaskLoggers" resultMap="BaseResultMap">

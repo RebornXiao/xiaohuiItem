@@ -3,10 +3,8 @@ package com.xlibao.saas.market.manager.service.itemmanager.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
-import com.xlibao.common.BasicWebService;
 import com.xlibao.common.exception.XlibaoRuntimeException;
 import com.xlibao.common.http.HttpRequest;
-import com.xlibao.common.http.HttpUtils;
 import com.xlibao.metadata.item.ItemTemplate;
 import com.xlibao.metadata.item.ItemType;
 import com.xlibao.metadata.item.ItemUnit;
@@ -61,19 +59,28 @@ public class ItemManagerServiceImpl implements ItemManagerService {
     }
 
     public JSONObject searchItemTemplatesPage(String searchType, String searchKey, int pageSize, int pageIndex) {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemTemplatesPage?searchType=" + searchType + "&searchKey=" + searchKey + "&pageSize=" + pageSize + "&pageIndex=" + pageIndex);
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/searchItemTemplatesPage?searchType=" + searchType + "&searchKey=" + searchKey + "&pageSize=" + pageSize + "&pageIndex=" + pageIndex);
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
 
-    public JSONObject getItemTemplate(long itemTemplateId) {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/getItemTemplate?itemTemplateId=" + itemTemplateId);
+    public JSONObject getItemTemplateJson(long itemTemplateId) {
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/getItemTemplate?itemTemplateId=" + itemTemplateId);
         JSONObject response = JSONObject.parseObject(json);
         return response;
+    }
+
+    @Override
+    public ItemTemplate getItemTemplate(long itemTemplateId) {
+        JSONObject json = getItemTemplateJson(itemTemplateId);
+        if (json.getIntValue("code") == 0) {
+            return JSONObject.parseObject(json.getString("response"), ItemTemplate.class);
+        }
+        return null;
     }
 
     public JSONObject removeItemTemplates(String[] ids) {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/removeItemTemplates?ids=");
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "item/removeItemTemplates?ids=");
         JSONObject response = JSONObject.parseObject(json);
         return response;
     }
@@ -108,7 +115,7 @@ public class ItemManagerServiceImpl implements ItemManagerService {
     }
 
     private List<ItemType> getSortItemTypes(long parentItemTypeId, boolean sort) {
-        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemTypePage?parentItemTypeId=" + parentItemTypeId+(sort?"&sort=1":""));
+        String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().itemRemoteURL + "/item/searchItemTypePage?parentItemTypeId=" + parentItemTypeId + (sort ? "&sort=1" : ""));
         JSONObject response = JSONObject.parseObject(json);
         int code = response.getIntValue("code");
         if (code != 0) {

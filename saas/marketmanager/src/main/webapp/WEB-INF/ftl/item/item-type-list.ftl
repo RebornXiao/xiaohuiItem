@@ -56,12 +56,10 @@
                         </thead>
                         <tbody>
 
+                        <!-- 这里显示的是当前所有二级的一级，应需求不需要显示 -->
                         <#if itemType?exists >
                         <tr>
-                            <td>${itemType.id?c}</td>
-                            <td>${itemType.title}</td>
-                            <td><span class="label label-primary">一级分类</span></td>
-                            <td>${itemType.sort}</td>
+                            <td colspan="4">${itemType.title}  的所有二级</td>
                             <td>
                                 <button id="pEditBtn" type="button" data_id="${itemType.id?c}"
                                         class="btn waves-effect waves-light btn-warning btn-sm">编辑
@@ -73,7 +71,7 @@
                         </tr>
                         </#if>
 
-                        <#if (itemTypes?size > 0)>
+                        <#if itemTypes?exists && (itemTypes?size > 0)>
                             <#list itemTypes as type >
                             <tr>
                                 <td>${type.id?c}</td>
@@ -141,25 +139,30 @@
                         swal("包括了特殊符号，无法搜索!");
                         return;
                     }
-                    location.href = "${base}/item/itemTypes.do?searchKey=" + sValue;
+                    open({url:"${base}/item/itemTypes.do?searchKey=" + sValue});
+                    //location.href = "${base}/item/itemTypes.do?searchKey=" + sValue;
                 });
 
                 //添加分类
                 $("#addBtn").on('click', function () {
-                    location.href = "${base}/item/itemTypeEdit.do";
+                    open({url:"${base}/item/itemTypeEdit.do"});
+                    //location.href = "${base}/item/itemTypeEdit.do";
                 });
 
                 //添加分类
                 $("#sortBtn").on('click', function () {
-                    location.href = "${base}/item/itemTypeSort.do";
+                    open({url:"${base}/item/itemTypeSort.do"});
+                    //location.href = "${base}/item/itemTypeSort.do";
                 });
 
             <#if itemType?exists >
                 $("#pEditBtn").on('click', function () {
-                    location.href = "${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
+                    open({url:"${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id")});
+                    //location.href = "${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
                 });
                 $("#pAddChildBtn").on('click', function () {
-                    location.href = "${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
+                    open({url:"${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id")});
+                    //location.href = "${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
                 });
             </#if>
 
@@ -168,21 +171,24 @@
                 //单项编辑
                 $("#itemTypeTable").find('button[id=editBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
+                        open({url:"${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id")});
+                        //location.href = "${base}/item/itemTypeEdit.do?id=" + $(this).attr("data_id");
                     });
                 });
 
                 //单项添加子类
                 $("#itemTypeTable").find('button[id=addChildBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
+                        open({url:"${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id")});
+                        //location.href = "${base}/item/itemTypeEdit.do?parentId=" + $(this).attr("data_id");
                     });
                 });
 
                 //单项查看子类
                 $("#itemTypeTable").find('button[id=seeChildBtn]').each(function () {
                     $(this).on('click', function () {
-                        location.href = "${base}/item/itemTypes.do?id=" + $(this).attr("data_id");
+                        open({url:"${base}/item/itemTypes.do?id=" + $(this).attr("data_id")});
+                        //location.href = "${base}/item/itemTypes.do?id=" + $(this).attr("data_id");
                     });
                 });
 

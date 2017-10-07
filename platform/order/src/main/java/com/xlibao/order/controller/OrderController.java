@@ -62,7 +62,7 @@ public class OrderController {
      *      <b>partnerId</b> - String 下单的商户号，必填参数；
      *      <b>appId</b> - String 分配的合作商户应用ID
      *      <b>sequenceNumber</b> - String 预下单的序列号，必填参数
-     *      <b>parnterUserId</b> - String 下游商户的用户ID，非必填参数；若可提供，请尽量提供，后期统计和数据校验需要用到
+     *      <b>partnerUserId</b> - String 下游商户的用户ID，非必填参数；若可提供，请尽量提供，后期统计和数据校验需要用到
      *
      *      当提供的<b>sequenceNumber</b>(预生成时决定)
      *          为：<b>{@linkplain com.xlibao.common.constant.order.OrderTypeEnum#SCAN_ORDER_TYPE}</b>时：
@@ -160,6 +160,12 @@ public class OrderController {
     @RequestMapping(value = "getOrderForSequenceNumber")
     public JSONObject getOrderForSequenceNumber() {
         return orderService.getOrderForSequenceNumber();
+    }
+
+    @ResponseBody
+    @RequestMapping(value = "getOrderForSequenceSet")
+    public JSONObject getOrderForSequenceSet() {
+        return orderService.getOrderForSequenceSet();
     }
 
     /**

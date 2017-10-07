@@ -8,6 +8,7 @@
         <result column="image" property="image" jdbcType="VARCHAR"/>
         <result column="type" property="type" jdbcType="INTEGER"/>
         <result column="status" property="status" jdbcType="INTEGER"/>
+        <result column="online_status" property="onlineStatus" jdbcType="INTEGER"/>
         <result column="admin_name" property="adminName" jdbcType="VARCHAR"/>
         <result column="phone_number" property="phoneNumber" jdbcType="VARCHAR"/>
         <result column="street_id" property="streetId" jdbcType="BIGINT"/>
@@ -21,11 +22,12 @@
         <result column="covering_distance" property="coveringDistance" jdbcType="BIGINT"/>
         <result column="delivery_mode" property="deliveryMode" jdbcType="INTEGER"/>
         <result column="delivery_cost" property="deliveryCost" jdbcType="BIGINT"/>
+        <result column="free_delivery_fee" property="freeDeliveryFee" jdbcType="BIGINT"/>
         <result column="create_time" property="createTime" jdbcType="TIMESTAMP"/>
     </resultMap>
 
     <select id="loaderMarkets" resultMap="BaseResultMap">
-        select * from market_entry where status = 1
+        select * from market_entry
     </select>
 
     <select id="getMarket" resultMap="BaseResultMap">
@@ -54,7 +56,7 @@
         <if test="searchModel.street != null">
             and street = #{searchModel.street}
         </if>
-        <if test="searchModel.streetId != -1">
+        <if test="searchModel.streetId != 0">
             and street_id = #{searchModel.streetId}
         </if>
         <if test="searchModel.type != -1">
@@ -66,6 +68,7 @@
         <if test="searchModel.deliveryMode != -1">
             and delivery_mode = #{searchModel.deliveryMode}
         </if>
+        order by create_time desc limit #{pageStartIndex}, #{pageSize}
     </select>
 
     <select id="searchMarketsCount" resultType="Integer">
@@ -96,11 +99,22 @@
         </if>
     </select>
 
-    <select id="getAllMarkets" resultMap="BaseResultMap">
-        select * from market_entry
-    </select>
-
     <update id="marketResponse">
         update market_entry set status = #{status} where id = #{marketId}
+        <if test="matchStatus != 0">and status = #{matchStatus}</if>
+    </update>
+
+    <update id="changeOnlineStatus">
+        update market_entry set online_status = #{targetStatus} where id = #{marketId} and online_status = #{matchStatus}
+    </update>
+
+    <insert id="createMarket" useGeneratedKeys="true" keyProperty="id" parameterType="com.xlibao.market.data.model.MarketEntry">
+        insert into market_entry(name, province, city, district, street_id, street, street_number, address, location, delivery_mode, covering_distance, delivery_cost, free_delivery_fee, status, type)
+        values(#{name}, #{province}, #{city}, #{district}, #{streetId}, #{street}, #{streetNumber}, #{address}, #{location}, #{deliveryMode}, #{distance}, #{deliveryCost}, #{freeDeliveryFee}, #{status}, #{type})
+    </insert>
+
+    <update id="updateMarket" parameterType="com.xlibao.market.data.model.MarketEntry">
+        update market_entry set name = #{name}, province = #{province}, city = #{city}, district = #{district}, street_id = #{streetId}, street = #{street}, street_number = #{streetNumber}, address = #{address},
+        location = #{location}, delivery_mode = #{deliveryMode}, covering_distance = #{distance}, delivery_cost = #{deliveryCost}, free_delivery_fee = #{freeDeliveryFee} where id = #{id}
     </update>
 </mapper>

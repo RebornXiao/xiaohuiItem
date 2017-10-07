@@ -144,10 +144,7 @@ public class LocationServiceImpl extends BasicWebService implements LocationServ
         long streetId = getLongParameter("streetId", 0);
         PassportStreet street = locationDataAccessManager.getStreet(streetId);
 
-        JSONObject json = new JSONObject();
-        json.put("data", street);
-
-        return success(json);
+        return result(street != null ? street : "没有该街道信息");
     }
 
     @Override
@@ -206,6 +203,24 @@ public class LocationServiceImpl extends BasicWebService implements LocationServ
             locationDataAccessManager.updateStreet(id, name);
             return success("修改成功");
         }
+    }
+
+    public JSONObject getProvinceById() {
+        long provinceId = getLongParameter("id");
+        PassportProvince province = locationDataAccessManager.getProvinceById(provinceId);
+        return result(province != null ? province : "没有该省份");
+    }
+
+    public JSONObject getCityById() {
+        long cityId = getLongParameter("id");
+        PassportCity city = locationDataAccessManager.getCityById(cityId);
+        return result(city != null ? city : "没有该城市");
+    }
+
+    public JSONObject getAreaById() {
+        long areaId = getLongParameter("id");
+        PassportArea area = locationDataAccessManager.getAreaById(areaId);
+        return result(area != null ? area : "没有该区域");
     }
 
     private JSONObject result(Object obj) {

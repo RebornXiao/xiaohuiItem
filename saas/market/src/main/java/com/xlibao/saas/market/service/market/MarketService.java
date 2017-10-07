@@ -13,8 +13,6 @@ public interface MarketService {
 
     JSONObject showMarkets();
 
-    JSONObject initShelvesDatas();
-
     JSONObject searchMarkets();
 
     JSONObject getMarket();
@@ -24,4 +22,10 @@ public interface MarketService {
     JSONObject getAllMarkets();
 
     JSONObject myFocusMarkets();
+
+    JSONObject macRelationMarket();
+
+    JSONObject marketEditSave();
+
+    JSONObject marketUpdateStatus();
 }
