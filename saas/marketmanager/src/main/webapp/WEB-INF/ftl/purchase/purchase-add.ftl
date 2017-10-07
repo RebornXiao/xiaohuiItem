@@ -226,7 +226,6 @@
        $($se).parent().parent().find("td:eq(2)").find('input').val(_code);
     }
     $(document).ready(function () {
-
         //提交
         $(".statusBtn").click(function () {
             var warehouseID = $("#houseSelect").val();//仓库id
