@@ -59,7 +59,7 @@
                                     <tbody>
                                     <tr>
                                         <td style="background-color: #f9f9f9">Key:</td>
-                                        <td><input type="text" class="form-control" id="keyInput" placeholder="请输入与WMS对接Key" value=""/></td>
+                                        <td><input type="text" class="form-control" id="keyInput" value="${warehouse.wmsKEY}"/></td>
                                     </tr>
                                     </tbody>
                                 <#--</#if>-->
@@ -95,11 +95,11 @@
                 var input1 = checkInput(arr.code);
                 var input2 = checkInput(arr.name);
                 var input3 = checkInput(arr.address);
-                var input4 = checkInput(arr.key);
-                if (input1 && input2 && input3 && input4) {
+//                var input4 = checkInput(arr.key);//wmsKEY可为空，省略检测
+                if (input1 && input2 && input3) {
                     var url = "${base}/purchase/updateWarehouse.do?id=${warehouse.id}&warehouseCode="
                             + arr.code + "&warehouseName=" + arr.name + "&address=" + arr.address + "&remark="
-                            + arr.remark + "&wmsKEY" + arr.key;
+                            + arr.remark + "&wmsKEY=" + arr.key;
                     $.post(url, function (data) {
                         //重新刷新
                         console.log(data);
