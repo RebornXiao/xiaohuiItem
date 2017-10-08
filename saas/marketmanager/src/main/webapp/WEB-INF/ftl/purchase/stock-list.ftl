@@ -121,7 +121,6 @@
             var inputTxt  = $td.find('input').val();
             $.post("${base}/purchase/updateCommodityStores.do?id="+$(obj).attr("data_id")+"&warnNumber="+inputTxt , function (data) {
             //重新刷新
-            console.log(data);
             if (data.code == "0") {
                 swal("提示", "保存成功", "success");
                 setTimeout(function () {location.reload()}, 1000);
