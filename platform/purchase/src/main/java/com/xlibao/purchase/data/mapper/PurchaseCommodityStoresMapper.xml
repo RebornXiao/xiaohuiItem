@@ -27,7 +27,7 @@
       AND warehouse_code = #{warehouseCode}
     </if>
     <if test="itemName!=null">
-      AND item_name = "%"#{itemName}"%"
+      AND item_name like "%"#{itemName}"%"
     </if>
     <if test="barcode!=null">
       AND barcode = #{barcode}
@@ -41,7 +41,7 @@
       AND warehouse_code = #{warehouseCode}
     </if>
     <if test="itemName!=null">
-      AND item_name = "%"#{itemName}"%"
+      AND item_name like "%"#{itemName}"%"
     </if>
     <if test="barcode!=null">
       AND barcode = #{barcode}
