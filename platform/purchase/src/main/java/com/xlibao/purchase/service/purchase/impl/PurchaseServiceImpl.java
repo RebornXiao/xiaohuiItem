@@ -538,10 +538,10 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         if(purchaseID == -1){
             return fail("缺少采购单ID");
         }
-        if (purchaseDataAccessManager.delPurchaseCommodity(purchaseID) > 0) {
-            return success("删除成功");
-        }
-        return fail("删除失败");
+        purchaseDataAccessManager.delPurchaseCommodity(purchaseID);
+
+        return success("删除成功");
+
     }
 
     @Override

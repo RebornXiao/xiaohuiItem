@@ -96,6 +96,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
 
     @Override
     public JSONObject deletePurchase() {
+
         long id = getLongParameter("id",-1);
 
         if(id==-1){
@@ -257,8 +258,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
             if (response.getIntValue("code")==0) {
                 String []  itemIDList= itemIDs.split(CommonUtils.SPLIT_COMMA);
                 String [] itemTypeIDList= itemTypeIDs.split(CommonUtils.SPLIT_COMMA);
-                String [] itemNameList= itemNames.split(CommonUtils.SPLIT_COMMA);
-                String [] itemTypeTitleList= itemTypeTitles.split(CommonUtils.SPLIT_COMMA);
+                String [] itemNameList= itemNames.split(CommonUtils.SPLIT_COMMA.trim());
+                String [] itemTypeTitleList= itemTypeTitles.split(CommonUtils.SPLIT_COMMA.trim());
                 String [] barcodeList= barcodes.split(CommonUtils.SPLIT_COMMA);
                 String [] purchaseTimeList= purchaseTimes.split(CommonUtils.SPLIT_COMMA);
                 String [] purchaseNumberList=purchaseNumbers.split(CommonUtils.SPLIT_COMMA);
@@ -267,8 +268,8 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
                     parameters2.put("purchaseID", String.valueOf(id));
                     parameters2.put("itemID", itemIDList[i]);
                     parameters2.put("itemTypeID", itemTypeIDList[i]);
-                    parameters2.put("itemName", itemNameList[i]);
-                    parameters2.put("itemTypeTitle", itemTypeTitleList[i]);
+                    parameters2.put("itemName", itemNameList[i].trim());
+                    parameters2.put("itemTypeTitle", itemTypeTitleList[i].trim());
                     parameters2.put("barcode", barcodeList[i]);
                     parameters2.put("purchaseTime", purchaseTimeList[i]);
                     parameters2.put("purchaseNumber", purchaseNumberList[i]);
