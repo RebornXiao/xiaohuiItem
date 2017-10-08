@@ -112,7 +112,8 @@
         var $td = $tr.find("td:eq(6)");
         var tdTxt = $td.text();
         if(xg=='编辑'){
-            $($td).html("<input type='text' name='editname' class='form-control' value="+tdTxt+" >");
+            $($td).html("<input type='text' style='border: 1px solid #e69900' name='editname' class='form-control' value="+tdTxt+" >");
+            $td.children().focus();
             $(obj).addClass('btn-warning');
             $(obj).removeClass('btn-primary');
             $(obj).html('保存');
