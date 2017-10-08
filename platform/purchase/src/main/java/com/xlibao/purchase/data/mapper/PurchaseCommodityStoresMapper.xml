@@ -30,7 +30,7 @@
       AND item_name like "%"#{itemName}"%"
     </if>
     <if test="barcode!=null">
-      AND barcode = #{barcode}
+      AND barcode like "%"#{barcode}"%"
     </if>
     order by create_time desc limit #{pageStartIndex}, #{pageSize}
   </select>
@@ -44,7 +44,7 @@
       AND item_name like "%"#{itemName}"%"
     </if>
     <if test="barcode!=null">
-      AND barcode = #{barcode}
+      AND barcode =like "%"#{barcode}"%"
     </if>
   </select>
 
