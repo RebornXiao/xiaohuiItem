@@ -102,7 +102,7 @@
                                                         <#--<option value="${commodity.purchaseId}">${commodity.itemTypeTitle}</option>-->
                                                         <#if (itemTypes?size > 0)>
                                                             <#list itemTypes as itemType>
-                                                                <option value=${itemType.id?c} <#if commodity?exists && itemType.id == commodity.itemId>selected </#if>><#if itemType.parentId == 0>${itemType.title}
+                                                                <option value=${itemType.id?c} ><#if itemType.parentId == 0>${itemType.title}
                                                                 <#else>&nbsp;&nbsp;&nbsp;&nbsp;${itemType.title}</#if></option>
                                                             </#list>
                                                         <#else><option value='0'>找不到商品</option>
