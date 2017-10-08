@@ -57,7 +57,7 @@
                                         <#if supplier.status=0>
                                             <tr>
                                                 <td style="background-color: #f9f9f9">停止使用原因</td>
-                                                <td colspan="3"></td>
+                                                <td colspan="3"><#if supplier.stopRemark=''>无记录<#else>${supplier.stopRemark}</#if></td>
                                             </tr>
                                         </#if>
                                         </tbody>
