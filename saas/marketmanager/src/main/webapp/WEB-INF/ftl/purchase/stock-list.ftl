@@ -66,13 +66,7 @@
                                 <td>${stock.itemName}</td>
                                 <td>${stock.storesNumber}</td>
                                 <td>${stock.warnNumber}</td>
-                                <#--<td><#if stock.updateTime!="">${html('${(stock.updateTime)!}')}<#else>无</#if></td>-->
-                                <#--<#if stock.updateTime="">-->
-                                    <#--<td>无</td>-->
-                                <#--<#else>-->
-                                    <#--<td>${stock.updateTime}</td>-->
-                                <#--</#if>-->
-                                <td>无</td>
+                                <td><#if stock.updateTime??>${stock.updateTime}<#else>--</#if></td>
                                 <td>
                                     <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${stock.id}" data_no="${stock.warnNumber}" onclick="update(this)">编辑</button>
                                 </td>

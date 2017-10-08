@@ -102,10 +102,10 @@
                                         </td>
                                         <td>
                                             <div class="input-group">
-                                                <input id="endTime" type="text" class="form-control">
-                                                <span class="input-group-addon bg-default" onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD'})">
-                                                    <i class="fa fa-calendar"></i>
-                                                </span>
+                                                <input id="endTime" type="text" class="form-control" placeholder="如：2017-10-10">
+                                                <#--<span class="input-group-addon bg-default" onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD'})">-->
+                                                    <#--<i class="fa fa-calendar"></i>-->
+                                                <#--</span>-->
                                             </div>
                                         </td>
                                         <td>
@@ -143,16 +143,18 @@
                 "<td><select class='form-control' onchange='changeCode(this)'><option value=''>请选择商品名称</option></select></td>" +
                 "<td><fieldset disabled><input type='text' class='form-control'></fieldset></td>" +
                 "<td>" +
-                "<div class='input-group'><input id='endTime' type='text' class='form-control'>" +
-                "<span class='input-group-addon bg-default' onClick=\"jeDate({dateCell:\'#endTime\',isTime:true,format:\'YYYY-MM-DD\'})\"><i class='fa fa-calendar'></i></span>" +
+                "<div class='input-group'><input id='endTime' type='text' class='form-control' placeholder='如：2017-10-10'>" +
+//                "<span class='input-group-addon bg-default' onClick=\"jeDate({dateCell:\'#endTime\',isTime:true,format:\'YYYY-MM-DD\'})\"><i class='fa fa-calendar'></i></span>" +
                 "</div>" +
                 "</td>" +
                 "<td><input type='text' class='form-control' placeholder='输入采购数量'></td>" +
                 "<td><button class='btn-danger' onclick='deleTr(this);'>删除</button></td>" +
                 "</tr>";
-        setTimeout(function(){
+
+        setTimeout(function(){//给时间框添加id标签
             var len = $('#tab tr').length;
-            $("#tab").children().last().attr("id",'tr_' + len);
+            console.log($("#tab").children().last().children().eq(3).children().children());
+            $("#tab").children().last().children().eq(3).children().children().attr("id",'time' + len);
         },100);
         addTr(tab, row, trHtml);
     }
@@ -270,7 +272,7 @@
                     //重新刷新
                     console.log(data);
                     if (data.code == "0") {
-                        swal("提示", "更新成功", "success");
+                        swal("提示", "添加成功", "success");
                         setTimeout(function () {
                             location.href="${base}/purchase/purchasePage.do"
                         }, 1000);
@@ -283,7 +285,7 @@
                     //重新刷新
                     console.log(data);
                     if (data.code == "0") {
-                        swal("提示", "更新成功", "success");
+                        swal("提示", "保存成功", "success");
                         setTimeout(function () {
                             location.href="${base}/purchase/purchasePage.do"
                         }, 1000);

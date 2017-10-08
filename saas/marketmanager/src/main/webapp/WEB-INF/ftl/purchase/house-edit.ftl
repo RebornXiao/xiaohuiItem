@@ -14,59 +14,61 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-sm-8">
-                    <div class="advert_container">
-                        <h5 class="page-title" style="padding-top: 20px"><b>基本信息</b></h5>
-                        <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
-                        <div class="table-responsive advert_detail_table">
-                            <table class="table table-bordered">
-                            <#if warehouse?exists>
-                                <tbody>
-                                <tr>
-                                    <td style="background-color: #f9f9f9">仓库编码:</td>
-                                    <td><input type="text" class="form-control" id="editHouseCode" placeholder="输入仓库编码" value="${warehouse.warehouseCode}"/></td>
-                                </tr>
-                                <tr>
-                                    <td style="background-color: #f9f9f9">仓库名称</td>
-                                    <td><input type="text" class="form-control" id="editHouseName" placeholder="输入仓库名称" value="${warehouse.warehouseName}"/></td>
-                                </tr>
-                                <tr>
-                                    <td style="background-color: #f9f9f9">仓库地址</td>
-                                    <td><input type="text" class="form-control" id="editHouseAddress" placeholder="输入仓库地址" value="${warehouse.address}"/></td>
-                                </tr>
-                                <tr>
-                                    <td style="background-color: #f9f9f9">备注</td>
-                                    <td><input type="text" class="form-control" id="remark" <#if warehouse.remark!=''>value="${warehouse.remark}"<#else>value="无"</#if>/></td>
-                                </tr>
-                                </tbody>
-                            </#if>
-                            </table>
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-sm-8">
+                        <div class="advert_container">
+                            <h5 class="page-title" style="padding-top: 20px"><b>基本信息</b></h5>
+                            <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                            <div class="table-responsive advert_detail_table">
+                                <table class="table table-bordered">
+                                <#if warehouse?exists>
+                                    <tbody>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">仓库编码:</td>
+                                        <td><input type="text" class="form-control" id="editHouseCode" placeholder="输入仓库编码" value="${warehouse.warehouseCode}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">仓库名称</td>
+                                        <td><input type="text" class="form-control" id="editHouseName" placeholder="输入仓库名称" value="${warehouse.warehouseName}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">仓库地址</td>
+                                        <td><input type="text" class="form-control" id="editHouseAddress" placeholder="输入仓库地址" value="${warehouse.address}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">备注</td>
+                                        <td><input type="text" class="form-control" id="remark" <#if warehouse.remark!=''>value="${warehouse.remark}"<#else>value="无"</#if>/></td>
+                                    </tr>
+                                    </tbody>
+                                </#if>
+                                </table>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="advert_container">
-                        <h5 class="page-title" style="padding-top: 20px"><b>对接信息</b></h5>
-                        <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
-                        <div class="table-responsive advert_detail_table">
-                            <table class="table table-bordered">
-                            <#--<#if supplier?exists>-->
-                                <tbody>
-                                <tr>
-                                    <td style="background-color: #f9f9f9">Key:</td>
-                                    <td><input type="text" class="form-control" id="keyInput" placeholder="请输入与WMS对接Key" value=""/></td>
-                                </tr>
-                                </tbody>
-                            <#--</#if>-->
-                            </table>
-                        </div>
-                        <div class="m-t-40">
-                            <button id="saveBtn" type="button" class="btn waves-effect waves-light btn-primary col-md-2">确定</button>
-                            <button id="backBtn" type="button" class="btn waves-effect waves-light btn-default col-md-2" onclick="history.go(-1);">返回</button>
+                <div class="row">
+                    <div class="col-sm-6">
+                        <div class="advert_container">
+                            <h5 class="page-title" style="padding-top: 20px"><b>对接信息</b></h5>
+                            <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                            <div class="table-responsive advert_detail_table">
+                                <table class="table table-bordered">
+                                <#--<#if supplier?exists>-->
+                                    <tbody>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">Key:</td>
+                                        <td><input type="text" class="form-control" id="keyInput" placeholder="请输入与WMS对接Key" value=""/></td>
+                                    </tr>
+                                    </tbody>
+                                <#--</#if>-->
+                                </table>
+                            </div>
+                            <div class="m-t-40">
+                                <button id="saveBtn" type="button" class="btn waves-effect waves-light btn-primary col-md-2">确定</button>
+                                <button id="backBtn" type="button" class="btn waves-effect waves-light btn-default col-md-2" onclick="history.go(-1);">返回</button>
+                            </div>
                         </div>
                     </div>
                 </div>

@@ -34,10 +34,10 @@
                                         <td style="background-color: #f9f9f9">供应商属性</td>
                                         <td>
                                             <select id="supplierSelect" class="form-control">
-                                                <option value="1">一级供应商</option>
-                                                <option value="2">二级供应商</option>
-                                                <option value="3">品牌供应商</option>
-                                                <option value="4">超市供应商</option>
+                                                <option value="1" <#if supplier.supplierType=1>selected</#if>>一级供应商</option>
+                                                <option value="2" <#if supplier.supplierType=2>selected</#if>>二级供应商</option>
+                                                <option value="3" <#if supplier.supplierType=3>selected</#if>>品牌供应商</option>
+                                                <option value="4" <#if supplier.supplierType=4>selected</#if>>超市供应商</option>
                                             </select>
                                         </td>
                                         <td style="background-color: #f9f9f9">出货周期</td>
