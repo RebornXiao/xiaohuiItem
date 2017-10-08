@@ -121,7 +121,6 @@
                     var url = "${base}/purchase/updateSupplier.do?id=${supplier.id}&supplierName="
                             + arr.name + "&address=" + arr.address + "&supplierType=" + arr.select + "&deliverPeriod="
                             + arr.time + "&salesmanName=" + arr.sname + "&phone=" + arr.phone;
-                    alert(url);
                     $.post(url, function (data) {
                         //重新刷新
                         console.log(data);

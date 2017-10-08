@@ -6,7 +6,7 @@
    pageItemCount
    action
  -->
-<#macro paginate nowPage=1 itemCount=1 pageItemCount=12 action="">
+<#macro paginate nowPage=1 itemCount=1 pageItemCount=10 action="">
 
     <#local allPage = (itemCount / pageItemCount)?int >
     <#if (itemCount/pageItemCount > 0) >
