@@ -50,6 +50,7 @@
                             <th>仓库名称</th>
                             <th>商品分类</th>
                             <th>商品名称</th>
+                            <th>条形码</th>
                             <th>库存数量</th>
                             <th>库存预警</th>
                             <th>更新时间</th>
@@ -64,6 +65,7 @@
                                 <td>${stock.warehouseName}</td>
                                 <td>${stock.itemTypeName}</td>
                                 <td>${stock.itemName}</td>
+                                <td>${stock.barcode}</td>
                                 <td>${stock.storesNumber}</td>
                                 <td>${stock.warnNumber}</td>
                                 <td><#if stock.updateTime??>${stock.updateTime}<#else>--</#if></td>
@@ -107,7 +109,7 @@
         var xg=$(obj).html();
         var $tr = $(obj).parent().parent();
         console.log($tr);
-        var $td = $tr.find("td:eq(5)");
+        var $td = $tr.find("td:eq(6)");
         var tdTxt = $td.text();
         if(xg=='编辑'){
             $($td).html("<input type='text' name='editname' class='form-control' value="+tdTxt+" >");
