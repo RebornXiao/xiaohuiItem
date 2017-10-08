@@ -93,7 +93,11 @@
 <script type="text/javascript">
     $(document).ready(function () {
         function checkInput (obj){//检查表单是否有空项，空格验证方法待加
-            if(obj == "") {return false;} else {return true;}
+            if(obj == "") {
+                return false;
+            } else {
+                return true;
+            }
         }
         $("#saveBtn").on('click',function () {
             $(this).button('loading').delay(500).queue(function() {
@@ -105,7 +109,7 @@
                     "select": $("#supplierSelect").val(),
                     "time": $("#editSupplierTime").val(),
                     "sname": $("#saleName").val(),
-                    "phone": $("#salephone").val()
+                    "phone": $("#salePhone").val()
                 };
                 var input1 = checkInput(arr.name);
                 var input2 = checkInput(arr.address);
@@ -117,6 +121,7 @@
                     var url = "${base}/purchase/updateSupplier.do?id=${supplier.id}&supplierName="
                             + arr.name + "&address=" + arr.address + "&supplierType=" + arr.select + "&deliverPeriod="
                             + arr.time + "&salesmanName=" + arr.sname + "&phone=" + arr.phone;
+                    alert(url);
                     $.post(url, function (data) {
                         //重新刷新
                         console.log(data);

@@ -43,7 +43,7 @@
                                             </td>
                                             <#if warehouse.status=0>
                                                 <td style="background-color: #f9f9f9">停用原因</td>
-                                                <td>${warehouse.stopRemark}</td>
+                                                <td><#if warehouse.stopRemark!=''>${warehouse.stopRemark}<#else>无</#if></td>
                                             </#if>
                                         </tr>
                                         </tbody>
@@ -96,7 +96,7 @@
                                                 <td>${user.createTime}</td>
                                                 <td>${user.username}</td>
                                                 <td><#if user.remark!=''>${user.remark}<#else>无</#if></td>
-                                                <td><a>初始化密码</a><a>删除</a></td>
+                                                <td><a>重置密码</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a>删除</a></td>
                                             </tr>
                                             </#list>
                                         <#else>

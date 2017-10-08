@@ -22,8 +22,8 @@
                     </div>
                     <div class="form-group m-l-15">
                         <label>供应商属性：</label>
-                        <select id="supplierSelect" class="form-control" name="supplier">
-                            <option value="-1">选择供应商</option>
+                        <select id="supplierSelect" class="form-control" name="supplierType">
+                            <option value="-1">所有供应商</option>
                             <option value="1">一级供应商</option>
                             <option value="2">二级供应商</option>
                             <option value="3">品牌供应商</option>
