@@ -259,8 +259,8 @@
                 var sTxt2 = $(this).children("td:eq(1)").find('option:selected').text();
                 var sVal2 = $(this).children("td:eq(1)").find('select').val();
                 var code =  $(this).children("td:eq(2)").find('input').val();
-                var inputTxt1 = $(this).children("td:eq(2)").find('input').val();
-                var inputTxt2 = $(this).children("td:eq(3)").find('input').val();
+                var inputTxt1 = $(this).children("td:eq(3)").find('input').val();
+                var inputTxt2 = $(this).children("td:eq(4)").find('input').val();
                 itemIDs += sVal2 + ",";
                 itemNames += sTxt2 + ",";
                 itemTypeIDs += sVal1 + ",";

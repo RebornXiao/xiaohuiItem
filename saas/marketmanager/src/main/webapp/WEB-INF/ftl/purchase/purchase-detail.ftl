@@ -111,8 +111,8 @@
                                             <td>${commodity.barcode}</td>
                                             <td>${commodity.purchaseTime}</td>
                                             <td>${commodity.purchaseNumber}</td>
-                                            <td><#if commodity.depositTime=''>--<#else>${commodity.depositTime}</#if></td>
-                                            <td><#if commodity.depositNumber=0>--<#else>${commodity.depositNumber}</#if></td>
+                                            <td><#if commodity.depositTime??>${commodity.depositTime}<#else>--</#if></td>
+                                            <td><#if commodity.depositNumber??>${commodity.depositNumber}<#else>--</#if></td>
                                         </tr>
                                         </#list>
                                     <#else>

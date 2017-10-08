@@ -54,7 +54,7 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-12">
+                    <div class="col-sm-10">
                         <div class="advert_container">
                             <div  style="width: 50%">
                                 <h5 class="page-title" style="padding-top: 20px"><b>对接信息</b></h5>
@@ -64,7 +64,7 @@
                                         <thead>
                                         <tr>
                                             <td style="background-color: #f9f9f9;width: 30%">key</td>
-                                            <td style="background-color: #f9f9f9;">暂无对接信息</td>
+                                            <td style="background-color: #f9f9f9;"><#if warehouse.wmsKEY!=''>${warehouse.wmsKEY}<#else>暂无对接信息</#if></td>
                                         </tr>
                                         </thead>
                                     </table>
