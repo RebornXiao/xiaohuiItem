@@ -31,7 +31,7 @@
                                                 <select class="form-control" id="houseSelect">
                                                     <#if warehouseItem?exists >
                                                         <#list warehouseItem as warehouse>
-                                                            <option value="${warehouse.id?c}" <#if warehouseItem?exists && purchase?exists && warehouse.warehouseName == purchase.warehouse_name>selected</#if>>${warehouse.warehouseName}</option>
+                                                            <option value="${warehouse.warehouseCode}" <#if warehouseItem?exists && purchase?exists && warehouse.warehouseName == purchase.warehouse_name>selected</#if>>${warehouse.warehouseName}</option>
                                                         </#list>
                                                     </#if>
                                                 </select>
@@ -40,7 +40,7 @@
                                                 <select class="form-control" id="houseSelect">
                                                     <#if warehouseItem?exists >
                                                         <#list warehouseItem as warehouse>
-                                                            <option value="${warehouse.id?c}" <#if warehouseItem?exists && purchase?exists && warehouse.warehouseName == purchase.warehouse_name>selected</#if>>${warehouse.warehouseName}</option>
+                                                            <option value="${warehouse.warehouseCode}" <#if warehouseItem?exists && purchase?exists && warehouse.warehouseName == purchase.warehouse_name>selected</#if>>${warehouse.warehouseName}</option>
                                                         </#list>
                                                     </#if>
                                                 </select>
