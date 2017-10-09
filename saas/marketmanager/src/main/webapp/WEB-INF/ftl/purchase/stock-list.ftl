@@ -113,11 +113,8 @@
         var tdTxt = $td.text();
         if(xg=='编辑'){
             $($td).html("<input type='text' style='border: 1px solid #e69900' name='editname' class='form-control' value="+tdTxt+" >");
-            $td.children().focus();//文本框获得焦点
             var result=$td.children().val();//对input取值
-            $td.children().val("")//使input的值为空
-            $td.children().val(result);//重新负值
-            $td.children()[0].scrollLeft=700;//光标偏移
+            $td.children().val("").focus().val(result);//清空值获焦再赋值
             $(obj).addClass('btn-warning');
             $(obj).removeClass('btn-primary');
             $(obj).html('保存');
