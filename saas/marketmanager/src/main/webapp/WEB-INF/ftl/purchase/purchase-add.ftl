@@ -119,8 +119,10 @@
                                 </table>
                             </div>
                             <div class="m-t-40">
-                                <button id="saveBtn" type="button" class="btn btn-primary col-md-1 statusBtn">提交</button>
-                                <button id="backBtn" type="button" class="btn btn-warning statusBtn">保存草稿</button>
+                                <div class="pull-right">
+                                    <button id="backBtn" type="button" class="btn btn-warning statusBtn pull-left">保存草稿</button>
+                                    <button id="saveBtn" type="button" class="btn btn-primary statusBtn pull-right">提交</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -131,8 +133,14 @@
 </div>
 <script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
 <script type="text/javascript">
+    function checkInput (obj,num){//检查表单是否有空项，空格验证方法待加
+        if(obj == "") {
+            return false;
+        } else {
+            return true;
+        }
+    }
     function addTr2(tab, row){
-
         var trHtml="<tr><td>" +
                 "<select class='form-control' onchange='changeSelect(this)'>" +
                 "<option value=''>请选择商品分类</option>" +
@@ -239,7 +247,9 @@
             var barcodes = "";//条形码
             var purchaseDates = "";//商品采购时间
             var purchaseNumbers = "";//商品采购数量
+            var index = 0;
             $("#tab tr").each(function() {
+                index+=1;
                 var sTxt1 = $(this).children("td:eq(0)").find('option:selected').text();
                 var sVal1 = $(this).children("td:eq(0)").find('select').val();
                 var sTxt2 = $(this).children("td:eq(1)").find('option:selected').text();
@@ -247,6 +257,8 @@
                 var code =  $(this).children("td:eq(2)").find('input').val();
                 var inputTxt1 = $(this).children("td:eq(3)").find('input').val();
                 var inputTxt2 = $(this).children("td:eq(4)").find('input').val();
+
+                checkInput(inputTxt1,index);
                 itemIDs += sVal2 + ",";
                 itemNames += sTxt2 + ",";
                 itemTypeIDs += sVal1 + ",";
@@ -267,6 +279,7 @@
             var para1 = "?warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs
                         +"&itemTypeTitles="+itemTypeTitles+"&purchaseTimes="+purchaseDates+"&purchaseNumbers="+purchaseNumbers+"&status=1&barcodes="+barcodes;
             var eleId = $(this).attr('id');
+            console.log(para1);
             if(eleId=='saveBtn'){
                 $.post("${base}/purchase/savePurchase.do"+para1, function (data) {//提交
                     //重新刷新

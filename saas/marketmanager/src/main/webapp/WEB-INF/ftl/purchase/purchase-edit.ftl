@@ -139,8 +139,14 @@
                                 </table>
                             </div>
                             <div class="m-t-40">
-                                <button id="saveBtn" type="button" class="btn btn-primary col-md-1 statusBtn">提交</button>
-                                <button id="backBtn" type="button" class="btn btn-warning statusBtn">保存草稿</button>
+                                <#if purchase.status=1>
+                                    <button id="saveBtn" type="button" class="btn btn-primary col-md-1 statusBtn pull-right">提交</button>
+                                <#else>
+                                    <div class="pull-right">
+                                        <button id="saveBtn" type="button" class="btn btn-primary statusBtn pull-left">提交</button>
+                                        <button id="backBtn" type="button" class="btn btn-warning statusBtn pull-right">保存草稿</button>
+                                    </div>
+                                </#if>
                             </div>
                         </div>
                     </div>
