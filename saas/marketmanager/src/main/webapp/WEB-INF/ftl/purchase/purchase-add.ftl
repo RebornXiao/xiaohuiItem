@@ -316,7 +316,7 @@
                     var eleId = $(this).attr('id');
                     console.log(para1);
                     if(eleId=='saveBtn'){
-                        $.post("${base}/purchase/savePurchase.do"+para, function (data) {//提交
+                        $.post("${base}/purchase/savePurchase.do"+para1, function (data) {//提交
                             //重新刷新
                             console.log(data);
                             if (data.code == "0") {
