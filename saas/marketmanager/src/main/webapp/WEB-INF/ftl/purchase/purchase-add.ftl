@@ -133,8 +133,33 @@
 </div>
 <script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
 <script type="text/javascript">
-    function checkInput (obj,num){//检查表单是否有空项，空格验证方法待加
+    function checkTypeSelect (obj,num,that){//检查表单是否有空项
         if(obj == "") {
+            $(that).children("td:eq(0)").find('select').css("border","1px solid red");
+            return false;
+        } else {
+            return true;
+        }
+    }
+    function checkTitleSelect (obj,num,that){//检查表单是否有空项
+        if(obj == "") {
+            $(that).children("td:eq(1)").find('select').css("border","1px solid red");
+            return false;
+        } else {
+            return true;
+        }
+    }
+    function checkTimeInput (obj,num,that){//检查表单是否有空项，空格验证方法待加
+        if(obj == "") {
+            $(that).children("td:eq(3)").find('input').css("border","1px solid red");
+            return false;
+        } else {
+            return true;
+        }
+    }
+    function checkNumInput (obj,num,that){//检查表单是否有空项，空格验证方法待加
+        if(obj == "") {
+            $(that).children("td:eq(4)").find('input').css("border","1px solid red");
             return false;
         } else {
             return true;
@@ -236,8 +261,7 @@
        $($se).parent().parent().find("td:eq(2)").find('input').val(_code);
     }
     $(document).ready(function () {
-        //提交
-        $(".statusBtn").click(function () {
+        $(".statusBtn").click(function () {//提交
             var warehouseID = $("#houseSelect").val();//仓库id
             var supplierID = $("#supplierSelect").val();//供应商id
             var itemIDs = "";//商品id
@@ -247,67 +271,81 @@
             var barcodes = "";//条形码
             var purchaseDates = "";//商品采购时间
             var purchaseNumbers = "";//商品采购数量
-            var index = 0;
-            $("#tab tr").each(function() {
-                index+=1;
-                var sTxt1 = $(this).children("td:eq(0)").find('option:selected').text();
-                var sVal1 = $(this).children("td:eq(0)").find('select').val();
-                var sTxt2 = $(this).children("td:eq(1)").find('option:selected').text();
-                var sVal2 = $(this).children("td:eq(1)").find('select').val();
-                var code =  $(this).children("td:eq(2)").find('input').val();
-                var inputTxt1 = $(this).children("td:eq(3)").find('input').val();
-                var inputTxt2 = $(this).children("td:eq(4)").find('input').val();
-
-                checkInput(inputTxt1,index);
-                itemIDs += sVal2 + ",";
-                itemNames += sTxt2 + ",";
-                itemTypeIDs += sVal1 + ",";
-                itemTypeTitles += sTxt1 + ",";
-                barcodes += code + ",";
-                purchaseDates += inputTxt1 + ",";
-                purchaseNumbers += inputTxt2 + ",";
-            });
-            itemIDs = itemIDs.length > 0 ? itemIDs.substring(0, itemIDs.length - 1) : "";
-            itemNames = itemNames.length > 0 ? itemNames.substring(0, itemNames.length - 1) : "";
-            itemTypeIDs = itemTypeIDs.length > 0 ? itemTypeIDs.substring(0, itemTypeIDs.length - 1) : "";
-            itemTypeTitles = itemTypeTitles.length > 0 ? itemTypeTitles.substring(0, itemTypeTitles.length - 1) : "";
-            barcodes = barcodes.length > 0 ? barcodes.substring(0, barcodes.length - 1) : "";
-            purchaseDates = purchaseDates.length > 0 ? purchaseDates.substring(0, purchaseDates.length - 1) : "";
-            purchaseNumbers = purchaseNumbers.length > 0 ? purchaseNumbers.substring(0, purchaseNumbers.length - 1) : "";
-            var para0 = "?warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs
-                        +"&itemTypeTitles="+itemTypeTitles+"&purchaseTimes="+purchaseDates+"&purchaseNumbers="+purchaseNumbers+"&status=0&barcodes="+barcodes;
-            var para1 = "?warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs
-                        +"&itemTypeTitles="+itemTypeTitles+"&purchaseTimes="+purchaseDates+"&purchaseNumbers="+purchaseNumbers+"&status=1&barcodes="+barcodes;
-            var eleId = $(this).attr('id');
-            console.log(para1);
-            if(eleId=='saveBtn'){
-                $.post("${base}/purchase/savePurchase.do"+para1, function (data) {//提交
-                    //重新刷新
-                    console.log(data);
-                    if (data.code == "0") {
-                        swal("提示", "添加成功", "success");
-                        setTimeout(function () {
-                            location.href="${base}/purchase/purchasePage.do"
-                        }, 1000);
-                    } else {
-                        swal("提示", data.msg, "error");
+            var index = 0;//行数
+            var c1 = false;
+            var c2 = false;
+            var c3 = false;
+            var c4 = false;
+            if((warehouseID || supplierID) ==''){
+                swal("提示","仓库名称和供应商名称不能为空", "error");
+            }else{
+                $("#tab tr").each(function() {
+                    index+=1;
+                    var that = this;
+                    var sTxt1 = $(this).children("td:eq(0)").find('option:selected').text();
+                    var sVal1 = $(this).children("td:eq(0)").find('select').val();
+                    var sTxt2 = $(this).children("td:eq(1)").find('option:selected').text();
+                    var sVal2 = $(this).children("td:eq(1)").find('select').val();
+                    var code =  $(this).children("td:eq(2)").find('input').val();
+                    var inputTxt1 = $(this).children("td:eq(3)").find('input').val();
+                    var inputTxt2 = $(this).children("td:eq(4)").find('input').val();
+                    c1 = checkTypeSelect(sVal1,index,that);
+                    c2 = checkTitleSelect(sVal2,index,that);
+                    c3 = checkTimeInput(inputTxt1,index,that);
+                    c4 = checkNumInput(inputTxt2,index,that);
+                    itemIDs += sVal2 + ",";
+                    itemNames += sTxt2 + ",";
+                    itemTypeIDs += sVal1 + ",";
+                    itemTypeTitles += sTxt1 + ",";
+                    barcodes += code + ",";
+                    purchaseDates += inputTxt1 + ",";
+                    purchaseNumbers += inputTxt2 + ",";
+                });
+                if((c1 && c2 && c3 && c4) == true){
+                    itemIDs = itemIDs.length > 0 ? itemIDs.substring(0, itemIDs.length - 1) : "";
+                    itemNames = itemNames.length > 0 ? itemNames.substring(0, itemNames.length - 1) : "";
+                    itemTypeIDs = itemTypeIDs.length > 0 ? itemTypeIDs.substring(0, itemTypeIDs.length - 1) : "";
+                    itemTypeTitles = itemTypeTitles.length > 0 ? itemTypeTitles.substring(0, itemTypeTitles.length - 1) : "";
+                    barcodes = barcodes.length > 0 ? barcodes.substring(0, barcodes.length - 1) : "";
+                    purchaseDates = purchaseDates.length > 0 ? purchaseDates.substring(0, purchaseDates.length - 1) : "";
+                    purchaseNumbers = purchaseNumbers.length > 0 ? purchaseNumbers.substring(0, purchaseNumbers.length - 1) : "";
+                    var para0 = "?warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs
+                                +"&itemTypeTitles="+itemTypeTitles+"&purchaseTimes="+purchaseDates+"&purchaseNumbers="+purchaseNumbers+"&status=0&barcodes="+barcodes;
+                    var para1 = "?warehouseCode="+warehouseID+"&supplierID="+supplierID+"&itemIDs="+itemIDs+"&itemNames="+itemNames+"&itemTypeIDs="+itemTypeIDs
+                                +"&itemTypeTitles="+itemTypeTitles+"&purchaseTimes="+purchaseDates+"&purchaseNumbers="+purchaseNumbers+"&status=1&barcodes="+barcodes;
+                    var eleId = $(this).attr('id');
+                    console.log(para1);
+                    if(eleId=='saveBtn'){
+                        $.post("${base}/purchase/savePurchase.do"+para, function (data) {//提交
+                            //重新刷新
+                            console.log(data);
+                            if (data.code == "0") {
+                                swal("提示", "添加成功", "success");
+                                setTimeout(function () {
+                                    location.href="${base}/purchase/purchasePage.do"
+                                }, 1000);
+                            } else {
+                                swal("提示", data.msg, "error");
+                            }
+                        }, "json");
+                    }else {
+                        $.post("${base}/purchase/savePurchase.do"+para0, function (data) {//保存草稿
+                            //重新刷新
+                            console.log(data);
+                            if (data.code == "0") {
+                                swal("提示", "保存成功", "success");
+                                setTimeout(function () {
+                                    location.href="${base}/purchase/purchasePage.do"
+                                }, 1000);
+                            } else {
+                                swal("提示", data.msg, "error");
+                            }
+                        }, "json");
                     }
-                }, "json");
-            }else {
-                $.post("${base}/purchase/savePurchase.do"+para0, function (data) {//保存草稿
-                    //重新刷新
-                    console.log(data);
-                    if (data.code == "0") {
-                        swal("提示", "保存成功", "success");
-                        setTimeout(function () {
-                            location.href="${base}/purchase/purchasePage.do"
-                        }, 1000);
-                    } else {
-                        swal("提示", data.msg, "error");
-                    }
-                }, "json");
+                }else{
+                    swal("提示", "请填写完整信息", "error");
+                }
             }
         });
-
     });
 </script>
