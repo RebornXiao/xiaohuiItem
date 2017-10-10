@@ -44,7 +44,7 @@
       AND item_name like "%"#{itemName}"%"
     </if>
     <if test="barcode!=null">
-      AND barcode =like "%"#{barcode}"%"
+      AND barcode like "%"#{barcode}"%"
     </if>
   </select>
 

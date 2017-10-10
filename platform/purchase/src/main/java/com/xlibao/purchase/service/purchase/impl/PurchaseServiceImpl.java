@@ -19,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static com.alibaba.fastjson.JSON.parseObject;
@@ -440,6 +437,14 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         long supplierID = getLongParameter("supplierID",-1);
         int status = getIntParameter("status", -1);
 
+        String  itemIDs= getUTF("itemIDs","");
+        String  itemTypeIDs= getUTF("itemTypeIDs","");
+        String  itemNames= getUTF("itemNames","");
+        String  itemTypeTitles= getUTF("itemTypeTitles","");
+        String  barcodes= getUTF("barcodes","");
+        String  purchaseTimes= getUTF("purchaseTimes","");
+        String  purchaseNumbers= getUTF("purchaseNumbers","");
+
         if(warehouseCode == null){
             return fail("缺少仓库编码warehouseCode");
         }else if(supplierID == -1){
@@ -453,13 +458,39 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         purchaseEntry.setStatus(status);
 
         if (purchaseDataAccessManager.savePurchase(purchaseEntry) > 0) {
+            try {
+            //添加采购单成功再添加采购物品
+                String []  itemIDList= itemIDs.split(CommonUtils.SPLIT_COMMA);
+                String [] itemTypeIDList= itemTypeIDs.split(CommonUtils.SPLIT_COMMA);
+                String [] itemNameList= itemNames.split(CommonUtils.SPLIT_COMMA);
+                String [] itemTypeTitleList= itemTypeTitles.split(CommonUtils.SPLIT_COMMA);
+                String [] barcodeList= barcodes.split(CommonUtils.SPLIT_COMMA);
+                String [] purchaseTimeList= purchaseTimes.split(CommonUtils.SPLIT_COMMA);
+                String [] purchaseNumberList=purchaseNumbers.split(CommonUtils.SPLIT_COMMA);
+                for (int i = 0; i < itemIDList.length; i++) {
+                    PurchaseCommodity purchaseCommodity = new PurchaseCommodity();
+                    purchaseCommodity.setPurchaseId(purchaseEntry.getId());
+                    purchaseCommodity.setItemId(Long.parseLong(itemIDList[i]));
+                    purchaseCommodity.setItemName(itemNameList[i].trim());
+                    purchaseCommodity.setItemTypeId(Long.parseLong(itemTypeIDList[i]));
+                    purchaseCommodity.setItemTypeTitle(itemTypeTitleList[i].trim());
+                    purchaseCommodity.setBarcode(barcodeList[i]);
+                    purchaseCommodity.setPurchaseNumber(Integer.parseInt(purchaseNumberList[i]));
+                    purchaseCommodity.setPurchaseTime(purchaseTimeList[i]);
+
+                    if (purchaseDataAccessManager.savePurchaseCommodity(purchaseCommodity) <= 0) {
+                        return fail("添加订单商品失败");
+                    }
+                }
+            } catch (Exception ex) {
+                throw new RuntimeException("添加订单商品失败");
+            }
             JSONObject response = new JSONObject();
             response.put("purchaseID",purchaseEntry.getId());
             return success("添加成功",response);
         }
-        return fail("添加失败");
+        return fail("订单添加失败");
     }
-
     @Override
     public JSONObject savePurchaseCommodity() {
         long purchaseID = getLongParameter("purchaseID",-1);
@@ -511,6 +542,14 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         long supplierID = getLongParameter("supplierID",-1);
         int status = getIntParameter("status", -1);
 
+        String  itemIDs= getUTF("itemIDs","");
+        String  itemTypeIDs= getUTF("itemTypeIDs","");
+        String  itemNames= getUTF("itemNames","");
+        String  itemTypeTitles= getUTF("itemTypeTitles","");
+        String  barcodes= getUTF("barcodes","");
+        String  purchaseTimes= getUTF("purchaseTimes","");
+        String  purchaseNumbers= getUTF("purchaseNumbers","");
+
         if(id == -1){
             return fail("缺少采购单id");
         }else if(warehouseCode == null){
@@ -528,9 +567,40 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         purchaseEntry.setUpdateTime(DateUtil.getNowDate());
 
         if (purchaseDataAccessManager.updatePurchase(purchaseEntry) > 0) {
-            return success("修改成功");
+            //删除采购单下的物品
+            purchaseDataAccessManager.delPurchaseCommodity(id);
+            try{
+                //添加采购单成功再添加采购物品
+                String []  itemIDList= itemIDs.split(CommonUtils.SPLIT_COMMA);
+                String [] itemTypeIDList= itemTypeIDs.split(CommonUtils.SPLIT_COMMA);
+                String [] itemNameList= itemNames.split(CommonUtils.SPLIT_COMMA);
+                String [] itemTypeTitleList= itemTypeTitles.split(CommonUtils.SPLIT_COMMA);
+                String [] barcodeList= barcodes.split(CommonUtils.SPLIT_COMMA);
+                String [] purchaseTimeList= purchaseTimes.split(CommonUtils.SPLIT_COMMA);
+                String [] purchaseNumberList=purchaseNumbers.split(CommonUtils.SPLIT_COMMA);
+                for (int i = 0; i < itemIDList.length; i++) {
+                    PurchaseCommodity purchaseCommodity = new PurchaseCommodity();
+                    purchaseCommodity.setPurchaseId(purchaseEntry.getId());
+                    purchaseCommodity.setItemId(Long.parseLong(itemIDList[i]));
+                    purchaseCommodity.setItemName(itemNameList[i].trim());
+                    purchaseCommodity.setItemTypeId(Long.parseLong(itemTypeIDList[i]));
+                    purchaseCommodity.setItemTypeTitle(itemTypeTitleList[i].trim());
+                    purchaseCommodity.setBarcode(barcodeList[i]);
+                    purchaseCommodity.setPurchaseNumber(Integer.parseInt(purchaseNumberList[i]));
+                    purchaseCommodity.setPurchaseTime(purchaseTimeList[i]);
+
+                    if (purchaseDataAccessManager.savePurchaseCommodity(purchaseCommodity) <= 0) {
+                        return fail("修改订单商品失败");
+                    }
+                }
+            } catch (Exception ex) {
+                throw new RuntimeException("修改订单商品失败");
+            }
+            JSONObject response = new JSONObject();
+            response.put("purchaseID",purchaseEntry.getId());
+            return success("更新订单成功",response);
         }
-        return fail("修改失败");
+        return fail("更新订单失败");
     }
     @Override
     public JSONObject delPurchaseCommodity() {
