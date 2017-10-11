@@ -50,7 +50,7 @@
                             <th>仓库编码</th>
                             <th>名称</th>
                             <th>地址</th>
-                            <th>仓管员/位</th>
+                            <#--<th>仓管员/位</th>-->
                             <th>状态</th>
                             <th>操作</th>
                         </tr>
@@ -62,11 +62,11 @@
                                 <td>${house.warehouseCode}</td>
                                 <td>${house.warehouseName}</td>
                                 <td>${house.address}</td>
-                                <td>${house.userCount}</td>
+                                <#--<td>${house.userCount}</td>-->
                                 <#if house.status=1>
                                     <td><b>正常</b></td>
                                     <td>
-                                        <button id="addBtn" type="button" class="btn btn-primary btn-sm" data_id="${house.id}">添加仓管</button>
+                                        <#--<button id="addBtn" type="button" class="btn btn-primary btn-sm" data_id="${house.id}">添加仓管</button>-->
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${house.id}">查看</button>
                                         <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${house.id}">编辑</button>
                                         <button id="stopBtn" type="button" class="btn btn-danger btn-sm" data_id="${house.id}" status="${house.status}">停用</button>

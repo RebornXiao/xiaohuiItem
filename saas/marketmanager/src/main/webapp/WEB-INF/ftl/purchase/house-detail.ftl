@@ -73,48 +73,81 @@
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-sm-12">
-                        <div class="advert_container">
-                            <div>
-                                <h5 class="page-title" style="padding-top: 20px"><b>仓管员信息</b></h5>
-                                <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
-                                <div class="table-responsive advert_detail_table">
-                                    <table class="table table-bordered">
-                                        <thead>
-                                        <tr>
-                                            <th style="background-color: #f9f9f9">创建时间</th>
-                                            <th style="background-color: #f9f9f9">账号</th>
-                                            <th style="background-color: #f9f9f9">备注</th>
-                                            <th style="background-color: #f9f9f9">操作</th>
-                                        </tr>
-                                        </thead>
-                                        <tbody>
-                                        <#if (users?size > 0)>
-                                            <#list users as user>
-                                            <tr>
-                                                <td>${user.createTime}</td>
-                                                <td>${user.username}</td>
-                                                <td><#if user.remark!=''>${user.remark}<#else>无</#if></td>
-                                                <td><a>重置密码</a>&nbsp;&nbsp;|&nbsp;&nbsp;<a>删除</a></td>
-                                            </tr>
-                                            </#list>
-                                        <#else>
-                                            <tr>
-                                                <td colSpan="11" height="100px">
-                                                    <p class="text-center" style="line-height: 100px">该仓库没有分配仓管员</p>
-                                                </td>
-                                            </tr>
-                                        </#if>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <#--<div class="row">-->
+                    <#--<div class="col-sm-12">-->
+                        <#--<div class="advert_container">-->
+                            <#--<div>-->
+                                <#--<h5 class="page-title" style="padding-top: 20px"><b>仓管员信息</b></h5>-->
+                                <#--<hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>-->
+                                <#--<div class="table-responsive advert_detail_table">-->
+                                    <#--<table class="table table-bordered">-->
+                                        <#--<thead>-->
+                                        <#--<tr>-->
+                                            <#--<th style="background-color: #f9f9f9">创建时间</th>-->
+                                            <#--<th style="background-color: #f9f9f9">账号</th>-->
+                                            <#--<th style="background-color: #f9f9f9">备注</th>-->
+                                            <#--<th style="background-color: #f9f9f9">操作</th>-->
+                                        <#--</tr>-->
+                                        <#--</thead>-->
+                                        <#--<tbody>-->
+                                        <#--<#if (users?size > 0)>-->
+                                            <#--<#list users as user>-->
+                                            <#--<tr>-->
+                                                <#--<td>${user.createTime}</td>-->
+                                                <#--<td>${user.username}</td>-->
+                                                <#--<td><#if user.remark!=''>${user.remark}<#else>无</#if></td>-->
+                                                <#--<td><button id="resetBtn">重置密码</button>&nbsp;&nbsp;<button id="deleBtn">删除</button></td>-->
+                                            <#--</tr>-->
+                                            <#--</#list>-->
+                                        <#--<#else>-->
+                                            <#--<tr>-->
+                                                <#--<td colSpan="11" height="100px">-->
+                                                    <#--<p class="text-center" style="line-height: 100px">该仓库没有分配仓管员</p>-->
+                                                <#--</td>-->
+                                            <#--</tr>-->
+                                        <#--</#if>-->
+                                        <#--</tbody>-->
+                                    <#--</table>-->
+                                <#--</div>-->
+                            <#--</div>-->
+                        <#--</div>-->
+                    <#--</div>-->
+                <#--</div>-->
             </div>
         </div>
     </div>
 </div>
-
+<script type="text/javascript">
+    <#--$(document).ready(function () {-->
+        <#--<#if (warehouse?exists)>-->
+            <#--$("#resetBtn").on('click',function () {-->
+                <#--$.post("${base}/purchase/resetWarehouseUserPwd.do?id=${warehouse.id}&password=", function (data) {//提交-->
+                    <#--//重新刷新-->
+                    <#--console.log(data);-->
+                    <#--if (data.code == "0") {-->
+                        <#--swal("提示", "更新成功", "success");-->
+                        <#--setTimeout(function () {-->
+                            <#--location.reload()-->
+                        <#--}, 1000);-->
+                    <#--} else {-->
+                        <#--swal("提示", data.msg, "error");-->
+                    <#--}-->
+                <#--}, "json");-->
+            <#--});-->
+            <#--$("#deleBtn").on('click',function () {-->
+                <#--$.post("${base}/purchase/deleteWarehouseUser.do?id=${warehouse.id}", function (data) {//提交-->
+                    <#--//重新刷新-->
+                    <#--console.log(data);-->
+                    <#--if (data.code == "0") {-->
+                        <#--swal("提示", "删除成功", "success");-->
+                        <#--setTimeout(function () {-->
+                            <#--location.reload()-->
+                        <#--}, 1000);-->
+                    <#--} else {-->
+                        <#--swal("提示", data.msg, "error");-->
+                    <#--}-->
+                <#--}, "json");-->
+            <#--});-->
+        <#--</#if>-->
+    <#--});-->
+</script>
