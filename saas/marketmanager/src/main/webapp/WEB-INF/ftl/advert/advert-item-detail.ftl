@@ -30,26 +30,19 @@
                                         <#if advert?exists>
                                             <tbody>
                                             <tr>
-                                                <td style="background-color: #f9f9f9">广告标题</td>
+                                                <td style="background-color: #f9f9f9;width: 20%">广告标题</td>
                                                 <td>${advert.title}</td>
-                                                <td style="background-color: #f9f9f9">广告状态</td>
-                                                <td><#if advert.isDelete=0>未删除<#else>已删除</#if></td>
-                                            </tr>
-                                            </tbody>
-                                            <tbody>
-                                            <tr>
-                                                <td style="background-color: #f9f9f9">广告时长</td>
+                                                <#--<td style="background-color: #f9f9f9">广告状态</td>-->
+                                                <#--<td><#if advert.isDelete=0>未删除<#else>已删除</#if></td>-->
+                                                <td style="background-color: #f9f9f9;width: 20%">广告时长</td>
                                                 <td>${advert.timeSize}</td>
+                                            </tr>
+                                            <tr>
                                                 <td style="background-color: #f9f9f9">创建时间</td>
                                                 <td>${advert.createTime}</td>
+                                                <td style="background-color: #f9f9f9;width: 20%">广告备注</td>
+                                                <td style="width: 40%"><#if advert.remark!=''>${advert.remark}<#else>无</#if></td>
                                             </tr>
-                                            </tbody>
-                                            <tbody>
-                                            <tr>
-                                                <td style="background-color: #f9f9f9">广告备注</td>
-                                                <td colspan="3"><#if advert.remark!=''>${advert.remark}<#else>无</#if></td>
-                                            </tr>
-                                            </tbody>
                                         </#if>
                                     </table>
                                 </div>
