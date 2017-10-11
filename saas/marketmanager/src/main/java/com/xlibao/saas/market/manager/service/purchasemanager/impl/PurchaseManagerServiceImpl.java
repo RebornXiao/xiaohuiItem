@@ -140,38 +140,21 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
         parameters.put("warehouseCode", warehouseCode);
         parameters.put("status", String.valueOf(status));
 
+        parameters.put("itemIDs", itemIDs);
+        parameters.put("itemTypeIDs", itemTypeIDs);
+        parameters.put("itemNames", itemNames);
+        parameters.put("itemTypeTitles", itemTypeTitles);
+        parameters.put("barcodes", barcodes);
+        parameters.put("purchaseTimes", purchaseTimes);
+        parameters.put("purchaseNumbers", purchaseNumbers);
+
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/savePurchase.do";
             JSONObject response = executor(url, parameters);
-            //添加采购单成功再添加采购物品
-            if (response.getIntValue("code")==0) {
-                JSONObject purchaseResp = response.getJSONObject("response");
-                long purchaseID = purchaseResp.getLongValue("purchaseID");
-                String []  itemIDList= itemIDs.split(CommonUtils.SPLIT_COMMA);
-                String [] itemTypeIDList= itemTypeIDs.split(CommonUtils.SPLIT_COMMA);
-                String [] itemNameList= itemNames.split(CommonUtils.SPLIT_COMMA);
-                String [] itemTypeTitleList= itemTypeTitles.split(CommonUtils.SPLIT_COMMA);
-                String [] barcodeList= barcodes.split(CommonUtils.SPLIT_COMMA);
-                String [] purchaseTimeList= purchaseTimes.split(CommonUtils.SPLIT_COMMA);
-                String [] purchaseNumberList=purchaseNumbers.split(CommonUtils.SPLIT_COMMA);
-                for (int i = 0; i < itemIDList.length; i++) {
-                    Map<String, String> parameters2 = new HashMap<>();
-                    parameters2.put("purchaseID", String.valueOf(purchaseID));
-                    parameters2.put("itemID", itemIDList[i]);
-                    parameters2.put("itemTypeID", itemTypeIDList[i]);
-                    parameters2.put("itemName", itemNameList[i].trim());
-                    parameters2.put("itemTypeTitle", itemTypeTitleList[i].trim());
-                    parameters2.put("barcode", barcodeList[i]);
-                    parameters2.put("purchaseTime", purchaseTimeList[i]);
-                    parameters2.put("purchaseNumber", purchaseNumberList[i]);
-                    //调用添加接口
-                    savePurchaseCommodity(parameters2);
-                }
-            }
+            return response;
         }catch (XlibaoIllegalArgumentException ex){
             throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
-        return success("添加成功");
     }
     @Override
     public JSONObject savePurchaseCommodity(Map<String, String> parameters) {
@@ -249,38 +232,21 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
         parameters.put("warehouseCode", warehouseCode);
         parameters.put("status", String.valueOf(status));
 
+        parameters.put("itemIDs", itemIDs);
+        parameters.put("itemTypeIDs", itemTypeIDs);
+        parameters.put("itemNames", itemNames);
+        parameters.put("itemTypeTitles", itemTypeTitles);
+        parameters.put("barcodes", barcodes);
+        parameters.put("purchaseTimes", purchaseTimes);
+        parameters.put("purchaseNumbers", purchaseNumbers);
+
         try {
             String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "purchase/updatePurchase.do";
             JSONObject response = executor(url, parameters);
-            //删除采购单下的物品
-            delPurchaseCommodity(id);
-            //添加采购单成功再添加采购物品
-            if (response.getIntValue("code")==0) {
-                String []  itemIDList= itemIDs.split(CommonUtils.SPLIT_COMMA);
-                String [] itemTypeIDList= itemTypeIDs.split(CommonUtils.SPLIT_COMMA);
-                String [] itemNameList= itemNames.split(CommonUtils.SPLIT_COMMA.trim());
-                String [] itemTypeTitleList= itemTypeTitles.split(CommonUtils.SPLIT_COMMA.trim());
-                String [] barcodeList= barcodes.split(CommonUtils.SPLIT_COMMA);
-                String [] purchaseTimeList= purchaseTimes.split(CommonUtils.SPLIT_COMMA);
-                String [] purchaseNumberList=purchaseNumbers.split(CommonUtils.SPLIT_COMMA);
-                for (int i = 0; i < itemIDList.length; i++) {
-                    Map<String, String> parameters2 = new HashMap<>();
-                    parameters2.put("purchaseID", String.valueOf(id));
-                    parameters2.put("itemID", itemIDList[i]);
-                    parameters2.put("itemTypeID", itemTypeIDList[i]);
-                    parameters2.put("itemName", itemNameList[i].trim());
-                    parameters2.put("itemTypeTitle", itemTypeTitleList[i].trim());
-                    parameters2.put("barcode", barcodeList[i]);
-                    parameters2.put("purchaseTime", purchaseTimeList[i]);
-                    parameters2.put("purchaseNumber", purchaseNumberList[i]);
-                    //调用添加接口
-                    savePurchaseCommodity(parameters2);
-                }
-            }
+            return response;
         }catch (XlibaoIllegalArgumentException ex){
             throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
-        return success("添加成功");
     }
 
     @Override
