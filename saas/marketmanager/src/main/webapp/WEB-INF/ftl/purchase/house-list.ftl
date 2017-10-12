@@ -134,19 +134,19 @@
         $("#houseInfoTable").find('button[id=addBtn]').each(function () {//添加仓管员
             var that = this;
             $(this).on('click', function () {
-                location.href = "${base}/purchase/warehouseUserAdd.do?id="+$(that).attr("data_id");
+                open({url:"${base}/purchase/warehouseUserAdd.do?id="+$(that).attr("data_id")});
             });
         });
         $("#houseInfoTable").find('button[id=lookBtn]').each(function () {//查看
             var that = this;
             $(this).on('click', function () {
-                location.href = "${base}/purchase/warehouseDetail.do?id="+$(that).attr("data_id");
+                open({url:"${base}/purchase/warehouseDetail.do?id="+$(that).attr("data_id")});
             });
         });
         $("#houseInfoTable").find('button[id=editBtn]').each(function () {//编辑
             var that = this;
             $(this).on('click', function () {
-                location.href = "${base}/purchase/warehouseEdit.do?id="+$(that).attr("data_id");
+                open({url:"${base}/purchase/warehouseEdit.do?id="+$(that).attr("data_id")});
             });
         });
         $("#houseInfoTable").find('button[id=stopBtn]').each(function () {//停用

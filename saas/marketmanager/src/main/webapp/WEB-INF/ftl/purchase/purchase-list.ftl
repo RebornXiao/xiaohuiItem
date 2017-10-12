@@ -148,13 +148,13 @@
         $("#purchaseInfoTable").find('button[id=lookBtn]').each(function () {
             var that = this;
             $(this).on('click', function () {
-                location.href = "${base}/purchase/purchaseDetail.do?id="+$(that).attr("data_id")+"&purchaseID="+$(that).attr("data_id");
+                open({url:"${base}/purchase/purchaseDetail.do?id="+$(that).attr("data_id")+"&purchaseID="+$(that).attr("data_id")});
             });
         });
         $("#purchaseInfoTable").find('button[id=editBtn]').each(function () {
             var that = this;
             $(this).on('click', function () {
-                location.href = "${base}/purchase/purchaseEdit.do?id="+$(that).attr("data_id")+"&purchaseID="+$(that).attr("data_id");
+                open({url:"${base}/purchase/purchaseEdit.do?id="+$(that).attr("data_id")+"&purchaseID="+$(that).attr("data_id")});
             });
         });
         $("#purchaseInfoTable").find('button[id=deleBtn]').each(function () {

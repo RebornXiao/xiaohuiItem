@@ -143,13 +143,13 @@
             $("#supplierInfoTable").find('button[id=lookBtn]').each(function () {
                 var that = this;
                 $(this).on('click', function () {
-                    location.href = "${base}/purchase/supplierDetail.do?id="+$(that).attr("data_id");
+                    open({url:"${base}/purchase/supplierDetail.do?id="+$(that).attr("data_id")});
                 });
             });
             $("#supplierInfoTable").find('button[id=editBtn]').each(function () {
                 var that = this;
                 $(this).on('click', function () {
-                    location.href = "${base}/purchase/supplierEdit.do?id="+$(that).attr("data_id");
+                    open({url:"${base}/purchase/supplierEdit.do?id="+$(that).attr("data_id")});
                 });
             });
             $("#supplierInfoTable").find('button[id=enableBtn]').each(function () {
