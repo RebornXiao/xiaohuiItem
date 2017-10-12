@@ -341,7 +341,7 @@
             var c2 = false;
             var c3 = false;
             var c4 = false;
-            if((warehouseID || supplierID) ==''){
+            if((warehouseID && supplierID) ==''){
                 swal("提示","仓库名称和供应商名称不能为空", "error");
             }else {
                 $("#tab tr").each(function () {
