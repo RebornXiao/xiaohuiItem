@@ -8,12 +8,13 @@
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="deposit_time" jdbcType="TIMESTAMP" property="depositTime" />
     <result column="exception_remark" jdbcType="VARCHAR" property="exceptionRemark" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
   </resultMap>
   <sql id="Base_Column_List">
-    id,warehouse_code, supplier_id, status, deposit_time, exception_remark, update_time, create_time,
+    id,warehouse_code, supplier_id, status, deposit_time, exception_remark, username, update_time, create_time,
     is_delete
   </sql>
   <select id="searchPurchasePage" resultType="java.util.Map">
@@ -143,6 +144,9 @@
       </if>
       <if test="exceptionRemark != null">
         exception_remark = #{exceptionRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
       </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},

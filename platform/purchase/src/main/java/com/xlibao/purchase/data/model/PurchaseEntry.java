@@ -15,6 +15,8 @@ public class PurchaseEntry {
 
     private String exceptionRemark="";
 
+    private String username;
+
     private String updateTime;
 
     private String createTime;
@@ -91,5 +93,13 @@ public class PurchaseEntry {
 
     public void setWarehouseCode(String warehouseCode) {
         this.warehouseCode = warehouseCode;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 }

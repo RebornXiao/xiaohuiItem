@@ -147,19 +147,19 @@
       <if test="warehouseName != null">
         warehouse_name = #{warehouseName,jdbcType=VARCHAR},
       </if>
-      <if test="address != null">
+      <if test="address != null and '' != address" >
         address = #{address,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
         status = #{status,jdbcType=INTEGER},
       </if>
-      <if test="stopRemark != null">
+      <if test="stopRemark != null and '' != stopRemark">
         stop_remark = #{stopRemark,jdbcType=VARCHAR},
       </if>
-      <if test="remark != null">
+      <if test="remark != null and '' != remark">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
-      <if test="wmsKEY != null">
+      <if test="wmsKEY != null and '' != wmsKEY">
         wms_key = #{wmsKEY,jdbcType=VARCHAR},
       </if>
       <if test="updateTime != null">
