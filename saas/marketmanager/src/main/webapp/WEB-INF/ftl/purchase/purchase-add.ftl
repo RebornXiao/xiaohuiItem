@@ -79,7 +79,7 @@
                                     <tbody id="tab">
                                     <tr id="tr_1">
                                         <td>
-                                            <select class="form-control" onchange="changeSelect(this)">
+                                            <select class="form-control" onchange="changeSelect(this)" onblur="clearSelectErr(this);">
                                                 <option value="">请选择商品分类</option>
                                                 <#if (itemTypes?size > 0)>
                                                     <#list itemTypes as iType>
@@ -91,7 +91,7 @@
                                             </select>
                                         </td>
                                         <td>
-                                            <select class="form-control" onchange="changeCode(this)">
+                                            <select class="form-control" onchange="changeCode(this)" onblur="clearSelectErr(this);">
                                                 <option value="">请选择商品名称</option>
                                             </select>
                                         </td>
@@ -102,17 +102,17 @@
                                         </td>
                                         <td>
                                             <div class="input-group">
-                                                <input id="time0" type="text" class="form-control" placeholder="选择时间或输入如：2017-10-10">
-                                                <span class="input-group-addon bg-default" onClick="jeDate({dateCell:'#time0',isTime:true,format:'YYYY-MM-DD'})">
+                                                <input id="time0" type="text" class="form-control" disabled="disabled" placeholder="请选择时间" onblur="clearInputErr(this);">
+                                                <span class="input-group-addon bg-default" onClick="findInput(this)" onblur="clearTimeErr(this)">
                                                     <i class="fa fa-calendar"></i>
                                                 </span>
                                             </div>
                                         </td>
                                         <td>
-                                            <input type="text" class="form-control" placeholder="输入采购数量">
+                                            <input type="text" class="form-control" placeholder="输入采购数量" onblur="clearInputErr(this);">
                                         </td>
                                         <td>
-                                            <button type="button" class="btn btn-default" disabled="disabled">不可删</button>
+                                            <button type="button" class="btn-danger" onclick="deleTr(this);">删除</button>
                                         </td>
                                     </tr>
                                     </tbody>
@@ -120,7 +120,7 @@
                             </div>
                             <div class="m-t-40">
                                 <div class="pull-right">
-                                    <button id="backBtn" type="button" class="btn btn-warning statusBtn pull-left">保存草稿</button>
+                                    <button id="unSaveBtn" type="button" class="btn btn-warning statusBtn pull-left">保存草稿</button>
                                     <button id="saveBtn" type="button" class="btn btn-primary statusBtn pull-right">提交</button>
                                 </div>
                             </div>
@@ -133,6 +133,30 @@
 </div>
 <script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
 <script type="text/javascript">
+    function clearSelectErr(obj) { //下拉框清除错误
+        var _val = $(obj).find('option:selected').val();
+        if(_val !=''){
+            $(obj).css('border','1px solid #eeeeee');
+        }else{
+            $(obj).css('border','1px solid red');
+        }
+    }
+    function clearTimeErr(obj) { //时间控件清除错误
+        console.log(obj);
+        var _val = $(obj).parent().parent().find('input').val();
+        if(_val ==''){
+            $(obj).parent().parent().find('input').css('border','1px solid #eeeeee');
+        }
+    }
+    function clearInputErr(obj) { //输入框清除错误
+        var _val = $(obj).val();
+        console.log(_val);
+        if(_val !=''){
+            $(obj).css('border','1px solid #eeeeee');
+        }else{
+            $(obj).css('border','1px solid red');
+        }
+    }
     function checkTypeSelect (obj,num,that){//检查表单是否有空项
         if(obj == "") {
             $(that).children("td:eq(0)").find('select').css("border","1px solid red");
@@ -167,21 +191,21 @@
     }
     function addTr2(tab, row){
         var trHtml="<tr><td>" +
-                "<select class='form-control' onchange='changeSelect(this)'>" +
+                "<select class='form-control' onchange='changeSelect(this)' onblur='clearSelectErr(this)'>" +
                 "<option value=''>请选择商品分类</option>" +
                 "<#if (itemTypes?size > 0)><#list itemTypes as iType> <option value='${iType.id?c}' <#if item?exists && iType.id == item.typeId>selected </#if>>" +
                 "<#if iType.parentId == 0>${iType.title}<#else>&nbsp;&nbsp;&nbsp;&nbsp;${iType.title}</#if></option></#list><#else><option value='0'>无</option></#if>" +
                 "</select>" +
                 "</td>" +
-                "<td><select class='form-control' onchange='changeCode(this)'><option value=''>请选择商品名称</option></select></td>" +
+                "<td><select class='form-control' onchange='changeCode(this)' onblur='clearSelectErr(this)'><option value=''>请选择商品名称</option></select></td>" +
                 "<td><fieldset disabled><input type='text' class='form-control'></fieldset></td>" +
                 "<td>" +
-                "<div class='input-group'><input id='endTime' type='text' class='form-control' placeholder='选择时间或输入如：2017-10-10'>" +
+                "<div class='input-group'><input type='text' class='form-control' disabled='disabled' placeholder='请选择时间'>" +
 //                "<span class='input-group-addon bg-default' onClick=\"jeDate({dateCell:\'#endTime\',isTime:true,format:\'YYYY-MM-DD\'})\"><i class='fa fa-calendar'></i></span>" +
-                "<span class='input-group-addon bg-default' onClick='findInput(this)'><i class='fa fa-calendar'></i></span>" +
+                "<span class='input-group-addon bg-default' onClick='findInput(this)' onblur='clearTimeErr(this)'><i class='fa fa-calendar'></i></span>" +
                 "</div>" +
                 "</td>" +
-                "<td><input type='text' class='form-control' placeholder='输入采购数量'></td>" +
+                "<td><input type='text' class='form-control' placeholder='输入采购数量' onblur='clearInputErr(this)'></td>" +
                 "<td><button class='btn-danger' onclick='deleTr(this);'>删除</button></td>" +
                 "</tr>";
 
@@ -206,7 +230,12 @@
         $tr.append(trHtml);
     }
     function deleTr(nowTr) {
-        $(nowTr).parent().parent().remove();
+          var trlen = $("#tab").find("tr").length;
+          if(trlen > 1){
+              $(nowTr).parent().parent().remove();
+          }else {
+              swal("提示", "不可删除至少要保留一行信息！", "error");
+          }
     }
     function changeSelect($s1) {
         var _id = $($s1).val();
@@ -269,6 +298,7 @@
             isTime:true,
             format:'YYYY-MM-DD'
         });
+        clearTimeErr(ele);
     }
     $(document).ready(function () {
         $(".statusBtn").click(function () {//提交
