@@ -386,7 +386,7 @@
                             if (data.code == "0") {
                                 swal("提示", "更新成功", "success");
                                 setTimeout(function () {
-                                    location.reload()
+                                    location.href="${base}/purchase/purchasePage.do"
                                 }, 1000);
                             } else {
                                 swal("提示", data.msg, "error");
@@ -399,7 +399,7 @@
                             if (data.code == "0") {
                                 swal("提示", "保存成功", "success");
                                 setTimeout(function () {
-                                    location.reload()
+                                    location.href="${base}/purchase/purchasePage.do"
                                 }, 1000);
                             } else {
                                 swal("提示", data.msg, "error");
