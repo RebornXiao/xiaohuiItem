@@ -619,6 +619,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         long id = getLongParameter("id",-1);
         String warehouseCode = getUTF("warehouseCode",null);
         String warehouseName = getUTF("warehouseName",null);
+        String username = getUTF("username",null);
         int status = getIntParameter("status", -1);
         String exceptionRemark = getUTF("exceptionRemark",null);
         /**保留一*/
@@ -633,6 +634,8 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
             return fail("缺少状态status");
         }else if(warehouseCode == null){
             return fail("缺少仓库编码warehouseCode");
+        }else if(username== null){
+            return fail("缺少入庫用戶名信息username");
         }else if(warehouseName == null){
             return fail("缺少仓库名称warehouseName");
         }else if(datas== null){
@@ -643,6 +646,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         purchaseEntry.setId(id);
         purchaseEntry.setStatus(status);
         purchaseEntry.setExceptionRemark(exceptionRemark);
+        purchaseEntry.setUsername(username);
         purchaseEntry.setDepositTime(DateUtil.getNowDate());
         purchaseEntry.setUpdateTime(DateUtil.getNowDate());
 
