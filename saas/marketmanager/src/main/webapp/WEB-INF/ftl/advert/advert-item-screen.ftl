@@ -217,7 +217,7 @@
         $("#screenInfoListTable").find('button[id=lookBtn]').each(function () {
             var that = this;
             $(this).on('click', function () {
-                location.href="${base}/advert/getScreenBy.do?mac="+$(that).attr("data_id");
+                open({url:"${base}/advert/getScreenBy.do?mac="+$(that).attr("data_id")});
             });
         });
     </#if>

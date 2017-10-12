@@ -349,7 +349,7 @@
             $("#storeInfoListTable").find('button[id=lookBtn]').each(function () {
                 var that = this;
                 $(this).on('click', function () {
-                    location.href = "${base}/advert/goAdvertScreen.do?advertID="+$(that).attr("a_id")+"&screenID="+$(that).attr("s_id")+"&marketID="+$(that).attr("m_id");
+                    open({url:"${base}/advert/goAdvertScreen.do?advertID="+$(that).attr("a_id")+"&screenID="+$(that).attr("s_id")+"&marketID="+$(that).attr("m_id")});
                 });
             });
         </#if>
