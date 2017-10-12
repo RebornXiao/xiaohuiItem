@@ -13,82 +13,77 @@
                     </div>
                 </div>
             </div>
-            <button type="button" id="advertReturnBtn" class="btn btn-primary" style="padding-right:0px 20px;" onclick="javascript:history.go(-1);"><i class="fa fa-backward"></i> 返回列表</button>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="advert_container">
-                        <div>
-                            <ol class="breadcrumb pull-right">
-                                <#--<li><a href="#" data-toggle="modal" data-target="#editButton">编辑</a></li>-->
-                                <#--<li><a href="#" data-toggle="modal" data-target="#deleteButton">删除</a></li>-->
-                            </ol>
-                            <h5 class="page-title" style="padding-top: 20px"><b>广告信息</b></h5>
-                            <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
-                            <div class="table-responsive advert_detail_table">
-                                <table class="table table-bordered">
-                                    <#if advert?exists>
-                                        <tbody>
-                                        <tr>
-                                            <td style="background-color: #f9f9f9">广告标题</td>
-                                            <td>${advert.title}</td>
-                                            <td style="background-color: #f9f9f9">广告状态</td>
-                                            <td>${advert.isDelete}</td>
-                                        </tr>
-                                        </tbody>
-                                        <tbody>
-                                        <tr>
-                                            <td style="background-color: #f9f9f9">广告时长</td>
-                                            <td>${advert.timeSize}</td>
-                                            <td style="background-color: #f9f9f9">更新时间</td>
-                                            <td>${advert.createTime}</td>
-                                        </tr>
-                                        </tbody>
-                                        <tbody>
-                                        <tr>
-                                            <td style="background-color: #f9f9f9">广告备注</td>
-                                            <td colspan="3">${advert.remark}</td>
-                                        </tr>
-                                        </tbody>
-                                    </#if>
-                                </table>
+            <button type="button" id="advertReturnBtn" class="btn btn-primary" style="padding-right:0px 20px;margin-bottom: 22px;" onclick="javascript:history.go(-1);"><i class="fa fa-backward"></i> 返回列表</button>
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="advert_container">
+                            <div>
+                                <ol class="breadcrumb pull-right">
+                                    <#--<li><a href="#" data-toggle="modal" data-target="#editButton">编辑</a></li>-->
+                                    <#--<li><a href="#" data-toggle="modal" data-target="#deleteButton">删除</a></li>-->
+                                </ol>
+                                <h5 class="page-title" style="padding-top: 20px"><b>广告信息</b></h5>
+                                <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                                <div class="table-responsive advert_detail_table">
+                                    <table class="table table-bordered">
+                                        <#if advert?exists>
+                                            <tbody>
+                                            <tr>
+                                                <td style="background-color: #f9f9f9;width: 20%">广告标题</td>
+                                                <td>${advert.title}</td>
+                                                <#--<td style="background-color: #f9f9f9">广告状态</td>-->
+                                                <#--<td><#if advert.isDelete=0>未删除<#else>已删除</#if></td>-->
+                                                <td style="background-color: #f9f9f9;width: 20%">广告时长</td>
+                                                <td>${advert.timeSize}</td>
+                                            </tr>
+                                            <tr>
+                                                <td style="background-color: #f9f9f9">创建时间</td>
+                                                <td>${advert.createTime}</td>
+                                                <td style="background-color: #f9f9f9;width: 20%">广告备注</td>
+                                                <td style="width: 40%"><#if advert.remark!=''>${advert.remark}<#else>无</#if></td>
+                                            </tr>
+                                        </#if>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="advert_container">
-                        <div>
-                            <h5 class="page-title" style="padding-top: 20px"><b>门店信息</b></h5>
-                            <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
-                            <div class="table-responsive advert_detail_table">
-                                <table class="table table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th style="background-color: #f9f9f9">门店</th>
-                                        <th style="background-color: #f9f9f9">屏幕编码</th>
-                                        <th style="background-color: #f9f9f9">屏幕分辨率</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                    <#if (screens?size > 0)>
-                                        <#list screens as screen>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="advert_container">
+                            <div>
+                                <h5 class="page-title" style="padding-top: 20px"><b>门店信息</b></h5>
+                                <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                                <div class="table-responsive advert_detail_table">
+                                    <table class="table table-bordered">
+                                        <thead>
                                         <tr>
-                                            <td>${screen.marketName}</td>
-                                            <td>${screen.code}</td>
-                                            <td>${screen.screenSize}</td>
+                                            <th style="background-color: #f9f9f9">门店</th>
+                                            <th style="background-color: #f9f9f9">屏幕编码</th>
+                                            <th style="background-color: #f9f9f9">屏幕分辨率</th>
                                         </tr>
-                                        </#list>
-                                    <#else>
-                                        <tr>
-                                            <td colSpan="11" height="100px">
-                                                <p class="text-center" style="line-height: 100px">暂无任何数据</p>
-                                            </td>
-                                        </tr>
-                                    </#if>
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                        <#if (screens?size > 0)>
+                                            <#list screens as screen>
+                                            <tr>
+                                                <td>${screen.marketName}</td>
+                                                <td>${screen.code}</td>
+                                                <td>${screen.screenSize}</td>
+                                            </tr>
+                                            </#list>
+                                        <#else>
+                                            <tr>
+                                                <td colSpan="11" height="100px">
+                                                    <p class="text-center" style="line-height: 100px">暂无任何数据</p>
+                                                </td>
+                                            </tr>
+                                        </#if>
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>

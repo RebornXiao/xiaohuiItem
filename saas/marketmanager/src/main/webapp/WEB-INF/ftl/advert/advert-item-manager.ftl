@@ -142,7 +142,7 @@
                                             a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">编辑
                                         </button>
                                         <button id="updateBtn" type="button" class="btn btn-primary btn-sm"
-                                                a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">更新
+                                                a_id="${advert.advertID?c}" m_id="${advert.marketID}" s_id="${advert.screenID?c}">重新下载
                                         </button>
                                         <button id="deleBtn" type="button" data-target="#deleModel"
                                                 class="btn btn-danger btn-sm" data-toggle="model"

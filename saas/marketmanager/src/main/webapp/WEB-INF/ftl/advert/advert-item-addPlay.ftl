@@ -14,95 +14,98 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col-sm-12">
-                    <div class="row m-t-30">
-                        <div class="col-md-8">
-                            <form class="form-horizontal" role="form">
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">门店信息：</label>
-                                    <div class="col-md-4">
-                                        <select id="storeSelect" class="form-control">
-                                        <#if markets?exists >
-                                            <#list markets as market>
-                                                <option value="${market.id?c}">${market.name}</option>
-                                            </#list>
-                                        </#if>
-                                        </select>
+            <div class="card-box">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="row m-t-30">
+                            <div class="col-md-8">
+                                <form class="form-horizontal" role="form">
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label">门店信息：</label>
+                                        <div class="col-md-4">
+                                            <select id="storeSelect" class="form-control">
+                                                <option value="">请选择门店</option>
+                                                <#if markets?exists >
+                                                    <#list markets as market>
+                                                        <option value="${market.id?c}">${market.name}</option>
+                                                    </#list>
+                                                </#if>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">屏幕编号：</label>
-                                    <div class="col-md-4">
-                                        <select id="screenNumSelect" class="form-control">
-                                            <#--<option value="000">该门店没有配置屏幕编号</option>-->
-                                        <#if screens?exists >
-                                            <#list screens as screen>
-                                                <option value="${screen.code}">${screen.code}</option>
-                                            </#list>
-                                        </#if>
-                                        </select>
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label">屏幕编号：</label>
+                                        <div class="col-md-4">
+                                            <select id="screenNumSelect" class="form-control">
+                                                <option value="">请选择编号</option>
+                                                <#if screens?exists >
+                                                    <#list screens as screen>
+                                                        <option value="${screen.code}">${screen.code}</option>
+                                                    </#list>
+                                                </#if>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">广告标题：</label>
-                                    <div class="col-md-4">
-                                        <select id="advertTitle" class="form-control">
-                                        <#if adverts?exists >
-                                            <#list adverts as advert>
-                                                <option value="${advert.advertID?c}">${advert.title}</option>
-                                            </#list>
-                                        </#if>
-                                        </select>
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label">广告标题：</label>
+                                        <div class="col-md-4">
+                                            <select id="advertTitle" class="form-control">
+                                            <#if adverts?exists >
+                                                <#list adverts as advert>
+                                                    <option value="${advert.advertID?c}">${advert.title}</option>
+                                                </#list>
+                                            </#if>
+                                            </select>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">开始时间：</label>
-                                    <div class="col-md-4">
-                                        <input type="text" id="startTime" class="form-control">
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label">开始时间：</label>
+                                        <div class="col-md-4">
+                                            <input type="text" id="startTime" class="form-control">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <span class="input-group-addon bg-default"
+                                                  onClick="jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD 00:00'})">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
                                     </div>
-                                    <div class="col-md-1">
-                                        <span class="input-group-addon bg-default"
-                                              onClick="jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD 00:00'})">
-                                            <i class="fa fa-calendar"></i>
-                                        </span>
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label">结束时间：</label>
+                                        <div class="col-md-4">
+                                            <input type="text" id="endTime" class="form-control">
+                                        </div>
+                                        <div class="col-md-1">
+                                            <span class="input-group-addon bg-default"
+                                                  onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD 00:00'})">
+                                                <i class="fa fa-calendar"></i>
+                                            </span>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">结束时间：</label>
-                                    <div class="col-md-4">
-                                        <input type="text" id="endTime" class="form-control">
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label">排序：</label>
+                                        <div class="col-md-2">
+                                            <input type="text" id="sort" class="form-control">
+                                        </div>
                                     </div>
-                                    <div class="col-md-1">
-                                        <span class="input-group-addon bg-default"
-                                              onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD 00:00'})">
-                                            <i class="fa fa-calendar"></i>
-                                        </span>
+                                    <div class="form-group">
+                                        <label class="col-md-4 control-label">播放备注：</label>
+                                        <div class="col-lg-8">
+                                            <textarea class="form-control" rows="6" id="playRemark" name="screenRemark"></textarea>
+                                        </div>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">排序：</label>
-                                    <div class="col-md-2">
-                                        <input type="text" id="sort" class="form-control">
+                                    <div class="form-group m-t-20">
+                                        <div class="col-md-4">
+                                        </div>
+                                        <button id="saveBtn" type="button"
+                                                class="btn waves-effect waves-light btn-primary col-md-2">确定
+                                        </button>
+                                        <button id="backBtn" type="button"
+                                                class="btn waves-effect waves-light btn-default col-md-2">返回
+                                        </button>
                                     </div>
-                                </div>
-                                <div class="form-group">
-                                    <label class="col-md-4 control-label">播放备注：</label>
-                                    <div class="col-lg-8">
-                                        <textarea class="form-control" rows="6" id="playRemark" name="screenRemark"></textarea>
-                                    </div>
-                                </div>
-                                <div class="form-group m-t-20">
-                                    <div class="col-md-4">
-                                    </div>
-                                    <button id="saveBtn" type="button"
-                                            class="btn waves-effect waves-light btn-primary col-md-2">确定
-                                    </button>
-                                    <button id="backBtn" type="button"
-                                            class="btn waves-effect waves-light btn-default col-md-2">返回
-                                    </button>
-                                </div>
-                            </form>
+                                </form>
+                            </div>
                         </div>
                     </div>
                 </div>
