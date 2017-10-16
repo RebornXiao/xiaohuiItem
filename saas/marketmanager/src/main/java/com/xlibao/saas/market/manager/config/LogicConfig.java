@@ -37,6 +37,9 @@ public class LogicConfig {
     public static final String TAB_ADVERT_LIST = "adverts";
     public static final String TAB_ADVERT_MANAGER = "admanager";
 
+    public static final String TAB_COUPON = "coupon";
+    public static final String TAB_COUPON_LIST = "coupons";
+
     public static final String ERROR_NAME = "error";
 
     public static final String RIGHT_FTL_PAGE_URL = "page";
@@ -74,6 +77,12 @@ public class LogicConfig {
     public static final String FTL_SUPPLIER_LIST = "purchase/supplier-list";
 
     public static final String FTL_STOCK_LIST = "purchase/stock-list";
+
+    //优惠券相关页面
+    public static final String FTL_COUPON_EDIT = "coupon/coupon-edit";
+    public static final String FTL_COUPON_ADD = "coupon/coupon-add";
+    public static final String FTL_COUPON_DETAIL = "coupon/coupon-detail";
+    public static final String FTL_COUPON_LIST = "coupon/coupon-list";
 
     //商品相关页面
     public static final String FTL_ITEM_LIST = "item/item-list";
