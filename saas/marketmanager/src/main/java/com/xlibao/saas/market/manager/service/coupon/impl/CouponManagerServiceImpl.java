@@ -34,7 +34,7 @@ public class CouponManagerServiceImpl extends BasicRemoteService implements Coup
         parameters.put("pageIndex", String.valueOf(pageIndex));
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "coupon/searchCouponPage.do";
+            String url = ConfigFactory.getDomainNameConfig().couponRemoteURL + "coupon/searchCouponPage.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -97,7 +97,7 @@ public class CouponManagerServiceImpl extends BasicRemoteService implements Coup
         parameters.put("bak",bak);
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "coupon/saveActiveRule.do";
+            String url = ConfigFactory.getDomainNameConfig().couponRemoteURL + "coupon/saveActiveRule.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -161,7 +161,7 @@ public class CouponManagerServiceImpl extends BasicRemoteService implements Coup
         parameters.put("bak",bak);
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "coupon/updateActiveRule.do";
+            String url = ConfigFactory.getDomainNameConfig().couponRemoteURL + "coupon/updateActiveRule.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -179,7 +179,7 @@ public class CouponManagerServiceImpl extends BasicRemoteService implements Coup
         parameters.put("activeRuleID", String.valueOf(activeRuleID));
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "coupon/getActiveRule.do";
+            String url = ConfigFactory.getDomainNameConfig().couponRemoteURL + "coupon/getActiveRule.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -197,7 +197,7 @@ public class CouponManagerServiceImpl extends BasicRemoteService implements Coup
         parameters.put("activeID", String.valueOf(activeID));
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "coupon/getActiveRecords.do";
+            String url = ConfigFactory.getDomainNameConfig().couponRemoteURL + "coupon/getActiveRecords.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -219,7 +219,7 @@ public class CouponManagerServiceImpl extends BasicRemoteService implements Coup
         parameters.put("activeRuleID", String.valueOf(activeRuleID));
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "coupon/delActive.do";
+            String url = ConfigFactory.getDomainNameConfig().couponRemoteURL + "coupon/delActive.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
