@@ -29,4 +29,8 @@ public class DomainNameConfig {
 
     @Value("${purchaseRemoteURL}")
     public String purchaseRemoteURL;
+
+    @Value("${couponRemoteURL}")
+    public String couponRemoteURL;
+
 }
