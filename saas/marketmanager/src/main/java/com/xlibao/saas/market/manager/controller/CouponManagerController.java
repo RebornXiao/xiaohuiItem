@@ -6,6 +6,7 @@ import com.xlibao.common.http.HttpRequest;
 import com.xlibao.saas.market.manager.BaseController;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.config.LogicConfig;
+import com.xlibao.saas.market.manager.service.coupon.CouponManagerService;
 import com.xlibao.saas.market.manager.service.itemmanager.ItemManagerService;
 import com.xlibao.saas.market.manager.service.purchasemanager.PurchaseManagerService;
 import com.xlibao.saas.market.manager.service.purchasemanager.SupplierManagerService;
@@ -27,7 +28,7 @@ import static com.alibaba.fastjson.JSON.parseObject;
 public class CouponManagerController extends BaseController {
 
     @Autowired
-    SupplierManagerService supplierManagerService;
+    CouponManagerService couponManagerService;
 
 
         /**
@@ -37,13 +38,13 @@ public class CouponManagerController extends BaseController {
          */
         @RequestMapping("/couponPage")
         public String searchCouponPage(ModelMap map) {
-            JSONObject couponJson =  supplierManagerService.searchSupplierPage();
+            JSONObject couponJson =  couponManagerService.searchActivePage();
             JSONObject response = couponJson.getJSONObject("response");
             JSONArray coupons = response.getJSONArray("data");
             map.put("count", response.getIntValue("count"));
 
-            map.put("activeName", getUTF("activeName",""));
-            map.put("activeType", getIntParameter("activeType",-1));
+            map.put("activeRuleName", getUTF("activeRuleName",""));
+            map.put("activeRuleType", getIntParameter("activeRuleType",-1));
             map.put("activeStatus", getIntParameter("activeStatus",-1));
             int pageIndex = getIntParameter("pageIndex", 1);
             map.put("pageIndex", pageIndex);
@@ -63,18 +64,39 @@ public class CouponManagerController extends BaseController {
     }
 
     /**
+     * 添加优惠券
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/saveCoupon")
+    public JSONObject saveCoupon(ModelMap map) {
+        return couponManagerService.saveActiveRule();
+    }
+    /**
      * 跳转优惠券编辑
      * @param map
      * @return
      */
     @RequestMapping("/couponEdit")
     public String supplierEdit(ModelMap map) {
-        JSONObject jsonObject= supplierManagerService.getSupplier();
-        JSONObject supplier = jsonObject.getJSONObject("response");
-        map.put("supplier", supplier);
+
+        JSONObject ruleObject= couponManagerService.getActiveRule();
+        JSONObject rule = ruleObject.getJSONObject("response");
+        map.put("rule", rule);
         return jumpPage(map, LogicConfig.FTL_COUPON_EDIT, LogicConfig.TAB_COUPON, LogicConfig.TAB_COUPON_LIST);
     }
 
+    /**
+     * 更新优惠券
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/updateCoupon")
+    public JSONObject updateCoupon(ModelMap map) {
+        return couponManagerService.updateActiveRule();
+    }
 
     /**
      * 优惠券详情
@@ -83,6 +105,24 @@ public class CouponManagerController extends BaseController {
      */
     @RequestMapping("/couponDetail")
     public String getSupplier(ModelMap map) {
+        JSONObject ruleObject= couponManagerService.getActiveRule();
+        JSONObject rule = ruleObject.getJSONObject("response");
+        map.put("rule", rule);
+
+        JSONObject recordObject= couponManagerService.getActiveRecords();
+        JSONObject records = recordObject.getJSONObject("datas");
+        map.put("records", records);
         return jumpPage(map, LogicConfig.FTL_COUPON_DETAIL, LogicConfig.TAB_COUPON, LogicConfig.TAB_COUPON_LIST);
+    }
+
+    /**
+     * 刪除优惠券
+     * @param map
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/delCoupon")
+    public JSONObject delCoupon(ModelMap map) {
+        return couponManagerService.delActive();
     }
 }
