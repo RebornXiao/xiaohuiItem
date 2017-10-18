@@ -188,7 +188,7 @@ public class CouponManagerServiceImpl extends BasicRemoteService implements Coup
     }
     @Override
     public JSONObject getActiveRecords(){
-        Long activeID = getLongParameter("activeID",-1);
+        Long activeID = getLongParameter("activeRuleID",-1);
         if(activeID==-1){
             return fail("缺少优惠券ID=activeID");
         }
