@@ -110,7 +110,8 @@ public class CouponManagerController extends BaseController {
         map.put("rule", rule);
 
         JSONObject recordObject= couponManagerService.getActiveRecords();
-        JSONObject records = recordObject.getJSONObject("datas");
+        JSONObject response = recordObject.getJSONObject("response");
+        JSONArray records = response.getJSONArray("datas");
         map.put("records", records);
         return jumpPage(map, LogicConfig.FTL_COUPON_DETAIL, LogicConfig.TAB_COUPON, LogicConfig.TAB_COUPON_LIST);
     }
