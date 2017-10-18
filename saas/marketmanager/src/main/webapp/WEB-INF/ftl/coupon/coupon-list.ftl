@@ -69,7 +69,7 @@
                             <tr id="tr_${coupon_index}">
                                 <td>${coupon.id}</td>
                                 <td>${coupon.activeRuleName}</td>
-                                <td><#if coupon.activeRuleType=1>注册优惠</#if></td>
+                                <td><#if coupon.activeRuleType=1>注册赠券</#if></td>
                                 <td><#if coupon.activeScene=1>全部商品</#if></td>
                                 <td><#if coupon.activeRuleOrderMoney=-1>不限金额<#else>${coupon.activeRuleOrderMoney}</#if></td>
                                 <td>${coupon.activeMonery}</td>
