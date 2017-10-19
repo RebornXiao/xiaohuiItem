@@ -6,10 +6,10 @@
                     <div class="page-title-box">
                         <ol class="breadcrumb pull-right">
                             <li><a href="#">首页</a></li>
-                            <li><a href="#">采购端管理</a></li>
-                            <li class="active"><a href="#">采购单列表</a></li>
+                            <li><a href="#">优惠券管理</a></li>
+                            <li class="active"><a href="#">优惠券列表</a></li>
                         </ol>
-                        <h4 class="page-title "><b>采购单详情</b></h4>
+                        <h4 class="page-title "><b>优惠券详情</b></h4>
                     </div>
                 </div>
             </div>
@@ -18,67 +18,72 @@
                 <div class="row">
                     <div class="col-sm-8">
                         <div class="advert_container">
-                            <div>
-                                <ol class="breadcrumb pull-right">
-                                    <#--<li><a href="#" data-toggle="modal" data-target="#editButton">编辑</a></li>-->
-                                    <#--<li><a href="#" data-toggle="modal" data-target="#deleteButton">删除</a></li>-->
-                                </ol>
-                                <h5 class="page-title" style="padding-top: 20px"><b>基本信息</b></h5>
-                                <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
-                                <div class="table-responsive advert_detail_table">
-                                    <table class="table table-bordered">
-                                        <#if purchase?exists>
-                                            <tbody>
-                                            <tr>
-                                                <td style="background-color: #f9f9f9">仓库名称</td>
-                                                <td>${purchase.warehouse_name}</td>
-                                                <td style="background-color: #f9f9f9">仓库地址</td>
-                                                <td>${purchase.address}</td>
-                                            </tr>
-                                            <tr>
-                                                <td style="background-color: #f9f9f9">供应商名称</td>
-                                                <td>${purchase.supplier_name}</td>
-                                                <td style="background-color: #f9f9f9">入库状态</td>
-                                                <td>
-                                                <#if purchase.status=1><text class="text-danger">未入库</text>
-                                                    <#elseif purchase.status=2><text class="text-danger">入库异常</text>
-                                                    <#elseif purchase.status=3>完成入库
-                                                    </#if>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="background-color: #f9f9f9">异常说明</td>
-                                                <td colspan="3"><#if purchase.exception_remark!=''>${purchase.exception_remark}<#else>无</#if></td>
-                                            </tr>
-                                            </tbody>
-                                        </#if>
-                                    </table>
-                                </div>
+                            <h5 class="page-title" style="padding-top: 20px"><b>基本信息</b></h5>
+                            <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                            <div class="table-responsive advert_detail_table">
+                                <table class="table table-bordered">
+                                    <#if rule?exists>
+                                        <tbody>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">优惠券类型</td>
+                                            <td><#if rule.activeRuleType=1>注册优惠</#if></td>
+                                            <td style="background-color: #f9f9f9">优惠券名称</td>
+                                            <td>${rule.activeRuleName}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">优惠券标题</td>
+                                            <td>${rule.activeRuleTitle}</td>
+                                            <td style="background-color: #f9f9f9">优惠券总张数</td>
+                                            <td><#if rule.activeDistributeCount=-1>没有上限<#else>${rule.activeDistributeCount}</#if></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">优惠券金额</td>
+                                            <td><#if rule.activeRuleOrderMoney=-1>不限金额<#else>${rule.activeRuleOrderMoney}</#if></td>
+                                            <td style="background-color: #f9f9f9">是否过期</td>
+                                            <td>
+                                                <#if rule.activeStatus=0><text class="text-success">未过期</text>
+                                                <#else><text class="text-danger">已过期</text>
+                                                </#if>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </#if>
+                                </table>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-8">
                         <div class="advert_container">
-                            <h5 class="page-title" style="padding-top: 20px"><b>联系信息</b></h5>
+                            <h5 class="page-title" style="padding-top: 20px"><b>使用规则</b></h5>
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
                             <div class="table-responsive advert_detail_table">
                                 <table class="table table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th style="background-color: #f9f9f9">对接业务员</th>
-                                        <th style="background-color: #f9f9f9">联系电话</th>
-                                    </tr>
-                                    </thead>
+                                <#if rule?exists>
                                     <tbody>
-                                    <#if purchase?exists>
                                         <tr>
-                                            <td>${purchase.salesman_name}</td>
-                                            <td>${purchase.phone}</td>
+                                            <td style="background-color: #f9f9f9">使用门槛</td>
+                                            <td><#if rule.activeRuleOrderMoney=-1>不限金额<#else>${rule.activeRuleOrderMoney}</#if></td>
+                                            <td style="background-color: #f9f9f9">每人限领</td>
+                                            <td>1张</td>
                                         </tr>
-                                    </#if>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">可使用商品</td>
+                                            <td><#if rule.activeScene=1>全部商品</#if></td>
+                                            <td style="background-color: #f9f9f9">有效时间</td>
+                                            <td><#if rule.effectiveType=-1>不限时<#elseif rule.effectiveType=1>${rule.activeRuleEffective}<#else>${rule.activeBeginTime}<br/>${rule.activeEndTime}</#if></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">使用规则</td>
+                                            <td colspan="3"><#if rule.activeRuleExplain!=''>${rule.activeRuleExplain}<#else>无</#if></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="background-color: #f9f9f9">备注</td>
+                                            <td colspan="3"><#if rule.bak!=''>${rule.bak}<#else>无</#if></td>
+                                        </tr>
                                     </tbody>
+                                </#if>
                                 </table>
                             </div>
                         </div>
@@ -87,32 +92,26 @@
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="advert_container">
-                            <h5 class="page-title" style="padding-top: 20px"><b>采购信息</b></h5>
+                            <h5 class="page-title" style="padding-top: 20px"><b>使用信息</b></h5>
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
                             <div class="table-responsive advert_detail_table">
                                 <table class="table table-bordered">
                                     <thead>
                                     <tr>
-                                        <th style="background-color: #f9f9f9">商品分类</th>
-                                        <th style="background-color: #f9f9f9">商品名称</th>
-                                        <th style="background-color: #f9f9f9">条形码</th>
-                                        <th style="background-color: #f9f9f9">采购日期</th>
-                                        <th style="background-color: #f9f9f9">采购数量</th>
-                                        <th style="background-color: #f9f9f9">入库日期</th>
-                                        <th style="background-color: #f9f9f9">入库数量</th>
+                                        <th style="background-color: #f9f9f9">优惠券编号</th>
+                                        <th style="background-color: #f9f9f9">所属用户</th>
+                                        <th style="background-color: #f9f9f9">订单号</th>
+                                        <th style="background-color: #f9f9f9">使用时间</th>
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    <#if (commoditys?size > 0)>
-                                        <#list commoditys as commodity>
+                                    <#if (records?size > 0)>
+                                        <#list records as record>
                                         <tr>
-                                            <td>${commodity.itemTypeTitle}</td>
-                                            <td>${commodity.itemName}</td>
-                                            <td>${commodity.barcode}</td>
-                                            <td>${commodity.purchaseTime}</td>
-                                            <td>${commodity.purchaseNumber}</td>
-                                            <td><#if commodity.depositTime??>${commodity.depositTime}<#else>--</#if></td>
-                                            <td><#if commodity.depositNumber??>${commodity.depositNumber}<#else>--</#if></td>
+                                            <td>${record.activeId}</td>
+                                            <td>${record.userName}</td>
+                                            <td>${record.orderId}</td>
+                                            <td>${record.createTime}</td>
                                         </tr>
                                         </#list>
                                     <#else>
