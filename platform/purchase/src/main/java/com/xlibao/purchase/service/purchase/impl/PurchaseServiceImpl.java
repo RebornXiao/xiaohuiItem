@@ -29,7 +29,7 @@ import static com.alibaba.fastjson.JSON.parseObject;
  * Created by admin on 2017/8/28.
  */
 @Transactional
-@Service("advertService")
+@Service("purchaseService")
 public class PurchaseServiceImpl extends BasicWebService implements PurchaseService {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(PurchaseServiceImpl.class);
@@ -622,11 +622,8 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String username = getUTF("username",null);
         int status = getIntParameter("status", -1);
         String exceptionRemark = getUTF("exceptionRemark",null);
-        /**保留一*/
+
         String datas = getUTF("datas",null);
-        /***删除二
-        String commodityIds= getUTF("commodityIds",null);
-        String  depositNumbers= getUTF("depositNumbers",null);*/
 
         if(id == -1){
             return fail("缺少采购单id");
@@ -651,7 +648,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         purchaseEntry.setUpdateTime(DateUtil.getNowDate());
 
         if (purchaseDataAccessManager.updatePurchase(purchaseEntry) > 0) {
-           /**保留一*/
+
             if(datas!=null){
                 JSONArray dataArray = JSONObject.parseArray(datas);
                 for(int i=0;i<dataArray.size();i++){
@@ -675,30 +672,6 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
                     }
                 }
             }
-            /***删除二
-            String[] commodityIdList = commodityIds.split(CommonUtils.SPLIT_COMMA);
-            String[] depositNumberList = depositNumbers.split(CommonUtils.SPLIT_COMMA);
-            for (int i=0;i<commodityIdList.length;i++) {
-                if(depositNumberList[i]!=null&&!depositNumberList[i].isEmpty()) {
-                    PurchaseCommodity purchaseCommodity = new PurchaseCommodity();
-                    purchaseCommodity.setId(Long.parseLong(commodityIdList[i]));
-                    purchaseCommodity.setDepositTime(DateUtil.getNowDate());
-                    purchaseCommodity.setDepositNumber(Integer.parseInt(depositNumberList[i]));
-                    purchaseCommodity.setUpdateTime(DateUtil.getNowDate());
-
-                    int result = purchaseDataAccessManager.updatePurchaseCommodity(purchaseCommodity) ;
-                    if (result <= 0) {
-                        throw new XlibaoIllegalArgumentException("产品入库数量失败");
-                    }else {
-                        //获取入库产品信息
-                        PurchaseCommodity commodity = purchaseDataAccessManager.getPurchaseCommodity(Long.parseLong(commodityIdList[i]));
-                        //更新商品库存
-                        updateStockNumber(warehouseCode,warehouseName,commodity.getItemTypeId(),commodity.getItemTypeTitle(),commodity.getItemId(),commodity.getItemName(),commodity.getBarcode(),1,Integer.parseInt(depositNumberList[i]));
-                    }
-
-                }
-            }*/
-            /****/
             putInWMS(id,datas);
             //将入库信息推送至WMS系统
         }else {
@@ -815,6 +788,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
                 purchaseCommodityStoresa.setBarcode(barcode);
                 purchaseCommodityStoresa.setStoresNumber(number);
                 purchaseCommodityStoresa.setWarnNumber(number);
+                purchaseCommodityStoresa.setUpdateTime(DateUtil.getNowDate());
                 //添加库存信息
                 if(purchaseDataAccessManager.savePurchaseCommodityStores(purchaseCommodityStoresa)>0){
                     JSONObject response = new JSONObject();
