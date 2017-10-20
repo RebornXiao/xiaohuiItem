@@ -368,13 +368,17 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
     public JSONObject searchPurchasePage() {
         String supplierName = getUTF("supplierName", null);
         String warehouseCode = getUTF("warehouseCode", null);
-        int status = getIntParameter("status", -1);
+        String status = getUTF("status", null);
         int pageSize = getPageSize();
         int pageStartIndex = getPageStartIndex("pageIndex", pageSize);
+        String []  statusList=null;
+        if(status != null && !"-1".equals(status)){
+            statusList= status.split(CommonUtils.SPLIT_COMMA);
+        }
 
 
-        List<ResultMap> purchaseWarehouses = purchaseDataAccessManager.searchPurchasePage(supplierName,warehouseCode,status,pageSize,pageStartIndex);
-        int count = purchaseDataAccessManager.searchPurchasePageCount(supplierName,warehouseCode,status);
+        List<ResultMap> purchaseWarehouses = purchaseDataAccessManager.searchPurchasePage(supplierName,warehouseCode,statusList,pageSize,pageStartIndex);
+        int count = purchaseDataAccessManager.searchPurchasePageCount(supplierName,warehouseCode,statusList);
 
         JSONObject response = new JSONObject();
         response.put("data", purchaseWarehouses);
@@ -541,6 +545,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         String warehouseCode = getUTF("warehouseCode",null);
         long supplierID = getLongParameter("supplierID",-1);
         int status = getIntParameter("status", -1);
+        String coerceRemark = getUTF("coerceRemark",null);
 
         String  itemIDs= getUTF("itemIDs","");
         String  itemTypeIDs= getUTF("itemTypeIDs","");
@@ -668,7 +673,7 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
                         //获取入库产品信息
                         PurchaseCommodity commodity = purchaseDataAccessManager.getPurchaseCommodity(commodityId);
                         //更新商品库存
-                        updateStockNumber(warehouseCode,warehouseName,commodity.getItemTypeId(),commodity.getItemTypeTitle(),commodity.getItemId(),commodity.getItemName(),commodity.getBarcode(),1,depositNumber);
+                        updateStockNumber(id,warehouseCode,warehouseName,commodity.getItemTypeId(),commodity.getItemTypeTitle(),commodity.getItemId(),commodity.getItemName(),commodity.getBarcode(),1,depositNumber);
                     }
                 }
             }
@@ -750,13 +755,13 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
         }else if(number==-1){
             return fail("缺少商品数量number");
         }
-       JSONObject response = updateStockNumber(warehouseCode,null,-1,null,itemId,null,null,stockType,number);
+       JSONObject response = updateStockNumber((long) 0,warehouseCode,null,-1,null,itemId,null,null,stockType,number);
         return success("商品库存更新",response);
     }
 
-    public JSONObject updateStockNumber(String warehouseCode,String warehouseName,long itemTypeId,String itemTypeName,long itemId,String itemName,String  barcode,int stockType,int number){
+    public JSONObject updateStockNumber(Long purchaseID,String warehouseCode,String warehouseName,long itemTypeId,String itemTypeName,long itemId,String itemName,String  barcode,int stockType,int number){
         int stockNumber=number;
-        //更新库存数量stockType:0出库1入库
+        //更新库存数量stockType:0出库1入库2退货
         if(stockType == 0){
             PurchaseCommodityStores purchaseCommodityStore =  purchaseDataAccessManager.getByParameterID(warehouseCode,itemId);
             if(purchaseCommodityStore!=null){
@@ -776,6 +781,17 @@ public class PurchaseServiceImpl extends BasicWebService implements PurchaseServ
                 return fail("商品库存不存在");
             }
         }else  if(stockType == 1){
+            PurchaseRepertoryRecord repertoryRecord = new PurchaseRepertoryRecord();
+            repertoryRecord.setPurchaseId(purchaseID);
+            repertoryRecord.setBarcode(barcode);
+            repertoryRecord.setDepositNumber(number);
+            repertoryRecord.setItemId(itemId);
+            repertoryRecord.setItemName(itemName);
+            repertoryRecord.setRecordType(1);
+            repertoryRecord.setWarehouseName(warehouseName);
+            repertoryRecord.setWarehouseCode(warehouseCode);
+            purchaseDataAccessManager.savePurchaseRepertoryRecord(repertoryRecord);
+
             PurchaseCommodityStores purchaseCommodityStores =  purchaseDataAccessManager.getByParameterID(warehouseCode,itemId);
             if(purchaseCommodityStores==null){
                 PurchaseCommodityStores purchaseCommodityStoresa = new PurchaseCommodityStores();

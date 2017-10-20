@@ -14,7 +14,7 @@
     <result column="is_delete" jdbcType="INTEGER" property="isDelete" />
   </resultMap>
   <sql id="Base_Column_List">
-    id,warehouse_code, supplier_id, status, deposit_time, exception_remark, username, update_time, create_time,
+    id,warehouse_code, supplier_id, status, deposit_time, exception_remark, coerce_remark, username, update_time, create_time,
     is_delete
   </sql>
   <select id="searchPurchasePage" resultType="java.util.Map">
@@ -25,8 +25,11 @@
     <if test="warehouseCode!=null">
       AND p.warehouse_code = #{warehouseCode}
     </if>
-    <if test="status!=-1">
-      AND p.status = #{status}
+    <if test="statusList!=null">
+      AND p.status in
+      <foreach collection="statusList" index="index" item="status" open="(" separator="," close=")">
+                   #{status}
+      </foreach>
     </if>
     order by p.create_time desc limit #{pageStartIndex}, #{pageSize}
   </select>
@@ -38,8 +41,11 @@
     <if test="warehouseCode!=null">
       AND p.warehouse_code = #{warehouseCode}
     </if>
-    <if test="status!=-1">
-      AND p.status = #{status}
+    <if test="statusList!=null">
+      AND p.status in
+      <foreach collection="statusList" index="index" item="status" open="(" separator="," close=")">
+        #{status}
+      </foreach>
     </if>
   </select>
 
@@ -144,6 +150,9 @@
       </if>
       <if test="exceptionRemark != null">
         exception_remark = #{exceptionRemark,jdbcType=VARCHAR},
+      </if>
+      <if test="coerceRemark != null">
+        coerce_remark = #{coerceRemark,jdbcType=VARCHAR},
       </if>
       <if test="username != null">
         username = #{username,jdbcType=VARCHAR},

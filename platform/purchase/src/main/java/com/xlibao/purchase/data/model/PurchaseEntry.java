@@ -15,6 +15,8 @@ public class PurchaseEntry {
 
     private String exceptionRemark="";
 
+    private String coerceRemark="";
+
     private String username;
 
     private String updateTime;
@@ -101,5 +103,13 @@ public class PurchaseEntry {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getCoerceRemark() {
+        return coerceRemark;
+    }
+
+    public void setCoerceRemark(String coerceRemark) {
+        this.coerceRemark = coerceRemark;
     }
 }

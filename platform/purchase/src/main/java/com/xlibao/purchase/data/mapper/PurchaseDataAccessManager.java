@@ -32,6 +32,9 @@ public class PurchaseDataAccessManager {
     @Autowired
     private  PurchaseWarehouseUserMapper warehouseUserMapper;
 
+    @Autowired
+    private PurchaseRepertoryRecordMapper purchaseRepertoryRecordMapper;
+
 
     public List<PurchaseSupplier> searchSupplierPage(String supplierName,int supplierType, int status,int pageSize, int pageStartIndex){
         return supplierMapper.searchSupplierPage(supplierName,supplierType,status,pageSize,pageStartIndex);
@@ -93,12 +96,12 @@ public class PurchaseDataAccessManager {
         return warehouseUserMapper.updateByPrimaryKeySelective(warehouseUser);
     }
     /**采购单**/
-    public List<ResultMap> searchPurchasePage(String supplierName,String warehouseCode, int status, int pageSize, int pageStartIndex){
-        return entryMapper.searchPurchasePage(supplierName,warehouseCode,status,pageSize,pageStartIndex);
+    public List<ResultMap> searchPurchasePage(String supplierName,String warehouseCode, String [] statusList, int pageSize, int pageStartIndex){
+        return entryMapper.searchPurchasePage(supplierName,warehouseCode,statusList,pageSize,pageStartIndex);
     }
 
-    public int searchPurchasePageCount(String supplierName,String warehouseCode, int status){
-        return entryMapper.searchPurchasePageCount(supplierName,warehouseCode,status);
+    public int searchPurchasePageCount(String supplierName,String warehouseCode,  String [] statusList){
+        return entryMapper.searchPurchasePageCount(supplierName,warehouseCode,statusList);
     }
     public HashMap getPurchase(Long id){
         return entryMapper.getPurchase(id);
@@ -159,6 +162,10 @@ public class PurchaseDataAccessManager {
     }
     public int updatePurchaseCommodityStores(PurchaseCommodityStores purchaseCommodityStores){
         return commodityStoresMapper.updateByPrimaryKeySelective(purchaseCommodityStores);
+    }
+
+    public  int savePurchaseRepertoryRecord(PurchaseRepertoryRecord purchaseRepertoryRecord){
+        return purchaseRepertoryRecordMapper.insertSelective(purchaseRepertoryRecord);
     }
 
 }
