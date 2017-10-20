@@ -48,7 +48,7 @@ public class CouponManagerServiceImpl extends BasicRemoteService implements Coup
         int activeRuleType = getIntParameter("activeRuleType", -1);
         int activeDistributeCount = getIntParameter("activeDistributeCount", 0);
         Double activeMonery = getDoubleParameter("activeMonery",0);
-        Double activeRuleOrderMoney = getDoubleParameter("activeRuleOrderMoney",0);
+        int activeRuleOrderMoney = getIntParameter("activeRuleOrderMoney",0);
         int activeRuleNum = getIntParameter("activeRuleNum",0);
         int activeScene = getIntParameter("activeScene",-1);
         int effectiveType = getIntParameter("effectiveType",-1);
@@ -111,7 +111,7 @@ public class CouponManagerServiceImpl extends BasicRemoteService implements Coup
         int activeRuleType = getIntParameter("activeRuleType", -1);
         int activeDistributeCount = getIntParameter("activeDistributeCount", 0);
         Double activeMonery = getDoubleParameter("activeMonery",0);
-        Double activeRuleOrderMoney = getDoubleParameter("activeRuleOrderMoney",0);
+        int activeRuleOrderMoney = getIntParameter("activeRuleOrderMoney",0);
         int activeRuleNum = getIntParameter("activeRuleNum",0);
         int activeScene = getIntParameter("activeScene",-1);
         int effectiveType = getIntParameter("effectiveType",-1);
