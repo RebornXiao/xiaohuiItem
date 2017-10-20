@@ -1,4 +1,4 @@
-package com.xlibao.saas.market.manager.service.coupon;
+package com.xlibao.saas.market.manager.service.couponmanager;
 
 import com.alibaba.fastjson.JSONObject;
 
