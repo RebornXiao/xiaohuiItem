@@ -7,7 +7,6 @@ import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.service.couponmanager.CouponManagerService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -110,7 +109,7 @@ public class CouponManagerServiceImpl extends BasicRemoteService implements Coup
         String activeRuleName = getUTF("activeRuleName","");
         String activeRuleTitle = getUTF("activeRuleTitle","");
         int activeRuleType = getIntParameter("activeRuleType", -1);
-        int activeDistributeCount = getIntParameter("activeDistributeCount", -1);
+        int activeDistributeCount = getIntParameter("activeDistributeCount", 0);
         Double activeMonery = getDoubleParameter("activeMonery",0);
         Double activeRuleOrderMoney = getDoubleParameter("activeRuleOrderMoney",0);
         int activeRuleNum = getIntParameter("activeRuleNum",0);
@@ -126,8 +125,8 @@ public class CouponManagerServiceImpl extends BasicRemoteService implements Coup
             return fail("缺少优惠券名称activeRuleName");
         }else if(activeRuleType==-1){
             return fail("缺少优惠券类型activeRuleType");
-        }else if(activeDistributeCount==-1){
-            return fail("缺少优惠券总数activeDistributeCount");
+        }else if(activeDistributeCount==0){
+            return fail("缺少优惠券數量activeDistributeCount");
         }else if(activeMonery==-1){
             return fail("缺少优惠金额activeMonery");
         }else if(activeRuleOrderMoney == 0){
