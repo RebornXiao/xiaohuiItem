@@ -6,7 +6,7 @@ import com.xlibao.common.http.HttpRequest;
 import com.xlibao.saas.market.manager.BaseController;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.config.LogicConfig;
-import com.xlibao.saas.market.manager.service.coupon.CouponManagerService;
+import com.xlibao.saas.market.manager.service.couponmanager.CouponManagerService;
 import com.xlibao.saas.market.manager.service.itemmanager.ItemManagerService;
 import com.xlibao.saas.market.manager.service.purchasemanager.PurchaseManagerService;
 import com.xlibao.saas.market.manager.service.purchasemanager.SupplierManagerService;
