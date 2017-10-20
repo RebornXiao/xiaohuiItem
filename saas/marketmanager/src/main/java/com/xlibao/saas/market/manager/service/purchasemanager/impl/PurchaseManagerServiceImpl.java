@@ -206,6 +206,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
         String warehouseCode = getUTF("warehouseCode","");
         long supplierID = getLongParameter("supplierID",-1);
         int status = getIntParameter("status", -1);
+        String coerceRemark = getUTF("coerceRemark","");
         //String [] purchaseID= getHttpServletRequest().getParameterValues("purchaseID");
         String  itemIDs= getUTF("itemIDs","");
         String  itemTypeIDs= getUTF("itemTypeIDs","");
@@ -231,6 +232,7 @@ public class PurchaseManagerServiceImpl extends BasicRemoteService implements Pu
         parameters.put("supplierID", String.valueOf(supplierID));
         parameters.put("warehouseCode", warehouseCode);
         parameters.put("status", String.valueOf(status));
+        parameters.put("coerceRemark", coerceRemark);
 
         parameters.put("itemIDs", itemIDs);
         parameters.put("itemTypeIDs", itemTypeIDs);
