@@ -26,7 +26,7 @@
                                     <tr>
                                         <td style="background-color: #f9f9f9">仓库名称</td>
                                         <td>
-                                            <#if purchase.status=1>
+                                            <#if purchase.status=1 || purchase.status=4>
                                                 <fieldset disabled>
                                                 <select class="form-control" id="houseSelect">
                                                     <#if warehouseItem?exists >
@@ -48,7 +48,7 @@
                                         </td>
                                         <td style="background-color: #f9f9f9">供应商名称</td>
                                         <td>
-                                            <#if purchase.status=1>
+                                            <#if purchase.status=1 || purchase.status=4>
                                                 <fieldset disabled>
                                                 <select class="form-control" id="supplierSelect">
                                                     <#if supperlierItem?exists >
@@ -74,12 +74,27 @@
                             </div>
                         </div>
                     </div>
+                    <#if purchase.status=4>
+                        <div class="col-sm-4">
+                            <div class="advert_container">
+                                <h5 class="page-title" style="padding-top: 20px"><b>温馨提示</b></h5>
+                                <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                                <ul class="list-group" style="color: red">
+                                    <li>1.请对比入库数量修改采购数量</li>
+                                    <li>2.修改的采购数量必须等于入库数量</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </#if>
                 </div>
                 <div class="row">
                     <div class="col-sm-12">
                         <div class="advert_container">
                             <ol class="breadcrumb pull-right">
-                                <li><button id="addRow" class='btn-primary' onclick="addTr2('tab',-1);">添加商品</button></li>
+                                <#if purchase.status=4>
+                                <#else>
+                                    <li><button id="addRow" class='btn-primary' onclick="addTr2('tab',-1);">添加商品</button></li>
+                                </#if>
                             </ol>
                             <h5 class="page-title" style="padding-top: 20px"><b>采购信息</b></h5>
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
@@ -91,60 +106,96 @@
                                         <th style="background-color: #f9f9f9">条形码</th>
                                         <th style="background-color: #f9f9f9">采购日期</th>
                                         <th style="background-color: #f9f9f9">采购数量</th>
-                                        <th style="background-color: #f9f9f9">操作</th>
+                                        <th style="background-color: #f9f9f9"><#if purchase.status=4>入库数量<#else>操作</#if></th>
                                     </thead>
                                     <tbody id="tab">
                                         <#if (commoditys?size > 0)>
                                             <#list commoditys as commodity>
-                                            <tr>
-                                                <td>
-                                                    <select class="form-control" onchange="changeSelect(this)" onblur="clearSelectErr(this);">
-                                                        <#--<option value="${commodity.purchaseId}">${commodity.itemTypeTitle}</option>-->
-                                                        <#if (itemTypes?size > 0)>
-                                                            <#list itemTypes as itemType>
-                                                                <option value=${itemType.id?c} <#if commodity?exists && itemType.id == commodity.itemTypeId>selected </#if>><#if itemType.parentId == 0>${itemType.title}
-                                                                <#else>&nbsp;&nbsp;&nbsp;&nbsp;${itemType.title}</#if></option>
-                                                            </#list>
-                                                        <#else><option value='0'>找不到商品</option>
-                                                        </#if>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <select class="form-control" onchange="changeCode(this)" onblur="clearSelectErr(this);">
-                                                        <option value="${commodity.itemId?c}">${commodity.itemName}</option>
-                                                    </select>
-                                                </td>
-                                                <td>
-                                                    <fieldset disabled>
-                                                        <input type="text" class="form-control" value="${commodity.barcode}">
-                                                    </fieldset>
-                                                </td>
-                                                <td>
-                                                    <div class="input-group">
-                                                        <input id="time${commodity_index}" type="text" class="form-control" disabled="disabled" value="${commodity.purchaseTime}" placeholder="请选择时间">
-                                                        <span class="input-group-addon bg-default" onClick="findInput(this)" onblur="clearTimeErr(this)">
-                                                         <i class="fa fa-calendar"></i></span>
-                                                    </div>
-                                                </td>
-                                                <td>
-                                                    <input type="text" class="form-control" value="${commodity.purchaseNumber?c}" onblur="clearInputErr(this);">
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn-danger" onclick="deleTr(this);">删除</button>
-                                                </td>
-                                            </tr>
+                                                <#if purchase.status=4>
+                                                    <tr>
+                                                        <td>
+                                                            <select class="form-control" disabled="disabled">
+                                                            <#--<option value="${commodity.purchaseId}">${commodity.itemTypeTitle}</option>-->
+                                                                <#if (itemTypes?size > 0)>
+                                                                    <#list itemTypes as itemType>
+                                                                        <option value=${itemType.id?c} <#if commodity?exists && itemType.id == commodity.itemTypeId>selected </#if>><#if itemType.parentId == 0>${itemType.title}
+                                                                        <#else>&nbsp;&nbsp;&nbsp;&nbsp;${itemType.title}</#if></option>
+                                                                    </#list>
+                                                                <#else><option value='0'>找不到商品</option>
+                                                                </#if>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-control" disabled="disabled">
+                                                                <option value="${commodity.itemId?c}">${commodity.itemName}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <fieldset disabled>
+                                                                <input type="text" class="form-control" value="${commodity.barcode}" disabled="disabled">
+                                                            </fieldset>
+                                                        </td>
+                                                        <td>
+                                                            <input id="time${commodity_index}" type="text" class="form-control" disabled="disabled" value="${commodity.purchaseTime}" placeholder="请选择时间">
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control" value="${commodity.purchaseNumber?c}" onblur="clearInputErr(this);">
+                                                        </td>
+                                                        <td>
+                                                            ${commodity.depositNumber?c}
+                                                        </td>
+                                                    </tr>
+                                                <#else>
+                                                    <tr>
+                                                        <td>
+                                                            <select class="form-control" onchange="changeSelect(this)" onblur="clearSelectErr(this);">
+                                                                <#--<option value="${commodity.purchaseId}">${commodity.itemTypeTitle}</option>-->
+                                                                <#if (itemTypes?size > 0)>
+                                                                    <#list itemTypes as itemType>
+                                                                        <option value=${itemType.id?c} <#if commodity?exists && itemType.id == commodity.itemTypeId>selected </#if>><#if itemType.parentId == 0>${itemType.title}
+                                                                        <#else>&nbsp;&nbsp;&nbsp;&nbsp;${itemType.title}</#if></option>
+                                                                    </#list>
+                                                                <#else><option value='0'>找不到商品</option>
+                                                                </#if>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select class="form-control" onchange="changeCode(this)" onblur="clearSelectErr(this);">
+                                                                <option value="${commodity.itemId?c}">${commodity.itemName}</option>
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <fieldset disabled>
+                                                                <input type="text" class="form-control" value="${commodity.barcode}">
+                                                            </fieldset>
+                                                        </td>
+                                                        <td>
+                                                            <div class="input-group">
+                                                                <input id="time${commodity_index}" type="text" class="form-control" disabled="disabled" value="${commodity.purchaseTime}" placeholder="请选择时间">
+                                                                <span class="input-group-addon bg-default" onClick="findInput(this)" onblur="clearTimeErr(this)">
+                                                                 <i class="fa fa-calendar"></i></span>
+                                                            </div>
+                                                        </td>
+                                                        <td>
+                                                            <input type="text" class="form-control" value="${commodity.purchaseNumber?c}" onblur="clearInputErr(this);">
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn-danger" onclick="deleTr(this);">删除</button>
+                                                        </td>
+                                                    </tr>
+                                                </#if>
                                             </#list>
                                         </#if>
                                     </tbody>
                                 </table>
                             </div>
                             <div class="m-t-40">
-                                <#if purchase.status=1>
-                                    <button id="saveBtn" type="button" class="btn btn-primary col-md-1 statusBtn pull-right">提交</button>
+                                <#if purchase.status=1 || purchase.status=4>
+                                    <button id="saveBtn" type="button" class="btn btn-primary col-md-1 statusBtn pull-right" data_status="${purchase.status}">提交</button>
                                 <#else>
                                     <div class="pull-right">
                                         <button id="unSaveBtn" type="button" class="btn btn-warning statusBtn pull-left">保存草稿</button>
-                                        <button id="saveBtn" type="button" class="btn btn-primary statusBtn pull-right">提交</button>
+                                        <button id="saveBtn" type="button" class="btn btn-primary statusBtn pull-right" data_status="${purchase.status}">提交</button>
                                     </div>
                                 </#if>
                             </div>
@@ -378,15 +429,31 @@
                             + "&itemTypeTitles=" + itemTypeTitles + "&purchaseTimes=" + purchaseDates + "&purchaseNumbers=" + purchaseNumbers + "&status=0&barcodes=" + barcodes;
                     var para1 = "&warehouseCode=" + warehouseID + "&supplierID=" + supplierID + "&itemIDs=" + itemIDs + "&itemNames=" + itemNames + "&itemTypeIDs=" + itemTypeIDs
                             + "&itemTypeTitles=" + itemTypeTitles + "&purchaseTimes=" + purchaseDates + "&purchaseNumbers=" + purchaseNumbers + "&status=1&barcodes=" + barcodes;
+                    var para4 = "&warehouseCode=" + warehouseID + "&supplierID=" + supplierID + "&itemIDs=" + itemIDs + "&itemNames=" + itemNames + "&itemTypeIDs=" + itemTypeIDs
+                            + "&itemTypeTitles=" + itemTypeTitles + "&purchaseTimes=" + purchaseDates + "&purchaseNumbers=" + purchaseNumbers + "&status=4&barcodes=" + barcodes;
                     var eleId = $(this).attr('id');
-                    if (eleId == 'saveBtn') {
+                    var eleStatus = $(this).attr('data_status');
+                    if (eleId == 'saveBtn' && eleStatus == 1) {
                         $.post("${base}/purchase/updatePurchase.do?id=${purchase.id}" + para1, function (data) {//提交
                             //重新刷新
                             console.log(data);
                             if (data.code == "0") {
                                 swal("提示", "更新成功", "success");
                                 setTimeout(function () {
-                                    location.href="${base}/purchase/purchasePage.do"
+                                    location.href = "${base}/purchase/purchasePage.do"
+                                }, 1000);
+                            } else {
+                                swal("提示", data.msg, "error");
+                            }
+                        }, "json");
+                    } else if (eleStatus == 4 && eleId == 'saveBtn'){
+                        $.post("${base}/purchase/updatePurchase.do?id=${purchase.id}" + para4, function (data) {//异常提交
+                            //重新刷新
+                            console.log(data);
+                            if (data.code == "0") {
+                                swal("提示", "更新成功", "success");
+                                setTimeout(function () {
+                                    location.href = "${base}/purchase/purchasePage.do"
                                 }, 1000);
                             } else {
                                 swal("提示", data.msg, "error");
