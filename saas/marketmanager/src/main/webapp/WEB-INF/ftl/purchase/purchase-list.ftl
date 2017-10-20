@@ -76,7 +76,7 @@
                                         <button id="deleBtn" type="button" class="btn btn-danger btn-sm" data_id="${purchase.id}">删除</button>
                                     </td>
                                 <#elseif purchase.status=1>
-                                    <td class="text-warning"><b>未入库</b></td>
+                                    <td class="text-default"><b>未入库</b></td>
                                     <td>
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">查看</button>
                                         <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">编辑</button>
@@ -90,6 +90,12 @@
                                     <td class="text-success"><b>完成入库</b></td>
                                     <td>
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">查看</button>
+                                    </td>
+                                <#elseif purchase.status=4>
+                                    <td class="text-warning"><b>异常完成入库</b></td>
+                                    <td>
+                                        <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">查看</button>
+                                        <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">编辑</button>
                                     </td>
                                 </#if>
                             </tr>
