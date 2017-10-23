@@ -60,27 +60,35 @@
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">开始时间：</label>
-                                        <div class="col-md-4">
+                                        <div class="input-group col-md-4">
                                             <input type="text" id="startTime" class="form-control">
-                                        </div>
-                                        <div class="col-md-1">
                                             <span class="input-group-addon bg-default"
                                                   onClick="jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD 00:00'})">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
                                         </div>
+                                        <#--<div class="col-md-1">-->
+                                            <#--<span class="input-group-addon bg-default"-->
+                                                  <#--onClick="jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD 00:00'})">-->
+                                                <#--<i class="fa fa-calendar"></i>-->
+                                            <#--</span>-->
+                                        <#--</div>-->
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">结束时间：</label>
-                                        <div class="col-md-4">
+                                        <div class="input-group col-md-4">
                                             <input type="text" id="endTime" class="form-control">
-                                        </div>
-                                        <div class="col-md-1">
                                             <span class="input-group-addon bg-default"
                                                   onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD 00:00'})">
                                                 <i class="fa fa-calendar"></i>
                                             </span>
                                         </div>
+                                        <#--<div class="col-md-1">-->
+                                            <#--<span class="input-group-addon bg-default"-->
+                                                  <#--onClick="jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD 00:00'})">-->
+                                                <#--<i class="fa fa-calendar"></i>-->
+                                            <#--</span>-->
+                                        <#--</div>-->
                                     </div>
                                     <div class="form-group">
                                         <label class="col-md-4 control-label">排序：</label>
