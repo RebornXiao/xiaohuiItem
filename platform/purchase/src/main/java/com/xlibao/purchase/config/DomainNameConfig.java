@@ -9,6 +9,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class DomainNameConfig {
 
+    @Value("${passportRemoteURL}")
+    public String passportRemoteURL;
+
     @Value("${wmsRemoteURL}")
     public String wmsRemoteURL;
 
