@@ -40,10 +40,12 @@
                                                 <td>${purchase.supplier_name}</td>
                                                 <td style="background-color: #f9f9f9">入库状态</td>
                                                 <td>
-                                                <#if purchase.status=1><text class="text-danger">未入库</text>
+                                                <#if purchase.status=1><text class="text-default">未入库</text>
                                                     <#elseif purchase.status=2><text class="text-danger">入库异常</text>
-                                                    <#elseif purchase.status=3>完成入库
-                                                    </#if>
+                                                    <#elseif purchase.status=3><text class="text-success">完成入库</text>
+                                                    <#elseif purchase.status=4><text class="text-warning">强制完成入库</text>
+                                                    <#elseif purchase.status=5><text class="text-info">部分入库</text>
+                                                </#if>
                                                 </td>
                                             </tr>
                                             <tr>

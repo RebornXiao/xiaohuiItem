@@ -39,6 +39,8 @@
                             <option value="1">未入库</option>
                             <option value="2">入库异常</option>
                             <option value="3">完成入库</option>
+                            <option value="4">强制完成入库</option>
+                            <option value="3">部分入库</option>
                         </select>
                     </div>
                     <div class="form-group m-l-15">
@@ -70,7 +72,7 @@
                                 <td>${purchase.supplier_name}</td>
                                 <td>${purchase.create_time}</td>
                                 <#if purchase.status=0>
-                                    <td class="text-info"><b>未提交</b></td>
+                                    <td class="text-muted"><b>未提交</b></td>
                                     <td>
                                         <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">编辑</button>
                                         <button id="deleBtn" type="button" class="btn btn-danger btn-sm" data_id="${purchase.id}">删除</button>
@@ -85,6 +87,7 @@
                                     <td class="text-danger"><b>入库异常</b></td>
                                     <td>
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">查看</button>
+                                        <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">编辑</button>
                                     </td>
                                 <#elseif purchase.status=3>
                                     <td class="text-success"><b>完成入库</b></td>
@@ -92,7 +95,12 @@
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">查看</button>
                                     </td>
                                 <#elseif purchase.status=4>
-                                    <td class="text-warning"><b>异常完成入库</b></td>
+                                    <td class="text-warning"><b>强制完成入库</b></td>
+                                    <td>
+                                        <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">查看</button>
+                                    </td>
+                                <#elseif purchase.status=5>
+                                    <td class="text-info"><b>部分入库</b></td>
                                     <td>
                                         <button id="lookBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">查看</button>
                                         <button id="editBtn" type="button" class="btn btn-primary btn-sm" data_id="${purchase.id}">编辑</button>
@@ -113,12 +121,14 @@
             </div>
 
             <!--分页-->
+            <#if (purchases?size > 0)>
             <div class="row small_page">
                 <div class="col-sm-12">
                 <#include "../common/paginate.ftl">
                     <@paginate nowPage=pageIndex itemCount=count action="${base}/purchase/purchasePage.do?supplierName=${supplierName}&warehouseCode=${warehouseCode}&status=${status}"/>
                 </div>
             </div>
+            </#if>
             <!--/分页-->
         </div>
     </div>

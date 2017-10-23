@@ -9,7 +9,7 @@
                             <li><a href="#">采购端管理</a></li>
                             <li class="active"><a href="#">供应商列表</a></li>
                         </ol>
-                        <h4 class="page-title "><b>编辑供应商</b></h4>
+                        <h4 class="page-title "><b>添加供应商</b></h4>
                     </div>
                 </div>
             </div>

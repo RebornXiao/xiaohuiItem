@@ -18,39 +18,37 @@
                 <div class="row">
                     <div class="col-sm-8">
                         <div class="advert_container">
-                            <div>
-                                <h5 class="page-title" style="padding-top: 20px"><b>基本信息</b></h5>
-                                <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
-                                <div class="table-responsive advert_detail_table">
-                                    <table class="table table-bordered">
-                                        <tbody>
-                                        <tr>
-                                            <td style="background-color: #f9f9f9">仓库名称</td>
-                                            <td>
-                                                <select class="form-control" id="houseSelect">
-                                                    <option value="">请选择仓库</option>
-                                                    <#if warehouseItem?exists >
-                                                        <#list warehouseItem as warehouse>
-                                                            <option value="${warehouse.warehouseCode}">${warehouse.warehouseName}</option>
-                                                        </#list>
-                                                    </#if>
-                                                </select>
-                                            </td>
-                                            <td style="background-color: #f9f9f9">供应商名称</td>
-                                            <td>
-                                                <select class="form-control" id="supplierSelect">
-                                                    <option value="">请选择供应商</option>
-                                                    <#if supperlierItem?exists >
-                                                        <#list supperlierItem as supplier>
-                                                            <option value="${supplier.id?c}">${supplier.supplierName}</option>
-                                                        </#list>
-                                                    </#if>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
+                            <h5 class="page-title" style="padding-top: 20px"><b>基本信息</b></h5>
+                            <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                            <div class="table-responsive advert_detail_table">
+                                <table class="table table-bordered">
+                                    <tbody>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">仓库名称</td>
+                                        <td>
+                                            <select class="form-control" id="houseSelect">
+                                                <option value="">请选择仓库</option>
+                                                <#if warehouseItem?exists >
+                                                    <#list warehouseItem as warehouse>
+                                                        <option value="${warehouse.warehouseCode}">${warehouse.warehouseName}</option>
+                                                    </#list>
+                                                </#if>
+                                            </select>
+                                        </td>
+                                        <td style="background-color: #f9f9f9">供应商名称</td>
+                                        <td>
+                                            <select class="form-control" id="supplierSelect">
+                                                <option value="">请选择供应商</option>
+                                                <#if supperlierItem?exists >
+                                                    <#list supperlierItem as supplier>
+                                                        <option value="${supplier.id?c}">${supplier.supplierName}</option>
+                                                    </#list>
+                                                </#if>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
                     </div>
@@ -103,7 +101,7 @@
                                         <td>
                                             <div class="input-group">
                                                 <input id="time0" type="text" class="form-control" disabled="disabled" placeholder="请选择时间" onblur="clearInputErr(this);">
-                                                <span class="input-group-addon bg-default" onClick="findInput(this)" onblur="clearTimeErr(this)">
+                                                <span class="input-group-addon bg-default" style="cursor: pointer;" onClick="findInput(this)">
                                                     <i class="fa fa-calendar"></i>
                                                 </span>
                                             </div>
@@ -286,7 +284,7 @@
             $in.val("");
         }
     }
-    function changeCode($se) {
+    function changeCode($se) {//填充条形码
        var _code = $($se).find('option:selected').attr('data-id');
        $($se).parent().parent().find("td:eq(2)").find('input').val(_code);
     }
