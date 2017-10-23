@@ -279,7 +279,7 @@
                         </div>
                         <div class="form-group" style="width: 100%">
                             <label>附&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;件：</label>
-                            <input id="modalAdvertFile" type="file" multiple="multiple" name="file"/>
+                            <input class="form-control" id="modalAdvertFile" style="width: 40%" type="file" multiple="multiple" name="file"/>
                         </div>
                         <div class="modal-footer" style="text-align: center">
                             <button type="button" class="btn btn-primary" style="padding:10px 80px" data-dismiss="modal">取消</button>
