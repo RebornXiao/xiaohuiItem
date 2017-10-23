@@ -9,7 +9,7 @@
                             <li><a href="#">广告端管理</a></li>
                             <li class="active"><a href="#">广告管理</a></li>
                         </ol>
-                        <h4 class="page-title"><b>广告列表</b></h4>
+                        <h4 class="page-title"><b>广告管理</b></h4>
                     </div>
                 </div>
             </div>
