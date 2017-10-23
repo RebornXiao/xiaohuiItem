@@ -23,7 +23,7 @@
                     <div class="form-group m-l-15">
                         <label>优惠券类型：</label>
                         <select id="houseSelect" class="form-control" name="activeRuleType">
-                            <option value="1">注册优惠</option>
+                            <option value="1">注册赠券</option>
                             <#--<#if coupons?exists >-->
                                 <#--<#list coupons as coupon>-->
                                     <#--<option value="${coupon.id}">注册优惠</option>-->
@@ -71,10 +71,20 @@
                                 <td>${coupon.activeRuleName}</td>
                                 <td><#if coupon.activeRuleType=1>注册赠券</#if></td>
                                 <td><#if coupon.activeScene=1>全部商品</#if></td>
-                                <td><#if coupon.activeRuleOrderMoney=-1>不限金额<#else>${coupon.activeRuleOrderMoney}</#if></td>
-                                <td>${coupon.activeMonery}</td>
+                                <td><#if coupon.activeRuleOrderMoney=-1>不限金额<#else>购满${coupon.activeRuleOrderMoney}元</#if></td>
+                                <td>${coupon.activeMonery?c}</td>
                                 <td><#if coupon.activeDistributeCount=-1>没有上限<#else>${coupon.activeDistributeCount}</#if></td>
-                                <td><#if coupon.effectiveType=-1>不限时<#elseif coupon.effectiveType=1>${coupon.activeRuleEffective}<#else>${coupon.activeBeginTime}<br/>${coupon.activeEndTime}</#if></td>
+                                <td>
+                                    <#if coupon.effectiveType=1>
+                                        <#if coupon.activeRuleEffective=-1>
+                                            不限时
+                                        <#else>
+                                            ${coupon.activeRuleEffective}&nbsp;天
+                                        </#if>
+                                    <#else>
+                                        ${coupon.activeBeginTime}<br/>${coupon.activeEndTime}
+                                    </#if>
+                                </td>
                                 <#if coupon.activeStatus=0>
                                     <td class="text-success"><b>未过期</b></td>
                                     <td>

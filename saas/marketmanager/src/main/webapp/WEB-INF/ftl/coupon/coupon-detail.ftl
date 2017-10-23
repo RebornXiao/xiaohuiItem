@@ -26,7 +26,7 @@
                                         <tbody>
                                         <tr>
                                             <td style="background-color: #f9f9f9">优惠券类型</td>
-                                            <td><#if rule.activeRuleType=1>注册优惠</#if></td>
+                                            <td><#if rule.activeRuleType=1>注册赠券</#if></td>
                                             <td style="background-color: #f9f9f9">优惠券名称</td>
                                             <td>${rule.activeRuleName}</td>
                                         </tr>
@@ -34,11 +34,11 @@
                                             <td style="background-color: #f9f9f9">优惠券标题</td>
                                             <td>${rule.activeRuleTitle}</td>
                                             <td style="background-color: #f9f9f9">优惠券总张数</td>
-                                            <td><#if rule.activeDistributeCount=-1>没有上限<#else>${rule.activeDistributeCount}</#if></td>
+                                            <td><#if rule.activeDistributeCount=-1>没有上限<#else>${rule.activeDistributeCount}张</#if></td>
                                         </tr>
                                         <tr>
                                             <td style="background-color: #f9f9f9">优惠券金额</td>
-                                            <td><#if rule.activeRuleOrderMoney=-1>不限金额<#else>${rule.activeRuleOrderMoney}</#if></td>
+                                            <td>${rule.activeMonery}元</td>
                                             <td style="background-color: #f9f9f9">是否过期</td>
                                             <td>
                                                 <#if rule.activeStatus=0><text class="text-success">未过期</text>
@@ -64,7 +64,7 @@
                                     <tbody>
                                         <tr>
                                             <td style="background-color: #f9f9f9">使用门槛</td>
-                                            <td><#if rule.activeRuleOrderMoney=-1>不限金额<#else>${rule.activeRuleOrderMoney}</#if></td>
+                                            <td><#if rule.activeRuleOrderMoney=-1>不限金额<#else>购满${rule.activeRuleOrderMoney}元</#if></td>
                                             <td style="background-color: #f9f9f9">每人限领</td>
                                             <td>1张</td>
                                         </tr>

@@ -6,10 +6,10 @@
                     <div class="page-title-box">
                         <ol class="breadcrumb pull-right">
                             <li><a href="#">首页</a></li>
-                            <li><a href="#">采购端管理</a></li>
-                            <li class="active"><a href="#">供应商列表</a></li>
+                            <li><a href="#">优惠券管理</a></li>
+                            <li class="active"><a href="#">优惠券列表</a></li>
                         </ol>
-                        <h4 class="page-title "><b>编辑供应商</b></h4>
+                        <h4 class="page-title "><b>编辑优惠券</b></h4>
                     </div>
                 </div>
             </div>
@@ -22,66 +22,274 @@
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
                             <div class="table-responsive advert_detail_table">
                                 <table class="table table-bordered">
-                                <#if supplier?exists>
                                     <tbody>
                                     <tr>
-                                        <td style="background-color: #f9f9f9">供应商名称</td>
-                                        <td><input type="text" class="form-control" id="editSupplierName" placeholder="输入供应商名称" value="${supplier.supplierName}"/></td>
-                                        <td style="background-color: #f9f9f9">供应商地址</td>
-                                        <td><input type="text" class="form-control" id="editSupplierAddress" placeholder="输入供应商地址" value="${supplier.address}"/></td>
-                                    </tr>
-                                    <tr>
-                                        <td style="background-color: #f9f9f9">供应商属性</td>
+                                        <td style="background-color: #f9f9f9">* 优惠券类型</td>
                                         <td>
-                                            <select id="supplierSelect" class="form-control">
-                                                <option value="1" <#if supplier.supplierType=1>selected</#if>>一级供应商</option>
-                                                <option value="2" <#if supplier.supplierType=2>selected</#if>>二级供应商</option>
-                                                <option value="3" <#if supplier.supplierType=3>selected</#if>>品牌供应商</option>
-                                                <option value="4" <#if supplier.supplierType=4>selected</#if>>超市供应商</option>
+                                            <select id="couponSelect" class="form-control">
+                                                <option value="1">注册赠券</option>
+                                            <#--<option value="2">注册赠券</option>-->
+                                            <#--<option value="3">注册赠券</option>-->
+                                            <#--<option value="4">注册赠券</option>-->
                                             </select>
                                         </td>
-                                        <td style="background-color: #f9f9f9">出货周期</td>
-                                        <td><input type="text" class="form-control" id="editSupplierTime" placeholder="输入出货周期" value="${supplier.deliverPeriod}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">* 优惠券名称</td>
+                                        <td><input type="text" class="form-control" id="couponName" placeholder="输入优惠券名称" value="${rule.activeRuleName}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">* 优惠券标题</td>
+                                        <td><input type="text" class="form-control" id="couponTitle" placeholder="输入优惠券标题" value="${rule.activeRuleTitle}"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">* 优惠券总张数</td>
+                                        <td>
+                                            <#if rule.activeDistributeCount=-1>
+                                                <form class="form-inline col-sm-12" id="form1">
+                                                    <div class="form-group pull-left col-sm-2" style="margin-bottom: 0px">
+                                                        <label class="radio-inline" style="color: #999">
+                                                            <input type="radio" name="numberRadio" id="inlineRadio1" value="-1" checked>不限量
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-group col-sm-10 pull-right" style="margin-bottom: 0px">
+                                                        <label class="radio-menu-item">
+                                                            <input type="radio" name="numberRadio" id="inlineRadio2" value="">
+                                                        </label>
+                                                        <div class="input-group col-sm-10">
+                                                            <input type="text" class="form-control" id="amountInput" placeholder="输入优惠券总发行数量（单位：张）"/>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            <#else>
+                                                <form class="form-inline col-sm-12" id="form1">
+                                                    <div class="form-group pull-left col-sm-2" style="margin-bottom: 0px">
+                                                        <label class="radio-inline" style="color: #999">
+                                                            <input type="radio" name="numberRadio" id="inlineRadio1" value="-1">不限量
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-group col-sm-10 pull-right" style="margin-bottom: 0px">
+                                                        <label class="radio-menu-item">
+                                                            <input type="radio" name="numberRadio" id="inlineRadio2" value="" checked>
+                                                        </label>
+                                                        <div class="input-group col-sm-10">
+                                                            <input type="text" class="form-control" id="amountInput" placeholder="输入优惠券总发行数量（单位：张）" value="${rule.activeDistributeCount}"/>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </#if>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">* 优惠金额</td>
+                                        <td><input type="text" class="form-control" id="couponSum" placeholder="输入优惠券金额（单位：元）" value="${rule.activeMonery}"/></td>
                                     </tr>
                                     </tbody>
-                                </#if>
                                 </table>
                             </div>
                         </div>
                     </div>
+                    <div class="col-sm-4">
+                        <div class="advert_container">
+                            <h5 class="page-title" style="padding-top: 20px"><b>使用须知</b></h5>
+                            <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
+                            <ul>
+                                <li>1.带 * 的一栏为必填项，没有可以不填</li>
+                                <li>2.单选栏必须先选中单选按钮，再输入相应数据，不可直接输入数据</li>
+                            </ul>
+                        </div>
+                    </div>
                 </div>
                 <div class="row">
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <div class="advert_container">
                             <h5 class="page-title" style="padding-top: 20px"><b>联系信息</b></h5>
                             <hr style="height:1px;width:100%;border:none;border-top:1px dashed #ccc;"/>
-                            <div class="table-responsive">
+                            <div class="table-responsive advert_detail_table">
                                 <table class="table table-bordered">
-                                    <thead>
-                                    <tr>
-                                        <th style="background-color: #f9f9f9">对接业务员</th>
-                                        <th style="background-color: #f9f9f9">联系电话</th>
-                                    </tr>
-                                    </thead>
                                     <tbody>
-                                    <#if supplier?exists>
-                                        <tr>
-                                            <td><input type="text" class="form-control" id="saleName" placeholder="输入业务员姓名" value="${supplier.salesmanName}"/></td>
-                                            <td><input type="text" class="form-control" id="salePhone" placeholder="输入业务员电话" value="${supplier.phone}"/></td>
-                                        </tr>
-                                    <#else>
-                                        <tr>
-                                            <td colSpan="11" height="50px">
-                                                <p class="text-center" style="line-height: 50px">暂无任何数据</p>
-                                            </td>
-                                        </tr>
-                                    </#if>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">* 使用门槛</td>
+                                        <td>
+                                            <#if rule.activeRuleOrderMoney=-1>
+                                                <form class="form-inline col-sm-10" id="form2">
+                                                    <div class="form-group pull-left col-sm-2" style="margin-bottom: 0px">
+                                                        <label class="radio-inline" style="color: #999">
+                                                            <input type="radio" name="sumRadio" id="inlineRadio3" value="-1">不限金额
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-group col-sm-8 pull-left" style="margin-bottom: 0px">
+                                                        <label class="radio-menu-item">
+                                                            <input type="radio" name="sumRadio" id="inlineRadio4" value="">
+                                                        </label>
+                                                        <div class="input-group col-sm-6">
+                                                            <input type="text" class="form-control" id="sumInput" placeholder="购满多少可以使用（单位：元）"/>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            <#else>
+                                                <form class="form-inline col-sm-10" id="form2">
+                                                    <div class="form-group pull-left col-sm-2" style="margin-bottom: 0px">
+                                                        <label class="radio-inline" style="color: #999">
+                                                            <input type="radio" name="sumRadio" id="inlineRadio3" value="-1">不限金额
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-group col-sm-8 pull-left" style="margin-bottom: 0px">
+                                                        <label class="radio-menu-item">
+                                                            <input type="radio" name="sumRadio" id="inlineRadio4" value="" checked>
+                                                        </label>
+                                                        <div class="input-group col-sm-6">
+                                                            <input type="text" class="form-control" id="sumInput" placeholder="购满多少可以使用（单位：元）" value="${rule.activeRuleOrderMoney}"/>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </#if>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">* 每人限领</td>
+                                        <td><div class="form-inline"><text class="pull-left" style="margin-left:55px;color: #999">1&nbsp;张</text></div></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">* 可使用商品</td>
+                                        <td>
+                                            <form class="form-inline col-sm-10" id="form3">
+                                                <div class="form-group pull-left col-sm-2" style="margin-bottom: 0px">
+                                                    <label class="radio-inline" style="color: #999">
+                                                        <input type="radio" name="goodsRadio" id="inlineRadio5" value="1" checked>全部商品
+                                                    </label>
+                                                </div>
+                                            </form>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">* 有效时间</td>
+                                        <td>
+                                            <#if rule.effectiveType=1>
+                                                <form class="form-inline col-sm-12" id="form2">
+                                                    <div class="form-group col-sm-6 pull-left" style="margin-bottom: 0px">
+                                                        <label class="radio-inline" style="color: #999">
+                                                            <input type="radio" name="timeRadio" id="inlineRadio6" value="">起止时间：
+                                                        </label>
+                                                        <div class="input-group" id="stimediv" style="display: inline-table">
+                                                            <input id="startTime" type="text" class="form-control" name="beginTime" readonly>
+                                                            <span class="input-group-addon bg-default" id="stimespan"
+                                                                  onClick="addStime()"><i class="fa fa-calendar" style="display: block"></i></span>
+                                                        </div>
+                                                        <label style="color: #999">-</label>
+                                                        <div class="input-group" id="etimediv" style="display: inline-table">
+                                                            <input id="endTime" type="text" class="form-control" name="endTime" readonly>
+                                                            <span class="input-group-addon bg-default" id="etimespan"
+                                                                  onClick="addEtime()"><i class="fa fa-calendar" style="display: block"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-sm-4 pull-left" style="margin-bottom: 0px">
+                                                        <label class="radio-menu-item">
+                                                            <input type="radio" name="timeRadio" id="inlineRadio7" value="" checked/>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="dayInput" placeholder="输入有效天数(单位：天)" value="${rule.activeRuleEffective}"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group pull-left col-sm-2" style="margin-bottom: 0px">
+                                                        <label class="radio-inline" style="color: #999">
+                                                            <input type="radio" name="timeRadio" id="inlineRadio8" value="-1">不限时
+                                                        </label>
+                                                    </div>
+                                                </form>
+                                            <#elseif rule.effectiveType=2>
+                                                <form class="form-inline col-sm-12" id="form2">
+                                                    <div class="form-group col-sm-6 pull-left" style="margin-bottom: 0px">
+                                                        <label class="radio-inline" style="color: #999">
+                                                            <input type="radio" name="timeRadio" id="inlineRadio6" value="" checked>起止时间：
+                                                        </label>
+                                                        <div class="input-group" id="stimediv" style="display: inline-table">
+                                                            <input id="startTime" type="text" class="form-control" name="beginTime" value="${rule.activeBeginTime}" readonly>
+                                                            <span class="input-group-addon bg-default" id="stimespan"
+                                                                  onClick="addStime()"><i class="fa fa-calendar" style="display: block"></i></span>
+                                                        </div>
+                                                        <label style="color: #999">-</label>
+                                                        <div class="input-group" id="etimediv" style="display: inline-table">
+                                                            <input id="endTime" type="text" class="form-control" name="endTime" value="${rule.activeEndTime}" readonly>
+                                                            <span class="input-group-addon bg-default" id="etimespan"
+                                                                  onClick="addEtime()"><i class="fa fa-calendar" style="display: block"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-sm-4 pull-left" style="margin-bottom: 0px">
+                                                        <label class="radio-menu-item">
+                                                            <input type="radio" name="timeRadio" id="inlineRadio7" value=""/>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="dayInput" placeholder="输入有效天数(单位：天)"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group pull-left col-sm-2" style="margin-bottom: 0px">
+                                                        <label class="radio-inline" style="color: #999">
+                                                            <input type="radio" name="timeRadio" id="inlineRadio8" value="-1">不限时
+                                                        </label>
+                                                    </div>
+                                                </form>
+                                            <#elseif rule.effectiveType=-1>
+                                                <form class="form-inline col-sm-12" id="form2">
+                                                    <div class="form-group col-sm-6 pull-left" style="margin-bottom: 0px">
+                                                        <label class="radio-inline" style="color: #999">
+                                                            <input type="radio" name="timeRadio" id="inlineRadio6" value="">起止时间：
+                                                        </label>
+                                                        <div class="input-group" id="stimediv" style="display: inline-table">
+                                                            <input id="startTime" type="text" class="form-control" name="beginTime" readonly>
+                                                            <span class="input-group-addon bg-default" id="stimespan"
+                                                                  onClick="addStime()"><i class="fa fa-calendar" style="display: block"></i></span>
+                                                        </div>
+                                                        <label style="color: #999">-</label>
+                                                        <div class="input-group" id="etimediv" style="display: inline-table">
+                                                            <input id="endTime" type="text" class="form-control" name="endTime" readonly>
+                                                            <span class="input-group-addon bg-default" id="etimespan"
+                                                                  onClick="addEtime()"><i class="fa fa-calendar" style="display: block"></i></span>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group col-sm-4 pull-left" style="margin-bottom: 0px">
+                                                        <label class="radio-menu-item">
+                                                            <input type="radio" name="timeRadio" id="inlineRadio7" value=""/>
+                                                        </label>
+                                                        <div class="input-group">
+                                                            <input type="text" class="form-control" id="dayInput" placeholder="输入有效天数(单位：天)"/>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group pull-left col-sm-2" style="margin-bottom: 0px">
+                                                        <label class="radio-inline" style="color: #999">
+                                                            <input type="radio" name="timeRadio" id="inlineRadio8" value="-1" checked>不限时
+                                                        </label>
+                                                    </div>
+                                                </form>
+                                            </#if>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">使用规则</td>
+                                        <td>
+                                            <#if rule.activeRuleExplain=''>
+                                                <input type="text" class="form-control" id="couponRule" placeholder="输入使用优惠券的规则"/>
+                                            <#else>
+                                                <input type="text" class="form-control" id="couponRule" placeholder="输入使用优惠券的规则" value="${rule.activeRuleExplain}"/>
+                                            </#if>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td style="background-color: #f9f9f9">备注</td>
+                                        <td>
+                                            <#if rule.bak=''>
+                                                <input type="text" class="form-control" id="couponRemark" placeholder="输入备注信息"/>
+                                            <#else>
+                                                <input type="text" class="form-control" id="couponRemark" placeholder="输入备注信息" value="${rule.bak}"/>
+                                            </#if>
+                                        </td>
+                                    </tr>
                                     </tbody>
                                 </table>
                             </div>
-                            <div class="m-t-40">
-                                <button id="saveBtn" type="button" class="btn waves-effect waves-light btn-primary col-md-2">确定</button>
-                                <button id="backBtn" type="button" class="btn waves-effect waves-light btn-default col-md-2" onclick="history.go(-1);">返回</button>
+                            <div class="m-t-40 pull-right">
+                                <button id="backBtn" type="button" class="btn waves-effect waves-light btn-default pull-left" onclick="history.go(-1);">返回</button>
+                                <button id="saveBtn" type="button" class="btn waves-effect waves-light btn-primary pull-right">确定</button>
                             </div>
                         </div>
                     </div>
@@ -90,51 +298,135 @@
         </div>
     </div>
 </div>
+<script type="text/javascript" src="${res}/assets/plugins/jedate/jedate.min.js"></script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        function checkInput (obj){//检查表单是否有空项，空格验证方法待加
-            if(obj == "") {
-                return false;
-            } else {
-                return true;
-            }
+    function checkInput (obj){//检查表单是否有空项，空格验证方法待加
+        if(obj == "") {
+            return false;
+        } else {
+            return true;
         }
+    }
+    function addStime() {
+        $("#dayInput").val('');
+        $("#dayInput").attr("disabled","disabled");
+        $("#inlineRadio7").attr("checked",false);
+        $("#inlineRadio6").attr("checked",true);
+        jeDate({dateCell:'#startTime',isTime:true,format:'YYYY-MM-DD'});
+    }
+    function addEtime() {
+        $("#dayInput").val('');
+        $("#dayInput").attr("disabled","disabled");
+        $("#inlineRadio7").attr("checked",false);
+        $("#inlineRadio6").attr("checked",true);
+        jeDate({dateCell:'#endTime',isTime:true,format:'YYYY-MM-DD'});
+    }
+    $(document).ready(function () {
+        $("#inlineRadio1").click(function(){
+            $("#amountInput").prop("disabled","disabled");
+            $("#amountInput").val('');
+        });
+        $("#inlineRadio2").click(function(){
+            $("#amountInput").prop("disabled","");
+            $("#amountInput").focus();
+        });
+        $("#inlineRadio3").click(function(){
+            $("#sumInput").prop("disabled","disabled");
+            $("#sumInput").val('');
+        });
+        $("#inlineRadio4").click(function(){
+            $("#sumInput").prop("disabled","");
+            $("#sumInput").focus();
+        });
+        $("#inlineRadio6").click(function(){
+//            $("#stimediv").css("display","inline-table");
+//            $("#etimediv").css("display","inline-table");
+            $(".dis-fa").css("display","block");
+            $("#startTime").prop("disabled","");
+            $("#endTime").prop("disabled","");
+            $("#dayInput").prop("disabled","disabled");
+            $("#dayInput").val('');
+        });
+        $("#inlineRadio7").click(function(){
+            $("#startTime").val('');
+            $("#endTime").val('');
+            $("#dayInput").prop("disabled","");
+            $("#dayInput").focus();
+        });
+        $("#inlineRadio8").click(function(){
+            $("#startTime").val('');
+            $("#endTime").val('');
+            $(".dis-fa").css("display","none");
+            $("#startTime").prop("disabled","disabled");
+            $("#endTime").prop("disabled","disabled");
+            $("#dayInput").val('');
+            $("#dayInput").prop("disabled","disabled");
+        });
+        $("#amountInput").focus(function () {
+            $("#inlineRadio2").attr("checked",true);
+        });
+        $("#sumInput").focus(function () {
+            $("#inlineRadio4").attr("checked",true);
+        });
+        $("#dayInput").focus(function () {
+            $("#inlineRadio7").attr("checked",true);
+            $(".dis-fa").css("display","none");
+            $("#startTime").prop("disabled","disabled");
+            $("#endTime").prop("disabled","disabled");
+//            $("#stimediv").css("display","none");
+//            $("#etimediv").css("display","none");
+            $("#startTime").val('');
+            $("#endTime").val('');
+        });
         $("#saveBtn").on('click',function () {
             $(this).button('loading').delay(500).queue(function() {
                 $(this).button('reset'); //重置按钮
                 $(this).dequeue();
+                var fs = '';//优惠券数量
                 var arr = {
-                    "name": $("#editSupplierName").val(),
-                    "address": $("#editSupplierAddress").val(),
-                    "select": $("#supplierSelect").val(),
-                    "time": $("#editSupplierTime").val(),
-                    "sname": $("#saleName").val(),
-                    "phone": $("#salePhone").val()
+                    "v1": $("#couponSelect").val(),//优惠券类型
+                    "v2": $("#couponName").val(),//优惠券名称
+                    "v3": $("#couponTitle").val(),//优惠券标题
+                    "v4": $("#couponSum").val(),//优惠券金额
+                    "v5": $("#couponTime").val(),//有效时间
+                    "v6": $("#couponRule").val(),//使用规则
+                    "v7": $("#couponRemark").val()//备注
                 };
-                var input1 = checkInput(arr.name);
-                var input2 = checkInput(arr.address);
-                var input3 = checkInput(arr.select);
-                var input4 = checkInput(arr.time);
-                var input5 = checkInput(arr.sname);
-                var input6 = checkInput(arr.phone);
+                $('input[name="numberRadio"]:checked').each(function () {
+                    var id= $(this).attr("id");
+                    if(id=="inlineRadio1"){
+                        fs=$("#"+id).val();
+                    }else if(id=="inlineRadio2"){
+                        fs=$("#amountInput").val();
+                    }else{
+                        fs='';
+                    }
+                });
+                alert(fs);
+                var input1 = checkInput(arr.v1);
+                var input2 = checkInput(arr.v2);
+                var input3 = checkInput(arr.v3);
+                var input4 = checkInput(arr.v4);
+                var input5 = checkInput(arr.v5);
+                var input6 = checkInput(arr.v6);
                 if (input1 && input2 && input3 && input4 && input5 && input6) {
-                    var url = "${base}/purchase/updateSupplier.do?id=${supplier.id}&supplierName="
-                            + arr.name + "&address=" + arr.address + "&supplierType=" + arr.select + "&deliverPeriod="
-                            + arr.time + "&salesmanName=" + arr.sname + "&phone=" + arr.phone;
-                    $.post(url, function (data) {
-                        //重新刷新
-                        console.log(data);
-                        if (data.code == "0") {
-                            swal("提示", "更新成功", "success");
-                            setTimeout(function () {
-                                location.href = "${base}/purchase/supplierPage.do";
-                            }, 1000);
-                        } else {
-                            swal("提示", data.msg, "error");
-                        }
-                    }, "json");
-                } else {
-                    swal("提示", "请检查表单是否有漏填项！", "info");
+                <#--var url = "${base}/coupon/updateCoupon.do?id=${supplier.id}&supplierName="-->
+                <#--+ arr.name + "&address=" + arr.address + "&supplierType=" + arr.select + "&deliverPeriod="-->
+                <#--+ arr.time + "&salesmanName=" + arr.sname + "&phone=" + arr.phone;-->
+                <#--$.post(url, function (data) {-->
+                <#--//重新刷新-->
+                <#--console.log(data);-->
+                <#--if (data.code == "0") {-->
+                <#--swal("提示", "添加成功", "success");-->
+                <#--setTimeout(function () {-->
+                <#--location.href = "${base}/coupon/couponPage.do";-->
+                <#--}, 1000);-->
+                <#--} else {-->
+                <#--swal("提示", data.msg, "error");-->
+                <#--}-->
+                <#--}, "json");-->
+                <#--} else {-->
+                <#--swal("提示", "请检查表单是否有漏填项！", "info");-->
                 }
             });
         });
