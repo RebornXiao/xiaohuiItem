@@ -400,7 +400,7 @@ public class AdvertManagerController extends BaseController {
         map.put("pageIndex", pageIndex);
         map.put("pageSize", getPageSize());
         map.put("suppliers", groups);
-        return jumpPage(map, LogicConfig.FTL_ADVERT_GROUPS, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_ADVERT_GROUPS);
+        return jumpPage(map, LogicConfig.FTL_ADVERT_GROUPS, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_GROUPS);
     }
 
     /**
@@ -429,7 +429,7 @@ public class AdvertManagerController extends BaseController {
         JSONArray adverts = advertJsonsResponse.getJSONArray("datas");
         map.put("adverts", adverts);
 
-        return jumpPage(map, LogicConfig.FTL_ADVERT_GROUPS, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_ADVERT_GROUPS);
+        return jumpPage(map, LogicConfig.FTL_ADVERT_GROUPS, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_GROUPS);
     }
     /**
      * 删除广告组
