@@ -36,6 +36,7 @@ public class LogicConfig {
     public static final String TAB_ADVERT = "advert";
     public static final String TAB_ADVERT_LIST = "adverts";
     public static final String TAB_ADVERT_MANAGER = "admanager";
+    public static final String TAB_ADVERT_GROUPS = "adgroups";
 
     public static final String TAB_COUPON = "coupon";
     public static final String TAB_COUPON_LIST = "coupons";
@@ -52,6 +53,7 @@ public class LogicConfig {
     //广告相关页面
     public static final String FTL_ADVERT_EDIT = "advert/advert-item-edit";
     public static final String FTL_ADVERT_MANAGER = "advert/advert-item-manager";
+    public static final String FTL_ADVERT_GROUPS = "advert/advert-item-groups";
     public static final String FTL_ADVERT_MANAGET_DETAIL = "advert/advert-item-detail";
 
     public static final String FTL_ADVERT_MANAGET_SCREEN = "advert/advert-item-screen";
