@@ -377,7 +377,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("pageIndex", String.valueOf(pageIndex));
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/searchGroupPage.do";
+            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/searchGroupPage.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -399,7 +399,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("remark", remark);
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/saveGroup.do";
+            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/saveGroup.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -417,7 +417,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("groupID", String.valueOf(groupID));
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/getGroup.do";
+            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getGroup.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -435,7 +435,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("groupID", String.valueOf(groupID));
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/getAdvertListByGroupID.do";
+            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAdvertListByGroupID.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -453,7 +453,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("groupID", String.valueOf(groupID));
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/delGroup.do";
+            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/delGroup.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -475,7 +475,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("advertIDs", advertIDs);
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/saveAdverGroup.do";
+            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/saveAdverGroup.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -497,7 +497,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("advertIDs", advertIDs);
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/updateAdverGroup.do";
+            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/updateAdverGroup.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
