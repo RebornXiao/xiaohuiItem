@@ -126,7 +126,7 @@
                         <ul class="list-unstyled" <#if tab=="advert"> style="display: block;" </#if> >
                             <li <#if tab_child=="adverts"> class="active" </#if> ><a href="${base}/advert/adverts.do">广告列表</a></li>
                             <li <#if tab_child=="admanager"> class="active" </#if> ><a href="${base}/advert/advertScreens.do">投放管理</a></li>
-                            <li <#if tab_child=="adgroups"> class="active" </#if> ><a href="${base}/advert/advertGroups.do">分组管理</a></li>
+                            <li <#if tab_child=="adgroups"> class="active" </#if> ><a href="${base}/advert/groupPage.do">分组管理</a></li>
                         </ul>
                     </li>
 
