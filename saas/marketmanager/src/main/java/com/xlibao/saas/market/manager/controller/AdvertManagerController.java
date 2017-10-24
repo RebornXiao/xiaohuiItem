@@ -399,7 +399,7 @@ public class AdvertManagerController extends BaseController {
         int pageIndex = getIntParameter("pageIndex", 1);
         map.put("pageIndex", pageIndex);
         map.put("pageSize", getPageSize());
-        map.put("suppliers", groups);
+        map.put("groups", groups);
         return jumpPage(map, LogicConfig.FTL_ADVERT_GROUPS, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_GROUPS);
     }
 
