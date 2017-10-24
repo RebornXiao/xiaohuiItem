@@ -40,7 +40,7 @@
                                                 <option value="">请选择编号</option>
                                                 <#if screens?exists >
                                                     <#list screens as screen>
-                                                        <option value="${screen.code}">${screen.code}</option>
+                                                        <option value="${screen.screenID}">${screen.code}</option>
                                                     </#list>
                                                 </#if>
                                             </select>
@@ -169,7 +169,7 @@
                             }
                         },
                         error: function (data) {
-                            swal("提示", "服务器出错", "info");
+                            swal("提示", data.msg, "error");
                         }
                     });
                 } else {
@@ -189,7 +189,7 @@
                         if((screenItem.length != 0)&& data) {//返回的数据不为空
                             select2.html("");
                             for(var i = 0; i < screenItem.length; i++) {
-                                $("<option value ='" + screenItem[i].code + "'> " + screenItem[i].code + "</option>").appendTo(select2);
+                                $("<option value ='" + screenItem[i].screenID + "'> " + screenItem[i].code + "</option>").appendTo(select2);
                             }
                             select2.parent().show();
                             select2.next().show();
