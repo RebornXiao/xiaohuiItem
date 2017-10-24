@@ -381,4 +381,82 @@ public class AdvertManagerController extends BaseController {
         return adverManagerService.updateAdvertScreenIsdown();
     }
 
+    /******************************/
+
+    /**
+     * 广告组列表
+     * @param map
+     * @return
+     */
+    @RequestMapping("/groupPage")
+    public String searchGroupPage(ModelMap map) {
+        JSONObject groupJson =  adverManagerService.searchGroupPage();
+        JSONObject response = groupJson.getJSONObject("response");
+        JSONArray groups = response.getJSONArray("data");
+        map.put("count", response.getIntValue("count"));
+
+        map.put("groupName", getUTF("groupName",""));
+        int pageIndex = getIntParameter("pageIndex", 1);
+        map.put("pageIndex", pageIndex);
+        map.put("pageSize", getPageSize());
+        map.put("suppliers", groups);
+        return jumpPage(map, LogicConfig.FTL_ADVERT_GROUPS, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_ADVERT_GROUPS);
+    }
+
+    /**
+     * 新增广告组
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("saveGroup")
+    public JSONObject saveGroup(){
+        return adverManagerService.saveGroup();
+    }
+
+    /**
+     * 广告组详情
+     * @return
+     */
+    @RequestMapping("groupDetail")
+    public String getGroup(ModelMap map){
+        JSONObject jsonObject= adverManagerService.getGroup();
+        JSONObject group = jsonObject.getJSONObject("response");
+        map.put("group", group);
+
+        /*************广告*************/
+        JSONObject advertJson = adverManagerService.getAdvertListByGroupID();
+        JSONObject advertJsonsResponse = advertJson.getJSONObject("response");
+        JSONArray adverts = advertJsonsResponse.getJSONArray("datas");
+        map.put("adverts", adverts);
+
+        return jumpPage(map, LogicConfig.FTL_ADVERT_GROUPS, LogicConfig.TAB_PURCHASE, LogicConfig.TAB_ADVERT_GROUPS);
+    }
+    /**
+     * 删除广告组
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("delGroup")
+    public JSONObject delGroup(){
+        return adverManagerService.delGroup();
+    }
+    /**
+     * 新增广告组
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("saveAdverGroup")
+    public JSONObject saveAdverGroup(){
+        return adverManagerService.saveAdverGroup();
+    }
+    /**
+     * 更新广告组
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("updateAdverGroup")
+    public JSONObject updateAdverGroup(){
+        return adverManagerService.updateAdverGroup();
+    }
+
 }

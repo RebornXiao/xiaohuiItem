@@ -113,4 +113,46 @@ public interface AdverManagerService {
      * * @return
      */
     JSONObject updateAdvertScreenIsdown();
+
+    /**
+     * 广告组查询
+     * @return
+     */
+    JSONObject searchGroupPage();
+
+    /**
+     * 新增广告组
+     * @return
+     */
+    JSONObject saveGroup();
+
+    /**
+     * 获取广告组信息
+     * @return
+     */
+    JSONObject getGroup();
+
+    /**
+     * 获取广告组下的广告
+     * @return
+     */
+    JSONObject getAdvertListByGroupID();
+
+    /**
+     * 删除广告组
+     * @return
+     */
+    JSONObject delGroup();
+
+    /**
+     * 设置广告组广告
+     * @return
+     */
+    JSONObject saveAdverGroup();
+
+    /**
+     * 更新广告组广告
+     * @return
+     */
+    JSONObject updateAdverGroup();
 }

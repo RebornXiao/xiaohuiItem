@@ -3,6 +3,7 @@ package com.xlibao.saas.market.manager.service.advermanager.impl;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.xlibao.common.exception.XlibaoIllegalArgumentException;
 import com.xlibao.common.support.BasicRemoteService;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.service.advermanager.AdverManagerService;
@@ -361,4 +362,146 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         return response;
     }
 
+    /*****************************************/
+
+    @Override
+    public JSONObject searchGroupPage() {
+
+        String groupName = getUTF("groupName", "");
+        int pageSize = getPageSize();
+        int pageIndex = getIntParameter("pageIndex", 1);
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("groupName", groupName);
+        parameters.put("pageSize", String.valueOf(pageSize));
+        parameters.put("pageIndex", String.valueOf(pageIndex));
+
+        try {
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/searchGroupPage.do";
+            JSONObject response = executor(url, parameters);
+            return response;
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
+        }
+
+    }
+    @Override
+    public JSONObject saveGroup() {
+
+        String groupName = getUTF("groupName","");
+        String remark = getUTF("remark","");
+        if(groupName==null){
+            return fail("缺少分组名称groupName");
+        }
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("groupName", groupName);
+        parameters.put("remark", remark);
+
+        try {
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/saveGroup.do";
+            JSONObject response = executor(url, parameters);
+            return response;
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
+        }
+    }
+    @Override
+    public JSONObject getGroup() {
+        Long groupID = getLongParameter("groupID",-1);
+        if(groupID==-1){
+            return fail("缺少分组IDgroupID");
+        }
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("groupID", String.valueOf(groupID));
+
+        try {
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/getGroup.do";
+            JSONObject response = executor(url, parameters);
+            return response;
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
+        }
+    }
+    @Override
+    public JSONObject getAdvertListByGroupID() {
+        Long groupID = getLongParameter("groupID",-1);
+        if(groupID==-1){
+            return fail("缺少分组IDgroupID");
+        }
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("groupID", String.valueOf(groupID));
+
+        try {
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/getAdvertListByGroupID.do";
+            JSONObject response = executor(url, parameters);
+            return response;
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
+        }
+    }
+    @Override
+    public JSONObject delGroup() {
+        Long groupID = getLongParameter("groupID",-1);
+        if(groupID==-1){
+            return fail("缺少分组ID:groupID");
+        }
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("groupID", String.valueOf(groupID));
+
+        try {
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/delGroup.do";
+            JSONObject response = executor(url, parameters);
+            return response;
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
+        }
+    }
+    @Override
+    public JSONObject saveAdverGroup() {
+        Long groupID = getLongParameter("groupID",-1);
+        String advertIDs = getUTF("advertIDs","");
+        if(groupID==-1){
+            return fail("缺少分组ID:groupID");
+        }else if(advertIDs==""){
+            return fail("缺少广告ID:advertIDs");
+        }
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("groupID", String.valueOf(groupID));
+        parameters.put("advertIDs", advertIDs);
+
+        try {
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/saveAdverGroup.do";
+            JSONObject response = executor(url, parameters);
+            return response;
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
+        }
+    }
+    @Override
+    public JSONObject updateAdverGroup() {
+        Long groupID = getLongParameter("groupID",-1);
+        String advertIDs = getUTF("advertIDs","");
+        if(groupID==-1){
+            return fail("缺少分组ID:groupID");
+        }else if(advertIDs==""){
+            return fail("缺少广告ID:advertIDs");
+        }
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("groupID", String.valueOf(groupID));
+        parameters.put("advertIDs", advertIDs);
+
+        try {
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/updateAdverGroup.do";
+            JSONObject response = executor(url, parameters);
+            return response;
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
+        }
+    }
 }
