@@ -124,8 +124,18 @@
                             <span> 广告管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
                         <ul class="list-unstyled" <#if tab=="advert"> style="display: block;" </#if> >
-                            <li <#if tab_child=="adverts"> class="active" </#if> ><a href="${base}/advert/adverts.do">广告管理</a></li>
+                            <li <#if tab_child=="adverts"> class="active" </#if> ><a href="${base}/advert/adverts.do">广告列表</a></li>
                             <li <#if tab_child=="admanager"> class="active" </#if> ><a href="${base}/advert/advertScreens.do">投放管理</a></li>
+                            <li <#if tab_child=="adgroups"> class="active" </#if> ><a href="${base}/advert/advertGroups.do">分组管理</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="has_sub">
+                        <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="coupon"> active </#if>"><i class="fa fa-credit-card"></i>
+                            <span> 优惠券管理 </span>
+                            <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
+                        <ul class="list-unstyled" <#if tab=="coupon"> style="display: block;" </#if> >
+                            <li <#if tab_child=="coupons"> class="active" </#if> ><a href="${base}/coupon/couponPage.do">优惠券列表</a></li>
                         </ul>
                     </li>
 
