@@ -354,6 +354,11 @@ public class AdvertManagerController extends BaseController {
             map.put("adverts", advertResponse.getJSONObject("response").getJSONArray("data"));
         }
 
+        JSONObject groupJson = adverManagerService.getAllGroup();
+        JSONObject groupJsonsResponse = groupJson.getJSONObject("response");
+        JSONArray groups = groupJsonsResponse.getJSONArray("datas");
+        map.put("groups", groups);
+
         return jumpPage(map, LogicConfig.FTL_ADVERT_MANAGET_ADDPLAY, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_LIST);
     }
 

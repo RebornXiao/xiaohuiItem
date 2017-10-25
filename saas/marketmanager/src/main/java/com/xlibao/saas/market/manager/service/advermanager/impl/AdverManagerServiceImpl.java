@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.xlibao.common.exception.XlibaoIllegalArgumentException;
+import com.xlibao.common.http.HttpRequest;
 import com.xlibao.common.support.BasicRemoteService;
 import com.xlibao.saas.market.manager.config.ConfigFactory;
 import com.xlibao.saas.market.manager.service.advermanager.AdverManagerService;
@@ -477,7 +478,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("advertIDs", advertIDs);
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/saveAdverGroup.do";
+            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/saveAdverGroup.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -499,11 +500,24 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("advertIDs", advertIDs);
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/updateAdverGroup.do";
+            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/updateAdverGroup.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
             throw new XlibaoIllegalArgumentException("远程接口通信异常");
         }
     }
+
+    @Override
+    public JSONObject getAllGroup() {
+        try {
+            String json = HttpRequest.get(ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/getAllGroup.do");
+            JSONObject response = JSONObject.parseObject(json);
+            return response;
+        }catch (XlibaoIllegalArgumentException ex){
+            throw new XlibaoIllegalArgumentException("远程接口通信异常");
+        }
+    }
+
+
 }

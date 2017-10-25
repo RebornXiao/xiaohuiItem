@@ -155,4 +155,10 @@ public interface AdverManagerService {
      * @return
      */
     JSONObject updateAdverGroup();
+
+    /**
+     * 所有組
+     * @return
+     */
+    JSONObject getAllGroup();
 }
