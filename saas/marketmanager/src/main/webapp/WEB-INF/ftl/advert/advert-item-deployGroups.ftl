@@ -6,10 +6,10 @@
                     <div class="page-title-box">
                         <ol class="breadcrumb pull-right">
                             <li><a href="#">首页</a></li>
-                            <li><a href="#">采购端管理</a></li>
-                            <li class="active"><a href="#">采购单列表</a></li>
+                            <li><a href="#">广告管理</a></li>
+                            <li class="active"><a href="#">分组管理</a></li>
                         </ol>
-                        <h4 class="page-title "><b>新建采购单</b></h4>
+                        <h4 class="page-title "><b>分配广告</b></h4>
                     </div>
                 </div>
             </div>

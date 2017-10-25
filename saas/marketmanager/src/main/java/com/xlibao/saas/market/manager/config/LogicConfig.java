@@ -55,7 +55,9 @@ public class LogicConfig {
     public static final String FTL_ADVERT_MANAGER = "advert/advert-item-manager";
     public static final String FTL_ADVERT_GROUPS = "advert/advert-item-groups";
     public static final String FTL_ADVERT_MANAGET_DETAIL = "advert/advert-item-detail";
-
+    public static final String FTL_ADVERT_GROUPS_DETAIL = "advert/advert-item-groupsDetail";
+    public static final String FTL_ADVERT_GROUPS_DEPLOY = "advert/advert-item-deployGroups";
+    public static final String FTL_ADVERT_GROUPS_EDIT = "advert/advert-item-editGroups";
     public static final String FTL_ADVERT_MANAGET_SCREEN = "advert/advert-item-screen";
     public static final String FTL_ADVERT_MANAGET_SCREENCONFIG = "advert/advert-item-screenConfig";
     public static final String FTL_ADVERT_MANAGET_PLAYDETAIL = "advert/advert-item-playDetail";
