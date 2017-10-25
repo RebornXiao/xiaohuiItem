@@ -475,7 +475,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("advertIDs", advertIDs);
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/saveAdverGroup.do";
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/saveAdverGroup.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){
@@ -497,7 +497,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
         parameters.put("advertIDs", advertIDs);
 
         try {
-            String url = ConfigFactory.getDomainNameConfig().adverRemoteURL + "advert/updateAdverGroup.do";
+            String url = ConfigFactory.getDomainNameConfig().purchaseRemoteURL + "advert/updateAdverGroup.do";
             JSONObject response = executor(url, parameters);
             return response;
         }catch (XlibaoIllegalArgumentException ex){

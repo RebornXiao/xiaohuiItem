@@ -429,7 +429,7 @@ public class AdvertManagerController extends BaseController {
         JSONArray adverts = advertJsonsResponse.getJSONArray("datas");
         map.put("adverts", adverts);
 
-        return jumpPage(map, LogicConfig.FTL_ADVERT_GROUPS, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_GROUPS);
+        return jumpPage(map, LogicConfig.FTL_ADVERT_GROUPS_DETAIL, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_GROUPS);
     }
     /**
      * 删除广告组
@@ -440,6 +440,20 @@ public class AdvertManagerController extends BaseController {
     public JSONObject delGroup(){
         return adverManagerService.delGroup();
     }
+
+    /**
+     * 设置广告页
+     * @param map
+     * @return
+     */
+    @RequestMapping("/goAddgroup")
+    public String goAddgroup(ModelMap map) {
+        JSONObject jsonObject= adverManagerService.getGroup();
+        JSONObject group = jsonObject.getJSONObject("response");
+        map.put("group", group);
+        return jumpPage(map, LogicConfig.FTL_ADVERT_GROUPS_DEPLOY, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_GROUPS);
+    }
+
     /**
      * 新增广告组
      * @return
@@ -448,6 +462,20 @@ public class AdvertManagerController extends BaseController {
     @RequestMapping("saveAdverGroup")
     public JSONObject saveAdverGroup(){
         return adverManagerService.saveAdverGroup();
+    }
+
+    @RequestMapping("/goEditgroup")
+    public String goEditgroup(ModelMap map) {
+        JSONObject jsonObject= adverManagerService.getGroup();
+        JSONObject group = jsonObject.getJSONObject("response");
+        map.put("group", group);
+
+        /*************广告*************/
+        JSONObject advertJson = adverManagerService.getAdvertListByGroupID();
+        JSONObject advertJsonsResponse = advertJson.getJSONObject("response");
+        JSONArray adverts = advertJsonsResponse.getJSONArray("datas");
+        map.put("adverts", adverts);
+        return jumpPage(map, LogicConfig.FTL_ADVERT_GROUPS_EDIT, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_GROUPS);
     }
     /**
      * 更新广告组
