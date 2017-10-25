@@ -300,14 +300,12 @@ public class AdvertManagerController extends BaseController {
     @RequestMapping("/goAdvertScreen")
     public String goAdvertScreen(ModelMap map) {
 
-        JSONObject json =  adverManagerService.getAdvertByID();
-        JSONObject response = json.getJSONObject("response");
-        JSONArray adverts = response.getJSONArray("data");
-        if(adverts.size()>0) {
-            map.put("advert", adverts.get(0));
-        }else {
-            map.put("advert", "");
-        }
+        /*************广告：参数groupID=advertID*************/
+        JSONObject advertJson = adverManagerService.getAdvertListByGroupID();
+        JSONObject advertJsonsResponse = advertJson.getJSONObject("response");
+        JSONArray adverts = advertJsonsResponse.getJSONArray("datas");
+        map.put("adverts", adverts);
+
         JSONObject jsonAS =  adverManagerService.getAdvertScreenByID();
         JSONObject responseAS = jsonAS.getJSONObject("response");
         JSONArray advertScreen = responseAS.getJSONArray("data");
@@ -451,6 +449,12 @@ public class AdvertManagerController extends BaseController {
         JSONObject jsonObject= adverManagerService.getGroup();
         JSONObject group = jsonObject.getJSONObject("response");
         map.put("group", group);
+
+        JSONObject advertResponse = adverManagerService.getAdvertByID();
+        if (advertResponse.getIntValue("code") == 0) {
+            map.put("adverts", advertResponse.getJSONObject("response").getJSONArray("data"));
+        }
+
         return jumpPage(map, LogicConfig.FTL_ADVERT_GROUPS_DEPLOY, LogicConfig.TAB_ADVERT, LogicConfig.TAB_ADVERT_GROUPS);
     }
 
@@ -470,7 +474,13 @@ public class AdvertManagerController extends BaseController {
         JSONObject group = jsonObject.getJSONObject("response");
         map.put("group", group);
 
-        /*************广告*************/
+        /********所有广告*********/
+        JSONObject advertResponse = adverManagerService.getAdvertByID();
+        if (advertResponse.getIntValue("code") == 0) {
+            map.put("advertList", advertResponse.getJSONObject("response").getJSONArray("data"));
+        }
+
+        /*************组广告*************/
         JSONObject advertJson = adverManagerService.getAdvertListByGroupID();
         JSONObject advertJsonsResponse = advertJson.getJSONObject("response");
         JSONArray adverts = advertJsonsResponse.getJSONArray("datas");

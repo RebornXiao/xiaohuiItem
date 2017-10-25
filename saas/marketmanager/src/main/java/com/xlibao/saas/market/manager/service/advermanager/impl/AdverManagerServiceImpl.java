@@ -221,6 +221,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
          JSONObject rest = new JSONObject();
          int marketID =  getIntParameter("marketID",0);
          int screenID =  getIntParameter("screenID",0);
+         int style = getIntParameter("style",1);
          String [] advertIDs= getHttpServletRequest().getParameterValues("advertID");
          String [] beginTimes= getHttpServletRequest().getParameterValues("beginTime");
          String [] endTimes= getHttpServletRequest().getParameterValues("endTime");
@@ -231,6 +232,7 @@ public class AdverManagerServiceImpl extends BasicRemoteService implements Adver
             Map<String, String> parameters = new HashMap<>();
             parameters.put("marketID",String.valueOf(marketID));
             parameters.put("screenID",String.valueOf(screenID));
+            parameters.put("style",String.valueOf(style));
             parameters.put("advertID",advertIDs[i]);
             parameters.put("beginTime",beginTimes[i]);
             parameters.put("endTime",endTimes[i]);
