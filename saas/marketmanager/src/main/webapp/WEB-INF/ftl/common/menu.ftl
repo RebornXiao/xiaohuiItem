@@ -140,6 +140,16 @@
                     </li>
 
                     <li class="has_sub">
+                        <a href="javascript:void(0);"
+                           class="waves-effect waves-primary <#if tab=="operation"> active </#if>"><i
+                                class="fa fa-cog"></i><span> 权限管理 </span>
+                            <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
+                        <ul class="list-unstyled" <#if tab=="operation"> style="display: block;" </#if>>
+                            <li <#if tab_child=="operationlist"> class="active" </#if>><a href="${base}/operation/operations.do">权限列表</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="has_sub">
                         <a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="user"> active </#if>"><i
                                 class="fa fa-users"></i><span> 用户管理 </span>
                             <span class="menu-arrow"><i class="fa fa-angle-down"></i></span></a>
@@ -163,6 +173,7 @@
                             </li>
                         </ul>
                     </li>
+
 
                 <#--<li class="has_sub">-->
                 <#--<a href="javascript:void(0);" class="waves-effect waves-primary <#if tab=="user"> active </#if>"><i-->
@@ -195,6 +206,7 @@
                             <li><a href="chart-flot.html">个人信息</a></li>
                         </ul>
                     </li>
+
 
                 </ul>
             </div>
